@@ -28,6 +28,7 @@ import java.applet.Applet;
 import java.applet.AppletContext;
 import java.applet.AppletStub;
 import java.applet.AudioClip;
+import java.awt.AWTEvent;
 import java.awt.Event;
 import java.awt.Frame;
 import java.awt.Image;
@@ -64,7 +65,7 @@ public class DummyAppletContext extends Frame implements AppletStub,
 
 	private static final long serialVersionUID = -1730642917347143433L;
 	private TextField status;
-	private Hashtable params = new Hashtable();
+	private Hashtable<String, String> params = new Hashtable<String, String>();
 	private Vector<Applet> applets = new Vector<Applet>();
 
 	private int initial_width;
@@ -214,13 +215,14 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 *            The event that occurred
 	 * @return false if the event was not handled by this object.
 	 */
-	public boolean handleEvent(Event evt) {
+	@Override
+	public void processEvent(AWTEvent evt) {
 
-		if (evt.id == Event.WINDOW_DESTROY) {
+		if (evt.getID() == Event.WINDOW_DESTROY) {
 			System.exit(0);
 		}
 
-		return super.handleEvent(evt);
+		super.processEvent(evt);
 	}
 
 	/************ AppletStub methods *************/
@@ -230,6 +232,7 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * 
 	 * @return always true
 	 */
+	@Override
 	public boolean isActive() {
 		return true;
 	}
@@ -307,10 +310,10 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 */
 	public void appletResize(int width, int height) {
 
-		Insets insets = insets();
+		Insets insets = getInsets();
 
-		resize((width + insets.left + insets.right),
-				(height + status.preferredSize().height + insets.top + insets.bottom));
+		setSize((width + insets.left + insets.right),
+				(height + status.getPreferredSize().height + insets.top + insets.bottom));
 	}
 
 	/************ AppletContext methods *************/
@@ -385,7 +388,7 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * @return the Enumeration -- contains ONLY the applet created with this
 	 *         DummyAppletContext
 	 */
-	public final Enumeration getApplets() {
+	public final Enumeration<Applet> getApplets() {
 		return applets.elements();
 	}
 
@@ -490,7 +493,7 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 *         context.
 	 * @since JDK1.4
 	 */
-	public Iterator getStreamKeys() {
+	public Iterator<String> getStreamKeys() {
 		return null; // To change body of implemented methods use File |
 						// Settings | File Templates.
 	}

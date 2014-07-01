@@ -64,6 +64,8 @@ import com.gallery.GalleryRemote.util.ImageUtils;
  */
 public class PictureInspector extends JPanel implements ActionListener,
 		DocumentListener {
+
+	private static final long serialVersionUID = -5594312109149362431L;
 	public static final String MODULE = "PictInspec";
 
 	HashMap extraLabels = new HashMap();

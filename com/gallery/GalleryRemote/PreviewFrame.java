@@ -21,22 +21,39 @@
 
 package com.gallery.GalleryRemote;
 
-import com.gallery.GalleryRemote.model.Picture;
-import com.gallery.GalleryRemote.util.GRI18n;
-import com.gallery.GalleryRemote.util.ImageUtils;
-import com.gallery.GalleryRemote.util.ImageLoaderUtil;
-import com.gallery.GalleryRemote.prefs.PreferenceNames;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.geom.NoninvertibleTransformException;
-import java.awt.event.*;
+import java.awt.geom.Point2D;
 
-public class PreviewFrame
-		extends JFrame
-		implements PreferenceNames, ImageLoaderUtil.ImageLoaderUser {
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import com.gallery.GalleryRemote.model.Picture;
+import com.gallery.GalleryRemote.prefs.PreferenceNames;
+import com.gallery.GalleryRemote.util.GRI18n;
+import com.gallery.GalleryRemote.util.ImageLoaderUtil;
+import com.gallery.GalleryRemote.util.ImageUtils;
+
+public class PreviewFrame extends JFrame implements PreferenceNames,
+		ImageLoaderUtil.ImageLoaderUser {
+
+	private static final long serialVersionUID = 3498443714616453620L;
 	public static final String MODULE = "PreviewFrame";
 	Rectangle currentRect = null;
 	ImageLoaderUtil loader;
@@ -49,14 +66,17 @@ public class PreviewFrame
 		setContentPane(new ImageContentPane());
 
 		addComponentListener(new ComponentAdapter() {
+			@Override
 			public void componentResized(ComponentEvent e) {
 				loader.flushMemory();
 			}
 		});
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
 			public void windowActivated(java.awt.event.WindowEvent e) {
-				MainFrame mainFrame = (MainFrame) GalleryRemote._().getMainFrame();
+				MainFrame mainFrame = (MainFrame) GalleryRemote._()
+						.getMainFrame();
 
 				if (mainFrame.activating == PreviewFrame.this) {
 					mainFrame.activating = null;
@@ -64,17 +84,22 @@ public class PreviewFrame
 				}
 
 				if (mainFrame.activating == null && mainFrame.isVisible()) {
-					/*WindowListener mfWindowListener = mainFrame.getWindowListeners()[0];
-					WindowListener pWindowListener = getWindowListeners()[0];
-					removeWindowListener(pWindowListener);
-					mainFrame.removeWindowListener(mfWindowListener);*/
+					/*
+					 * WindowListener mfWindowListener =
+					 * mainFrame.getWindowListeners()[0]; WindowListener
+					 * pWindowListener = getWindowListeners()[0];
+					 * removeWindowListener(pWindowListener);
+					 * mainFrame.removeWindowListener(mfWindowListener);
+					 */
 
 					mainFrame.activating = PreviewFrame.this;
 					mainFrame.toFront();
 					toFront();
 
-					/*addWindowListener(pWindowListener);
-					mainFrame.addWindowListener(mfWindowListener);*/
+					/*
+					 * addWindowListener(pWindowListener);
+					 * mainFrame.addWindowListener(mfWindowListener);
+					 */
 				}
 			}
 		});
@@ -87,38 +112,58 @@ public class PreviewFrame
 				this);
 	}
 
-	public void hide() {
-		// release memory if no longer necessary
-		loader.flushMemory();
-		super.hide();
-
-		loader.preparePicture(null, false, false);
+	@Override
+	public void setVisible(boolean visible) {
+		if (!visible) {
+			// release memory if no longer necessary
+			loader.flushMemory();
+			super.setVisible(visible);
+			loader.preparePicture(null, false, false);
+		} else {
+			super.setVisible(visible);
+		}
 	}
 
+	@Override
 	public void pictureReady() {
 		repaint();
 	}
 
+	@Override
 	public boolean blockPictureReady(Image image, Picture picture) {
 		return false;
 	}
 
+	@Override
 	public Dimension getImageSize() {
 		return getGlassPane().getSize();
 	}
 
+	@Override
 	public void nullRect() {
 		currentRect = null;
 	}
 
-	public void pictureStartDownloading(Picture picture) {}
-	public void pictureStartProcessing(Picture picture) {}
-	public void pictureLoadError(Picture picture) {}
+	@Override
+	public void pictureStartDownloading(Picture picture) {
+	}
+
+	@Override
+	public void pictureStartProcessing(Picture picture) {
+	}
+
+	@Override
+	public void pictureLoadError(Picture picture) {
+	}
 
 	class ImageContentPane extends JPanel {
+		private static final long serialVersionUID = 6465140694468227338L;
+
+		@Override
 		public void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g;
-			Color c = GalleryRemote._().properties.getColorProperty(SLIDESHOW_COLOR);
+			Color c = GalleryRemote._().properties
+					.getColorProperty(SLIDESHOW_COLOR);
 			if (c != null) {
 				g.setColor(c);
 			} else {
@@ -128,21 +173,29 @@ public class PreviewFrame
 			g.fillRect(0, 0, getSize().width, getSize().height);
 
 			if (loader.imageShowNow != null && loader.pictureShowWant != null) {
-				//Log.log(Log.LEVEL_TRACE, MODULE, "New image: " + loader.imageShowNow);
+				// Log.log(Log.LEVEL_TRACE, MODULE, "New image: " +
+				// loader.imageShowNow);
 
-				Image tmpImage = ImageUtils.rotateImage(loader.imageShowNow, loader.pictureShowWant.getAngle(),
+				Image tmpImage = ImageUtils.rotateImage(loader.imageShowNow,
+						loader.pictureShowWant.getAngle(),
 						loader.pictureShowWant.isFlipped(), this);
 
-				currentRect = new Rectangle(getLocation().x + (getWidth() - tmpImage.getWidth(this)) / 2,
-						getLocation().y + (getHeight() - tmpImage.getHeight(this)) / 2,
+				currentRect = new Rectangle(getLocation().x
+						+ (getWidth() - tmpImage.getWidth(this)) / 2,
+						getLocation().y
+								+ (getHeight() - tmpImage.getHeight(this)) / 2,
 						tmpImage.getWidth(this), tmpImage.getHeight(this));
 
-				g2.drawImage(tmpImage, currentRect.x, currentRect.y, getContentPane());
+				g2.drawImage(tmpImage, currentRect.x, currentRect.y,
+						getContentPane());
 			}
 		}
 	}
 
-	class CropGlassPane extends JComponent implements MouseListener, MouseMotionListener {
+	class CropGlassPane extends JComponent implements MouseListener,
+			MouseMotionListener {
+
+		private static final long serialVersionUID = 6033021304558249809L;
 		Color background = new Color(100, 100, 100, 150);
 		boolean inDrag;
 		Point2D start = null, end = null, moveCropStart = null;
@@ -153,7 +206,7 @@ public class PreviewFrame
 		Picture localCurrentPicture = null;
 		boolean updateRectOnce = false;
 
-		int movingEdge = 0;  // use SwingConstants
+		int movingEdge = 0; // use SwingConstants
 		static final int INSIDE = 9;
 		public static final int TOLERANCE = 5;
 
@@ -162,6 +215,7 @@ public class PreviewFrame
 			addMouseMotionListener(this);
 		}
 
+		@Override
 		public void paint(Graphics g) {
 			oldRect = null;
 
@@ -170,7 +224,8 @@ public class PreviewFrame
 				localCurrentPicture = loader.pictureShowNow;
 			}
 
-			if (loader.pictureShowNow == null || loader.imageShowNow == null || loader.pictureShowNow.isOnline()) {
+			if (loader.pictureShowNow == null || loader.imageShowNow == null
+					|| loader.pictureShowNow.isOnline()) {
 				cacheRect = null;
 				return;
 			}
@@ -178,26 +233,32 @@ public class PreviewFrame
 			if (currentRect != null && start != null && end != null) {
 				Rectangle ct = loader.pictureShowNow.getCropTo();
 				if (ct != null) {
-					AffineTransform t = ImageUtils.createTransform(
-							getBounds(),
-							currentRect,
-							loader.pictureShowNow.getDimension(),
+					AffineTransform t = ImageUtils.createTransform(getBounds(),
+							currentRect, loader.pictureShowNow.getDimension(),
 							loader.pictureShowNow.getAngle(),
 							loader.pictureShowNow.isFlipped());
 
 					try {
-						cacheRect = getRect(t.inverseTransform(ct.getLocation(), null),
-								t.inverseTransform(new Point(ct.x + ct.width, ct.y + ct.height), null));
+						cacheRect = getRect(t.inverseTransform(
+								ct.getLocation(), null), t.inverseTransform(
+								new Point(ct.x + ct.width, ct.y + ct.height),
+								null));
 
 						g.setColor(background);
 						g.setClip(currentRect);
 						g.fillRect(0, 0, cacheRect.x, getHeight());
-						g.fillRect(cacheRect.x, 0, getWidth() - cacheRect.x, cacheRect.y);
-						g.fillRect(cacheRect.x, cacheRect.y + cacheRect.height, getWidth() - cacheRect.x, getHeight() - cacheRect.y - cacheRect.height);
-						g.fillRect(cacheRect.x + cacheRect.width, cacheRect.y, getWidth() - cacheRect.x - cacheRect.width, cacheRect.height);
+						g.fillRect(cacheRect.x, 0, getWidth() - cacheRect.x,
+								cacheRect.y);
+						g.fillRect(cacheRect.x, cacheRect.y + cacheRect.height,
+								getWidth() - cacheRect.x, getHeight()
+										- cacheRect.y - cacheRect.height);
+						g.fillRect(cacheRect.x + cacheRect.width, cacheRect.y,
+								getWidth() - cacheRect.x - cacheRect.width,
+								cacheRect.height);
 
 						g.setColor(Color.black);
-						g.drawRect(cacheRect.x,  cacheRect.y, cacheRect.width, cacheRect.height);
+						g.drawRect(cacheRect.x, cacheRect.y, cacheRect.width,
+								cacheRect.height);
 
 						g.setColor(background);
 						drawThirds(g, cacheRect);
@@ -208,7 +269,8 @@ public class PreviewFrame
 					}
 				} else {
 					if (movingEdge == 0) {
-						// only blank the cacheRect if we're not busy modifying it
+						// only blank the cacheRect if we're not busy modifying
+						// it
 						cacheRect = null;
 					}
 				}
@@ -217,7 +279,7 @@ public class PreviewFrame
 			}
 
 			paintInfo(g);
-			
+
 			if (updateRectOnce) {
 				updateRectOnce = false;
 				updateRect(g);
@@ -228,7 +290,7 @@ public class PreviewFrame
 			String message = null;
 
 			Rectangle cropTo = loader.pictureShowNow.getCropTo();
-			if (! inDrag) {
+			if (!inDrag) {
 				if (cropTo == null) {
 					message = GRI18n.getString(MODULE, "noCrop");
 				} else {
@@ -243,9 +305,10 @@ public class PreviewFrame
 			}
 
 			g.setFont(g.getFont());
-			ImageLoaderUtil.paintOutline(g, message, 5, getBounds().height - 5, 1);
+			ImageLoaderUtil.paintOutline(g, message, 5, getBounds().height - 5,
+					1);
 		}
-		
+
 		public void updateRect() {
 			updateRect(getGraphics());
 		}
@@ -254,7 +317,7 @@ public class PreviewFrame
 			if (updateRectOnce) {
 				return;
 			}
-			
+
 			g.setXORMode(Color.cyan);
 			g.setColor(Color.black);
 			if (oldRect != null) {
@@ -270,36 +333,40 @@ public class PreviewFrame
 		}
 
 		private void drawThirds(Graphics g, Rectangle r) {
-			if (GalleryRemote._().properties.getBooleanProperty(PREVIEW_DRAW_THIRDS, false)
-					|| "thirds".equals(GalleryRemote._().properties.getProperty(PREVIEW_DRAW_THIRDS))) {
-				g.drawLine(r.x + r.width / 3, r.y,
-						r.x + r.width / 3, r.y + r.height);
-				g.drawLine(r.x + r.width * 2 / 3, r.y,
-						r.x + r.width * 2 / 3, r.y + r.height);
-				g.drawLine(r.x, r.y + r.height / 3,
-						r.x + r.width, r.y  + r.height / 3);
-				g.drawLine(r.x, r.y + r.height * 2 / 3,
-						r.x + r.width, r.y + r.height * 2 / 3);
-			} else if ("golden".equals(GalleryRemote._().properties.getProperty(PREVIEW_DRAW_THIRDS))) {
+			if (GalleryRemote._().properties.getBooleanProperty(
+					PREVIEW_DRAW_THIRDS, false)
+					|| "thirds".equals(GalleryRemote._().properties
+							.getProperty(PREVIEW_DRAW_THIRDS))) {
+				g.drawLine(r.x + r.width / 3, r.y, r.x + r.width / 3, r.y
+						+ r.height);
+				g.drawLine(r.x + r.width * 2 / 3, r.y, r.x + r.width * 2 / 3,
+						r.y + r.height);
+				g.drawLine(r.x, r.y + r.height / 3, r.x + r.width, r.y
+						+ r.height / 3);
+				g.drawLine(r.x, r.y + r.height * 2 / 3, r.x + r.width, r.y
+						+ r.height * 2 / 3);
+			} else if ("golden".equals(GalleryRemote._().properties
+					.getProperty(PREVIEW_DRAW_THIRDS))) {
 				double p = 1.6180339887499;
 				double gw = r.width * p / (2 * p + 1);
 				double gh = r.height * p / (2 * p + 1);
-				g.drawLine((int) (r.x + gw), r.y,
-						(int) (r.x + gw), r.y + r.height);
-				g.drawLine((int) (r.x + r.width - gw), r.y,
-						(int) (r.x + r.width - gw), r.y + r.height);
-				g.drawLine(r.x, (int) (r.y + gh),
-						r.x + r.width, (int) (r.y + gh));
-				g.drawLine(r.x, (int) (r.y + r.height - gh),
-						r.x + r.width, (int) (r.y + r.height -gh));
+				g.drawLine((int) (r.x + gw), r.y, (int) (r.x + gw), r.y
+						+ r.height);
+				g.drawLine((int) (r.x + r.width - gw), r.y, (int) (r.x
+						+ r.width - gw), r.y + r.height);
+				g.drawLine(r.x, (int) (r.y + gh), r.x + r.width,
+						(int) (r.y + gh));
+				g.drawLine(r.x, (int) (r.y + r.height - gh), r.x + r.width,
+						(int) (r.y + r.height - gh));
 			}
 		}
 
+		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (loader.pictureShowNow == null) {
 				return;
 			}
-			
+
 			if (System.currentTimeMillis() - dragStartTime < 500) {
 				// don't drop the crop if this took longer than a real click
 				loader.pictureShowNow.setCropTo(null);
@@ -308,73 +375,84 @@ public class PreviewFrame
 			}
 		}
 
-		public void mouseEntered(MouseEvent e) {}
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
 
-		public void mouseExited(MouseEvent e) {}
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
 
+		@Override
 		public void mousePressed(MouseEvent e) {
-			if (loader.pictureShowNow == null || currentRect == null || loader.pictureShowNow.isOnline()) {
+			if (loader.pictureShowNow == null || currentRect == null
+					|| loader.pictureShowNow.isOnline()) {
 				return;
 			}
 
 			if (cacheRect == null) {
 				movingEdge = 0;
 			}
-			
+
 			dragStartTime = System.currentTimeMillis();
 
 			inDrag = true;
 
 			switch (movingEdge) {
-				case SwingConstants.NORTH:
-					// keep bottom-right
-					start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y + cacheRect.height));
-					break;
+			case SwingConstants.NORTH:
+				// keep bottom-right
+				start = makeValid(new Point(cacheRect.x + cacheRect.width,
+						cacheRect.y + cacheRect.height));
+				break;
 
-				case SwingConstants.SOUTH:
-					// keep top-left
-					start = makeValid(new Point(cacheRect.x, cacheRect.y));
-					break;
+			case SwingConstants.SOUTH:
+				// keep top-left
+				start = makeValid(new Point(cacheRect.x, cacheRect.y));
+				break;
 
-				case SwingConstants.WEST:
-					// keep bottom-right
-					start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y + cacheRect.height));
-					break;
+			case SwingConstants.WEST:
+				// keep bottom-right
+				start = makeValid(new Point(cacheRect.x + cacheRect.width,
+						cacheRect.y + cacheRect.height));
+				break;
 
-				case SwingConstants.EAST:
-					// keep top-left
-					start = makeValid(new Point(cacheRect.x, cacheRect.y));
-					break;
+			case SwingConstants.EAST:
+				// keep top-left
+				start = makeValid(new Point(cacheRect.x, cacheRect.y));
+				break;
 
-				case SwingConstants.NORTH_WEST:
-					// keep bottom-right
-					start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y + cacheRect.height));
-					break;
+			case SwingConstants.NORTH_WEST:
+				// keep bottom-right
+				start = makeValid(new Point(cacheRect.x + cacheRect.width,
+						cacheRect.y + cacheRect.height));
+				break;
 
-				case SwingConstants.NORTH_EAST:
-					// keep bottom-left
-					start = makeValid(new Point(cacheRect.x, cacheRect.y + cacheRect.height));
-					break;
+			case SwingConstants.NORTH_EAST:
+				// keep bottom-left
+				start = makeValid(new Point(cacheRect.x, cacheRect.y
+						+ cacheRect.height));
+				break;
 
-				case SwingConstants.SOUTH_WEST:
-					// keep top-right
-					start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y));
-					break;
+			case SwingConstants.SOUTH_WEST:
+				// keep top-right
+				start = makeValid(new Point(cacheRect.x + cacheRect.width,
+						cacheRect.y));
+				break;
 
-				case SwingConstants.SOUTH_EAST:
-					// keep top-left
-					start = makeValid(new Point(cacheRect.x, cacheRect.y));
-					break;
+			case SwingConstants.SOUTH_EAST:
+				// keep top-left
+				start = makeValid(new Point(cacheRect.x, cacheRect.y));
+				break;
 
-				case INSIDE:
-					// moving: just remember transitionStart for offset
-					moveCropStart = makeValid(e.getPoint());
-					break;
+			case INSIDE:
+				// moving: just remember transitionStart for offset
+				moveCropStart = makeValid(e.getPoint());
+				break;
 
-				default:
-					// new rectangle
-					start = makeValid(e.getPoint());
-					break;
+			default:
+				// new rectangle
+				start = makeValid(e.getPoint());
+				break;
 			}
 
 			loader.pictureShowNow.setCropTo(null);
@@ -383,25 +461,28 @@ public class PreviewFrame
 			repaint();
 		}
 
+		@Override
 		public void mouseReleased(MouseEvent e) {
 			inDrag = false;
 			centerMode = false;
 
-			if (loader.pictureShowNow == null || oldRect == null || loader.pictureShowNow.isOnline()) {
+			if (loader.pictureShowNow == null || oldRect == null
+					|| loader.pictureShowNow.isOnline()) {
 				return;
 			}
 
-			AffineTransform t = ImageUtils.createTransform(
-					getBounds(),
-					currentRect,
-					loader.pictureShowNow.getDimension(),
+			AffineTransform t = ImageUtils.createTransform(getBounds(),
+					currentRect, loader.pictureShowNow.getDimension(),
 					loader.pictureShowNow.getAngle(),
 					loader.pictureShowNow.isFlipped());
-			//pictureShowNow.setCropTo(getRect(t.transform(transitionStart, null), t.transform(end, null)));
+			// pictureShowNow.setCropTo(getRect(t.transform(transitionStart,
+			// null), t.transform(end, null)));
 
 			Rectangle tmpRect = new Rectangle();
-			tmpRect.setFrameFromDiagonal(t.transform(oldRect.getLocation(), null),
-					t.transform(new Point(oldRect.x + oldRect.width, oldRect.y + oldRect.height), null));
+			tmpRect.setFrameFromDiagonal(
+					t.transform(oldRect.getLocation(), null),
+					t.transform(new Point(oldRect.x + oldRect.width, oldRect.y
+							+ oldRect.height), null));
 			loader.pictureShowNow.setCropTo(tmpRect);
 
 			setCursor(Cursor.getDefaultCursor());
@@ -409,6 +490,7 @@ public class PreviewFrame
 			repaint();
 		}
 
+		@Override
 		public void mouseDragged(MouseEvent e) {
 			if (currentRect == null) {
 				return;
@@ -422,53 +504,60 @@ public class PreviewFrame
 
 			Point2D p;
 			switch (movingEdge) {
-				case SwingConstants.NORTH:
-					p = makeValid(new Point(cacheRect.x, (int) (e.getPoint().getY())));
-					modifiers = 0;
-					break;
+			case SwingConstants.NORTH:
+				p = makeValid(new Point(cacheRect.x,
+						(int) (e.getPoint().getY())));
+				modifiers = 0;
+				break;
 
-				case SwingConstants.SOUTH:
-					p = makeValid(new Point(cacheRect.x + cacheRect.width, (int) (e.getPoint().getY())));
-					modifiers = 0;
-					break;
+			case SwingConstants.SOUTH:
+				p = makeValid(new Point(cacheRect.x + cacheRect.width,
+						(int) (e.getPoint().getY())));
+				modifiers = 0;
+				break;
 
-				case SwingConstants.WEST:
-					p = makeValid(new Point((int) (e.getPoint().getX()), cacheRect.y));
-					modifiers = 0;
-					break;
+			case SwingConstants.WEST:
+				p = makeValid(new Point((int) (e.getPoint().getX()),
+						cacheRect.y));
+				modifiers = 0;
+				break;
 
-				case SwingConstants.EAST:
-					p = makeValid(new Point((int) (e.getPoint().getX()), cacheRect.y + cacheRect.height));
-					modifiers = 0;
-					break;
+			case SwingConstants.EAST:
+				p = makeValid(new Point((int) (e.getPoint().getX()),
+						cacheRect.y + cacheRect.height));
+				modifiers = 0;
+				break;
 
-				case SwingConstants.NORTH_WEST:
-				case SwingConstants.NORTH_EAST:
-				case SwingConstants.SOUTH_WEST:
-				case SwingConstants.SOUTH_EAST:
-					p = makeValid(e.getPoint());
-					modifiers = modifiers & ~InputEvent.ALT_DOWN_MASK;
-					break;
+			case SwingConstants.NORTH_WEST:
+			case SwingConstants.NORTH_EAST:
+			case SwingConstants.SOUTH_WEST:
+			case SwingConstants.SOUTH_EAST:
+				p = makeValid(e.getPoint());
+				modifiers = modifiers & ~InputEvent.ALT_DOWN_MASK;
+				break;
 
-				case INSIDE:
-					// move
-					double dx = e.getPoint().getX() - moveCropStart.getX();
-					double dy = e.getPoint().getY() - moveCropStart.getY();
+			case INSIDE:
+				// move
+				double dx = e.getPoint().getX() - moveCropStart.getX();
+				double dy = e.getPoint().getY() - moveCropStart.getY();
 
-					start = makeValid(new Point((int) (cacheRect.x + dx), (int) (cacheRect.y + dy)));
-					p = new Point((int) (start.getX() + cacheRect.width), (int) (start.getY() + cacheRect.height));
-					
-					if (!isValid(p)) {
-						p = makeValid(p);
-						start = new Point((int) (p.getX() - cacheRect.width), (int) (p.getY() - cacheRect.height));
-					}
-					modifiers = 0;
-					break;
+				start = makeValid(new Point((int) (cacheRect.x + dx),
+						(int) (cacheRect.y + dy)));
+				p = new Point((int) (start.getX() + cacheRect.width),
+						(int) (start.getY() + cacheRect.height));
 
-				default:
-					// new rectangle
-					p = makeValid(e.getPoint());
-					break;
+				if (!isValid(p)) {
+					p = makeValid(p);
+					start = new Point((int) (p.getX() - cacheRect.width),
+							(int) (p.getY() - cacheRect.height));
+				}
+				modifiers = 0;
+				break;
+
+			default:
+				// new rectangle
+				p = makeValid(e.getPoint());
+				break;
 			}
 
 			double px = p.getX();
@@ -479,9 +568,9 @@ public class PreviewFrame
 				double dy = py - start.getY();
 
 				if (Math.abs(dx) < Math.abs(dy)) {
-					py = start.getY() + (dy*dx > 0?dx:-dx);
+					py = start.getY() + (dy * dx > 0 ? dx : -dx);
 				} else {
-					px = start.getX() + (dx*dy > 0?dy:-dy);
+					px = start.getX() + (dx * dy > 0 ? dy : -dy);
 				}
 
 				p.setLocation(px, py);
@@ -492,20 +581,23 @@ public class PreviewFrame
 
 				// reverse rectangle
 				Dimension target;
-				int sameOrientation = (Math.abs(dx) - Math.abs(dy)) * (currentRect.width - currentRect.height);
+				int sameOrientation = (Math.abs(dx) - Math.abs(dy))
+						* (currentRect.width - currentRect.height);
 				if (sameOrientation > 0) {
 					target = new Dimension(dx, dy);
 				} else {
 					target = new Dimension(dy, dx);
 				}
 
-				Dimension d = ImageUtils.getSizeKeepRatio(currentRect.getSize(),
-						target, false);
+				Dimension d = ImageUtils.getSizeKeepRatio(
+						currentRect.getSize(), target, false);
 
 				if (sameOrientation > 0) {
-					p.setLocation(start.getX() + d.width, start.getY() + d.height);
+					p.setLocation(start.getX() + d.width, start.getY()
+							+ d.height);
 				} else {
-					p.setLocation(start.getX() + d.height, start.getY() + d.width);
+					p.setLocation(start.getX() + d.height, start.getY()
+							+ d.width);
 				}
 			}
 
@@ -516,8 +608,10 @@ public class PreviewFrame
 			updateRect();
 		}
 
+		@Override
 		public void mouseMoved(MouseEvent e) {
-			if (loader.pictureShowNow == null || loader.imageShowNow == null || loader.pictureShowNow.isOnline() || cacheRect == null) {
+			if (loader.pictureShowNow == null || loader.imageShowNow == null
+					|| loader.pictureShowNow.isOnline() || cacheRect == null) {
 				movingEdge = 0;
 				setCursor(Cursor.getDefaultCursor());
 				return;
@@ -528,56 +622,68 @@ public class PreviewFrame
 
 			boolean canMove = false;
 
-			if (px >= cacheRect.x + TOLERANCE && px <= cacheRect.x + cacheRect.width - TOLERANCE) {
+			if (px >= cacheRect.x + TOLERANCE
+					&& px <= cacheRect.x + cacheRect.width - TOLERANCE) {
 				if (Math.abs(py - cacheRect.y) < TOLERANCE) {
 					movingEdge = SwingConstants.NORTH;
-					setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+					setCursor(Cursor
+							.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
 					canMove = true;
 				} else if (Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
 					movingEdge = SwingConstants.SOUTH;
-					setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+					setCursor(Cursor
+							.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
 					canMove = true;
 				}
 			}
 
-			if (py >= cacheRect.y + TOLERANCE && py <= cacheRect.y + cacheRect.height - TOLERANCE) {
+			if (py >= cacheRect.y + TOLERANCE
+					&& py <= cacheRect.y + cacheRect.height - TOLERANCE) {
 				if (Math.abs(px - cacheRect.x) < TOLERANCE) {
 					movingEdge = SwingConstants.WEST;
-					setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+					setCursor(Cursor
+							.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
 					canMove = true;
 				} else if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE) {
 					movingEdge = SwingConstants.EAST;
-					setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+					setCursor(Cursor
+							.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
 					canMove = true;
 				}
 			}
-			
-			if (Math.abs(px - cacheRect.x) < TOLERANCE && Math.abs(py - cacheRect.y) < TOLERANCE) {
+
+			if (Math.abs(px - cacheRect.x) < TOLERANCE
+					&& Math.abs(py - cacheRect.y) < TOLERANCE) {
 				movingEdge = SwingConstants.NORTH_WEST;
 				setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
 				canMove = true;
 			}
 
-			if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE && Math.abs(py - cacheRect.y) < TOLERANCE) {
+			if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE
+					&& Math.abs(py - cacheRect.y) < TOLERANCE) {
 				movingEdge = SwingConstants.NORTH_EAST;
 				setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
 				canMove = true;
 			}
 
-			if (Math.abs(px - cacheRect.x) < TOLERANCE && Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
+			if (Math.abs(px - cacheRect.x) < TOLERANCE
+					&& Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
 				movingEdge = SwingConstants.SOUTH_WEST;
 				setCursor(Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR));
 				canMove = true;
 			}
 
-			if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE && Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
+			if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE
+					&& Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
 				movingEdge = SwingConstants.SOUTH_EAST;
 				setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
 				canMove = true;
 			}
 
-			if (px >= cacheRect.x + TOLERANCE && px <= cacheRect.x + cacheRect.width - TOLERANCE
-					&& py >= cacheRect.y + TOLERANCE && py <= cacheRect.y + cacheRect.height - TOLERANCE) {
+			if (px >= cacheRect.x + TOLERANCE
+					&& px <= cacheRect.x + cacheRect.width - TOLERANCE
+					&& py >= cacheRect.y + TOLERANCE
+					&& py <= cacheRect.y + cacheRect.height - TOLERANCE) {
 				movingEdge = INSIDE;
 				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 				canMove = true;
@@ -624,14 +730,13 @@ public class PreviewFrame
 
 			return new Point2D.Double(px, py);
 		}
-		
+
 		public boolean isValid(Point2D p) {
 			double px = p.getX();
 			double py = p.getY();
 
-			return px >= currentRect.x 
-					&& py >= currentRect.y 
-					&& px <= currentRect.x + currentRect.width - 1 
+			return px >= currentRect.x && py >= currentRect.y
+					&& px <= currentRect.x + currentRect.width - 1
 					&& py <= currentRect.y + currentRect.height - 1;
 		}
 	}

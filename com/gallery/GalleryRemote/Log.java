@@ -20,10 +20,18 @@
  */
 package com.gallery.GalleryRemote;
 
-import com.gallery.GalleryRemote.prefs.PreferenceNames;
+import java.io.BufferedWriter;
+import java.io.CharArrayWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
-import java.io.*;
-import java.util.*;
+import com.gallery.GalleryRemote.prefs.PreferenceNames;
 
 /**
  * Log manager
@@ -36,7 +44,7 @@ public class Log implements PreferenceNames, Runnable {
 	public final static int LEVEL_INFO = 2;
 	public final static int LEVEL_TRACE = 3;
 
-	static String levelName[] = {"CRITI", "ERROR", "INFO ", "TRACE"};
+	static String levelName[] = { "CRITI", "ERROR", "INFO ", "TRACE" };
 
 	public final static int sleepInterval = 500;
 	public final static int moduleLength = 10;
@@ -53,11 +61,13 @@ public class Log implements PreferenceNames, Runnable {
 	static Log singleton = new Log();
 	static boolean started = false;
 
-	List logLines = Collections.synchronizedList(new LinkedList());
+	List<String> logLines = Collections
+			.synchronizedList(new LinkedList<String>());
 	boolean running = false;
-	List moduleList = null;
+	List<String> moduleList = null;
 
-	private Log() {}
+	private Log() {
+	}
 
 	public static void log(int level, String module, String message) {
 		if (level <= maxLevel || !started) {
@@ -67,21 +77,20 @@ public class Log implements PreferenceNames, Runnable {
 				module = (module + emptyModule).substring(0, moduleLength);
 			}
 
-			if (singleton.moduleList != null && !singleton.moduleList.contains(module)) {
+			if (singleton.moduleList != null
+					&& !singleton.moduleList.contains(module)) {
 				return;
 			}
 
 			String time = emptyTime + (System.currentTimeMillis() - startTime);
 			time = time.substring(time.length() - emptyTime.length());
 
-			singleton.logLines.add(time + "|"
-					+ levelName[level] + "|"
-					+ module + "|"
-					+ message);
+			singleton.logLines.add(time + "|" + levelName[level] + "|" + module
+					+ "|" + message);
 		}
 	}
 
-	public static void log(int level, Class c, String message) {
+	public static void log(int level, Class<?> c, String message) {
 		log(level, c.getName(), message);
 	}
 
@@ -93,7 +102,7 @@ public class Log implements PreferenceNames, Runnable {
 		log(level, (String) null, message);
 	}
 
-	public static void log(Class c, String message) {
+	public static void log(Class<?> c, String message) {
 		log(LEVEL_TRACE, getShortClassName(c), message);
 	}
 
@@ -124,7 +133,7 @@ public class Log implements PreferenceNames, Runnable {
 
 	public static void logException(int level, String module, Throwable t) {
 		if (level <= maxLevel || !started) {
-			//log(level, module, t.toString());
+			// log(level, module, t.toString());
 
 			CharArrayWriter caw = new CharArrayWriter();
 			t.printStackTrace(new PrintWriter(caw));
@@ -133,7 +142,7 @@ public class Log implements PreferenceNames, Runnable {
 		}
 	}
 
-	public static String getShortClassName(Class c) {
+	public static String getShortClassName(Class<?> c) {
 		String name = c.getName();
 		int i = name.lastIndexOf(".");
 
@@ -150,24 +159,28 @@ public class Log implements PreferenceNames, Runnable {
 			singleton.loggerThread.join();
 		} catch (InterruptedException ee) {
 			System.err.println("Logger thread killed");
-		} catch (Throwable t) {}
+		} catch (Throwable t) {
+		}
 
 		started = false;
 		singleton = new Log();
 	}
 
-
 	/**
 	 * Main processing method for the Log object
 	 */
+	@Override
 	public void run() {
 		System.out.println("Logger thread running");
 
 		BufferedWriter writer = null;
 		running = true;
 		try {
-			System.out.println("Creating log file in " + System.getProperty("java.io.tmpdir"));
-			writer = new BufferedWriter(new FileWriter(new File(System.getProperty("java.io.tmpdir"), "GalleryRemoteLog.txt")));
+			System.out.println("Creating log file in "
+					+ System.getProperty("java.io.tmpdir"));
+			writer = new BufferedWriter(new FileWriter(new File(
+					System.getProperty("java.io.tmpdir"),
+					"GalleryRemoteLog.txt")));
 			while (running) {
 				Thread.sleep(sleepInterval);
 				while (!logLines.isEmpty()) {
@@ -204,24 +217,23 @@ public class Log implements PreferenceNames, Runnable {
 	public static void startLog(int maxLevel, boolean toSysOut) {
 		if (Log.maxLevel != maxLevel) {
 			Log.maxLevel = maxLevel;
-			singleton.logLines.add(emptyTime + "|"
-					+ levelName[LEVEL_TRACE] + "|"
-					+ emptyModule + "|"
-					+ "Setting Log level to " + levelName[Log.maxLevel]);
+			singleton.logLines.add(emptyTime + "|" + levelName[LEVEL_TRACE]
+					+ "|" + emptyModule + "|" + "Setting Log level to "
+					+ levelName[Log.maxLevel]);
 		}
 
 		Log.toSysOut = toSysOut;
 
 		try {
-		String modules = System.getenv("GR_LOG_MODULES");
-		if (modules != null) {
-			singleton.moduleList = Arrays.asList(modules.split(","));
+			String modules = System.getenv("GR_LOG_MODULES");
+			if (modules != null) {
+				singleton.moduleList = Arrays.asList(modules.split(","));
+			}
+		} catch (Throwable e) {
 		}
-		} catch (Throwable e) {}
 
 		singleton.loggerThread = new Thread(singleton);
 		singleton.loggerThread.setPriority(threadPriority);
 		singleton.loggerThread.start();
 	}
 }
-

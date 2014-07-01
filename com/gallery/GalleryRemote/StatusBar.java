@@ -1,19 +1,29 @@
 package com.gallery.GalleryRemote;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.SystemColor;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.border.BevelBorder;
+
+import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.util.DialogUtil;
 import com.gallery.GalleryRemote.util.GRI18n;
-import com.gallery.GalleryRemote.model.Picture;
-
-import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import java.awt.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: paour
- * Date: Sep 17, 2003
+ * Created by IntelliJ IDEA. User: paour Date: Sep 17, 2003
  */
 public class StatusBar extends JPanel implements StatusUpdate {
+
+	private static final long serialVersionUID = -3346018784723463138L;
 	public static final String MODULE = "StatusBar";
 	JProgressBar jProgress = new JProgressBar();
 	JLabel jStatus = new JLabel();
@@ -46,17 +56,20 @@ public class StatusBar extends JPanel implements StatusUpdate {
 
 		if (level > currentLevel) {
 			currentLevel = level;
-			//data[currentLevel].active = true;
+			// data[currentLevel].active = true;
 		}
 
 		return true;
 	}
 
+	@Override
 	public void setStatus(String message) {
 		updateProgressStatus(LEVEL_GENERIC, message);
 	}
 
-	public void startProgress(int level, int minValue, int maxValue, String message, boolean undetermined) {
+	@Override
+	public void startProgress(int level, int minValue, int maxValue,
+			String message, boolean undetermined) {
 		data[level].minValue = minValue;
 		data[level].maxValue = maxValue;
 		data[level].value = 0;
@@ -69,17 +82,20 @@ public class StatusBar extends JPanel implements StatusUpdate {
 		}
 	}
 
+	@Override
 	public void updateProgressValue(int level, int value) {
 		data[level].value = value;
 
 		if (level == currentLevel && data[level].active) {
 			resetUIState();
 		} else {
-			//Log.log(Log.TRACE, MODULE, "Trying to use updateProgressValue when not progressOn or with wrong level");
-			//Log.logStack(Log.TRACE, MODULE);
+			// Log.log(Log.TRACE, MODULE,
+			// "Trying to use updateProgressValue when not progressOn or with wrong level");
+			// Log.logStack(Log.TRACE, MODULE);
 		}
 	}
 
+	@Override
 	public void updateProgressValue(int level, int value, int maxValue) {
 		data[level].maxValue = maxValue;
 		data[level].value = value;
@@ -87,38 +103,46 @@ public class StatusBar extends JPanel implements StatusUpdate {
 		if (level == currentLevel && data[level].active) {
 			resetUIState();
 		} else {
-			//Log.log(Log.TRACE, MODULE, "Trying to use updateProgressValue when not progressOn or with wrong level");
-			//Log.logStack(Log.TRACE, MODULE);
+			// Log.log(Log.TRACE, MODULE,
+			// "Trying to use updateProgressValue when not progressOn or with wrong level");
+			// Log.logStack(Log.TRACE, MODULE);
 		}
 	}
 
+	@Override
 	public void updateProgressStatus(int level, String message) {
 		data[level].message = message;
 
 		if (level == currentLevel && data[level].active) {
 			resetUIState();
 		} else {
-			//Log.log(Log.TRACE, MODULE, "Trying to use updateProgressStatus when not progressOn or with wrong level");
-			//Log.logStack(Log.TRACE, MODULE);
+			// Log.log(Log.TRACE, MODULE,
+			// "Trying to use updateProgressStatus when not progressOn or with wrong level");
+			// Log.logStack(Log.TRACE, MODULE);
 		}
 	}
 
+	@Override
 	public void setUndetermined(int level, boolean undetermined) {
-		//To change body of implemented methods use Options | File Templates.
+		// To change body of implemented methods use Options | File Templates.
 	}
 
+	@Override
 	public int getProgressValue(int level) {
 		return data[level].value;
 	}
 
+	@Override
 	public int getProgressMinValue(int level) {
 		return data[level].minValue;
 	}
 
+	@Override
 	public int getProgressMaxValue(int level) {
 		return data[level].maxValue;
 	}
 
+	@Override
 	public void stopProgress(int level, String message) {
 		data[LEVEL_GENERIC].message = message;
 
@@ -138,27 +162,32 @@ public class StatusBar extends JPanel implements StatusUpdate {
 			}
 
 			// find the next active level
-			//currentLevel = level - 1;
-			while (currentLevel > LEVEL_GENERIC && data[currentLevel].active == false) {
+			// currentLevel = level - 1;
+			while (currentLevel > LEVEL_GENERIC
+					&& data[currentLevel].active == false) {
 				currentLevel--;
 			}
 
-			//if (currentLevel == -1) {
+			// if (currentLevel == -1) {
 			resetUIState();
-			//} else {
-			//	resetUIState();
-			//}
+			// } else {
+			// resetUIState();
+			// }
 		}
 
-		//setStatus(message);
+		// setStatus(message);
 	}
 
+	@Override
 	public void setInProgress(boolean inProgress) {
 		GalleryRemote._().getCore().setInProgress(inProgress);
 	}
 
+	@Override
 	public void error(String message) {
-		JOptionPane.showMessageDialog(DialogUtil.findParentWindow(this), message, GRI18n.getString(MODULE, "Error"), JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(DialogUtil.findParentWindow(this),
+				message, GRI18n.getString(MODULE, "Error"),
+				JOptionPane.ERROR_MESSAGE);
 	}
 
 	public void jbInit() {
@@ -167,19 +196,24 @@ public class StatusBar extends JPanel implements StatusUpdate {
 		jProgress.setMaximumSize(new Dimension(progressWidth, 18));
 		jProgress.setStringPainted(false);
 
-		jStatus.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.white, SystemColor.control, SystemColor.control, Color.gray));
+		jStatus.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED,
+				Color.white, SystemColor.control, SystemColor.control,
+				Color.gray));
 		jStatus.setMinimumSize(new Dimension(100, 18));
 		jStatus.setPreferredSize(new Dimension(100, 18));
 
 		setLayout(new GridBagLayout());
-		add(jStatus, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0
-				, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		add(jProgress, new GridBagConstraints(1, 0, 1, 1, 0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		add(jStatus, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0,
+				GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 0, 0), 0, 0));
+		add(jProgress, new GridBagConstraints(1, 0, 1, 1, 0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+						0, 0, 0, 0), 0, 0));
 	}
 
 	private void resetUIState() {
-		Log.log(Log.LEVEL_TRACE, MODULE, "level: " + currentLevel + " - " + data[currentLevel].message + " - " + data[currentLevel].value);
+		Log.log(Log.LEVEL_TRACE, MODULE, "level: " + currentLevel + " - "
+				+ data[currentLevel].message + " - " + data[currentLevel].value);
 		if (currentLevel >= 0) {
 			jProgress.setMinimum(data[currentLevel].minValue);
 			jProgress.setValue(data[currentLevel].value);
@@ -188,10 +222,13 @@ public class StatusBar extends JPanel implements StatusUpdate {
 			try {
 				jProgress.setIndeterminate(data[currentLevel].undetermined);
 			} catch (Throwable t) {
-				// we end up here if the method is not implemented and we don't have indeterminate progress
+				// we end up here if the method is not implemented and we don't
+				// have indeterminate progress
 				// bars: come up with our own...
-				if (data[currentLevel].undetermined && data[currentLevel].undeterminedThread == null) {
-					data[currentLevel].undeterminedThread = new UndeterminedThread(StatusBar.this, currentLevel);
+				if (data[currentLevel].undetermined
+						&& data[currentLevel].undeterminedThread == null) {
+					data[currentLevel].undeterminedThread = new UndeterminedThread(
+							StatusBar.this, currentLevel);
 					data[currentLevel].undeterminedThread.start();
 				}
 			}
@@ -209,6 +246,7 @@ public class StatusBar extends JPanel implements StatusUpdate {
 		}
 	}
 
+	@Override
 	public void doneUploading(String newItemName, Picture picture) {
 	}
 
@@ -231,16 +269,19 @@ public class StatusBar extends JPanel implements StatusUpdate {
 			this.level = level;
 		}
 
+		@Override
 		public void run() {
 			boolean forward = true;
 			while (!interrupted()) {
 				if (su.getProgressValue(level) >= su.getProgressMaxValue(level)) {
 					forward = false;
-				} else if (su.getProgressValue(level) <= su.getProgressMinValue(level)) {
+				} else if (su.getProgressValue(level) <= su
+						.getProgressMinValue(level)) {
 					forward = true;
 				}
 
-				su.updateProgressValue(level, su.getProgressValue(level) + (forward ? 1 : -1));
+				su.updateProgressValue(level, su.getProgressValue(level)
+						+ (forward ? 1 : -1));
 
 				try {
 					sleep(500);

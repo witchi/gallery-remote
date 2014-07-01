@@ -94,7 +94,8 @@ public class PostChangeLog extends org.apache.tools.ant.Task {
 					}
 				}
 			}
-
+			in.close();
+			
 			StringBuffer note = new StringBuffer();
 			note.append("version=").append(currentBuildS).append('\n');
 			note.append("releaseDate=").append(defaultProps.getProperty("releaseDate")).append('\n');

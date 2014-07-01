@@ -24,12 +24,28 @@
  */
 package com.gallery.GalleryRemote.util;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 public class ColorWellButton extends JButton {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2001871387146667137L;
 	public static final String MODULE = "ColorWell";
 
 	public ColorWellButton(Color color) {
@@ -78,36 +94,29 @@ public class ColorWellButton extends JButton {
 			Frame parent = DialogUtil.findParentWindow(ColorWellButton.this);
 			JDialog dialog;
 			if (parent != null) {
-				dialog = new ColorPickerDialog(parent,
-						GRI18n.getString(MODULE, "colorChooserTitle"),
-						true);
+				dialog = new ColorPickerDialog(parent, GRI18n.getString(MODULE,
+						"colorChooserTitle"), true);
 			} else {
-				dialog = new ColorPickerDialog(JOptionPane.getFrameForComponent(ColorWellButton.this),
-						GRI18n.getString(MODULE, "colorChooserTitle"),
-						true);
+				dialog = new ColorPickerDialog(
+						JOptionPane.getFrameForComponent(ColorWellButton.this),
+						GRI18n.getString(MODULE, "colorChooserTitle"), true);
 			}
 			dialog.pack();
-			dialog.show();
+			dialog.setVisible(true);
 		}
 	}
 
 	/**
 	 * Replacement for the color picker dialog provided with Swing. This version
 	 * supports dialog as well as frame parents.
-	 *
+	 * 
 	 * @since jEdit 4.1pre7
 	 */
 	private class ColorPickerDialog extends JDialog implements ActionListener {
+		private static final long serialVersionUID = -1525452984763555408L;
+
 		public ColorPickerDialog(Frame parent, String title, boolean modal) {
 			super(parent, title, modal);
-
-			init();
-		}
-
-		public ColorPickerDialog(Dialog parent, String title, boolean modal) {
-			super(parent, title, modal);
-
-			getContentPane().setLayout(new BorderLayout());
 
 			init();
 		}

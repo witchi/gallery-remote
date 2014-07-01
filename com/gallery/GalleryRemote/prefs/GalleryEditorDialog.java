@@ -16,6 +16,8 @@ import java.awt.event.ActionListener;
  * Date: May 27, 2003
  */
 public class GalleryEditorDialog extends JDialog implements ActionListener {
+
+	private static final long serialVersionUID = 3602604689639523421L;
 	public static final String MODULE = "GEdiDlog";
 
 	Gallery gallery;
@@ -246,7 +248,7 @@ public class GalleryEditorDialog extends JDialog implements ActionListener {
 
 	public void readUIState() {
 		gallery.setUsername(jUsername.getText());
-		gallery.setPassword(jPassword.getText());
+		gallery.setPassword(new String(jPassword.getPassword()));
 		gallery.setType(jType.getSelectedIndex());
 		String alias = jAlias.getText().trim();
 		gallery.setAlias(alias.length() == 0?null:alias);

@@ -1,39 +1,40 @@
 package com.gallery.GalleryRemote.util;
 
-import com.gallery.GalleryRemote.Log;
-import com.gallery.GalleryRemote.GalleryRemote;
-
 import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
+
+import com.gallery.GalleryRemote.GalleryRemote;
+import com.gallery.GalleryRemote.Log;
 
 /**
- * Shut down the OS. Idea by Nick77.
- * OS names from <http://www.tolstoy.com/samizdat/sysprops.html>
- * User: paour
- * Date: Sep 25, 2003
+ * Shut down the OS. Idea by Nick77. OS names from
+ * <http://www.tolstoy.com/samizdat/sysprops.html> User: paour Date: Sep 25,
+ * 2003
  */
 public class OsShutdown {
 	public static final String MODULE = "Shutdown";
-	public static final String osname = System.getProperty("os.name").toLowerCase();
+	public static final String osname = System.getProperty("os.name")
+			.toLowerCase();
 
 	public static void shutdown() {
 		Method m = getPrivateShutdownMethod();
-		
+
 		if (m != null) {
 			try {
-				m.invoke(null, null);
+				m.invoke((Object) null, (Object[]) null);
 			} catch (Throwable e) {
 				Log.logException(Log.LEVEL_ERROR, MODULE, e);
 			}
 		}
 	}
-	
+
 	private static Method getPrivateShutdownMethod() {
 		try {
-			Class c = GalleryRemote.secureClassForName("com.gallery.GalleryRemote.util.PrivateShutdown");
-			return c.getMethod("shutdown", null);
+			Class<?> c = GalleryRemote
+					.secureClassForName("com.gallery.GalleryRemote.util.PrivateShutdown");
+			return c.getMethod("shutdown", (Class<?>) null);
 		} catch (Throwable e) {
-			Log.log(Log.LEVEL_TRACE, MODULE, "Could not load PrivateShutdown, this is expected for the applet");
+			Log.log(Log.LEVEL_TRACE, MODULE,
+					"Could not load PrivateShutdown, this is expected for the applet");
 			return null;
 		}
 	}
@@ -43,7 +44,8 @@ public class OsShutdown {
 	}
 
 	public static boolean isWin9x() {
-		return isWindows() && (osname.indexOf("9") != -1 || osname.indexOf("me") != -1);
+		return isWindows()
+				&& (osname.indexOf("9") != -1 || osname.indexOf("me") != -1);
 	}
 
 	public static boolean isWinNT() {
@@ -71,6 +73,7 @@ public class OsShutdown {
 	}
 
 	public static boolean canShutdown() {
-		return (isWin9x() || isWinNT() || (isUnix() && !isMacOSX())) && getPrivateShutdownMethod() != null;
+		return (isWin9x() || isWinNT() || (isUnix() && !isMacOSX()))
+				&& getPrivateShutdownMethod() != null;
 	}
 }

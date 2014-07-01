@@ -6,13 +6,14 @@
  */
 package com.gallery.GalleryRemote.model;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import com.gallery.GalleryRemote.util.HTMLEscaper;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import java.util.Vector;
-
-public abstract class GalleryItem extends DefaultMutableTreeNode implements Cloneable {
+public abstract class GalleryItem extends DefaultMutableTreeNode implements
+		Cloneable {
+	
+	private static final long serialVersionUID = 3219127395262782249L;
 	public static final String MODULE = "GalleryItem";
 
 	transient Gallery gallery = null;
@@ -49,8 +50,9 @@ public abstract class GalleryItem extends DefaultMutableTreeNode implements Clon
 	}
 
 	/**
-	 * Cache the escapedCaption because the escaping is lengthy and this is called by a frequent UI method
-	 *
+	 * Cache the escapedCaption because the escaping is lengthy and this is
+	 * called by a frequent UI method
+	 * 
 	 * @return the HTML escaped version of the caption
 	 */
 	public String getEscapedCaption() {
@@ -64,39 +66,34 @@ public abstract class GalleryItem extends DefaultMutableTreeNode implements Clon
 	}
 
 	/*
-	 ****** Overriden methods from DefaultMutableTreeNode to send notifications ******
+	 * ***** Overriden methods from DefaultMutableTreeNode to send notifications
+	 * ******
 	 */
 
-	/*public void insert(MutableTreeNode newChild, int childIndex) {
-		if (!allowsChildren) {
-			throw new IllegalStateException("node does not allow children");
-		} else if (newChild == null) {
-			throw new IllegalArgumentException("new child is null");
-		} else if (isNodeAncestor(newChild)) {
-			throw new IllegalArgumentException("new child is an ancestor");
-		}
-
-		MutableTreeNode oldParent = (MutableTreeNode) newChild.getParent();
-
-		if (oldParent != null) {
-			oldParent.remove(newChild);
-		}
-
-		newChild.setParent(this);
-
-		if (children == null) {
-			children = new Vector();
-		}
-
-		children.insertElementAt(newChild, childIndex);
-		gallery.nodesWereInserted(this, new int[] {childIndex});
-	}
-
-	public void remove(int childIndex) {
-		MutableTreeNode child = (MutableTreeNode)getChildAt(childIndex);
-		children.removeElementAt(childIndex);
-		//gallery.nodesWereRemoved(this, new int[] {childIndex}, new Object[] {child});
-		gallery.nodeStructureChanged(this);
-		child.setParent(null);
-	}*/
+	/*
+	 * public void insert(MutableTreeNode newChild, int childIndex) { if
+	 * (!allowsChildren) { throw new
+	 * IllegalStateException("node does not allow children"); } else if
+	 * (newChild == null) { throw new
+	 * IllegalArgumentException("new child is null"); } else if
+	 * (isNodeAncestor(newChild)) { throw new
+	 * IllegalArgumentException("new child is an ancestor"); }
+	 * 
+	 * MutableTreeNode oldParent = (MutableTreeNode) newChild.getParent();
+	 * 
+	 * if (oldParent != null) { oldParent.remove(newChild); }
+	 * 
+	 * newChild.setParent(this);
+	 * 
+	 * if (children == null) { children = new Vector(); }
+	 * 
+	 * children.insertElementAt(newChild, childIndex);
+	 * gallery.nodesWereInserted(this, new int[] {childIndex}); }
+	 * 
+	 * public void remove(int childIndex) { MutableTreeNode child =
+	 * (MutableTreeNode)getChildAt(childIndex);
+	 * children.removeElementAt(childIndex); //gallery.nodesWereRemoved(this,
+	 * new int[] {childIndex}, new Object[] {child});
+	 * gallery.nodeStructureChanged(this); child.setParent(null); }
+	 */
 }

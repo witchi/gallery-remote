@@ -1,20 +1,21 @@
 package com.gallery.GalleryRemote.util;
 
-import com.gallery.GalleryRemote.Log;
-import edu.stanford.ejalbert.BrowserLauncher;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 
+import javax.swing.JLabel;
+
+import com.gallery.GalleryRemote.Log;
+
+import edu.stanford.ejalbert.BrowserLauncher;
+
 /**
- * Created by IntelliJ IDEA.
- * User: paour
- * Date: Dec 16, 2003
+ * Created by IntelliJ IDEA. User: paour Date: Dec 16, 2003
  */
 public class BrowserLink extends JLabel implements MouseListener {
+	private static final long serialVersionUID = 6359091486724234508L;
 	public static final String MODULE = "BrowserLink";
 	String url = null;
 

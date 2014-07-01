@@ -35,7 +35,7 @@ public class GeneralPanel extends /*JPanel*/ PreferencePanel implements Preferen
 	JCheckBox savePasswords = new JCheckBox();
 	GridBagLayout gridBagLayout2 = new GridBagLayout();
 	JLabel jLabel3 = new JLabel();
-	JComboBox logLevel = new JComboBox(new String[]{
+	JComboBox<String> logLevel = new JComboBox<String>(new String[]{
 		GRI18n.getString(MODULE, "logLevel0"),
 		GRI18n.getString(MODULE, "logLevel1"),
 		GRI18n.getString(MODULE, "logLevel2"),

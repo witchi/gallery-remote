@@ -21,20 +21,19 @@
 
 package com.gallery.GalleryRemote.util;
 
+import java.lang.reflect.Method;
+
+import javax.swing.JFrame;
+
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 import com.gallery.GalleryRemote.Log;
 
-import javax.swing.*;
-import java.lang.reflect.Method;
-
 /**
- * Single class with hooks to handle existing functionality "about", "quit"
- * and "preferences" within the MacOSX application menu
+ * Single class with hooks to handle existing functionality "about", "quit" and
+ * "preferences" within the MacOSX application menu
  * 
- * @author iluvatar
- *         Date: Aug 27, 2003
- *         Time: 5:52:55 PM
+ * @author iluvatar Date: Aug 27, 2003 Time: 5:52:55 PM
  */
 public class MacOSXAdapter extends ApplicationAdapter {
 	private static MacOSXAdapter theAdapter;
@@ -48,8 +47,8 @@ public class MacOSXAdapter extends ApplicationAdapter {
 
 	public static final String MODULE = "MacOSX";
 
-
-	public static void registerMacOSXApplication(JFrame srcApp, String about, String quit, String pref) {
+	public static void registerMacOSXApplication(JFrame srcApp, String about,
+			String quit, String pref) {
 		if (theApplication == null) {
 			theApplication = new com.apple.eawt.Application();
 		}
@@ -72,23 +71,33 @@ public class MacOSXAdapter extends ApplicationAdapter {
 			try {
 				ae.setHandled(true);
 				// this may happen outside of main application flow
-				Class caller = Class.forName(mainApplication.getClass().getName());
-				Method callMethod = caller.getDeclaredMethod(aboutMethod, null);
+				Class<?> caller = Class.forName(mainApplication.getClass()
+						.getName());
+				Method callMethod = caller.getDeclaredMethod(aboutMethod,
+						(Class<?>[]) null);
 				if (callMethod != null) {
-					callMethod.invoke(mainApplication, null);
+					callMethod.invoke(mainApplication, (Object[]) null);
 				}
 
 			} catch (NoClassDefFoundError e) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+				Log.log(Log.LEVEL_ERROR,
+						MODULE,
+						"This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled ("
+								+ e + ")");
 			} catch (ClassNotFoundException e) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+				Log.log(Log.LEVEL_ERROR,
+						MODULE,
+						"This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled ("
+								+ e + ")");
 			} catch (Exception e) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "Exception while loading the MacOSXAdapter:");
+				Log.log(Log.LEVEL_ERROR, MODULE,
+						"Exception while loading the MacOSXAdapter:");
 				e.printStackTrace();
 			}
 
 		} else {
-			throw new IllegalStateException("handleAbout: mainApplication instance detached");
+			throw new IllegalStateException(
+					"handleAbout: mainApplication instance detached");
 		}
 	}
 
@@ -97,23 +106,33 @@ public class MacOSXAdapter extends ApplicationAdapter {
 			try {
 				ae.setHandled(false);
 				// this may happen outside of main application flow
-				Class caller = Class.forName(mainApplication.getClass().getName());
-				Method callMethod = caller.getDeclaredMethod(quitMethod, null);
+				Class<?> caller = Class.forName(mainApplication.getClass()
+						.getName());
+				Method callMethod = caller.getDeclaredMethod(quitMethod,
+						(Class<?>[]) null);
 				if (callMethod != null) {
-					callMethod.invoke(mainApplication, null);
+					callMethod.invoke(mainApplication, (Object[]) null);
 				}
 
 			} catch (NoClassDefFoundError e) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+				Log.log(Log.LEVEL_ERROR,
+						MODULE,
+						"This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled ("
+								+ e + ")");
 			} catch (ClassNotFoundException e) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+				Log.log(Log.LEVEL_ERROR,
+						MODULE,
+						"This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled ("
+								+ e + ")");
 			} catch (Exception e) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "Exception while loading the MacOSXAdapter:");
+				Log.log(Log.LEVEL_ERROR, MODULE,
+						"Exception while loading the MacOSXAdapter:");
 				e.printStackTrace();
 			}
 
 		} else {
-			throw new IllegalStateException("handleQuit: mainApplication instance detached");
+			throw new IllegalStateException(
+					"handleQuit: mainApplication instance detached");
 		}
 	}
 
@@ -121,24 +140,34 @@ public class MacOSXAdapter extends ApplicationAdapter {
 		if (mainApplication != null) {
 			try {
 				// this may happen outside of main application flow
-				Class caller = Class.forName(mainApplication.getClass().getName());
-				Method callMethod = caller.getDeclaredMethod(preferencesMethod, null);
+				Class<?> caller = Class.forName(mainApplication.getClass()
+						.getName());
+				Method callMethod = caller.getDeclaredMethod(preferencesMethod,
+						(Class<?>[]) null);
 				if (callMethod != null) {
-					callMethod.invoke(mainApplication, null);
+					callMethod.invoke(mainApplication, (Object[]) null);
 				}
 				ae.setHandled(true);
 
 			} catch (NoClassDefFoundError e) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+				Log.log(Log.LEVEL_ERROR,
+						MODULE,
+						"This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled ("
+								+ e + ")");
 			} catch (ClassNotFoundException e) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+				Log.log(Log.LEVEL_ERROR,
+						MODULE,
+						"This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled ("
+								+ e + ")");
 			} catch (Exception e) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "Exception while loading the MacOSXAdapter:");
+				Log.log(Log.LEVEL_ERROR, MODULE,
+						"Exception while loading the MacOSXAdapter:");
 				e.printStackTrace();
 			}
 
 		} else {
-			throw new IllegalStateException("handlePreferences: mainApplication instance detached");
+			throw new IllegalStateException(
+					"handlePreferences: mainApplication instance detached");
 		}
 	}
 

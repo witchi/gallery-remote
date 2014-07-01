@@ -45,6 +45,8 @@ import java.awt.*;
  */
 
 public class Gallery extends DefaultTreeModel implements Serializable, PreferenceNames {
+
+	private static final long serialVersionUID = -3672828934329148260L;
 	public static final String MODULE = "Gallery";
 
 	String stUrlString = null;
@@ -203,22 +205,22 @@ public class Gallery extends DefaultTreeModel implements Serializable, Preferenc
 		return (new File(defaultFilePath.toString()));
 	}
 
-	public ArrayList getAllPictures() {
+	public ArrayList<Picture> getAllPictures() {
 		return getAllPictures(false);
 	}
 
-	public ArrayList getAllUploadablePictures() {
+	public ArrayList<Picture> getAllUploadablePictures() {
 		return getAllPictures(true);
 	}
 
-	public ArrayList getAllPictures(boolean onlyUploadable) {
-		ArrayList pictures = new ArrayList();
-		ArrayList albumList = getFlatAlbumList();
+	public ArrayList<Picture> getAllPictures(boolean onlyUploadable) {
+		ArrayList<Picture> pictures = new ArrayList<Picture>();
+		ArrayList<Album> albumList = getFlatAlbumList();
 
 		if (albumList != null) {
-			Iterator i = albumList.iterator();
+			Iterator<Album> i = albumList.iterator();
 			while (i.hasNext()) {
-				Album a = (Album) i.next();
+				Album a = i.next();
 
 				if (onlyUploadable) {
 					pictures.addAll(a.getUploadablePicturesList());
@@ -237,12 +239,12 @@ public class Gallery extends DefaultTreeModel implements Serializable, Preferenc
 	 * by the "New" function in the UI.
 	 */
 	public void deleteAllPictures() {
-		ArrayList albumList = getFlatAlbumList();
+		ArrayList<Album> albumList = getFlatAlbumList();
 
 		if (albumList != null) {
-			Iterator i = albumList.iterator();
+			Iterator<Album> i = albumList.iterator();
 			while (i.hasNext()) {
-				Album a = (Album) i.next();
+				Album a = i.next();
 				a.clearPictures();
 			}
 		}
@@ -250,12 +252,12 @@ public class Gallery extends DefaultTreeModel implements Serializable, Preferenc
 
 	public int countAllPictures() {
 		int c = 0;
-		ArrayList albumList = getFlatAlbumList();
+		ArrayList<Album> albumList = getFlatAlbumList();
 
 		if (albumList != null) {
-			Iterator i = albumList.iterator();
+			Iterator<Album> i = albumList.iterator();
 			while (i.hasNext()) {
-				Album a = (Album) i.next();
+				Album a =  i.next();
 
 				c += a.getSize();
 			}
@@ -265,12 +267,12 @@ public class Gallery extends DefaultTreeModel implements Serializable, Preferenc
 	}
 
 	public boolean hasPictures() {
-		ArrayList albumList = getFlatAlbumList();
+		ArrayList<Album> albumList = getFlatAlbumList();
 
 		if (albumList != null) {
-			Iterator i = albumList.iterator();
+			Iterator<Album> i = albumList.iterator();
 			while (i.hasNext()) {
-				Album a = (Album) i.next();
+				Album a = i.next();
 				if (a.getSize() > 0) {
 					return true;
 				}
@@ -835,10 +837,10 @@ public class Gallery extends DefaultTreeModel implements Serializable, Preferenc
 	}
 
 	public static void uncacheAmbiguousUrl() {
-		ListModel galleries = GalleryRemote._().getCore().getGalleries();
+		ListModel<Gallery> galleries = GalleryRemote._().getCore().getGalleries();
 
 		for (int i = 0; i < galleries.getSize(); i++) {
-			Gallery g = (Gallery) galleries.getElementAt(i);
+			Gallery g = galleries.getElementAt(i);
 
 			g.ambiguousUrl = null;
 		}
@@ -872,14 +874,14 @@ public class Gallery extends DefaultTreeModel implements Serializable, Preferenc
 	}
 
 	public Album getAlbumByName(String name) {
-		ArrayList albumList = getFlatAlbumList();
+		ArrayList<Album> albumList = getFlatAlbumList();
 		if (albumList == null || name == null) {
 			return null;
 		}
 
-		Iterator it = albumList.iterator();
+		Iterator<Album> it = albumList.iterator();
 		while (it.hasNext()) {
-			Album a = (Album) it.next();
+			Album a = it.next();
 
 			if (name.equals(a.getName())) {
 				return a;
@@ -893,8 +895,8 @@ public class Gallery extends DefaultTreeModel implements Serializable, Preferenc
 		this.blockWrites = blockWrites;
 	}
 
-	ArrayList flatAlbumList = null;
-	public ArrayList getFlatAlbumList() {
+	ArrayList<Album> flatAlbumList = null;
+	public ArrayList<Album> getFlatAlbumList() {
 		if (flatAlbumList == null) {
 			if (getRoot() != null) {
 				flatAlbumList = Collections.list(new TreeEnumeration((TreeNode) getRoot()));

@@ -14,28 +14,25 @@ import java.util.*;
 import java.io.InputStream;
 import java.io.IOException;
 
-
 public class GRI18n implements PreferenceNames {
-	private static final String RESNAME =
-			"com.gallery.GalleryRemote.resources.GRResources";
-	private static final String RESNAME_DEV =
-			"GRResources";
-	private static final String RESPATH =
-			"com/gallery/GalleryRemote/resources/GRResources";
+	private static final String RESNAME = "com.gallery.GalleryRemote.resources.GRResources";
+	private static final String RESNAME_DEV = "GRResources";
+	private static final String RESPATH = "com/gallery/GalleryRemote/resources/GRResources";
 	private static final String MODULE = "GRI18n";
 
 	private static Locale grLocale;
 	private static ResourceBundle grResBundle;
-	private static HashMap formats = new HashMap();
+	private static HashMap<String, MessageFormat> formats = new HashMap<String, MessageFormat>();
 
-	private static List lAvailLoc = null;
+	private static List<Locale> lAvailLoc = null;
 
 	private static boolean devMode = false;
 	private static Properties devResProperties = null;
 
 	static {
 		String myLocale = GalleryRemote._().properties.getProperty(UI_LOCALE);
-		devMode = GalleryRemote._().properties.getBooleanProperty(UI_LOCALE_DEV);
+		devMode = GalleryRemote._().properties
+				.getBooleanProperty(UI_LOCALE_DEV);
 
 		grLocale = parseLocaleString(myLocale);
 
@@ -51,19 +48,18 @@ public class GRI18n implements PreferenceNames {
 			int i = localeString.indexOf("_");
 
 			if (i != -1) {
-				return new Locale(localeString.substring(0, i), localeString.substring(i + 1));
+				return new Locale(localeString.substring(0, i),
+						localeString.substring(i + 1));
 			} else {
 				return new Locale(localeString, "");
 			}
 		}
 	}
 
-
 	public static void setLocale(String language, String country) {
 		grLocale = new Locale(language, country);
 		setResBundle();
 	}
-
 
 	public static String getString(String className, String key) {
 		String msg;
@@ -71,7 +67,8 @@ public class GRI18n implements PreferenceNames {
 		try {
 			msg = grResBundle.getString(extKey);
 
-			if (devResProperties != null && devResProperties.getProperty(extKey) == null) {
+			if (devResProperties != null
+					&& devResProperties.getProperty(extKey) == null) {
 				if (msg.startsWith("<html>")) {
 					msg = "<html>***" + msg.substring(6);
 				} else {
@@ -91,19 +88,20 @@ public class GRI18n implements PreferenceNames {
 		return msg;
 	}
 
-
 	public static String getString(String className, String key, Object[] params) {
 		String msg;
 		String extKey = className + "." + key;
 		try {
 			MessageFormat format = (MessageFormat) formats.get(extKey);
 			if (format == null) {
-				format = new MessageFormat(fixQuotes(grResBundle.getString(extKey)), grLocale);
+				format = new MessageFormat(
+						fixQuotes(grResBundle.getString(extKey)), grLocale);
 				formats.put(extKey, format);
 			}
 			msg = format.format(params);
 
-			if (devResProperties != null && devResProperties.getProperty(extKey) == null) {
+			if (devResProperties != null
+					&& devResProperties.getProperty(extKey) == null) {
 				if (msg.startsWith("<html>")) {
 					msg = "<html>***" + msg.substring(6);
 				} else {
@@ -141,10 +139,10 @@ public class GRI18n implements PreferenceNames {
 		return grLocale;
 	}
 
-
 	private static void setResBundle() {
 		try {
-			grResBundle = ResourceBundle.getBundle(devMode?RESNAME_DEV:RESNAME, grLocale);
+			grResBundle = ResourceBundle.getBundle(devMode ? RESNAME_DEV
+					: RESNAME, grLocale);
 
 			if (devMode) {
 				devResProperties = getLocaleProperties(grLocale);
@@ -159,11 +157,13 @@ public class GRI18n implements PreferenceNames {
 		Properties p = new Properties();
 		String filename;
 		if (locale == null) {
-			filename = (devMode?RESNAME_DEV:RESPATH) + ".properties";
+			filename = (devMode ? RESNAME_DEV : RESPATH) + ".properties";
 		} else {
-			filename = (devMode?RESNAME_DEV:RESPATH) + "_" + locale.toString() + ".properties";
+			filename = (devMode ? RESNAME_DEV : RESPATH) + "_"
+					+ locale.toString() + ".properties";
 		}
-		InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(filename);
+		InputStream is = ClassLoader.getSystemClassLoader()
+				.getResourceAsStream(filename);
 		if (is != null) {
 			try {
 				p.load(is);
@@ -177,48 +177,52 @@ public class GRI18n implements PreferenceNames {
 		return p;
 	}
 
-
-	public static List getAvailableLocales() {
+	public static List<Locale> getAvailableLocales() {
 		if (lAvailLoc == null)
 			lAvailLoc = initAvailableLocales();
 		return lAvailLoc;
 	}
 
-	private static List initAvailableLocales() {
+	private static List<Locale> initAvailableLocales() {
 		String locPath;
 		String loc;
-		List aList = new LinkedList();
+		List<Locale> aList = new LinkedList<Locale>();
 		long start = System.currentTimeMillis();
 
 		// todo: it seems that the dialog can't be displayed because all this
 		// is running in the Swing event thread. Need to find a better way...
-//		JDialog dialog = new JDialog(GalleryRemote.getInstance().mainFrame, "Please wait...");
-//		dialog.getContentPane().add("Center", new JLabel("<HTML>Parsing list of locales for this platform." +
-//				"<br>This can take between 1 and 10 seconds..."));
-//		dialog.pack();
-//		DialogUtil.center(dialog);
-//		dialog.setVisible(true);
-//		Thread.yield();
+		// JDialog dialog = new JDialog(GalleryRemote.getInstance().mainFrame,
+		// "Please wait...");
+		// dialog.getContentPane().add("Center", new
+		// JLabel("<HTML>Parsing list of locales for this platform." +
+		// "<br>This can take between 1 and 10 seconds..."));
+		// dialog.pack();
+		// DialogUtil.center(dialog);
+		// dialog.setVisible(true);
+		// Thread.yield();
 
 		Log.log(Log.LEVEL_TRACE, MODULE, "Getting the list of locales");
 
 		// this call is apparently very slow...
 		Locale[] list = Locale.getAvailableLocales();
 
-		Log.log(Log.LEVEL_TRACE, MODULE, "The platform supports " + list.length + " locales. Pruning...");
+		Log.log(Log.LEVEL_TRACE, MODULE, "The platform supports " + list.length
+				+ " locales. Pruning...");
 
 		String prefix = "##DUMMY";
 		for (int i = 0; i < list.length; i++) {
 			loc = list[i].toString();
 
-			// perf optimization: don't go through all the regions if the main language was not found
+			// perf optimization: don't go through all the regions if the main
+			// language was not found
 			if (!loc.startsWith(prefix)) {
 				prefix = loc;
 				if (devMode) {
 					Log.log(Log.LEVEL_TRACE, MODULE, "Trying locale: " + loc);
 				}
 
-				locPath = (devMode?RESNAME_DEV:RESPATH) + "_" + loc + ".properties";
+				locPath = (devMode ? RESNAME_DEV : RESPATH) + "_" + loc
+						+ ".properties";
 				if (ClassLoader.getSystemClassLoader().getResource(locPath) != null) {
 					Log.log(Log.LEVEL_INFO, MODULE, "Found locale: " + loc);
 					aList.add(list[i]);
@@ -227,21 +231,21 @@ public class GRI18n implements PreferenceNames {
 			}
 		}
 
-		Log.log(Log.LEVEL_TRACE, MODULE, "Pruned locales in " + (System.currentTimeMillis() - start) + "ms");
-		//dialog.setVisible(false);
+		Log.log(Log.LEVEL_TRACE, MODULE,
+				"Pruned locales in " + (System.currentTimeMillis() - start)
+						+ "ms");
+		// dialog.setVisible(false);
 
 		return aList;
 	}
 
-	/*class PatienceDialog extends JDialog implements Runnable {
-		public boolean done = false;
-
-		public void run() {
-			try {
-				Thread.sleep(1000);
-
-
-			} catch (InterruptedException e) {}
-		}
-	}*/
+	/*
+	 * class PatienceDialog extends JDialog implements Runnable { public boolean
+	 * done = false;
+	 * 
+	 * public void run() { try { Thread.sleep(1000);
+	 * 
+	 * 
+	 * } catch (InterruptedException e) {} } }
+	 */
 }

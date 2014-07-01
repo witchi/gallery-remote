@@ -1,50 +1,54 @@
 /*
-*  Gallery Remote - a File Upload Utility for Gallery
-*
-*  Gallery - a web based photo album viewer and editor
-*  Copyright (C) 2000-2001 Bharat Mediratta
-*
-*  This program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or (at
-*  your option) any later version.
-*
-*  This program is distributed in the hope that it will be useful, but
-*  WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-*  General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License
-*  along with this program; if not, write to the Free Software
-*  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+ *  Gallery Remote - a File Upload Utility for Gallery
+ *
+ *  Gallery - a web based photo album viewer and editor
+ *  Copyright (C) 2000-2001 Bharat Mediratta
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or (at
+ *  your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 package com.gallery.GalleryRemote.model;
+
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import com.gallery.GalleryRemote.GalleryRemote;
 import com.gallery.GalleryRemote.Log;
 import com.gallery.GalleryRemote.prefs.PreferenceNames;
 import com.gallery.GalleryRemote.util.ImageUtils;
 
-import java.awt.*;
-import java.io.File;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.ArrayList;
-
 /**
  * Picture model
  * 
  * @author paour
  */
-public class Picture extends GalleryItem implements Serializable, PreferenceNames, Cloneable {
+public class Picture extends GalleryItem implements Serializable,
+		PreferenceNames, Cloneable {
+	private static final long serialVersionUID = 6261659613183212485L;
+
 	public static final String MODULE = "Picture";
 
 	File source = null;
 
-	HashMap extraFields;
-	ArrayList resizedDerivatives;
+	HashMap<String, String> extraFields;
+	ArrayList<ResizedDerivative> resizedDerivatives;
 
 	boolean hidden;
 
@@ -82,11 +86,11 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 		setAllowsChildren(false);
 	}
 
-
 	/**
 	 * Constructor for the Picture object
 	 * 
-	 * @param source File the Picture is based on
+	 * @param source
+	 *            File the Picture is based on
 	 */
 	public Picture(Gallery gallery, File source) {
 		this(gallery);
@@ -116,7 +120,7 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 		newPicture.urlThumbnail = urlThumbnail;
 		newPicture.sizeThumbnail = sizeThumbnail;
 		newPicture.cropTo = cropTo;
-		
+
 		newPicture.albumOnServer = albumOnServer;
 		newPicture.indexOnServer = indexOnServer;
 
@@ -127,11 +131,11 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 		return newPicture;
 	}
 
-
 	/**
 	 * Sets the source file the Picture is based on
 	 * 
-	 * @param source The new file
+	 * @param source
+	 *            The new file
 	 */
 	public void setSource(File source) {
 		this.source = source;
@@ -139,7 +143,8 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 		if (GalleryRemote._().properties.getAutoCaptions() == AUTO_CAPTIONS_FILENAME) {
 			String filename = source.getName();
 
-			if (GalleryRemote._().properties.getBooleanProperty(CAPTION_STRIP_EXTENSION)) {
+			if (GalleryRemote._().properties
+					.getBooleanProperty(CAPTION_STRIP_EXTENSION)) {
 				int i = filename.lastIndexOf(".");
 
 				if (i != -1) {
@@ -152,13 +157,13 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 				&& getExifData() != null && getExifData().getCaption() != null) {
 			setCaption(getExifData().getCaption());
 		} else if (GalleryRemote._().properties.getAutoCaptions() == AUTO_CAPTIONS_DATE
-				&& getExifData() != null && getExifData().getCreationDate() != null) {
+				&& getExifData() != null
+				&& getExifData().getCreationDate() != null) {
 			setCaption(getExifData().getCreationDate().toString());
 		}
 
 		fileSize = 0;
 	}
-
 
 	/**
 	 * Gets the source file the Picture is based on
@@ -174,8 +179,8 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 	}
 
 	/**
-	 * Gets the fource file of the picture, prepared for upload.
-	 * Called by GalleryComm to upload the picture.
+	 * Gets the fource file of the picture, prepared for upload. Called by
+	 * GalleryComm to upload the picture.
 	 * 
 	 * @return The source value
 	 */
@@ -189,7 +194,8 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 			try {
 				picture = ImageUtils.losslessCrop(picture.getPath(), cropTo);
 			} catch (UnsupportedOperationException e) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "Couldn't use ImageUtils to losslessly crop the image, will try lossy");
+				Log.log(Log.LEVEL_ERROR, MODULE,
+						"Couldn't use ImageUtils to losslessly crop the image, will try lossy");
 				Log.logException(Log.LEVEL_ERROR, MODULE, e);
 				useLossyCrop = true;
 			}
@@ -208,28 +214,36 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 					i = l;
 				} else {
 					// server can't tell us how to resize, try default
-					i = GalleryRemote._().properties.getIntDimensionProperty(RESIZE_TO_DEFAULT);
+					i = GalleryRemote._().properties
+							.getIntDimensionProperty(RESIZE_TO_DEFAULT);
 				}
 			}
 
 			if (i != -1 || useLossyCrop) {
 				try {
-					picture = ImageUtils.resize(picture.getPath(), new Dimension(i, i), useLossyCrop?cropTo:null, resizeJpegQuality);
+					picture = ImageUtils.resize(picture.getPath(),
+							new Dimension(i, i), useLossyCrop ? cropTo : null,
+							resizeJpegQuality);
 				} catch (UnsupportedOperationException e) {
-					Log.log(Log.LEVEL_ERROR, MODULE, "Couldn't use ImageUtils to resize the image, it will be uploaded at the original size");
+					Log.log(Log.LEVEL_ERROR,
+							MODULE,
+							"Couldn't use ImageUtils to resize the image, it will be uploaded at the original size");
 					Log.logException(Log.LEVEL_ERROR, MODULE, e);
 				}
 			}
 		} else if (useLossyCrop) {
-			picture = ImageUtils.resize(picture.getPath(), null, useLossyCrop?cropTo:null, resizeJpegQuality);
+			picture = ImageUtils.resize(picture.getPath(), null,
+					useLossyCrop ? cropTo : null, resizeJpegQuality);
 		}
 
 		// rotate
 		if (angle != 0 || flipped) {
 			try {
-				picture = ImageUtils.rotate(picture.getPath(), angle, flipped, true);
+				picture = ImageUtils.rotate(picture.getPath(), angle, flipped,
+						true);
 			} catch (UnsupportedOperationException e) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "Couldn't use jpegtran to rotate the image, it will be uploaded unrotated");
+				Log.log(Log.LEVEL_ERROR, MODULE,
+						"Couldn't use jpegtran to rotate the image, it will be uploaded unrotated");
 				Log.logException(Log.LEVEL_ERROR, MODULE, e);
 			}
 		}
@@ -258,15 +272,14 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 		this.fileSize = fileSize;
 	}
 
-
 	/**
 	 * Gets the album this Picture is inside of
 	 * 
 	 * @return The album
 	 */
-	/*public Album getAlbum() {
-		return album;
-	}*/
+	/*
+	 * public Album getAlbum() { return album; }
+	 */
 
 	public String toString() {
 		if (online) {
@@ -341,9 +354,10 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 		StringBuffer sb = new StringBuffer();
 		String sep = System.getProperty("line.separator");
 
-		for (Iterator it = getParentAlbum().getExtraFields().iterator(); it.hasNext();) {
-			String name = (String) it.next();
-			String value = (String) extraFields.get(name);
+		for (Iterator<String> it = getParentAlbum().getExtraFields().iterator(); it
+				.hasNext();) {
+			String name = it.next();
+			String value = extraFields.get(name);
 
 			if (value != null) {
 				if (includeKey) {
@@ -358,7 +372,7 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 
 	public void setExtraField(String name, String value) {
 		if (extraFields == null) {
-			extraFields = new HashMap();
+			extraFields = new HashMap<String, String>();
 		}
 
 		extraFields.put(name, value);
@@ -366,13 +380,13 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 
 	public void removeExtraField(String name) {
 		if (extraFields == null) {
-			extraFields = new HashMap();
+			extraFields = new HashMap<String, String>();
 		}
 
 		extraFields.remove(name);
 	}
 
-	public HashMap getExtraFieldsMap() {
+	public HashMap<String, String> getExtraFieldsMap() {
 		return extraFields;
 	}
 
@@ -522,7 +536,8 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 
 	public Album getAlbumOnServer() {
 		if (!online) {
-			throw new RuntimeException("Can't get Album on server for a local file!");
+			throw new RuntimeException(
+					"Can't get Album on server for a local file!");
 		}
 
 		return albumOnServer;
@@ -534,7 +549,8 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 
 	public int getIndexOnServer() {
 		if (!online) {
-			throw new RuntimeException("Can't get Index on server for a local file!");
+			throw new RuntimeException(
+					"Can't get Index on server for a local file!");
 		}
 
 		return indexOnServer;
@@ -542,8 +558,7 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 
 	public int getIndex() {
 		Album album = getParentAlbum();
-		if (indexCache == -1
-				|| indexCache >= album.pictures.size()
+		if (indexCache == -1 || indexCache >= album.pictures.size()
 				|| album.pictures.get(indexCache) != this) {
 			return album.pictures.indexOf(this);
 		} else {
@@ -632,7 +647,7 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 
 	public void addResizedDerivative(URL url, Dimension d) {
 		if (resizedDerivatives == null) {
-			resizedDerivatives = new ArrayList();
+			resizedDerivatives = new ArrayList<ResizedDerivative>();
 		}
 
 		resizedDerivatives.add(new ResizedDerivative(url, d));
@@ -648,4 +663,3 @@ public class Picture extends GalleryItem implements Serializable, PreferenceName
 		}
 	}
 }
-

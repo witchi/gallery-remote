@@ -1,28 +1,36 @@
 package com.gallery.GalleryRemote;
 
-import com.gallery.GalleryRemote.util.GRI18n;
-import com.gallery.GalleryRemote.util.ImageUtils;
-import com.gallery.GalleryRemote.model.Album;
-import com.gallery.GalleryRemote.model.Picture;
-import com.gallery.GalleryRemote.prefs.SlideshowPanel;
-import com.gallery.GalleryRemote.prefs.PreferenceNames;
-
-import javax.swing.*;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListDataEvent;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+
+import com.gallery.GalleryRemote.model.Album;
+import com.gallery.GalleryRemote.model.Gallery;
+import com.gallery.GalleryRemote.model.Picture;
+import com.gallery.GalleryRemote.prefs.PreferenceNames;
+import com.gallery.GalleryRemote.prefs.SlideshowPanel;
+import com.gallery.GalleryRemote.util.GRI18n;
+import com.gallery.GalleryRemote.util.ImageUtils;
+
 /**
- * Created by IntelliJ IDEA.
- * User: paour
- * Date: Oct 30, 2003
+ * Created by IntelliJ IDEA. User: paour Date: Oct 30, 2003
  */
-public class GRAppletSlideshow
-		extends GRAppletMini
-		implements GalleryRemoteCore, ActionListener, ListDataListener, PreferenceNames {
+public class GRAppletSlideshow extends GRAppletMini implements
+		GalleryRemoteCore, ActionListener, ListDataListener, PreferenceNames {
+
+	private static final long serialVersionUID = -5416086781671901467L;
 	public static final String MODULE = "AppletSlideshow";
 	JButton jStart;
 	SlideshowPanel jSlidePanel;
@@ -33,8 +41,9 @@ public class GRAppletSlideshow
 		coreClass = "com.gallery.GalleryRemote.GalleryRemoteMini";
 	}
 
+	@Override
 	public void startup() {
-		galleries = new DefaultComboBoxModel();
+		galleries = new DefaultComboBoxModel<Gallery>();
 		info = getGRAppletInfo();
 
 		gallery = info.gallery;
@@ -46,11 +55,12 @@ public class GRAppletSlideshow
 		album.setName(info.albumName);
 		album.addListDataListener(this);
 
-		album.fetchAlbumImages(jStatusBar,
-				GalleryRemote._().properties.getBooleanProperty(SLIDESHOW_RECURSIVE, true), 
-				GalleryRemote._().properties.getIntProperty(SLIDESHOW_MAX_PICTURES, 0));
+		album.fetchAlbumImages(jStatusBar, GalleryRemote._().properties
+				.getBooleanProperty(SLIDESHOW_RECURSIVE, true), GalleryRemote
+				._().properties.getIntProperty(SLIDESHOW_MAX_PICTURES, 0));
 	}
 
+	@Override
 	protected void jbInit() {
 		getContentPane().setLayout(new GridBagLayout());
 
@@ -65,18 +75,38 @@ public class GRAppletSlideshow
 		JPanel filler2 = new JPanel();
 		filler2.setMinimumSize(new Dimension(0, 0));
 
-		getContentPane().add(jSlidePanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		getContentPane().add(new JLabel(GRI18n.getString(MODULE, "Disabled")), new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0
-				, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
-		getContentPane().add(filler2, new GridBagConstraints(0, 2, 1, 1, 0.1, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
-		getContentPane().add(jStart, new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		getContentPane().add(filler1, new GridBagConstraints(0, 4, 1, 1, 0.1, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
-		getContentPane().add(jStatusBar, new GridBagConstraints(0, 5 , 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		getContentPane().add(
+				jSlidePanel,
+				new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
+						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(0, 0, 0, 0), 0, 0));
+		getContentPane().add(
+				new JLabel(GRI18n.getString(MODULE, "Disabled")),
+				new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0,
+						GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+						new Insets(0, 5, 0, 5), 0, 0));
+		getContentPane().add(
+				filler2,
+				new GridBagConstraints(0, 2, 1, 1, 0.1, 1.0,
+						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(10, 10, 10, 10), 0, 0));
+		getContentPane().add(
+				jStart,
+				new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10,
+								10), 0, 0));
+		getContentPane().add(
+				filler1,
+				new GridBagConstraints(0, 4, 1, 1, 0.1, 1.0,
+						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(10, 10, 10, 10), 0, 0));
+		getContentPane().add(
+				jStatusBar,
+				new GridBagConstraints(0, 5, 1, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
+						0, 0));
 
 		jSlidePanel.buildUI();
 		jSlidePanel.remove(jSlidePanel.spacerPanel);
@@ -87,12 +117,14 @@ public class GRAppletSlideshow
 		jPicturesList = new DroppableList();
 	}
 
+	@Override
 	public void setInProgress(boolean inProgress) {
 		jStart.setEnabled(!inProgress && album.getSize() > 0);
 
 		this.inProgress = inProgress;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		jSlidePanel.writeProperties(GalleryRemote._().properties);
 
@@ -108,29 +140,36 @@ public class GRAppletSlideshow
 		slideshowFrame = null;
 	}
 
+	@Override
 	public void shutdown() {
 		if (hasStarted && GalleryRemote._() != null) {
 			jSlidePanel.writeProperties(GalleryRemote._().properties);
-			//GalleryRemote._().properties.write();
+			// GalleryRemote._().properties.write();
 		}
 
 		super.shutdown();
 	}
 
+	@Override
 	public void contentsChanged(ListDataEvent e) {
 		if (album.isHasFetchedImages()) {
-			Log.log(Log.LEVEL_TRACE, MODULE, "Pictures were just added to the album. Preload the first one.");
+			Log.log(Log.LEVEL_TRACE, MODULE,
+					"Pictures were just added to the album. Preload the first one.");
 
 			new Thread() {
+				@Override
 				public void run() {
 					slideshowFrame = new SlideshowFrame();
 					int index = 0;
-					ArrayList picturesList = album.getPicturesList();
+					ArrayList<Picture> picturesList = album.getPicturesList();
 
 					if (info.slideshowFrom != null) {
 						for (int i = 0; i < picturesList.size(); i++) {
-							if (info.slideshowFrom.equals(((Picture) picturesList.get(i)).getUniqueId())) {
-								Log.log(Log.LEVEL_TRACE, MODULE, "Starting slideshow from index " + i);
+							if (info.slideshowFrom
+									.equals(((Picture) picturesList.get(i))
+											.getUniqueId())) {
+								Log.log(Log.LEVEL_TRACE, MODULE,
+										"Starting slideshow from index " + i);
 								index = i;
 								slideshowFrame.wantIndex = i - 1;
 								break;
@@ -139,16 +178,24 @@ public class GRAppletSlideshow
 					}
 
 					if (album.getSize() > index) {
-						ImageUtils.download((Picture) picturesList.get(index), getGraphicsConfiguration().getBounds().getSize(), GalleryRemote._().getCore().getMainStatusUpdate(), null);
+						ImageUtils.download((Picture) picturesList.get(index),
+								getGraphicsConfiguration().getBounds()
+										.getSize(), GalleryRemote._().getCore()
+										.getMainStatusUpdate(), null);
 					} else {
-						JOptionPane.showMessageDialog(GRAppletSlideshow.this, GRI18n.getString(MODULE, "emptyAlbum"));
+						JOptionPane.showMessageDialog(GRAppletSlideshow.this,
+								GRI18n.getString(MODULE, "emptyAlbum"));
 					}
 				}
 			}.start();
 		}
 	}
 
-	public void intervalAdded(ListDataEvent e) {}
+	@Override
+	public void intervalAdded(ListDataEvent e) {
+	}
 
-	public void intervalRemoved(ListDataEvent e) {}
+	@Override
+	public void intervalRemoved(ListDataEvent e) {
+	}
 }

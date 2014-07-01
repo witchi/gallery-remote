@@ -45,6 +45,7 @@ import java.util.Date;
  */
 
 public class Update extends JFrame implements ActionListener, PreferenceNames {
+	private static final long serialVersionUID = -2982673464534431463L;
 	public static final String MODULE = "Update";
 
 

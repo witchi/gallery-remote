@@ -30,6 +30,8 @@ import java.io.IOException;
  * @version $id$
  */
 public class GR2Exception extends IOException {
+	private static final long serialVersionUID = -2663610497029331652L;
+
 	public GR2Exception(String message) {
 		super(message);
 	}

@@ -816,7 +816,7 @@ public class Gallery extends DefaultTreeModel implements Serializable, Preferenc
 
 	public boolean isAmbiguousUrl() {
 		if (ambiguousUrl == null) {
-			ListModel galleries = GalleryRemote._().getCore().getGalleries();
+			ListModel<Gallery> galleries = GalleryRemote._().getCore().getGalleries();
 			String myUrl = toString(false);
 
 			for (int i = 0; i < galleries.getSize(); i++) {

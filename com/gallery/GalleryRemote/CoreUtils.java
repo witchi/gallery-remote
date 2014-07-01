@@ -9,9 +9,7 @@ import java.awt.*;
 import java.io.File;
 
 /**
- * Created by IntelliJ IDEA.
- * User: paour
- * Date: Jan 15, 2004
+ * Created by IntelliJ IDEA. User: paour Date: Jan 15, 2004
  */
 public class CoreUtils {
 	public static final String MODULE = "CoreUtils";
@@ -23,7 +21,7 @@ public class CoreUtils {
 	}
 
 	public static void deleteSelectedPictures() {
-		JList jPicturesList = core.getPicturesList();
+		JList<Picture> jPicturesList = core.getPicturesList();
 		int[] indices = jPicturesList.getSelectedIndices();
 		int selected = jPicturesList.getSelectedIndex();
 		Picture reselect = null;
@@ -65,12 +63,11 @@ public class CoreUtils {
 		}
 	}
 
-
 	/**
 	 * Move selected Pictures up
 	 */
 	public static void movePicturesUp() {
-		JList jPicturesList = core.getPicturesList();
+		JList<Picture> jPicturesList = core.getPicturesList();
 		int[] indices = jPicturesList.getSelectedIndices();
 		int[] reselect = new int[indices.length];
 
@@ -81,9 +78,10 @@ public class CoreUtils {
 				Album currentAlbum = core.getCurrentAlbum();
 
 				Picture buf = currentAlbum.getPicture(indices[i]);
-				currentAlbum.setPicture(indices[i], currentAlbum.getPicture(indices[i] - 1));
+				currentAlbum.setPicture(indices[i],
+						currentAlbum.getPicture(indices[i] - 1));
 				currentAlbum.setPicture(indices[i] - 1, buf);
-				//jPicturesList.setSelectedIndex( indices[i] - 1 );
+				// jPicturesList.setSelectedIndex( indices[i] - 1 );
 				reselect[i] = indices[i] - 1;
 			} else {
 				reselect[i] = indices[i];
@@ -94,12 +92,11 @@ public class CoreUtils {
 		jPicturesList.ensureIndexIsVisible(jPicturesList.getSelectedIndex());
 	}
 
-
 	/**
 	 * Move selected Pictures down
 	 */
 	public static void movePicturesDown() {
-		JList jPicturesList = core.getPicturesList();
+		JList<Picture> jPicturesList = core.getPicturesList();
 		int[] indices = jPicturesList.getSelectedIndices();
 		int[] reselect = new int[indices.length];
 
@@ -110,9 +107,10 @@ public class CoreUtils {
 
 			if (indices[i] < currentAlbum.sizePictures() - 1) {
 				Picture buf = currentAlbum.getPicture(indices[i]);
-				currentAlbum.setPicture(indices[i], currentAlbum.getPicture(indices[i] + 1));
+				currentAlbum.setPicture(indices[i],
+						currentAlbum.getPicture(indices[i] + 1));
 				currentAlbum.setPicture(indices[i] + 1, buf);
-				//jPicturesList.setSelectedIndex( sel + 1 );
+				// jPicturesList.setSelectedIndex( sel + 1 );
 				reselect[i] = indices[i] + 1;
 			} else {
 				reselect[i] = indices[i];
@@ -124,7 +122,7 @@ public class CoreUtils {
 	}
 
 	public static void selectNextPicture() {
-		JList jPicturesList = core.getPicturesList();
+		JList<Picture> jPicturesList = core.getPicturesList();
 		int i = jPicturesList.getSelectedIndex();
 
 		if (i < jPicturesList.getModel().getSize() - 1) {
@@ -134,7 +132,7 @@ public class CoreUtils {
 	}
 
 	public static void selectPrevPicture() {
-		JList jPicturesList = core.getPicturesList();
+		JList<Picture> jPicturesList = core.getPicturesList();
 		int i = jPicturesList.getSelectedIndex();
 
 		if (i > 0) {
@@ -145,15 +143,16 @@ public class CoreUtils {
 
 	static class FileCellRenderer extends DefaultListCellRenderer {
 
-		public Component getListCellRendererComponent(
-				JList list, Object value, int index,
-				boolean selected, boolean hasFocus) {
-			super.getListCellRendererComponent(list, value, index, selected, hasFocus);
+		private static final long serialVersionUID = -7506167308544454638L;
 
-            Album currentAlbum = core.getCurrentAlbum();
-			if ( null != currentAlbum
-                && null != value 
-                && -1 != index) {
+		@Override
+		public Component getListCellRendererComponent(JList<?> list,
+				Object value, int index, boolean selected, boolean hasFocus) {
+			super.getListCellRendererComponent(list, value, index, selected,
+					hasFocus);
+
+			Album currentAlbum = core.getCurrentAlbum();
+			if (null != currentAlbum && null != value && -1 != index) {
 
 				try {
 					Picture p = currentAlbum.getPicture(index);
@@ -166,19 +165,22 @@ public class CoreUtils {
 							setForeground(Color.green);
 						}
 					} else {
-						//setForeground(Color.black);
+						// setForeground(Color.black);
 					}
 
 					if (GalleryRemote._().properties.getShowThumbnails()) {
 						Image icon = core.getThumbnail(p);
 						if (icon != null) {
 							Icon iicon = getIcon();
-							if (iicon == null || ! (iicon instanceof ImageIcon)) {
+							if (iicon == null || !(iicon instanceof ImageIcon)) {
 								setIcon((iicon = new ImageIcon()));
 							}
 							((ImageIcon) iicon).setImage(icon);
 
-							setIconTextGap(4 + GalleryRemote._().properties.getThumbnailSize().width - icon.getWidth(this));
+							setIconTextGap(4
+									+ GalleryRemote._().properties
+											.getThumbnailSize().width
+									- icon.getWidth(this));
 						}
 					}
 
@@ -191,16 +193,19 @@ public class CoreUtils {
 						File f = p.getSource();
 						text.append(f.getName());
 						if (GalleryRemote._().properties.getShowPath()) {
-							text.append(" [").append(f.getParent()).append("]</p>");
+							text.append(" [").append(f.getParent())
+									.append("]</p>");
 						}
 					}
 
 					if (p.getCaption() != null && getIcon() != null) {
-						text.append("<p><font color=\"gray\">").append(p.getEscapedCaption()).append("</font></p>");
+						text.append("<p><font color=\"gray\">")
+								.append(p.getEscapedCaption())
+								.append("</font></p>");
 					}
 
 					text.append("</html>");
-					//Log.log(Log.TRACE, MODULE, text.toString());
+					// Log.log(Log.TRACE, MODULE, text.toString());
 					setText(text.toString());
 				} catch (Exception e) {
 					setText("Problem...");

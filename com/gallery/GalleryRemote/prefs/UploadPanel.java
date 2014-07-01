@@ -321,7 +321,7 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 		resetUIState();
 	}
 
-	static class ResizeSize {
+	public static class ResizeSize {
 		public int size;
 		public String desc;
 

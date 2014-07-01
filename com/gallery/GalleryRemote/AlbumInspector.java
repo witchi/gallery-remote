@@ -1,37 +1,61 @@
 /*
-*  Gallery Remote - a File Upload Utility for Gallery
-*
-*  Gallery - a web based photo album viewer and editor
-*  Copyright (C) 2000-2001 Bharat Mediratta
-*
-*  This program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or (at
-*  your option) any later version.
-*
-*  This program is distributed in the hope that it will be useful, but
-*  WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-*  General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License
-*  along with this program; if not, write to the Free Software
-*  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+ *  Gallery Remote - a File Upload Utility for Gallery
+ *
+ *  Gallery - a web based photo album viewer and editor
+ *  Copyright (C) 2000-2001 Bharat Mediratta
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or (at
+ *  your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 package com.gallery.GalleryRemote;
 
-import com.gallery.GalleryRemote.model.Album;
-import com.gallery.GalleryRemote.util.GRI18n;
-import com.gallery.GalleryRemote.prefs.UploadPanel;
-import com.gallery.GalleryRemote.prefs.PreferenceNames;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
-import java.awt.*;
-import java.awt.event.*;
+
+import com.gallery.GalleryRemote.model.Album;
+import com.gallery.GalleryRemote.prefs.PreferenceNames;
+import com.gallery.GalleryRemote.prefs.UploadPanel;
+import com.gallery.GalleryRemote.prefs.UploadPanel.ResizeSize;
+import com.gallery.GalleryRemote.util.GRI18n;
 
 /**
  * Bean inspector for Pictures
@@ -39,8 +63,10 @@ import java.awt.event.*;
  * @author paour
  * @created August 16, 2002
  */
-public class AlbumInspector extends JPanel
-		implements ActionListener, ItemListener, KeyListener, PreferenceNames {
+public class AlbumInspector extends JPanel implements ActionListener,
+		ItemListener, KeyListener, PreferenceNames {
+
+	private static final long serialVersionUID = 8406883123834053126L;
 	public static final String MODULE = "AlbmInspec";
 
 	JLabel jLabelName = new JLabel();
@@ -50,8 +76,8 @@ public class AlbumInspector extends JPanel
 	JLabel jLabelSummary = new JLabel();
 	JPanel jOverridePanel = new JPanel();
 	JPanel jPanelProps = new JPanel();
-	//JPanel jPanel6 = new JPanel();
-	//JLabel jLabel7 = new JLabel();
+	// JPanel jPanel6 = new JPanel();
+	// JLabel jLabel7 = new JLabel();
 	ButtonGroup buttonGroup1 = new ButtonGroup();
 
 	JTextArea jTitle = new JTextArea();
@@ -63,14 +89,14 @@ public class AlbumInspector extends JPanel
 	JButton jSlideshow = new JButton();
 	JButton jNew = new JButton();
 	// todo: change back when protocol support in implemented
-	//JButton jApply = new JButton();
+	// JButton jApply = new JButton();
 	JLabel jApply = new JLabel();
 	JButton jMove = new JButton();
 	JCheckBox jResizeBeforeUpload = new JCheckBox();
 	JRadioButton jResizeToDefault = new JRadioButton();
 	JRadioButton jResizeToForce = new JRadioButton();
-	JComboBox jResizeTo = new JComboBox(UploadPanel.defaultSizes);
-	//JTextField jResizeToHeight = new JTextField();
+	JComboBox<ResizeSize> jResizeTo = new JComboBox<ResizeSize>(UploadPanel.defaultSizes);
+	// JTextField jResizeToHeight = new JTextField();
 	JCheckBox jBeginning = new JCheckBox();
 
 	MainFrame mf = null;
@@ -86,7 +112,6 @@ public class AlbumInspector extends JPanel
 		jbInit();
 		jbInitEvents();
 	}
-
 
 	private void jbInit() {
 		setLayout(new GridBagLayout());
@@ -106,7 +131,8 @@ public class AlbumInspector extends JPanel
 
 		jPictures.setFont(UIManager.getFont("Label.font"));
 		jPictures.setEditable(false);
-		jPictures.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+		jPictures.setBackground(UIManager
+				.getColor("TextField.inactiveBackground"));
 
 		jOverridePanel.setLayout(new GridBagLayout());
 		jPanelProps.setLayout(new GridBagLayout());
@@ -121,7 +147,8 @@ public class AlbumInspector extends JPanel
 		jResizeTo.setEditable(true);
 		jResizeTo.setRenderer(new UploadPanel.SizeListRenderer());
 
-		jResizeBeforeUpload.setToolTipText(GRI18n.getString(MODULE, "resBfrUpldTip"));
+		jResizeBeforeUpload.setToolTipText(GRI18n.getString(MODULE,
+				"resBfrUpldTip"));
 		jResizeBeforeUpload.setText(GRI18n.getString(MODULE, "resBfrUpld"));
 		jResizeToDefault.setToolTipText(GRI18n.getString(MODULE, "res2Def"));
 		jResizeToDefault.setText(GRI18n.getString(MODULE, "res2Def"));
@@ -129,53 +156,79 @@ public class AlbumInspector extends JPanel
 		jResizeToForce.setText(GRI18n.getString(MODULE, "res2Frc"));
 
 		jBeginning.setText(GRI18n.getString(MODULE, "Beginning"));
-		jOverridePanel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(Color.white, new Color(148, 145, 140)), GRI18n.getString(MODULE, "Override")));
-		jPanelProps.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(Color.white, new Color(148, 145, 140)), GRI18n.getString(MODULE, "Props")));
+		jOverridePanel.setBorder(new TitledBorder(BorderFactory
+				.createEtchedBorder(Color.white, new Color(148, 145, 140)),
+				GRI18n.getString(MODULE, "Override")));
+		jPanelProps.setBorder(new TitledBorder(BorderFactory
+				.createEtchedBorder(Color.white, new Color(148, 145, 140)),
+				GRI18n.getString(MODULE, "Props")));
 
-		jPanelProps.add(jLabelName, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-				, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 0, 0, 5), 2, 0));
-		jPanelProps.add(new JScrollPane(jName), new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 3, 0), 0, 0));
-		jPanelProps.add(jLabelTitle, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-				, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 0, 0, 5), 2, 0));
-		jPanelProps.add(new JScrollPane(jTitle), new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 3, 0), 0, 0));
-		jPanelProps.add(jLabelSummary, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-				, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 0, 0, 5), 0, 0));
-		jPanelProps.add(new JScrollPane(jSummary), new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		jPanelProps.add(jLabelPictures, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 2, 5), 2, 0));
-		jPanelProps.add(jPictures, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 3, 0), 0, 0));
-		jPanelProps.add(jApply, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
-		jPanelProps.add(jMove, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
+		jPanelProps.add(jLabelName, new GridBagConstraints(0, 0, 1, 1, 0.0,
+				0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
+				new Insets(2, 0, 0, 5), 2, 0));
+		jPanelProps.add(new JScrollPane(jName), new GridBagConstraints(1, 0, 1,
+				1, 1.0, 1.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(0, 0, 3, 0), 0, 0));
+		jPanelProps.add(jLabelTitle, new GridBagConstraints(0, 1, 1, 1, 0.0,
+				0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
+				new Insets(2, 0, 0, 5), 2, 0));
+		jPanelProps.add(new JScrollPane(jTitle), new GridBagConstraints(1, 1,
+				1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(0, 0, 3, 0), 0, 0));
+		jPanelProps.add(jLabelSummary, new GridBagConstraints(0, 2, 1, 1, 0.0,
+				0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
+				new Insets(2, 0, 0, 5), 0, 0));
+		jPanelProps.add(new JScrollPane(jSummary), new GridBagConstraints(1, 2,
+				1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		jPanelProps.add(jLabelPictures, new GridBagConstraints(0, 3, 1, 1, 0.0,
+				0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(0, 0, 2, 5), 2, 0));
+		jPanelProps.add(jPictures, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 3, 0), 0, 0));
+		jPanelProps.add(jApply, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+						5, 0, 0, 0), 0, 0));
+		jPanelProps.add(jMove, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+						5, 0, 0, 0), 0, 0));
 
-		jOverridePanel.add(jResizeBeforeUpload, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0
-				, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		jOverridePanel.add(jResizeToDefault, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-				, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 20, 0, 0), 0, 0));
-		//jOverridePanel.add(jPanel6, new GridBagConstraints(4, 1, 1, 1, 1.0, 0.0
-		//		, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		jOverridePanel.add(jResizeToForce, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-				, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 20, 0, 0), 0, 0));
-		jOverridePanel.add(jResizeTo, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0
-				, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		jOverridePanel.add(jBeginning, new GridBagConstraints(0, 3, 4, 1, 0.0, 0.0
-				, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		jOverridePanel.add(jResizeBeforeUpload, new GridBagConstraints(0, 0, 3,
+				1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 0));
+		jOverridePanel.add(jResizeToDefault, new GridBagConstraints(0, 1, 1, 1,
+				0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+				new Insets(0, 20, 0, 0), 0, 0));
+		// jOverridePanel.add(jPanel6, new GridBagConstraints(4, 1, 1, 1, 1.0,
+		// 0.0
+		// , GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new
+		// Insets(0, 0, 0, 0), 0, 0));
+		jOverridePanel.add(jResizeToForce, new GridBagConstraints(0, 2, 1, 1,
+				0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+				new Insets(0, 20, 0, 0), 0, 0));
+		jOverridePanel.add(jResizeTo, new GridBagConstraints(1, 2, 1, 1, 0.0,
+				0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 0, 0), 0, 0));
+		jOverridePanel.add(jBeginning, new GridBagConstraints(0, 3, 4, 1, 0.0,
+				0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 0, 0), 0, 0));
 
-		add(jPanelProps, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		add(jOverridePanel, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		add(jFetch, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
-		add(jSlideshow, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
-		add(jSpacer, new GridBagConstraints(0, 5, 1, 1, 1.0, 0.1
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		add(jPanelProps, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
+						0, 0, 0, 0), 0, 0));
+		add(jOverridePanel, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
+						0, 0, 0, 0), 0, 0));
+		add(jFetch, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+						5, 0, 0, 0), 0, 0));
+		add(jSlideshow, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+						5, 0, 0, 0), 0, 0));
+		add(jSpacer, new GridBagConstraints(0, 5, 1, 1, 1.0, 0.1,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
+						0, 0, 0, 0), 0, 0));
 
 		buttonGroup1.add(jResizeToDefault);
 		buttonGroup1.add(jResizeToForce);
@@ -188,15 +241,24 @@ public class AlbumInspector extends JPanel
 	}
 
 	private void setupKeyboardHandling(JComponent c) {
-		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), nextFocusAction.getValue(Action.NAME));
-		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_MASK), prevFocusAction.getValue(Action.NAME));
-		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), nextPictureAction.getValue(Action.NAME));
-		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), prevPictureAction.getValue(Action.NAME));
+		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0),
+				nextFocusAction.getValue(Action.NAME));
+		c.getInputMap().put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_MASK),
+				prevFocusAction.getValue(Action.NAME));
+		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0),
+				nextPictureAction.getValue(Action.NAME));
+		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0),
+				prevPictureAction.getValue(Action.NAME));
 
-		c.getActionMap().put(nextFocusAction.getValue(Action.NAME), nextFocusAction);
-		c.getActionMap().put(prevFocusAction.getValue(Action.NAME), prevFocusAction);
-		c.getActionMap().put(nextPictureAction.getValue(Action.NAME), nextPictureAction);
-		c.getActionMap().put(prevPictureAction.getValue(Action.NAME), prevPictureAction);
+		c.getActionMap().put(nextFocusAction.getValue(Action.NAME),
+				nextFocusAction);
+		c.getActionMap().put(prevFocusAction.getValue(Action.NAME),
+				prevFocusAction);
+		c.getActionMap().put(nextPictureAction.getValue(Action.NAME),
+				nextPictureAction);
+		c.getActionMap().put(prevPictureAction.getValue(Action.NAME),
+				prevPictureAction);
 	}
 
 	private void jbInitEvents() {
@@ -220,8 +282,10 @@ public class AlbumInspector extends JPanel
 	/**
 	 * Menu and button handling
 	 * 
-	 * @param e Action event
+	 * @param e
+	 *            Action event
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ignoreItemChanges) {
 			return;
@@ -238,16 +302,18 @@ public class AlbumInspector extends JPanel
 		} else if (source == jApply) {
 			// todo
 		} else if (source == jMove) {
-			MoveAlbumDialog mad = new MoveAlbumDialog(mf, album.getGallery(), album);
+			MoveAlbumDialog mad = new MoveAlbumDialog(mf, album.getGallery(),
+					album);
 			Album newParent = mad.getNewParent();
 
 			if (newParent != null) {
-				album.moveAlbumTo(GalleryRemote._().getCore().getMainStatusUpdate(), newParent);
+				album.moveAlbumTo(GalleryRemote._().getCore()
+						.getMainStatusUpdate(), newParent);
 
 				// todo: this is too drastic...
 				album.getGallery().reload();
 
-				//album.moveAlbumTo(null, null);
+				// album.moveAlbumTo(null, null);
 			}
 		} else if (source == jSlideshow) {
 			mf.slideshow();
@@ -272,25 +338,28 @@ public class AlbumInspector extends JPanel
 		try {
 			int overrideDimension = album.getOverrideResizeDimension();
 
-			//if (text.length() > 0) {
+			// if (text.length() > 0) {
 			int newOverrideDimension = Integer.parseInt(text);
 
 			if (overrideDimension != -1
-					|| (newOverrideDimension != GalleryRemote._().properties.getIntDimensionProperty(RESIZE_TO))) {
-				Log.log(Log.LEVEL_TRACE, MODULE, "Overriding dimension to " + newOverrideDimension);
+					|| (newOverrideDimension != GalleryRemote._().properties
+							.getIntDimensionProperty(RESIZE_TO))) {
+				Log.log(Log.LEVEL_TRACE, MODULE, "Overriding dimension to "
+						+ newOverrideDimension);
 				album.setOverrideResizeDimension(newOverrideDimension);
 			}
-			//}
+			// }
 		} catch (NumberFormatException ee) {
 			Log.logException(Log.LEVEL_ERROR, MODULE, ee);
 		}
 	}
 
 	/**
-	 * Invoked when an item has been selected or deselected by the user.
-	 * The code written for this method performs the operations
-	 * that need to occur when an item is selected (or deselected).
+	 * Invoked when an item has been selected or deselected by the user. The
+	 * code written for this method performs the operations that need to occur
+	 * when an item is selected (or deselected).
 	 */
+	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (ignoreItemChanges) {
 			return;
@@ -302,11 +371,13 @@ public class AlbumInspector extends JPanel
 		if (source == jBeginning) {
 			album.setOverrideAddToBeginning(new Boolean(jBeginning.isSelected()));
 		} else if (source == jResizeBeforeUpload) {
-			album.setOverrideResize(new Boolean(jResizeBeforeUpload.isSelected()));
+			album.setOverrideResize(new Boolean(jResizeBeforeUpload
+					.isSelected()));
 
 			resetUIState();
 		} else if (source == jResizeToDefault || source == jResizeToForce) {
-			album.setOverrideResizeDefault(new Boolean(jResizeToDefault.isSelected()));
+			album.setOverrideResizeDefault(new Boolean(jResizeToDefault
+					.isSelected()));
 
 			resetUIState();
 		} else {
@@ -326,16 +397,19 @@ public class AlbumInspector extends JPanel
 
 			if (jResizeToForce.isSelected()) {
 				jResizeTo.setEnabled(true);
-				jResizeTo.setBackground(UIManager.getColor("TextField.background"));
+				jResizeTo.setBackground(UIManager
+						.getColor("TextField.background"));
 			} else {
 				jResizeTo.setEnabled(false);
-				jResizeTo.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+				jResizeTo.setBackground(UIManager
+						.getColor("TextField.inactiveBackground"));
 			}
 		} else {
 			jResizeToDefault.setEnabled(false);
 			jResizeToForce.setEnabled(false);
 			jResizeTo.setEnabled(false);
-			jResizeTo.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+			jResizeTo.setBackground(UIManager
+					.getColor("TextField.inactiveBackground"));
 		}
 
 		ignoreItemChanges = oldIgnoreItemChanges;
@@ -344,7 +418,8 @@ public class AlbumInspector extends JPanel
 	/**
 	 * Sets the mainFrame attribute of the PictureInspector object
 	 * 
-	 * @param mf The new mainFrame value
+	 * @param mf
+	 *            The new mainFrame value
 	 */
 	public void setMainFrame(MainFrame mf) {
 		this.mf = mf;
@@ -357,9 +432,10 @@ public class AlbumInspector extends JPanel
 		this.album = album;
 
 		if (album == null) {
-			/*setActive(jName, false);
-			setActive(jTitle, false);
-			setActive(jSummary, false);*/
+			/*
+			 * setActive(jName, false); setActive(jTitle, false);
+			 * setActive(jSummary, false);
+			 */
 
 			jName.setText("");
 			jTitle.setText("");
@@ -370,13 +446,13 @@ public class AlbumInspector extends JPanel
 		} else {
 			setEnabledInternal(true);
 
-			//setActive(jName, true);
+			// setActive(jName, true);
 			jName.setText(album.getName());
 
-			//setActive(jTitle, true);
+			// setActive(jTitle, true);
 			jTitle.setText(album.getTitle());
 
-			//setActive(jSummary, true);
+			// setActive(jSummary, true);
 			jSummary.setText(album.getSummary());
 
 			jPictures.setText("" + album.getSize());
@@ -389,8 +465,16 @@ public class AlbumInspector extends JPanel
 			ignoreNextComboBoxChanged = true;
 			jBeginning.setSelected(album.getAddToBeginning());
 
-			jFetch.setEnabled(album.getGallery().getComm(mf.jStatusBar).hasCapability(mf.jStatusBar, GalleryCommCapabilities.CAPA_FETCH_ALBUM_IMAGES));
-			jMove.setEnabled(album.getGallery().getComm(mf.jStatusBar).hasCapability(mf.jStatusBar, GalleryCommCapabilities.CAPA_MOVE_ALBUM));
+			jFetch.setEnabled(album
+					.getGallery()
+					.getComm(mf.jStatusBar)
+					.hasCapability(mf.jStatusBar,
+							GalleryCommCapabilities.CAPA_FETCH_ALBUM_IMAGES));
+			jMove.setEnabled(album
+					.getGallery()
+					.getComm(mf.jStatusBar)
+					.hasCapability(mf.jStatusBar,
+							GalleryCommCapabilities.CAPA_MOVE_ALBUM));
 
 			jSlideshow.setEnabled(album.getSize() > 0);
 		}
@@ -402,29 +486,28 @@ public class AlbumInspector extends JPanel
 		jTitle.setEditable(false);
 		jTitle.setBackground(UIManager.getColor("TextField.inactiveBackground"));
 		jSummary.setEditable(false);
-		jSummary.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+		jSummary.setBackground(UIManager
+				.getColor("TextField.inactiveBackground"));
 
 		jPictures.setEditable(false);
-		jPictures.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+		jPictures.setBackground(UIManager
+				.getColor("TextField.inactiveBackground"));
 
 		resetUIState();
 
 		ignoreItemChanges = oldIgnoreItemChanges;
 	}
 
-	/*public void setActive(JTextArea t, boolean active) {
-		if (active) {
-			t.setEditable(true);
-			t.setBackground(UIManager.getColor("TextField.background"));
-		} else {
-			t.setText( "" );
-			t.setEditable(false);
-			t.setBackground(UIManager.getColor("TextField.inactiveBackground"));
-		}
-	}*/
+	/*
+	 * public void setActive(JTextArea t, boolean active) { if (active) {
+	 * t.setEditable(true);
+	 * t.setBackground(UIManager.getColor("TextField.background")); } else {
+	 * t.setText( "" ); t.setEditable(false);
+	 * t.setBackground(UIManager.getColor("TextField.inactiveBackground")); } }
+	 */
 
 	public void setEnabledInternal(boolean enabled) {
-		//Log.log(Log.TRACE, MODULE, "setEnabled " + enabled);
+		// Log.log(Log.TRACE, MODULE, "setEnabled " + enabled);
 		jName.setEnabled(enabled);
 		jTitle.setEnabled(enabled);
 		jSummary.setEnabled(enabled);
@@ -443,10 +526,12 @@ public class AlbumInspector extends JPanel
 		if (enabled) {
 			jResizeTo.setBackground(UIManager.getColor("TextField.background"));
 		} else {
-			jResizeTo.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+			jResizeTo.setBackground(UIManager
+					.getColor("TextField.inactiveBackground"));
 		}
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		setEnabledInternal(enabled);
 		super.setEnabled(enabled);
@@ -454,35 +539,51 @@ public class AlbumInspector extends JPanel
 
 	// Focus traversal actions
 	public Action nextFocusAction = new AbstractAction("Move Focus Forwards") {
+		private static final long serialVersionUID = -6152119464284501366L;
+
+		@Override
 		public void actionPerformed(ActionEvent evt) {
 			((Component) evt.getSource()).transferFocus();
 		}
 	};
 
 	public Action prevFocusAction = new AbstractAction("Move Focus Backwards") {
+		private static final long serialVersionUID = 1L;
+
+		@Override
 		public void actionPerformed(ActionEvent evt) {
 			((Component) evt.getSource()).transferFocusBackward();
 		}
 	};
 
 	public Action nextPictureAction = new AbstractAction("Select Next Picture") {
+		private static final long serialVersionUID = -7887651627594625022L;
+
+		@Override
 		public void actionPerformed(ActionEvent evt) {
 			CoreUtils.selectNextPicture();
 		}
 	};
 
 	public Action prevPictureAction = new AbstractAction("Select Prev Picture") {
+		private static final long serialVersionUID = -2198243559490322155L;
+
+		@Override
 		public void actionPerformed(ActionEvent evt) {
 			CoreUtils.selectPrevPicture();
 		}
 	};
 
-	public void keyPressed(KeyEvent e) {}
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
 
+	@Override
 	public void keyReleased(KeyEvent e) {
 		readResizeTo(jResizeTo.getEditor().getItem().toString());
 	}
 
-	public void keyTyped(KeyEvent e) {	}
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
 }
-

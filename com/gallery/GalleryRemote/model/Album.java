@@ -20,21 +20,32 @@
  */
 package com.gallery.GalleryRemote.model;
 
-import com.gallery.GalleryRemote.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import javax.swing.ListModel;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+
+import com.gallery.GalleryRemote.GalleryCommCapabilities;
+import com.gallery.GalleryRemote.GalleryRemote;
+import com.gallery.GalleryRemote.Log;
+import com.gallery.GalleryRemote.StatusUpdate;
+import com.gallery.GalleryRemote.StatusUpdateAdapter;
 import com.gallery.GalleryRemote.prefs.PreferenceNames;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 import com.gallery.GalleryRemote.util.NaturalOrderComparator;
-
-import javax.swing.*;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.ListDataEvent;
-
-import java.io.File;
-import java.io.Serializable;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Album model
@@ -42,8 +53,11 @@ import java.util.*;
  * @author paour
  */
 
-public class Album extends GalleryItem implements ListModel, Serializable,
+public class Album extends GalleryItem implements ListModel<Picture>, Serializable,
 		PreferenceNames {
+
+	private static final long serialVersionUID = -448524246006100127L;
+
 	/*
 	 * -------------------------------------------------------------------------
 	 * CONSTANTS
@@ -599,7 +613,7 @@ public class Album extends GalleryItem implements ListModel, Serializable,
 	 * @return The file size (bytes)
 	 */
 	public static long getPictureFileSize(Picture[] pictures) {
-		return getObjectFileSize(pictures);
+		return getObjectFileSize(Arrays.asList(pictures));
 	}
 
 	/**
@@ -610,16 +624,17 @@ public class Album extends GalleryItem implements ListModel, Serializable,
 	 *            the list of Pictures
 	 * @return The file size (bytes)
 	 */
-	public static long getObjectFileSize(Object[] pictures) {
+	public static long getObjectFileSize(List<Picture> pictures) {
 		long total = 0;
 
-		for (int i = 0; i < pictures.length; i++) {
-			total += ((Picture) pictures[i]).getFileSize();
+		for (Picture p : pictures) {
+			total += p.getFileSize();
 		}
 
 		return total;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer();
 		ret.append(indentHelper(""));
@@ -639,6 +654,7 @@ public class Album extends GalleryItem implements ListModel, Serializable,
 		return ret.toString();
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		return (o != null && o instanceof Album
 				&& ((Album) o).getGallery() == getGallery()
@@ -656,6 +672,7 @@ public class Album extends GalleryItem implements ListModel, Serializable,
 	 * 
 	 * @return The size value
 	 */
+	@Override
 	public int getSize() {
 		return pictures.size();
 	}
@@ -667,7 +684,8 @@ public class Album extends GalleryItem implements ListModel, Serializable,
 	 *            Description of Parameter
 	 * @return The elementAt value
 	 */
-	public Object getElementAt(int index) {
+	@Override
+	public Picture getElementAt(int index) {
 		return pictures.get(index);
 	}
 
@@ -936,13 +954,14 @@ public class Album extends GalleryItem implements ListModel, Serializable,
 	/*
 	 * ****************** LIST HANDLING (FOR PICTURES) ***************
 	 */
-
+	@Override
 	public void addListDataListener(ListDataListener l) {
 		if (listenerList == null)
 			listenerList = new EventListenerList();
 		listenerList.add(ListDataListener.class, l);
 	}
 
+	@Override
 	public void removeListDataListener(ListDataListener l) {
 		if (listenerList == null)
 			listenerList = new EventListenerList();

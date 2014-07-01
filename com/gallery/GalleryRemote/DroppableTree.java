@@ -20,24 +20,36 @@
  */
 package com.gallery.GalleryRemote;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JTree;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
+
 import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
-
-import javax.swing.*;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreePath;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Iterator;
 
 /**
  * Drag and drop handler
@@ -45,9 +57,9 @@ import java.util.Iterator;
  * @author paour
  * @created August 16, 2002
  */
-public class DroppableTree
-		extends JTree implements DropTargetListener {
+public class DroppableTree extends JTree implements DropTargetListener {
 
+	private static final long serialVersionUID = 4673983882665863495L;
 	protected final static String MODULE = "Droptree";
 	MainFrame mf = null;
 
@@ -59,6 +71,7 @@ public class DroppableTree
 		dropTarget = new DropTarget(this, this);
 	}
 
+	@Override
 	public void paint(Graphics g) {
 		lastRow = -1;
 		super.paint(g);
@@ -73,23 +86,34 @@ public class DroppableTree
 		}
 
 		if (dropTargetEvent instanceof DropTargetDragEvent) {
-			Point dropLocation = ((DropTargetDragEvent) dropTargetEvent).getLocation();
-			if (getPathForLocation((int) dropLocation.getX(), (int) dropLocation.getY()) == null) {
-				// Java 1.6 bug: getPathForLocation inexplicably returns false at the top or bottom of the component
-				//Log.log(Log.LEVEL_TRACE, MODULE, "getPathForLocation" + dropLocation + " is false");
+			Point dropLocation = ((DropTargetDragEvent) dropTargetEvent)
+					.getLocation();
+			if (getPathForLocation((int) dropLocation.getX(),
+					(int) dropLocation.getY()) == null) {
+				// Java 1.6 bug: getPathForLocation inexplicably returns false
+				// at the top or bottom of the component
+				// Log.log(Log.LEVEL_TRACE, MODULE, "getPathForLocation" +
+				// dropLocation + " is false");
 				result = false;
 			} else {
-				result = ((DropTargetDragEvent) dropTargetEvent).isDataFlavorSupported(DataFlavor.javaFileListFlavor)
-						|| ((DropTargetDragEvent) dropTargetEvent).isDataFlavorSupported(PictureSelection.flavors[0]);
+				result = ((DropTargetDragEvent) dropTargetEvent)
+						.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
+						|| ((DropTargetDragEvent) dropTargetEvent)
+								.isDataFlavorSupported(PictureSelection.flavors[0]);
 			}
 		} else {
-			Point dropLocation = ((DropTargetDropEvent) dropTargetEvent).getLocation();
-			if (getPathForLocation((int) dropLocation.getX(), (int) dropLocation.getY()) == null) {
-				//Log.log(Log.LEVEL_TRACE, MODULE, "getPathForLocation" + dropLocation + " is false");
+			Point dropLocation = ((DropTargetDropEvent) dropTargetEvent)
+					.getLocation();
+			if (getPathForLocation((int) dropLocation.getX(),
+					(int) dropLocation.getY()) == null) {
+				// Log.log(Log.LEVEL_TRACE, MODULE, "getPathForLocation" +
+				// dropLocation + " is false");
 				result = false;
 			} else {
-				result = ((DropTargetDropEvent) dropTargetEvent).isDataFlavorSupported(DataFlavor.javaFileListFlavor)
-						|| ((DropTargetDropEvent) dropTargetEvent).isDataFlavorSupported(PictureSelection.flavors[0]);
+				result = ((DropTargetDropEvent) dropTargetEvent)
+						.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
+						|| ((DropTargetDropEvent) dropTargetEvent)
+								.isDataFlavorSupported(PictureSelection.flavors[0]);
 			}
 		}
 
@@ -100,22 +124,26 @@ public class DroppableTree
 
 			lastRow = -1;
 		}
-		
-		//Log.log(Log.LEVEL_TRACE, MODULE, "isDragOk: " + result);
+
+		// Log.log(Log.LEVEL_TRACE, MODULE, "isDragOk: " + result);
 
 		return result;
 	}
 
 	/* ********* TargetListener ********** */
+	@Override
 	public void dragEnter(DropTargetDragEvent dropTargetDragEvent) {
 		Log.log(Log.LEVEL_TRACE, MODULE, "dragEnter - dtde");
-		for (Iterator it = dropTargetDragEvent.getCurrentDataFlavorsAsList().iterator(); it.hasNext();) {
+		for (Iterator<DataFlavor> it = dropTargetDragEvent
+				.getCurrentDataFlavorsAsList().iterator(); it.hasNext();) {
 			DataFlavor flavor = (DataFlavor) it.next();
-			Log.log(Log.LEVEL_TRACE, MODULE, "Flavor: " + flavor.getHumanPresentableName() + " -- " +
-					flavor.getMimeType());
+			Log.log(Log.LEVEL_TRACE, MODULE,
+					"Flavor: " + flavor.getHumanPresentableName() + " -- "
+							+ flavor.getMimeType());
 		}
-		Log.log(Log.LEVEL_TRACE, MODULE, "Action: " + dropTargetDragEvent.getSourceActions() + " -- " +
-				dropTargetDragEvent.getDropAction());
+		Log.log(Log.LEVEL_TRACE, MODULE,
+				"Action: " + dropTargetDragEvent.getSourceActions() + " -- "
+						+ dropTargetDragEvent.getDropAction());
 
 		if (!isDragOK(dropTargetDragEvent)) {
 			dropTargetDragEvent.rejectDrag();
@@ -123,17 +151,20 @@ public class DroppableTree
 		}
 
 		Log.log(Log.LEVEL_TRACE, MODULE, "Accepting drag");
-		//dropTargetDragEvent.acceptDrag( DnDConstants.ACTION_COPY_OR_MOVE | DnDConstants.ACTION_REFERENCE );
+		// dropTargetDragEvent.acceptDrag( DnDConstants.ACTION_COPY_OR_MOVE |
+		// DnDConstants.ACTION_REFERENCE );
 	}
 
+	@Override
 	public void dragExit(DropTargetEvent dropTargetEvent) {
 		Log.log(Log.LEVEL_TRACE, MODULE, "dragExit - dtde");
 
 		repaint();
 	}
 
+	@Override
 	public void dragOver(DropTargetDragEvent dropTargetDragEvent) {
-		//Log.log(Log.TRACE, MODULE,"dragOver - dtde");
+		// Log.log(Log.TRACE, MODULE,"dragOver - dtde");
 		if (!isDragOK(dropTargetDragEvent)) {
 			dropTargetDragEvent.rejectDrag();
 			return;
@@ -149,25 +180,29 @@ public class DroppableTree
 		Rectangle r = getVisibleRect();
 		boolean scrolled = false;
 
-		//Log.log(Log.LEVEL_TRACE, MODULE, "row: " + row + " lastRow: " + lastRow + " rowHeight: " + rowHeight);
+		// Log.log(Log.LEVEL_TRACE, MODULE, "row: " + row + " lastRow: " +
+		// lastRow + " rowHeight: " + rowHeight);
 		if (y < r.getY() + getRowHeight() && row > 0) {
 			int tmpLastRow = lastRow;
-			//scrollRowToVisible(row - 1);
-			scrollRectToVisible(new Rectangle(0, (int) r.getY() - rowHeight, 0, 0));
+			// scrollRowToVisible(row - 1);
+			scrollRectToVisible(new Rectangle(0, (int) r.getY() - rowHeight, 0,
+					0));
 			lastRow = tmpLastRow;
 			scrolled = true;
 		}
-		if (y > r.getY() + r.getHeight() - getRowHeight() && row < getRowCount() - 1) {
+		if (y > r.getY() + r.getHeight() - getRowHeight()
+				&& row < getRowCount() - 1) {
 			int tmpLastRow = lastRow;
-			//scrollRowToVisible(row + 1);
-			scrollRectToVisible(new Rectangle(0, (int) (r.getY() + r.getHeight() + rowHeight), 0, 0));
+			// scrollRowToVisible(row + 1);
+			scrollRectToVisible(new Rectangle(0, (int) (r.getY()
+					+ r.getHeight() + rowHeight), 0, 0));
 			lastRow = tmpLastRow;
 			scrolled = true;
 		}
-		/*if (scrolled) {
-			r = getVisibleRect();
-			scrollRectToVisible(new Rectangle(0, (int) r.getY(), 0, 0));
-		}*/
+		/*
+		 * if (scrolled) { r = getVisibleRect(); scrollRectToVisible(new
+		 * Rectangle(0, (int) r.getY(), 0, 0)); }
+		 */
 
 		Graphics g = getGraphics();
 		g.setXORMode(Color.cyan);
@@ -195,6 +230,7 @@ public class DroppableTree
 		}
 	}
 
+	@Override
 	public synchronized void drop(DropTargetDropEvent dropTargetDropEvent) {
 		Log.log(Log.LEVEL_TRACE, MODULE, "drop - dtde");
 
@@ -209,40 +245,48 @@ public class DroppableTree
 		try {
 			Transferable tr = dropTargetDropEvent.getTransferable();
 
-			dropTargetDropEvent.acceptDrop(
-					DnDConstants.ACTION_COPY_OR_MOVE);
+			dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
 
-			//thanks John Zukowski
+			// thanks John Zukowski
 			Point dropLocation = dropTargetDropEvent.getLocation();
-			Album album = (Album) getPathForLocation((int) dropLocation.getX(), (int) dropLocation.getY()).getLastPathComponent();
+			Album album = (Album) getPathForLocation((int) dropLocation.getX(),
+					(int) dropLocation.getY()).getLastPathComponent();
 
 			if (tr.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-				List fileList = (List)
-						tr.getTransferData(DataFlavor.javaFileListFlavor);
+
+				@SuppressWarnings("unchecked")
+				List<File> fileList = (List<File>) tr
+						.getTransferData(DataFlavor.javaFileListFlavor);
 
 				/* recursively add contents of directories */
 				try {
 					fileList = ImageUtils.expandDirectories(fileList);
 				} catch (IOException ioe) {
-					Log.log(Log.LEVEL_ERROR, MODULE, "i/o exception listing dirs in a drop");
+					Log.log(Log.LEVEL_ERROR, MODULE,
+							"i/o exception listing dirs in a drop");
 					Log.logStack(Log.LEVEL_ERROR, MODULE);
-					JOptionPane.showMessageDialog(
-							null,
+					JOptionPane.showMessageDialog(null,
 							GRI18n.getString(MODULE, "imgError"),
 							GRI18n.getString(MODULE, "dragError"),
 							JOptionPane.ERROR_MESSAGE);
 				}
 
-				Log.log(Log.LEVEL_TRACE, MODULE, "Adding " + fileList.size() + " new files(s) to album " + album);
+				Log.log(Log.LEVEL_TRACE, MODULE, "Adding " + fileList.size()
+						+ " new files(s) to album " + album);
 
-				mf.addPictures(album, (File[]) fileList.toArray(new File[0]), false);
+				mf.addPictures(album, (File[]) fileList.toArray(new File[0]),
+						false);
 			} else {
-				List pictureList = (List)
-						tr.getTransferData(PictureSelection.flavors[0]);
 
-				Log.log(Log.LEVEL_TRACE, MODULE, "Adding " + pictureList.size() + " new pictures(s) to album " + album);
+				@SuppressWarnings("unchecked")
+				List<Picture> pictureList = (List<Picture>) tr
+						.getTransferData(PictureSelection.flavors[0]);
 
-				mf.addPictures(album, (Picture[]) pictureList.toArray(new Picture[0]), false);
+				Log.log(Log.LEVEL_TRACE, MODULE, "Adding " + pictureList.size()
+						+ " new pictures(s) to album " + album);
+
+				mf.addPictures(album,
+						(Picture[]) pictureList.toArray(new Picture[0]), false);
 			}
 
 			dropTargetDropEvent.getDropTargetContext().dropComplete(true);
@@ -257,6 +301,7 @@ public class DroppableTree
 		repaint();
 	}
 
+	@Override
 	public void dropActionChanged(DropTargetDragEvent dropTargetDragEvent) {
 		Log.log(Log.LEVEL_TRACE, MODULE, "dropActionChanged - dtde");
 		if (!isDragOK(dropTargetDragEvent)) {
@@ -264,7 +309,7 @@ public class DroppableTree
 			return;
 		}
 
-		//dropTargetDragEvent.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
+		// dropTargetDragEvent.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
 	}
 
 	public void setMainFrame(MainFrame mf) {
@@ -286,6 +331,7 @@ public class DroppableTree
 		return row;
 	}
 
+	@Override
 	public Point getToolTipLocation(MouseEvent event) {
 		try {
 			Point p = event.getPoint();
@@ -302,34 +348,35 @@ public class DroppableTree
 		}
 	}
 
+	@Override
 	public String getToolTipText(MouseEvent event) {
-		// this code is copied from JTree, to only show tooltip when longer than the tree
-		if(event != null) {
+		// this code is copied from JTree, to only show tooltip when longer than
+		// the tree
+		if (event != null) {
 			Point p = event.getPoint();
 			int selRow = getRowForLocation(p.x, p.y);
-			TreeCellRenderer       r = getCellRenderer();
+			TreeCellRenderer r = getCellRenderer();
 
-			if(selRow != -1 && r != null) {
-				TreePath     path = getPathForRow(selRow);
-				Object       lastPath = path.getLastPathComponent();
-				Component    rComponent = r.getTreeCellRendererComponent
-					(this, lastPath, isRowSelected(selRow),
-					 isExpanded(selRow), getModel().isLeaf(lastPath), selRow,
-					 true);
+			if (selRow != -1 && r != null) {
+				TreePath path = getPathForRow(selRow);
+				Object lastPath = path.getLastPathComponent();
+				Component rComponent = r.getTreeCellRendererComponent(this,
+						lastPath, isRowSelected(selRow), isExpanded(selRow),
+						getModel().isLeaf(lastPath), selRow, true);
 
 				Rectangle pathBounds = getPathBounds(path);
 
-				if(rComponent instanceof JComponent && pathBounds.x + pathBounds.width > getParent().getWidth()) {
-					MouseEvent      newEvent;
+				if (rComponent instanceof JComponent
+						&& pathBounds.x + pathBounds.width > getParent()
+								.getWidth()) {
+					MouseEvent newEvent;
 
 					p.translate(-pathBounds.x, -pathBounds.y);
 					newEvent = new MouseEvent(rComponent, event.getID(),
-										  event.getWhen(),
-											  event.getModifiers(),
-											  p.x, p.y, event.getClickCount(),
-											  event.isPopupTrigger());
+							event.getWhen(), event.getModifiers(), p.x, p.y,
+							event.getClickCount(), event.isPopupTrigger());
 
-					return ((JComponent)rComponent).getToolTipText(newEvent);
+					return ((JComponent) rComponent).getToolTipText(newEvent);
 				}
 			}
 		}

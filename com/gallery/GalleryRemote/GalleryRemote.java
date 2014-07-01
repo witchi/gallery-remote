@@ -1,40 +1,41 @@
 /*
-*  Gallery Remote - a File Upload Utility for Gallery
-*
-*  Gallery - a web based photo album viewer and editor
-*  Copyright (C) 2000-2001 Bharat Mediratta
-*
-*  This program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or (at
-*  your option) any later version.
-*
-*  This program is distributed in the hope that it will be useful, but
-*  WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-*  General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License
-*  along with this program; if not, write to the Free Software
-*  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+ *  Gallery Remote - a File Upload Utility for Gallery
+ *
+ *  Gallery - a web based photo album viewer and editor
+ *  Copyright (C) 2000-2001 Bharat Mediratta
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or (at
+ *  your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 package com.gallery.GalleryRemote;
 
-import com.gallery.GalleryRemote.prefs.GalleryProperties;
-import com.gallery.GalleryRemote.prefs.PropertiesFile;
-import com.gallery.GalleryRemote.prefs.PreferenceNames;
-import com.gallery.GalleryRemote.model.Gallery;
-
-import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import java.awt.event.ActionEvent;
-import java.awt.*;
 import java.applet.Applet;
-import java.util.Enumeration;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Properties;
-import java.lang.reflect.Method;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
+
+import com.gallery.GalleryRemote.model.Gallery;
+import com.gallery.GalleryRemote.prefs.GalleryProperties;
+import com.gallery.GalleryRemote.prefs.PreferenceNames;
+import com.gallery.GalleryRemote.prefs.PropertiesFile;
 
 /**
  * Main class and entry point of Gallery Remote
@@ -46,8 +47,9 @@ public abstract class GalleryRemote implements PreferenceNames {
 
 	private static GalleryRemote singleton = null;
 
-	/** Default properties, loaded from distribution file
-	 * and generally not modified by the user.
+	/**
+	 * Default properties, loaded from distribution file and generally not
+	 * modified by the user.
 	 */
 	public PropertiesFile defaults = null;
 
@@ -80,18 +82,26 @@ public abstract class GalleryRemote implements PreferenceNames {
 	public static boolean IS_MAC_OS_X = (System.getProperty("mrj.version") != null);
 	public static int ACCELERATOR_MASK = 0;
 
-	protected GalleryRemote() {}
+	protected GalleryRemote() {
+	}
 
 	protected void initializeGR() {
 		try {
 			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} catch (Exception e) {	}
+				UIManager.setLookAndFeel(UIManager
+						.getSystemLookAndFeelClassName());
+			} catch (Exception e) {
+			}
 
-			if (Float.parseFloat(System.getProperty("java.specification.version")) < 1.39) {
-				JOptionPane.showMessageDialog(null, "Gallery Remote is not supported on Java " +
-						"Virtual Machines older than 1.4. Please install a recent VM " +
-						"and try running Gallery Remote again.", "VM too old", JOptionPane.ERROR_MESSAGE);
+			if (Float.parseFloat(System
+					.getProperty("java.specification.version")) < 1.39) {
+				JOptionPane
+						.showMessageDialog(
+								null,
+								"Gallery Remote is not supported on Java "
+										+ "Virtual Machines older than 1.4. Please install a recent VM "
+										+ "and try running Gallery Remote again.",
+								"VM too old", JOptionPane.ERROR_MESSAGE);
 
 				System.exit(1);
 			}
@@ -99,10 +109,12 @@ public abstract class GalleryRemote implements PreferenceNames {
 			createProperties();
 
 			// log system properties
-			new GalleryProperties(System.getProperties()).logProperties(Log.LEVEL_INFO, "SysProps");
+			new GalleryProperties(System.getProperties()).logProperties(
+					Log.LEVEL_INFO, "SysProps");
 
 			// log system environment
-			new GalleryProperties(System.getenv()).logProperties(Log.LEVEL_INFO, "SysEnv");
+			new GalleryProperties(System.getenv()).logProperties(
+					Log.LEVEL_INFO, "SysEnv");
 
 			// log properties
 			properties.logProperties(Log.LEVEL_TRACE, "UsrProps");
@@ -119,10 +131,13 @@ public abstract class GalleryRemote implements PreferenceNames {
 	}
 
 	private void setFontOverrides() {
-		String name = properties.getProperty(PreferenceNames.FONT_OVERRIDE_NAME);
+		String name = properties
+				.getProperty(PreferenceNames.FONT_OVERRIDE_NAME);
 		if (name != null) {
-			int style = properties.getIntProperty(PreferenceNames.FONT_OVERRIDE_STYLE);
-			int size = properties.getIntProperty(PreferenceNames.FONT_OVERRIDE_SIZE);
+			int style = properties
+					.getIntProperty(PreferenceNames.FONT_OVERRIDE_STYLE);
+			int size = properties
+					.getIntProperty(PreferenceNames.FONT_OVERRIDE_SIZE);
 
 			FontUIResource fur = new FontUIResource(name, style, size);
 			UIManager.put("Label.font", fur);
@@ -161,7 +176,8 @@ public abstract class GalleryRemote implements PreferenceNames {
 			setStaticProperties();
 
 			try {
-				singleton = (GalleryRemote) Class.forName(className).newInstance();
+				singleton = (GalleryRemote) Class.forName(className)
+						.newInstance();
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -172,11 +188,12 @@ public abstract class GalleryRemote implements PreferenceNames {
 
 			singleton.applet = applet;
 
-			//singleton.run();
+			// singleton.run();
 
 			return true;
 		} else {
-			System.err.println("Trying to instanciate Gallery Remote more than once...");
+			System.err
+					.println("Trying to instanciate Gallery Remote more than once...");
 			Thread.dumpStack();
 
 			return false;
@@ -199,16 +216,18 @@ public abstract class GalleryRemote implements PreferenceNames {
 		String url = null;
 		String username = null;
 
-		Iterator i = Arrays.asList(args).iterator();
+		Iterator<String> i = Arrays.asList(args).iterator();
 		while (i.hasNext()) {
 			String sw = (String) i.next();
 
 			if (sw.equals("-url") && i.hasNext()) {
 				url = (String) i.next();
-				Log.log(Log.LEVEL_TRACE, MODULE, "Command-line switch: url=" + url);
+				Log.log(Log.LEVEL_TRACE, MODULE, "Command-line switch: url="
+						+ url);
 			} else if (sw.equals("-username") && i.hasNext()) {
 				username = (String) i.next();
-				Log.log(Log.LEVEL_TRACE, MODULE, "Command-line switch: username=" + username);
+				Log.log(Log.LEVEL_TRACE, MODULE,
+						"Command-line switch: username=" + username);
 			}
 		}
 
@@ -218,8 +237,10 @@ public abstract class GalleryRemote implements PreferenceNames {
 			boolean found = false;
 			while (_().properties.containsKey(GURL + j)) {
 				if (_().properties.getProperty(GURL + j).equals(url)
-						&& _().properties.getProperty(USERNAME + j).equals(username)) {
-					// we have probably already loaded and saved thus URL, nothing to do
+						&& _().properties.getProperty(USERNAME + j).equals(
+								username)) {
+					// we have probably already loaded and saved thus URL,
+					// nothing to do
 					found = true;
 					break;
 				}
@@ -235,15 +256,18 @@ public abstract class GalleryRemote implements PreferenceNames {
 					_().properties.setProperty(USERNAME + j, username);
 				}
 
-				_().properties.setBooleanProperty(AUTO_LOAD_ON_STARTUP + j, true);
+				_().properties.setBooleanProperty(AUTO_LOAD_ON_STARTUP + j,
+						true);
 
 				try {
-					Gallery g = Gallery.readFromProperties(_().properties, j, _().getCore().getMainStatusUpdate());
+					Gallery g = Gallery.readFromProperties(_().properties, j,
+							_().getCore().getMainStatusUpdate());
 					if (g != null) {
 						_().getCore().getGalleries().addElement(g);
 					}
 				} catch (Exception e) {
-					Log.log(Log.LEVEL_ERROR, MODULE, "Error trying to load Gallery profile " + i);
+					Log.log(Log.LEVEL_ERROR, MODULE,
+							"Error trying to load Gallery profile " + i);
 					Log.logException(Log.LEVEL_ERROR, MODULE, e);
 				}
 			}
@@ -253,74 +277,82 @@ public abstract class GalleryRemote implements PreferenceNames {
 	}
 
 	public static void setStaticProperties() {
-		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Gallery Remote");
+		System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+				"Gallery Remote");
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("apple.awt.showGrowBox", "false");
 		System.setProperty("apple.awt.brushMetalLook", "true");
-		//System.setProperty("http.agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
+		// System.setProperty("http.agent",
+		// "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
 
 		// fix buggy Swing Windows XP lookup code
 		System.setProperty("swing.noxp", "true");
 
 		// todo: this should not remain this way
-		//System.setProperty("apple.awt.fakefullscreen", "true");
+		// System.setProperty("apple.awt.fakefullscreen", "true");
 
 		// this isn't such a good idea, it crashes with some NVidia drivers
-		/*try {
-			if (Float.parseFloat(System.getProperty("java.specification.version")) >= 1.6) {
-				System.setProperty("sun.java2d.opengl", "true");
-			}
-		} catch (RuntimeException e) {
-			Log.log(Log.LEVEL_ERROR, "Couldn't get property java.specification.version: " +
-					System.getProperty("java.specification.version"));
-		}*/
-		
-		/*try {
-			// purposely not using secure class loading...
-			Class unsignedTest = Class.forName("com.gallery.GalleryRemote.insecureutil.UnsignedTest");
-			Log.log(Log.LEVEL_TRACE, MODULE, "isSignedByGallery: " + isSignedByGallery(unsignedTest));
-			
-			if (isSignedByGallery(unsignedTest)) {
-				Log.log(Log.LEVEL_TRACE, MODULE, "Not signed by us, we should not execute method... but do it to test...");
-			}
-			Method createFile = unsignedTest.getMethod("createFile", null);
-			createFile.invoke(null, null);
-			
-			Log.log(Log.LEVEL_TRACE, MODULE, "isSignedByGallery: " + isSignedByGallery(com.gallery.GalleryRemote.Base64.class));
-		} catch (Throwable e) {
-			System.err.println(e);
-		}*/
+		/*
+		 * try { if
+		 * (Float.parseFloat(System.getProperty("java.specification.version"))
+		 * >= 1.6) { System.setProperty("sun.java2d.opengl", "true"); } } catch
+		 * (RuntimeException e) { Log.log(Log.LEVEL_ERROR,
+		 * "Couldn't get property java.specification.version: " +
+		 * System.getProperty("java.specification.version")); }
+		 */
+
+		/*
+		 * try { // purposely not using secure class loading... Class
+		 * unsignedTest =
+		 * Class.forName("com.gallery.GalleryRemote.insecureutil.UnsignedTest");
+		 * Log.log(Log.LEVEL_TRACE, MODULE, "isSignedByGallery: " +
+		 * isSignedByGallery(unsignedTest));
+		 * 
+		 * if (isSignedByGallery(unsignedTest)) { Log.log(Log.LEVEL_TRACE,
+		 * MODULE,
+		 * "Not signed by us, we should not execute method... but do it to test..."
+		 * ); } Method createFile = unsignedTest.getMethod("createFile", null);
+		 * createFile.invoke(null, null);
+		 * 
+		 * Log.log(Log.LEVEL_TRACE, MODULE, "isSignedByGallery: " +
+		 * isSignedByGallery(com.gallery.GalleryRemote.Base64.class)); } catch
+		 * (Throwable e) { System.err.println(e); }
+		 */
 	}
-	
-	public static boolean isSignedByGallery(Class c) {
+
+	public static boolean isSignedByGallery(Class<?> c) {
 		if (GalleryRemote.class.getSigners() == null) {
 			// the main class is unsigned so we can't expect others to be signed
-			Log.log(Log.LEVEL_INFO, MODULE, "GalleryRemote is not signed: none of the other classes need to be signed");
+			Log.log(Log.LEVEL_INFO, MODULE,
+					"GalleryRemote is not signed: none of the other classes need to be signed");
 			return true;
 		}
-		
+
 		Object[] signers = c.getSigners();
-		if (signers != null && signers instanceof java.security.cert.Certificate[]) {
+		if (signers != null
+				&& signers instanceof java.security.cert.Certificate[]) {
 			java.security.cert.Certificate[] certs = (java.security.cert.Certificate[]) signers;
-			
+
 			for (int i = 0; i < certs.length; i++) {
-				 if (signers[i].equals(GalleryRemote.class.getSigners()[0])) {
-					 return true;
-				 }
+				if (signers[i].equals(GalleryRemote.class.getSigners()[0])) {
+					return true;
+				}
 			}
 		}
-		
+
 		Log.log(Log.LEVEL_CRITICAL, MODULE, "Could not find matching signature");
 		return false;
 	}
-	
-	public static Class secureClassForName(String name) throws ClassNotFoundException {
+
+	public static Class<?> secureClassForName(String name)
+			throws ClassNotFoundException {
 		Log.log(Log.LEVEL_INFO, MODULE, "Trying to securely load " + name);
-		Class c = Class.forName(name);
+		Class<?> c = Class.forName(name);
 		if (isSignedByGallery(c)) {
 			return c;
 		} else {
-			throw new ClassNotFoundException("The class is not signed by Gallery, so we're not going to load it");
+			throw new ClassNotFoundException(
+					"The class is not signed by Gallery, so we're not going to load it");
 		}
 	}
 
@@ -329,31 +361,32 @@ public abstract class GalleryRemote implements PreferenceNames {
 		properties.setReadOnly();
 	}
 
-	/*public PropertiesFile createAppletOverride(PropertiesFile p) {
-		PropertiesFile override;
+	/*
+	 * public PropertiesFile createAppletOverride(PropertiesFile p) {
+	 * PropertiesFile override;
+	 * 
+	 * if (p == null) { override = new PropertiesFile(defaults); } else {
+	 * override = new PropertiesFile(p); }
+	 * 
+	 * override.setReadOnly();
+	 * 
+	 * return override; }
+	 */
 
-		if (p == null) {
-			override = new PropertiesFile(defaults);
-		} else {
-			override = new PropertiesFile(p);
-		}
-
-		override.setReadOnly();
-
-		return override;
-	}*/
-
-	public PropertiesFile getAppletOverrides(PropertiesFile defaults, String prefix) {
-		Log.log(Log.LEVEL_TRACE, MODULE, "Getting applet parameters for prefix " + prefix);
+	public PropertiesFile getAppletOverrides(PropertiesFile defaults,
+			String prefix) {
+		Log.log(Log.LEVEL_TRACE, MODULE,
+				"Getting applet parameters for prefix " + prefix);
 
 		PropertiesFile p = new PropertiesFile(defaults, null, prefix);
 
-		for (Enumeration e = p.propertyNames(); e.hasMoreElements();) {
+		for (Enumeration<?> e = p.propertyNames(); e.hasMoreElements();) {
 			String name = (String) e.nextElement();
 			String value = applet.getParameter(prefix + name);
 
 			if (value != null && value.length() != 0) {
-				Log.log(Log.LEVEL_TRACE, MODULE, "Got: " + name + "= |" + value + "|");
+				Log.log(Log.LEVEL_TRACE, MODULE, "Got: " + name + "= |" + value
+						+ "|");
 				p.setProperty(name, value);
 			}
 		}
@@ -375,8 +408,10 @@ public abstract class GalleryRemote implements PreferenceNames {
 				ACCELERATOR_MASK = ActionEvent.META_MASK;
 			}
 
-			iComputer = new ImageIcon(GalleryRemote.class.getResource("/computer.gif"));
-			iUploading = new ImageIcon(GalleryRemote.class.getResource("/uploading.gif"));
+			iComputer = new ImageIcon(
+					GalleryRemote.class.getResource("/computer.gif"));
+			iUploading = new ImageIcon(
+					GalleryRemote.class.getResource("/uploading.gif"));
 		} catch (Exception e) {
 			Log.logException(Log.LEVEL_ERROR, MODULE, e);
 		}

@@ -4,16 +4,25 @@
  */
 package com.gallery.GalleryRemote;
 
-import HTTPClient.NVPair;
-import com.gallery.GalleryRemote.util.GRI18n;
-import com.gallery.GalleryRemote.util.DialogUtil;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
+import HTTPClient.NVPair;
+
+import com.gallery.GalleryRemote.util.DialogUtil;
+import com.gallery.GalleryRemote.util.GRI18n;
 
 /**
  * Do the authorization popup in a swing-compatible way. Built from the code in
@@ -91,6 +100,7 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 	 * @created February 2, 2003
 	 */
 	private static class BasicAuthBox extends JDialog implements ActionListener {
+		private static final long serialVersionUID = 3085064589259802287L;
 		private final static String title = GRI18n.getString(MODULE, "authreq");
 		private JLabel line1, line2, line3;
 		private JTextField user, pass;
@@ -208,7 +218,7 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 
 			// This is a modal dialog: the "show" method does not return
 			// until "hide" is called by close, cancel or ok action
-			show();
+			setVisible(true);
 
 			NVPair result = new NVPair(user.getText(), pass.getText());
 			user.setText("");
@@ -227,14 +237,14 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == pass || "ok".equals(e.getActionCommand())) {
 				done = OK;
-				hide();
+				setVisible(false);
 			} else if ("clear".equals(e.getActionCommand())) {
 				user.setText("");
 				pass.setText("");
 				user.requestFocus();
 			} else if ("cancel".equals(e.getActionCommand())) {
 				done = CANCEL;
-				hide();
+				setVisible(false);
 			} else if ("close".equals(e.getActionCommand())) {
 			}
 		}

@@ -197,7 +197,7 @@ public abstract class GalleryAbstractListModel implements ListModel, Serializabl
 	 * @see #getListDataListeners
 	 * @since 1.3
 	 */
-	public EventListener[] getListeners(Class listenerType) {
+	public EventListener[] getListeners(Class<? extends EventListener> listenerType) {
 		if (listenerList == null) listenerList = new EventListenerList();
 		return listenerList.getListeners(listenerType);
 	}

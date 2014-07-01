@@ -20,16 +20,26 @@
  */
 package com.gallery.GalleryRemote;
 
-import com.gallery.GalleryRemote.util.DialogUtil;
-import com.gallery.GalleryRemote.util.GRI18n;
-
-import javax.swing.*;
-import javax.swing.border.MatteBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.UIManager;
+import javax.swing.border.MatteBorder;
+
+import com.gallery.GalleryRemote.util.DialogUtil;
+import com.gallery.GalleryRemote.util.GRI18n;
 
 /**
  * Gallery Remote About Box
@@ -37,10 +47,10 @@ import java.util.StringTokenizer;
  * @author paour
  */
 public class AboutBox extends JDialog {
+	private static final long serialVersionUID = 117092856826918304L;
 	public static final String MODULE = "About";
 	public static int TOP = 5;
 	public static int BOTTOM = 105;
-
 
 	/**
 	 * Constructor for the AboutBox object
@@ -50,17 +60,16 @@ public class AboutBox extends JDialog {
 		init();
 	}
 
-
 	/**
 	 * Constructor for the AboutBox object
 	 * 
-	 * @param owner Description of Parameter
+	 * @param owner
+	 *            Description of Parameter
 	 */
 	public AboutBox(Frame owner) {
 		super(owner);
 		init();
 	}
-
 
 	private void init() {
 		setModal(true);
@@ -71,18 +80,18 @@ public class AboutBox extends JDialog {
 
 		DialogUtil.center(this);
 
-		addMouseListener(
-				new java.awt.event.MouseAdapter() {
-					public void mouseClicked(MouseEvent e) {
-						thisWindowClosing();
-					}
-				});
-		addWindowListener(
-				new java.awt.event.WindowAdapter() {
-					public void windowClosing(MouseEvent e) {
-						thisWindowClosing();
-					}
-				});
+		addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				thisWindowClosing();
+			}
+		});
+		addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				thisWindowClosing();
+			}
+		});
 	}
 
 	// Close the window when the box is clicked
@@ -91,15 +100,15 @@ public class AboutBox extends JDialog {
 		dispose();
 	}
 
-
 	/**
 	 * AboutPanel: scrolling panel of credits for About boxes
 	 * 
 	 * @author paour
 	 */
 	public class AboutPanel extends JComponent {
+		private static final long serialVersionUID = 539994781856850049L;
 		ImageIcon image;
-		ArrayList text;
+		ArrayList<String> text;
 		int scrollPosition;
 		AnimationThread thread;
 		int maxWidth;
@@ -114,21 +123,21 @@ public class AboutBox extends JDialog {
 			fm = getFontMetrics(getFont());
 
 			URL imu = getClass().getResource("/rar_about_gr1.png");
-			Log.log(Log.LEVEL_TRACE, MODULE, "Looking for splash screen in " + imu.toString());
+			Log.log(Log.LEVEL_TRACE, MODULE, "Looking for splash screen in "
+					+ imu.toString());
 			image = new ImageIcon(imu);
 
 			setBorder(new MatteBorder(1, 1, 1, 1, Color.gray));
 
-			text = new ArrayList();
+			text = new ArrayList<String>();
 			StringTokenizer st = new StringTokenizer(
 					GalleryRemote._().properties.getProperty("aboutText"), "\n");
 			while (st.hasMoreTokens()) {
 				String line = st.nextToken();
 				text.add(line);
-				maxWidth = Math.max(maxWidth,
-						fm.stringWidth(line) + 10);
+				maxWidth = Math.max(maxWidth, fm.stringWidth(line) + 10);
 			}
-			initialPosition = getHeight() - BOTTOM /*- BOTTOM*/ - TOP - TOP;
+			initialPosition = getHeight() - BOTTOM /*- BOTTOM*/- TOP - TOP;
 			scrollPosition = initialPosition;
 
 			thread = new AnimationThread();
@@ -139,6 +148,7 @@ public class AboutBox extends JDialog {
 		 * 
 		 * @return The preferredSize value
 		 */
+		@Override
 		public Dimension getPreferredSize() {
 			return new Dimension(1 + image.getIconWidth(),
 					1 + image.getIconHeight());
@@ -147,15 +157,18 @@ public class AboutBox extends JDialog {
 		/**
 		 * Description of the Method
 		 * 
-		 * @param g Description of Parameter
+		 * @param g
+		 *            Description of Parameter
 		 */
+		@Override
 		public void paintComponent(Graphics g) {
-			//g.setColor(new Color(96, 96, 96));
+			// g.setColor(new Color(96, 96, 96));
 			image.paintIcon(this, g, 1, 1);
 
 			FontMetrics fm = g.getFontMetrics();
 
-			String version = GalleryRemote._().properties.getProperty("version");
+			String version = GalleryRemote._().properties
+					.getProperty("version");
 			g.drawString(version, (getWidth() - fm.stringWidth(version)) / 2,
 					getHeight() - 5);
 
@@ -182,6 +195,7 @@ public class AboutBox extends JDialog {
 		/**
 		 * Adds a feature to the Notify attribute of the AboutPanel object
 		 */
+		@Override
 		public void addNotify() {
 			super.addNotify();
 			thread.start();
@@ -190,6 +204,7 @@ public class AboutBox extends JDialog {
 		/**
 		 * Description of the Method
 		 */
+		@Override
 		public void removeNotify() {
 			super.removeNotify();
 			thread.kill();
@@ -203,12 +218,10 @@ public class AboutBox extends JDialog {
 		class AnimationThread extends Thread {
 			private boolean running = true;
 
-
 			AnimationThread() {
 				super(GRI18n.getString(MODULE, "aboutAnim"));
 				setPriority(Thread.MIN_PRIORITY);
 			}
-
 
 			/**
 			 * Description of the Method
@@ -217,17 +230,18 @@ public class AboutBox extends JDialog {
 				running = false;
 			}
 
-
 			/**
 			 * Main processing method for the AnimationThread object
 			 */
+			@Override
 			public void run() {
 				FontMetrics fm = getFontMetrics(getFont());
 				int max = (text.size() * fm.getHeight());
 				long start = System.currentTimeMillis();
 
 				while (running) {
-					scrollPosition = initialPosition + (int) ((System.currentTimeMillis() - start) / 40);
+					scrollPosition = initialPosition
+							+ (int) ((System.currentTimeMillis() - start) / 40);
 
 					if (scrollPosition > max) {
 						scrollPosition = initialPosition;
@@ -235,15 +249,14 @@ public class AboutBox extends JDialog {
 					}
 
 					try {
-						Thread.sleep(100/60);
-					} catch (Exception e) {	}
+						Thread.sleep(100 / 60);
+					} catch (Exception e) {
+					}
 
-					repaint(getWidth() / 2 - maxWidth,
-							TOP, maxWidth * 2,
+					repaint(getWidth() / 2 - maxWidth, TOP, maxWidth * 2,
 							getHeight() - TOP - BOTTOM);
 				}
 			}
 		}
 	}
 }
-

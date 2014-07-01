@@ -68,9 +68,9 @@ public class PictureInspector extends JPanel implements ActionListener,
 	private static final long serialVersionUID = -5594312109149362431L;
 	public static final String MODULE = "PictInspec";
 
-	HashMap extraLabels = new HashMap();
-	HashMap extraTextAreas = new HashMap();
-	ArrayList currentExtraFields = null;
+	HashMap<String, JLabel> extraLabels = new HashMap<String, JLabel>();
+	HashMap<String, JTextArea> extraTextAreas = new HashMap<String, JTextArea>();
+	ArrayList<String> currentExtraFields = null;
 
 	JLabel jLabel5 = new JLabel();
 	JLabel jLabel6 = new JLabel();
@@ -304,6 +304,7 @@ public class PictureInspector extends JPanel implements ActionListener,
 	 * @param e
 	 *            Action event
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		Log.log(Log.LEVEL_INFO, MODULE, "Command selected " + command);
@@ -347,6 +348,7 @@ public class PictureInspector extends JPanel implements ActionListener,
 	/**
 	 * Caption JTextArea events.
 	 */
+	@Override
 	public void insertUpdate(DocumentEvent e) {
 		textUpdate(e);
 	}
@@ -354,6 +356,7 @@ public class PictureInspector extends JPanel implements ActionListener,
 	/**
 	 * Caption JTextArea events.
 	 */
+	@Override
 	public void removeUpdate(DocumentEvent e) {
 		textUpdate(e);
 	}
@@ -361,6 +364,7 @@ public class PictureInspector extends JPanel implements ActionListener,
 	/**
 	 * Caption JTextArea events.
 	 */
+	@Override
 	public void changedUpdate(DocumentEvent e) {
 		textUpdate(e);
 	}
@@ -373,7 +377,7 @@ public class PictureInspector extends JPanel implements ActionListener,
 				p.setCaption(jCaption.getText());
 			}
 
-			Iterator it = extraTextAreas.keySet().iterator();
+			Iterator<String> it = extraTextAreas.keySet().iterator();
 			while (it.hasNext()) {
 				String name = (String) it.next();
 				JTextArea field = (JTextArea) extraTextAreas.get(name);
@@ -502,7 +506,7 @@ public class PictureInspector extends JPanel implements ActionListener,
 	}
 
 	void addExtraFields(Picture p) {
-		ArrayList newExtraFields = p.getParentAlbum().getExtraFields();
+		ArrayList<String> newExtraFields = p.getParentAlbum().getExtraFields();
 
 		if (newExtraFields == null) {
 			removeExtraFields();
@@ -511,7 +515,7 @@ public class PictureInspector extends JPanel implements ActionListener,
 				removeExtraFields();
 
 				int i = 0;
-				Iterator it = newExtraFields.iterator();
+				Iterator<String> it = newExtraFields.iterator();
 				while (it.hasNext()) {
 					String name = (String) it.next();
 					// String value = p.getExtraField(name);
@@ -541,7 +545,7 @@ public class PictureInspector extends JPanel implements ActionListener,
 				currentExtraFields = newExtraFields;
 			}
 
-			Iterator it = newExtraFields.iterator();
+			Iterator<String> it = newExtraFields.iterator();
 			while (it.hasNext()) {
 				String name = (String) it.next();
 				String value = p.getExtraField(name);
@@ -556,15 +560,15 @@ public class PictureInspector extends JPanel implements ActionListener,
 	}
 
 	void removeExtraFields() {
-		Iterator it = extraLabels.values().iterator();
+		Iterator<JLabel> it = extraLabels.values().iterator();
 		while (it.hasNext()) {
 			JLabel label = (JLabel) it.next();
 			remove(label);
 		}
 
-		it = extraTextAreas.values().iterator();
-		while (it.hasNext()) {
-			JTextArea textArea = (JTextArea) it.next();
+		Iterator<JTextArea> i = extraTextAreas.values().iterator();
+		while (i.hasNext()) {
+			JTextArea textArea = (JTextArea) i.next();
 			remove(textArea);
 		}
 
@@ -574,6 +578,7 @@ public class PictureInspector extends JPanel implements ActionListener,
 		currentExtraFields = null;
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		// Log.log(Log.TRACE, MODULE, "setEnabled " + enabled);
 		jIcon.setEnabled(enabled);
@@ -590,24 +595,36 @@ public class PictureInspector extends JPanel implements ActionListener,
 
 	// Focus traversal actions
 	public Action nextFocusAction = new AbstractAction("Move Focus Forwards") {
+		private static final long serialVersionUID = -7481079099741609449L;
+
+		@Override
 		public void actionPerformed(ActionEvent evt) {
 			((Component) evt.getSource()).transferFocus();
 		}
 	};
 
 	public Action prevFocusAction = new AbstractAction("Move Focus Backwards") {
+		private static final long serialVersionUID = -4207478878462672331L;
+
+		@Override
 		public void actionPerformed(ActionEvent evt) {
 			((Component) evt.getSource()).transferFocusBackward();
 		}
 	};
 
 	public Action nextPictureAction = new AbstractAction("Select Next Picture") {
+		private static final long serialVersionUID = -3058236737204149574L;
+
+		@Override
 		public void actionPerformed(ActionEvent evt) {
 			CoreUtils.selectNextPicture();
 		}
 	};
 
 	public Action prevPictureAction = new AbstractAction("Select Prev Picture") {
+		private static final long serialVersionUID = 5771498665345070313L;
+
+		@Override
 		public void actionPerformed(ActionEvent evt) {
 			CoreUtils.selectPrevPicture();
 		}

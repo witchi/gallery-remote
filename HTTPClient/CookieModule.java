@@ -2,7 +2,7 @@
  * @(#)CookieModule.java				0.3-3 06/05/2001
  *
  *  This file is part of the HTTPClient package
- *  Copyright (C) 1996-2001 Ronald Tschalär
+ *  Copyright (C) 1996-2001 Ronald Tschalï¿½r
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -93,7 +93,7 @@ import java.awt.event.WindowAdapter;
  * @see <a href="http://home.netscape.com/newsref/std/cookie_spec.html">Netscape's cookie spec</a>
  * @see <a href="http://www.ietf.org/rfc/rfc2965.txt">HTTP State Management Mechanism spec</a>
  * @version	0.3-3  06/05/2001
- * @author	Ronald Tschalär
+ * @author	Ronald Tschalï¿½r
  * @since	V0.3
  */
 public class CookieModule implements HTTPClientModule
@@ -829,7 +829,7 @@ class DefaultCookiePolicyHandler implements CookiePolicyHandler
  * or if cookies from whole domains should be silently accepted or rejected.
  *
  * @version	0.3-3  06/05/2001
- * @author	Ronald Tschalär
+ * @author	Ronald Tschalï¿½r
  */
 class BasicCookieBox extends Frame
 {

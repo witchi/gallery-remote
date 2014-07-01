@@ -34,7 +34,7 @@ import java.util.Iterator;
  * Picture model
  * 
  * @author paour
- * @created 11 août 2002
+ * @created 11 aoÃ»t 2002
  */
 public class PictureSelection extends ArrayList implements Transferable, ClipboardOwner {
 

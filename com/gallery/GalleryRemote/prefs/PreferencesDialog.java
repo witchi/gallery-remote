@@ -189,7 +189,7 @@ public class PreferencesDialog extends JDialog implements ListSelectionListener,
 	 * Cell renderer
 	 * 
 	 * @author paour
-	 * @created 11 août 2002
+	 * @created 11 aoÃ»t 2002
 	 */
 	public class IconsCellRenderer extends DefaultListCellRenderer {
 		public IconsCellRenderer() {

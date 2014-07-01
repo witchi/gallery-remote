@@ -179,7 +179,6 @@ public class PropertiesFile extends GalleryProperties {
 	 * @throws java.io.FileNotFoundException
 	 *             Description of Exception
 	 */
-	@SuppressWarnings("resource")
 	public synchronized void read() throws FileNotFoundException {
 
 		if (mFilename == null) {

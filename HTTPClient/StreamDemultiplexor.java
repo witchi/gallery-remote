@@ -69,7 +69,8 @@ class StreamDemultiplexor implements GlobalConstants
     private static SocketTimeout   TimerThread = null;
 
     /** cleanup object to stop timer thread when we're gc'd */
-    private static Object          cleanup;
+    @SuppressWarnings("unused")
+	private static Object          cleanup;
 
     /** a Vector to hold the list of response handlers were serving */
     private LinkedList             RespHandlerList;

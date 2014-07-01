@@ -28,9 +28,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.swing.ListModel;
 import javax.swing.event.EventListenerList;
@@ -53,8 +55,7 @@ import com.gallery.GalleryRemote.util.NaturalOrderComparator;
  * @author paour
  */
 
-public class Album extends GalleryItem implements ListModel<Picture>, Serializable,
-		PreferenceNames {
+public class Album extends GalleryItem implements ListModel<Picture>, Serializable, PreferenceNames {
 
 	private static final long serialVersionUID = -448524246006100127L;
 
@@ -104,10 +105,8 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	transient private Integer albumDepth;
 	transient private boolean suppressEvents = false;
 
-	public static List<String> extraFieldsNoShow = Arrays.asList(new String[] {
-			"Capture date", "Upload date", "Description" });
-	public static List<String> extraFieldsNoShowG2 = Arrays
-			.asList(new String[] { "Capture date", "Upload date" });
+	public static List<String> extraFieldsNoShow = Arrays.asList(new String[] { "Capture date", "Upload date", "Description" });
+	public static List<String> extraFieldsNoShowG2 = Arrays.asList(new String[] { "Capture date", "Upload date" });
 
 	public Album(Gallery gallery) {
 		super(gallery);
@@ -119,9 +118,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Retrieves the album properties from the server.
 	 */
 	public void fetchAlbumProperties(StatusUpdate su) {
-		if (!hasFetchedInfo
-				&& getGallery().getComm(su).hasCapability(su,
-						GalleryCommCapabilities.CAPA_ALBUM_INFO)) {
+		if (!hasFetchedInfo && getGallery().getComm(su).hasCapability(su, GalleryCommCapabilities.CAPA_ALBUM_INFO)) {
 			if (su == null) {
 				su = new StatusUpdateAdapter() {
 				};
@@ -130,22 +127,18 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 			try {
 				gallery.getComm(su).albumProperties(su, this, false);
 			} catch (RuntimeException e) {
-				Log.log(Log.LEVEL_INFO, MODULE,
-						"Server probably doesn't support album-properties");
+				Log.log(Log.LEVEL_INFO, MODULE, "Server probably doesn't support album-properties");
 				Log.logException(Log.LEVEL_INFO, MODULE, e);
 			}
 		}
 	}
 
-	public void fetchAlbumImages(StatusUpdate su, boolean recursive,
-			int maxPictures) {
+	public void fetchAlbumImages(StatusUpdate su, boolean recursive, int maxPictures) {
 		fetchAlbumImages(su, recursive, maxPictures, false);
 	}
 
-	public void fetchAlbumImages(StatusUpdate su, boolean recursive,
-			int maxPictures, boolean random) {
-		if (getGallery().getComm(su).hasCapability(su,
-				GalleryCommCapabilities.CAPA_FETCH_ALBUM_IMAGES)) {
+	public void fetchAlbumImages(StatusUpdate su, boolean recursive, int maxPictures, boolean random) {
+		if (getGallery().getComm(su).hasCapability(su, GalleryCommCapabilities.CAPA_FETCH_ALBUM_IMAGES)) {
 			if (su == null) {
 				su = new StatusUpdateAdapter() {
 				};
@@ -154,11 +147,9 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 			try {
 				removeRemotePictures();
 
-				gallery.getComm(su).fetchAlbumImages(su, this, recursive, true,
-						maxPictures, random);
+				gallery.getComm(su).fetchAlbumImages(su, this, recursive, true, maxPictures, random);
 			} catch (RuntimeException e) {
-				Log.log(Log.LEVEL_INFO, MODULE,
-						"Server probably doesn't support album-fetch-images");
+				Log.log(Log.LEVEL_INFO, MODULE, "Server probably doesn't support album-fetch-images");
 				Log.logException(Log.LEVEL_INFO, MODULE, e);
 			}
 		}
@@ -177,8 +168,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	}
 
 	public void moveAlbumTo(StatusUpdate su, Album newParent) {
-		if (getGallery().getComm(su).hasCapability(su,
-				GalleryCommCapabilities.CAPA_MOVE_ALBUM)) {
+		if (getGallery().getComm(su).hasCapability(su, GalleryCommCapabilities.CAPA_MOVE_ALBUM)) {
 			if (su == null) {
 				su = new StatusUpdateAdapter() {
 				};
@@ -187,14 +177,12 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 			try {
 				if (gallery.getComm(su).moveAlbum(su, this, newParent, false)) {
 					gallery.removeNodeFromParent(this);
-					gallery.insertNodeInto(this, newParent,
-							newParent.getChildCount());
+					gallery.insertNodeInto(this, newParent, newParent.getChildCount());
 				}
 
 				// gallery.fetchAlbums(su);
 			} catch (RuntimeException e) {
-				Log.log(Log.LEVEL_INFO, MODULE,
-						"Server probably doesn't support move-album");
+				Log.log(Log.LEVEL_INFO, MODULE, "Server probably doesn't support move-album");
 				Log.logException(Log.LEVEL_INFO, MODULE, e);
 			}
 		}
@@ -204,7 +192,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Sets the server auto resize dimension.
 	 * 
 	 * @param autoResize
-	 *            the server's resize dimension
+	 *           the server's resize dimension
 	 */
 	public void setServerAutoResize(int autoResize) {
 		this.autoResize = autoResize;
@@ -226,7 +214,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Sets the gallery attribute of the Album object
 	 * 
 	 * @param gallery
-	 *            The new gallery
+	 *           The new gallery
 	 */
 	/*
 	 * public void setGallery(Gallery gallery) { this.gallery = gallery; }
@@ -254,7 +242,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Adds a picture to the album
 	 * 
 	 * @param p
-	 *            the picture to add. This will change its parent album
+	 *           the picture to add. This will change its parent album
 	 */
 	public void addPicture(Picture p) {
 		p.setParent(this);
@@ -268,7 +256,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Adds a picture to the album
 	 * 
 	 * @param file
-	 *            the file to create the picture from
+	 *           the file to create the picture from
 	 */
 	public Picture addPicture(File file) {
 		Picture p = new Picture(gallery, file);
@@ -285,7 +273,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Adds pictures to the album
 	 * 
 	 * @param files
-	 *            the files to create the pictures from
+	 *           the files to create the pictures from
 	 */
 	public ArrayList<Picture> addPictures(File[] files) {
 		return addPictures(files, -1);
@@ -295,9 +283,9 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Adds pictures to the album at a specified index
 	 * 
 	 * @param files
-	 *            the files to create the pictures from
+	 *           the files to create the pictures from
 	 * @param index
-	 *            the index in the list at which to begin adding
+	 *           the index in the list at which to begin adding
 	 */
 	public ArrayList<Picture> addPictures(File[] files, int index) {
 		List<File> expandedFiles = Arrays.asList(files);
@@ -310,11 +298,9 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 			Log.logException(Log.LEVEL_ERROR, MODULE, e);
 		}
 
-		Log.log(Log.LEVEL_TRACE, MODULE, "addPictures (expanded): "
-				+ expandedFiles);
+		Log.log(Log.LEVEL_TRACE, MODULE, "addPictures (expanded): " + expandedFiles);
 
-		ArrayList<Picture> pictures = new ArrayList<Picture>(
-				expandedFiles.size());
+		ArrayList<Picture> pictures = new ArrayList<Picture>(expandedFiles.size());
 
 		for (Iterator<File> it = expandedFiles.iterator(); it.hasNext();) {
 			File f = it.next();
@@ -364,8 +350,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 
 	private void addPictureInternal(int index, Picture p) {
 		// handle EXIF
-		if (GalleryRemote._().properties.getBooleanProperty(EXIF_AUTOROTATE)
-				&& p.getExifData() != null) {
+		if (GalleryRemote._().properties.getBooleanProperty(EXIF_AUTOROTATE) && p.getExifData() != null) {
 			ImageUtils.AngleFlip af = p.getExifData().getTargetOrientation();
 
 			if (af != null) {
@@ -385,7 +370,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	}
 
 	public void sortPicturesAlphabetically() {
-		Collections.sort(pictures, new NaturalOrderComparator());
+		Collections.sort(pictures, new NaturalOrderComparator<Picture>());
 		fireContentsChanged(this, 0, pictures.size() - 1);
 	}
 
@@ -396,6 +381,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	public void sortPicturesCreated() {
 		Collections.sort(pictures, new Comparator<Picture>() {
 
+			@Override
 			public int compare(Picture o1, Picture o2) {
 				Date d1 = null, d2 = null;
 
@@ -427,9 +413,10 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 		fireContentsChanged(this, 0, pictures.size() - 1);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void sortSubAlbums() {
 		if (children != null) {
-			Collections.sort(children, new NaturalOrderComparator());
+			Collections.sort((Vector<Album>) children, new NaturalOrderComparator<Album>());
 		}
 
 		fireContentsChanged(this, 0, pictures.size() - 1);
@@ -459,7 +446,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Remove a picture
 	 * 
 	 * @param n
-	 *            item number of the picture to remove
+	 *           item number of the picture to remove
 	 */
 	public void removePicture(int n) {
 		pictures.remove(n);
@@ -475,7 +462,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Remove pictures
 	 * 
 	 * @param indices
-	 *            list of indices of pictures to remove
+	 *           list of indices of pictures to remove
 	 */
 	public void removePictures(int[] indices) {
 		int min, max;
@@ -496,7 +483,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Get a picture from the album
 	 * 
 	 * @param n
-	 *            index of the picture to retrieve
+	 *           index of the picture to retrieve
 	 * @return The Picture
 	 */
 	public Picture getPicture(int n) {
@@ -507,9 +494,9 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Set a picture in the album
 	 * 
 	 * @param n
-	 *            index of the picture
+	 *           index of the picture
 	 * @param p
-	 *            The new picture
+	 *           The new picture
 	 */
 	public void setPicture(int n, Picture p) {
 		pictures.set(n, p);
@@ -536,7 +523,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Sets the name attribute of the Album object
 	 * 
 	 * @param name
-	 *            The new name value
+	 *           The new name value
 	 */
 	public void setName(String name) {
 		this.name = removeOffendingChars(name);
@@ -571,7 +558,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Sets the title attribute of the Album object
 	 * 
 	 * @param title
-	 *            The new title
+	 *           The new title
 	 */
 	public void setTitle(String title) {
 		this.title = title;
@@ -597,9 +584,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 */
 	public long getPictureFileSize() {
 		if (pictureFileSize == null) {
-			pictureFileSize = new Long(
-					getPictureFileSize((Picture[]) pictures
-							.toArray(new Picture[0])));
+			pictureFileSize = new Long(getPictureFileSize((Picture[]) pictures.toArray(new Picture[0])));
 		}
 
 		return pictureFileSize.longValue();
@@ -609,7 +594,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Gets the aggregated file size of a list of pictures
 	 * 
 	 * @param pictures
-	 *            the list of Pictures
+	 *           the list of Pictures
 	 * @return The file size (bytes)
 	 */
 	public static long getPictureFileSize(Picture[] pictures) {
@@ -621,7 +606,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * will be cast to Pictures.
 	 * 
 	 * @param pictures
-	 *            the list of Pictures
+	 *           the list of Pictures
 	 * @return The file size (bytes)
 	 */
 	public static long getObjectFileSize(List<Picture> pictures) {
@@ -656,10 +641,8 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 
 	@Override
 	public boolean equals(Object o) {
-		return (o != null && o instanceof Album
-				&& ((Album) o).getGallery() == getGallery()
-				&& getName() != null && ((Album) o).getName() != null && ((Album) o)
-				.getName().equals(getName()));
+		return (o != null && o instanceof Album && ((Album) o).getGallery() == getGallery() && getName() != null
+				&& ((Album) o).getName() != null && ((Album) o).getName().equals(getName()));
 	}
 
 	/*
@@ -681,7 +664,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Gets the elementAt attribute of the Album object
 	 * 
 	 * @param index
-	 *            Description of Parameter
+	 *           Description of Parameter
 	 * @return The elementAt value
 	 */
 	@Override
@@ -693,8 +676,8 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * Description of the Method
 	 */
 	/*
-	 * public void setParent(Album a) { // take care of a Gallery bug... if (a
-	 * == this) { Log.log(Log.LEVEL_ERROR, MODULE, "Gallery error: the album " +
+	 * public void setParent(Album a) { // take care of a Gallery bug... if (a ==
+	 * this) { Log.log(Log.LEVEL_ERROR, MODULE, "Gallery error: the album " +
 	 * name + " is its own parent. You should delete it, the album database " +
 	 * "is corrupted because of it.");
 	 * 
@@ -822,8 +805,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 
 	int depthHelper(int depth) throws IllegalArgumentException {
 		if (getParentAlbum() == this || depth > 20) {
-			throw new IllegalArgumentException(
-					"Circular containment hierarchy. Gallery corrupted!");
+			throw new IllegalArgumentException("Circular containment hierarchy. Gallery corrupted!");
 		}
 
 		if (getParentAlbum() != null) {
@@ -861,8 +843,8 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * }, // new Object[] { a }); gallery.fireTreeStructureChanged(gallery,
 	 * gallery.getPathForAlbum(this)); } }
 	 * 
-	 * public void removeSubAlbum(Album a) { int index = subAlbums.indexOf(a);
-	 * if (index != -1) { subAlbums.remove(a);
+	 * public void removeSubAlbum(Album a) { int index = subAlbums.indexOf(a); if
+	 * (index != -1) { subAlbums.remove(a);
 	 * 
 	 * if (!suppressEvents) { //gallery.fireTreeNodesRemoved(this,
 	 * gallery.getObjectArrayForAlbum(this), // new int[] { index }, // new
@@ -907,8 +889,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 		if (overrideResize != null) {
 			return overrideResize.booleanValue();
 		} else {
-			return GalleryRemote._().properties
-					.getBooleanProperty(RESIZE_BEFORE_UPLOAD);
+			return GalleryRemote._().properties.getBooleanProperty(RESIZE_BEFORE_UPLOAD);
 		}
 	}
 
@@ -916,8 +897,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 		if (overrideResizeDefault != null) {
 			return overrideResizeDefault.booleanValue();
 		} else {
-			return GalleryRemote._().properties
-					.getIntDimensionProperty(RESIZE_TO) == 0;
+			return GalleryRemote._().properties.getIntDimensionProperty(RESIZE_TO) == 0;
 		}
 	}
 
@@ -925,8 +905,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 		if (overrideResizeDimension != -1) {
 			return overrideResizeDimension;
 		} else {
-			return GalleryRemote._().properties
-					.getIntDimensionProperty(RESIZE_TO);
+			return GalleryRemote._().properties.getIntDimensionProperty(RESIZE_TO);
 		}
 	}
 
@@ -977,8 +956,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			if (listeners[i] == ListDataListener.class) {
 				if (e == null) {
-					e = new ListDataEvent(source,
-							ListDataEvent.CONTENTS_CHANGED, index0, index1);
+					e = new ListDataEvent(source, ListDataEvent.CONTENTS_CHANGED, index0, index1);
 				}
 				((ListDataListener) listeners[i + 1]).contentsChanged(e);
 			}
@@ -994,8 +972,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			if (listeners[i] == ListDataListener.class) {
 				if (e == null) {
-					e = new ListDataEvent(source, ListDataEvent.INTERVAL_ADDED,
-							index0, index1);
+					e = new ListDataEvent(source, ListDataEvent.INTERVAL_ADDED, index0, index1);
 				}
 				((ListDataListener) listeners[i + 1]).intervalAdded(e);
 			}
@@ -1011,8 +988,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			if (listeners[i] == ListDataListener.class) {
 				if (e == null) {
-					e = new ListDataEvent(source,
-							ListDataEvent.INTERVAL_REMOVED, index0, index1);
+					e = new ListDataEvent(source, ListDataEvent.INTERVAL_REMOVED, index0, index1);
 				}
 				((ListDataListener) listeners[i + 1]).intervalRemoved(e);
 			}
@@ -1020,4 +996,10 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	}
 
 	transient protected EventListenerList listenerList = new EventListenerList();
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Enumeration<Album> children() {
+		return (Enumeration<Album>) super.children();
+	}
 }

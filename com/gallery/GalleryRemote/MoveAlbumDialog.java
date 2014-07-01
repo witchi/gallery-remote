@@ -40,6 +40,8 @@ import java.util.Enumeration;
  */
 public class MoveAlbumDialog extends JDialog
 		implements ActionListener {
+
+	private static final long serialVersionUID = -5217703609161413941L;
 	public final static String MODULE = "MoveAlbum";
 
 	Gallery gallery = null;
@@ -52,7 +54,7 @@ public class MoveAlbumDialog extends JDialog
 	JLabel jLabel5 = new JLabel();
 	JLabel jLabel1 = new JLabel();
 	JLabel jAlbumName = new JLabel();
-	JComboBox jAlbum = null;
+	JComboBox<Album> jAlbum = null;
 	JPanel jPanel2 = new JPanel();
 	JButton jOk = new JButton();
 	JButton jCancel = new JButton();
@@ -87,7 +89,7 @@ public class MoveAlbumDialog extends JDialog
 		this.setModal(true);
 		this.setTitle(GRI18n.getString(MODULE, "title"));
 
-		Vector albums = new Vector(gallery.getFlatAlbumList());
+		Vector<Album> albums = new Vector<Album>(gallery.getFlatAlbumList());
 		//rootAlbum = new Album(gallery);
 		//rootAlbum.setSuppressEvents(true);
 		//rootAlbum.setTitle(GRI18n.getString(MODULE, "rootAlbmTitle"));
@@ -98,7 +100,7 @@ public class MoveAlbumDialog extends JDialog
 		}
 		removeChildren(albums, album);
 
-		jAlbum = new JComboBox(albums);
+		jAlbum = new JComboBox<Album>(albums);
 		jAlbum.setFont(UIManager.getFont("Label.font"));
 
 		jCancel.setText(GRI18n.getString("Common", "Cancel"));
@@ -128,8 +130,8 @@ public class MoveAlbumDialog extends JDialog
 		getRootPane().setDefaultButton(jOk);
 	}
 
-	public void removeChildren(Vector albums, Album album) {
-		for (Enumeration it = album.children(); it.hasMoreElements();) {
+	public void removeChildren(Vector<Album> albums, Album album) {
+		for (Enumeration<Album> it = album.children(); it.hasMoreElements();) {
 			Album subAlbum = (Album) it.nextElement();
 			removeChildren(albums, subAlbum);
 		}

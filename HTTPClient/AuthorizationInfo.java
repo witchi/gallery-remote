@@ -93,7 +93,7 @@ public class AuthorizationInfo implements Cloneable
     // class fields
 
     /** Holds the list of lists of authorization info structures */
-    private static Hashtable     CntxtList = new Hashtable();
+    private static Hashtable<Object, Hashtable>     CntxtList = new Hashtable<Object, Hashtable>();
 
     /** A pointer to the handler to be called when we need authorization info */
     private static AuthorizationHandler

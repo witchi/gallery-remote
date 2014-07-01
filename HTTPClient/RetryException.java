@@ -35,71 +35,68 @@ package HTTPClient;
 import java.io.IOException;
 
 /**
- * Signals that an exception was thrown and caught, and the request was
- * retried.
- *
- * @version	0.3-3  06/05/2001
- * @author	Ronald Tschal�r
+ * Signals that an exception was thrown and caught, and the request was retried.
+ * 
+ * @version 0.3-3 06/05/2001
+ * @author Ronald Tschal�r
  */
-class RetryException extends IOException
-{
-    /** the request to retry */
-    Request     request  = null;
+class RetryException extends IOException {
+	private static final long serialVersionUID = -2293945641458356734L;
 
-    /** the response associated with the above request */
-    Response    response = null;
+	/** the request to retry */
+	Request request = null;
 
-    /** the start of the liked list */
-    RetryException first = null;
+	/** the response associated with the above request */
+	Response response = null;
 
-    /** the next exception in the list */
-    RetryException next  = null;
+	/** the start of the liked list */
+	RetryException first = null;
 
-    /** the original exception which caused the connection to be closed. */
-    IOException exception = null;
+	/** the next exception in the list */
+	RetryException next = null;
 
-    /** was this exception generated because of an abnormal connection reset? */
-    boolean conn_reset = true;
+	/** the original exception which caused the connection to be closed. */
+	IOException exception = null;
 
-    /** restart processing? */
-    boolean restart = false;
+	/** was this exception generated because of an abnormal connection reset? */
+	boolean conn_reset = true;
 
+	/** restart processing? */
+	boolean restart = false;
 
-    /**
-     * Constructs an RetryException with no detail message.
-     * A detail message is a String that describes this particular exception.
-     */
-    public RetryException()
-    {
-	super();
-    }
+	/**
+	 * Constructs an RetryException with no detail message. A detail message is a
+	 * String that describes this particular exception.
+	 */
+	public RetryException() {
+		super();
+	}
 
+	/**
+	 * Constructs an RetryException class with the specified detail message. A
+	 * detail message is a String that describes this particular exception.
+	 * 
+	 * @param s
+	 *           the String containing a detail message
+	 */
+	public RetryException(String s) {
+		super(s);
+	}
 
-    /**
-     * Constructs an RetryException class with the specified detail message.
-     * A detail message is a String that describes this particular exception.
-     *
-     * @param s the String containing a detail message
-     */
-    public RetryException(String s)
-    {
-	super(s);
-    }
+	// Methods
 
+	/**
+	 * Inserts this exception into the list.
+	 * 
+	 * @param re
+	 *           the retry exception after which to add this one
+	 */
+	void addToListAfter(RetryException re) {
+		if (re == null)
+			return;
 
-    // Methods
-
-    /**
-     * Inserts this exception into the list.
-     *
-     * @param re the retry exception after which to add this one
-     */
-    void addToListAfter(RetryException re)
-    {
-	if (re == null)  return;
-
-	if (re.next != null)
-	    this.next = re.next;
-	re.next = this;
-    }
+		if (re.next != null)
+			this.next = re.next;
+		re.next = this;
+	}
 }

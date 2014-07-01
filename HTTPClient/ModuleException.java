@@ -32,35 +32,32 @@
 
 package HTTPClient;
 
-
 /**
  * Signals that an exception occured in a module.
- *
- * @version	0.3-3  06/05/2001
- * @author	Ronald Tschal�r
- * @since	V0.3
+ * 
+ * @version 0.3-3 06/05/2001
+ * @author Ronald Tschal�r
+ * @since V0.3
  */
-public class ModuleException extends Exception
-{
+public class ModuleException extends Exception {
+	private static final long serialVersionUID = 19191268149149172L;
 
-    /**
-     * Constructs an ModuleException with no detail message. A detail
-     * message is a String that describes this particular exception.
-     */
-    public ModuleException()
-    {
-	super();
-    }
+	/**
+	 * Constructs an ModuleException with no detail message. A detail message is
+	 * a String that describes this particular exception.
+	 */
+	public ModuleException() {
+		super();
+	}
 
-
-    /**
-     * Constructs an ModuleException class with the specified detail message.
-     * A detail message is a String that describes this particular exception.
-     *
-     * @param msg the String containing a detail message
-     */
-    public ModuleException(String msg)
-    {
-	super(msg);
-    }
+	/**
+	 * Constructs an ModuleException class with the specified detail message. A
+	 * detail message is a String that describes this particular exception.
+	 * 
+	 * @param msg
+	 *           the String containing a detail message
+	 */
+	public ModuleException(String msg) {
+		super(msg);
+	}
 }

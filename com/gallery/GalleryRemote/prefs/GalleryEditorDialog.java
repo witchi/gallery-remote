@@ -1,19 +1,34 @@
 package com.gallery.GalleryRemote.prefs;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+
 import com.gallery.GalleryRemote.Log;
 import com.gallery.GalleryRemote.model.Gallery;
 import com.gallery.GalleryRemote.util.DialogUtil;
 import com.gallery.GalleryRemote.util.GRI18n;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 /**
- * Created by IntelliJ IDEA.
- * User: paour
- * Date: May 27, 2003
+ * Created by IntelliJ IDEA. User: paour Date: May 27, 2003
  */
 public class GalleryEditorDialog extends JDialog implements ActionListener {
 
@@ -40,7 +55,7 @@ public class GalleryEditorDialog extends JDialog implements ActionListener {
 	JLabel jGlHelpLabel = new JLabel();
 	JLabel jAliasLabel = new JLabel();
 
-	JComboBox jType = new JComboBox();
+	JComboBox<String> jType = new JComboBox<String>();
 	JPanel jStylePanel = new JPanel();
 	CardLayout jStyleLayout = new CardLayout();
 
@@ -62,7 +77,7 @@ public class GalleryEditorDialog extends JDialog implements ActionListener {
 
 	JPanel jStandalone = new JPanel();
 	JTextField jStandaloneUrl = new JTextField();
-	
+
 	JCheckBox jAutoLogin = new JCheckBox();
 
 	JPanel jButtonPanel = new JPanel();
@@ -102,7 +117,7 @@ public class GalleryEditorDialog extends JDialog implements ActionListener {
 
 		jType.setToolTipText(GRI18n.getString(MODULE, "typeTip"));
 		jType.setEditable(false);
-		jType.setModel(new DefaultComboBoxModel(Gallery.types));
+		jType.setModel(new DefaultComboBoxModel<String>(Gallery.types));
 
 		jOk.setText(GRI18n.getString("Common", "OK"));
 		jOk.setActionCommand("OK");
@@ -143,78 +158,107 @@ public class GalleryEditorDialog extends JDialog implements ActionListener {
 		jGlHelpLabel.setPreferredSize(new Dimension(300, 80));
 		jGlHelpLabel.setText(GRI18n.getString(MODULE, "glHelp"));
 		jGlHelpLabel.setVerticalAlignment(SwingConstants.TOP);
-		
+
 		jAutoLogin.setText(GRI18n.getString(MODULE, "autoLogin"));
 
 		this.getContentPane().add(jMainPanel, BorderLayout.CENTER);
-		jMainPanel.add(jUsernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
-		jMainPanel.add(jAliasLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		jMainPanel.add(jPasswordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
-		jMainPanel.add(jTypeLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
-		jMainPanel.add(jAlias, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 5, 5), 0, 0));
-		jMainPanel.add(jUsername, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0));
-		jMainPanel.add(jPassword, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0));
-		jMainPanel.add(jAutoLogin, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0
-				, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0));
-		jMainPanel.add(jType, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0));
-		jMainPanel.add(jStylePanel, new GridBagConstraints(0, 5, 4, 1, 1.0, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
-		jMainPanel.add(jButtonPanel, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+		jMainPanel.add(jUsernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0,
+				0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(0, 5, 5, 5), 0, 0));
+		jMainPanel.add(jAliasLabel, new GridBagConstraints(0, 0, 1, 1, 0.0,
+				0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(5, 5, 5, 5), 0, 0));
+		jMainPanel.add(jPasswordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0,
+				0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(0, 5, 5, 5), 0, 0));
+		jMainPanel.add(jTypeLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
+				GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
+						5, 5, 5), 0, 0));
+		jMainPanel.add(jAlias, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(5, 0, 5, 5), 0, 0));
+		jMainPanel.add(jUsername, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 5, 5), 0, 0));
+		jMainPanel.add(jPassword, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 5, 5), 0, 0));
+		jMainPanel.add(jAutoLogin, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0,
+				GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 5, 5), 0, 0));
+		jMainPanel.add(jType, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 5, 5), 0, 0));
+		jMainPanel.add(jStylePanel, new GridBagConstraints(0, 5, 4, 1, 1.0,
+				1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(0, 5, 5, 5), 0, 0));
+		jMainPanel.add(jButtonPanel, new GridBagConstraints(0, 6, 2, 1, 0.0,
+				0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(10, 10, 10, 10), 0, 0));
 		jButtonPanel.add(jOk, null);
 		jButtonPanel.add(jCancel, null);
 
 		jStylePanel.add(jPostNuke, Gallery.types[Gallery.TYPE_POSTNUKE]);
-		jPostNuke.add(jPnLoginUrlLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 20, 0, 5), 0, 0));
-		jPostNuke.add(jPnLoginUrl, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 0), 0, 0));
-		jPostNuke.add(jPnGalleryUrlLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 20, 0, 5), 0, 0));
-		jPostNuke.add(jPnGalleryUrl, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 0), 0, 0));
-		jPostNuke.add(jPnHelpLabel, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0
-				, GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0, 20, 0, 0), 0, 0));
+		jPostNuke.add(jPnLoginUrlLabel, new GridBagConstraints(0, 0, 1, 1, 0.0,
+				0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(0, 20, 0, 5), 0, 0));
+		jPostNuke.add(jPnLoginUrl, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 5, 0), 0, 0));
+		jPostNuke.add(jPnGalleryUrlLabel, new GridBagConstraints(0, 1, 1, 1,
+				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(0, 20, 0, 5), 0, 0));
+		jPostNuke.add(jPnGalleryUrl, new GridBagConstraints(1, 1, 1, 1, 1.0,
+				0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 5, 0), 0, 0));
+		jPostNuke.add(jPnHelpLabel, new GridBagConstraints(0, 2, 2, 1, 1.0,
+				1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH,
+				new Insets(0, 20, 0, 0), 0, 0));
 
 		jStylePanel.add(jPHPNuke, Gallery.types[Gallery.TYPE_PHPNUKE]);
-		jPHPNuke.add(jPhpnLoginUrlLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 20, 0, 5), 0, 0));
-		jPHPNuke.add(jPhpnLoginUrl, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 0), 0, 0));
-		jPHPNuke.add(jPhpnGalleryUrlLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 20, 0, 5), 0, 0));
-		jPHPNuke.add(jPhpnGalleryUrl, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 0), 0, 0));
-		jPHPNuke.add(jPhpnHelpLabel, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0
-				, GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0, 20, 0, 0), 0, 0));
+		jPHPNuke.add(jPhpnLoginUrlLabel, new GridBagConstraints(0, 0, 1, 1,
+				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(0, 20, 0, 5), 0, 0));
+		jPHPNuke.add(jPhpnLoginUrl, new GridBagConstraints(1, 0, 1, 1, 1.0,
+				0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 5, 0), 0, 0));
+		jPHPNuke.add(jPhpnGalleryUrlLabel, new GridBagConstraints(0, 1, 1, 1,
+				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(0, 20, 0, 5), 0, 0));
+		jPHPNuke.add(jPhpnGalleryUrl, new GridBagConstraints(1, 1, 1, 1, 1.0,
+				0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 5, 0), 0, 0));
+		jPHPNuke.add(jPhpnHelpLabel, new GridBagConstraints(0, 2, 2, 1, 1.0,
+				1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH,
+				new Insets(0, 20, 0, 0), 0, 0));
 
 		jStylePanel.add(jGeekLog, Gallery.types[Gallery.TYPE_GEEKLOG]);
-		jGeekLog.add(jGlLoginUrlLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 20, 0, 5), 0, 0));
-		jGeekLog.add(jGlLoginUrl, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 0), 0, 0));
-		jGeekLog.add(jGlGalleryUrlLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 20, 0, 5), 0, 0));
-		jGeekLog.add(jGlGalleryUrl, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 0), 0, 0));
-		jGeekLog.add(jGlHelpLabel, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0
-				, GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0, 20, 0, 0), 0, 0));
+		jGeekLog.add(jGlLoginUrlLabel, new GridBagConstraints(0, 0, 1, 1, 0.0,
+				0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(0, 20, 0, 5), 0, 0));
+		jGeekLog.add(jGlLoginUrl, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 5, 0), 0, 0));
+		jGeekLog.add(jGlGalleryUrlLabel, new GridBagConstraints(0, 1, 1, 1,
+				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(0, 20, 0, 5), 0, 0));
+		jGeekLog.add(jGlGalleryUrl, new GridBagConstraints(1, 1, 1, 1, 1.0,
+				0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 5, 0), 0, 0));
+		jGeekLog.add(jGlHelpLabel, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0,
+				GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(
+						0, 20, 0, 0), 0, 0));
 
 		jStylePanel.add(jStandalone, Gallery.types[Gallery.TYPE_STANDALONE]);
-		jStandalone.add(jStandaloneUrlLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 20, 5, 5), 0, 0));
-		jStandalone.add(jStandaloneUrl, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0
-				, GridBagConstraints.SOUTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 0), 0, 0));
-		jStandalone.add(jStandaloneHelpLabel, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 20, 0, 0), 0, 0));
+		jStandalone.add(jStandaloneUrlLabel, new GridBagConstraints(0, 0, 1, 1,
+				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(0, 20, 5, 5), 0, 0));
+		jStandalone.add(jStandaloneUrl, new GridBagConstraints(1, 0, 1, 1, 1.0,
+				0.0, GridBagConstraints.SOUTHEAST,
+				GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 0), 0, 0));
+		jStandalone.add(jStandaloneHelpLabel, new GridBagConstraints(0, 1, 2,
+				1, 1.0, 1.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(0, 20, 0, 0), 0, 0));
 
 		jType.addActionListener(this);
 		jOk.addActionListener(this);
@@ -226,7 +270,7 @@ public class GalleryEditorDialog extends JDialog implements ActionListener {
 	public void resetUIState() {
 		jUsername.setText(gallery.getUsername());
 		jPassword.setText(gallery.getPassword());
-		jAlias.setText(gallery.getAlias() == null?"":gallery.getAlias());
+		jAlias.setText(gallery.getAlias() == null ? "" : gallery.getAlias());
 
 		jType.setSelectedIndex(gallery.getType());
 		String panel = (String) jType.getSelectedItem();
@@ -242,7 +286,7 @@ public class GalleryEditorDialog extends JDialog implements ActionListener {
 
 		jGlGalleryUrl.setText(gallery.getGlGalleryUrlString());
 		jGlLoginUrl.setText(gallery.getGlLoginUrlString());
-		
+
 		jAutoLogin.setSelected(gallery.isAutoLoadOnStartup());
 	}
 
@@ -251,7 +295,7 @@ public class GalleryEditorDialog extends JDialog implements ActionListener {
 		gallery.setPassword(new String(jPassword.getPassword()));
 		gallery.setType(jType.getSelectedIndex());
 		String alias = jAlias.getText().trim();
-		gallery.setAlias(alias.length() == 0?null:alias);
+		gallery.setAlias(alias.length() == 0 ? null : alias);
 
 		gallery.setStUrlString(jStandaloneUrl.getText());
 
@@ -263,7 +307,7 @@ public class GalleryEditorDialog extends JDialog implements ActionListener {
 
 		gallery.setGlLoginUrlString(jGlLoginUrl.getText());
 		gallery.setGlGalleryUrlString(jGlGalleryUrl.getText());
-		
+
 		gallery.setAutoLoadOnStartup(jAutoLogin.isSelected());
 	}
 

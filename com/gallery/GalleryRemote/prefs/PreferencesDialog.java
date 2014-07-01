@@ -1,14 +1,13 @@
 package com.gallery.GalleryRemote.prefs;
 
-import com.gallery.GalleryRemote.GalleryRemote;
-import com.gallery.GalleryRemote.Log;
-import com.gallery.GalleryRemote.util.DialogUtil;
-import com.gallery.GalleryRemote.util.GRI18n;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -16,23 +15,38 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
 
-/**
- * The Preferences dialog
- * User: paour
- * Date: May 8, 2003
- */
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-public class PreferencesDialog extends JDialog implements ListSelectionListener, ActionListener {
+import com.gallery.GalleryRemote.GalleryRemote;
+import com.gallery.GalleryRemote.Log;
+import com.gallery.GalleryRemote.util.DialogUtil;
+import com.gallery.GalleryRemote.util.GRI18n;
+
+/**
+ * The Preferences dialog User: paour Date: May 8, 2003
+ */
+public class PreferencesDialog extends JDialog implements
+		ListSelectionListener, ActionListener {
+
+	private static final long serialVersionUID = 8999939339280032022L;
 	public static final String MODULE = "PrefsDlog";
 
-
-	DefaultListModel panels = new DefaultListModel();
-	HashMap panelNames = new HashMap();
+	DefaultListModel<PreferencePanel> panels = new DefaultListModel<PreferencePanel>();
+	HashMap<String, PreferencePanel> panelNames = new HashMap<String, PreferencePanel>();
 	private boolean isOK = false;
 
 	JPanel jPanel1 = new JPanel();
 	JScrollPane jScrollPane1 = new JScrollPane();
-	JList jIcons = new JList();
+	JList<PreferencePanel> jIcons = new JList<PreferencePanel>();
 	JPanel jPanels = new JPanel();
 	GridBagLayout gridBagLayout1 = new GridBagLayout();
 	CardLayout jPanelsLayout = new CardLayout();
@@ -68,7 +82,8 @@ public class PreferencesDialog extends JDialog implements ListSelectionListener,
 			String className;
 			while ((className = panes.getProperty("pane." + i++)) != null) {
 				try {
-					PreferencePanel pp = (PreferencePanel) GalleryRemote.secureClassForName(className).newInstance();
+					PreferencePanel pp = (PreferencePanel) GalleryRemote
+							.secureClassForName(className).newInstance();
 
 					pp.setDialog(this);
 					pp.buildUI();
@@ -112,12 +127,15 @@ public class PreferencesDialog extends JDialog implements ListSelectionListener,
 		jCancel.setActionCommand("cancel");
 		gridLayout1.setHgap(5);
 		this.getContentPane().add(jPanel1, BorderLayout.CENTER);
-		jPanel1.add(jScrollPane1, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(10, 10, 0, 0), 0, 0));
-		jPanel1.add(jPanels, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 0, 10), 0, 0));
-		jPanel1.add(jPanel2, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+		jPanel1.add(jScrollPane1, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
+				new Insets(10, 10, 0, 0), 0, 0));
+		jPanel1.add(jPanels, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
+						10, 10, 0, 10), 0, 0));
+		jPanel1.add(jPanel2, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0,
+				GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(
+						10, 10, 10, 10), 0, 0));
 		jPanel2.add(jOK, null);
 		jScrollPane1.getViewport().add(jIcons, null);
 		jPanel2.add(jCancel, null);
@@ -134,6 +152,7 @@ public class PreferencesDialog extends JDialog implements ListSelectionListener,
 		getRootPane().setDefaultButton(jOK);
 	}
 
+	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		PreferencePanel pp = (PreferencePanel) jIcons.getSelectedValue();
 
@@ -148,6 +167,7 @@ public class PreferencesDialog extends JDialog implements ListSelectionListener,
 		pack();
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		Log.log(Log.LEVEL_INFO, MODULE, "Command selected " + cmd);
@@ -155,12 +175,14 @@ public class PreferencesDialog extends JDialog implements ListSelectionListener,
 		if (cmd.equals("OK")) {
 			GalleryRemote._().properties.uncache();
 
-			Enumeration enumeration = panels.elements();
+			Enumeration<PreferencePanel> enumeration = panels.elements();
 			while (enumeration.hasMoreElements()) {
-				PreferencePanel pp = (PreferencePanel) enumeration.nextElement();
+				PreferencePanel pp = (PreferencePanel) enumeration
+						.nextElement();
 
 				if (pp.hasBeenRead()) {
-					Log.log(Log.LEVEL_TRACE, MODULE, "Writing properties for panel " + pp.getClass());
+					Log.log(Log.LEVEL_TRACE, MODULE,
+							"Writing properties for panel " + pp.getClass());
 
 					pp.writeProperties(GalleryRemote._().properties);
 				}
@@ -170,8 +192,8 @@ public class PreferencesDialog extends JDialog implements ListSelectionListener,
 
 			setVisible(false);
 
-			//Log.log(Log.TRACE, MODULE, "Updating preferences");
-			//((MainFrame) getOwner()).readPreferences(oldProperties);
+			// Log.log(Log.TRACE, MODULE, "Updating preferences");
+			// ((MainFrame) getOwner()).readPreferences(oldProperties);
 		} else if (cmd.equals("cancel")) {
 			setVisible(false);
 		} else if (cmd.equals("revert")) {
@@ -192,6 +214,8 @@ public class PreferencesDialog extends JDialog implements ListSelectionListener,
 	 * @created 11 août 2002
 	 */
 	public class IconsCellRenderer extends DefaultListCellRenderer {
+		private static final long serialVersionUID = 969262059074430337L;
+
 		public IconsCellRenderer() {
 			super();
 			setHorizontalTextPosition(JLabel.CENTER);
@@ -203,17 +227,23 @@ public class PreferencesDialog extends JDialog implements ListSelectionListener,
 		 * Gets the listCellRendererComponent attribute of the FileCellRenderer
 		 * object
 		 * 
-		 * @param list     Description of Parameter
-		 * @param value    Description of Parameter
-		 * @param index    Description of Parameter
-		 * @param selected Description of Parameter
-		 * @param hasFocus Description of Parameter
+		 * @param list
+		 *            Description of Parameter
+		 * @param value
+		 *            Description of Parameter
+		 * @param index
+		 *            Description of Parameter
+		 * @param selected
+		 *            Description of Parameter
+		 * @param hasFocus
+		 *            Description of Parameter
 		 * @return The listCellRendererComponent value
 		 */
-		public Component getListCellRendererComponent(
-				JList list, Object value, int index,
-				boolean selected, boolean hasFocus) {
-			super.getListCellRendererComponent(list, value, index, selected, hasFocus);
+		@Override
+		public Component getListCellRendererComponent(JList<?> list,
+				Object value, int index, boolean selected, boolean hasFocus) {
+			super.getListCellRendererComponent(list, value, index, selected,
+					hasFocus);
 
 			if (value != null && index != -1) {
 				PreferencePanel pp = (PreferencePanel) value;

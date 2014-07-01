@@ -1,15 +1,14 @@
 package com.gallery.GalleryRemote.prefs;
 
-import com.gallery.GalleryRemote.MainFrame;
-
-import javax.swing.*;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
- * Interface for Preference Panels
- * User: paour
- * Date: May 8, 2003
+ * Interface for Preference Panels User: paour Date: May 8, 2003
  */
 public abstract class PreferencePanel extends JPanel {
+	private static final long serialVersionUID = -6800759798693900722L;
 	protected JPanel panel = new JPanel();
 	protected boolean hasBeenRead = false;
 	JDialog dialog = null;

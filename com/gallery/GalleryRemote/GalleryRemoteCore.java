@@ -1,12 +1,15 @@
 package com.gallery.GalleryRemote;
 
-import com.gallery.GalleryRemote.model.Picture;
-import com.gallery.GalleryRemote.model.Album;
-
-import javax.swing.*;
-import java.util.Iterator;
+import java.awt.Image;
 import java.io.File;
-import java.awt.*;
+import java.util.Iterator;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JList;
+
+import com.gallery.GalleryRemote.model.Album;
+import com.gallery.GalleryRemote.model.Gallery;
+import com.gallery.GalleryRemote.model.Picture;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,7 +23,7 @@ public interface GalleryRemoteCore {
 	public void shutdown(boolean shutdownOs);
 
 	public void flushMemory();
-	public void preloadThumbnails(Iterator pictures);
+	public void preloadThumbnails(Iterator<Picture> pictures);
 	public Image getThumbnail(Picture p);
 	public StatusUpdate getMainStatusUpdate();
 
@@ -30,8 +33,8 @@ public interface GalleryRemoteCore {
 	public void addPictures(File[] files, int index, boolean select);
 	public void addPictures(Picture[] pictures, int index, boolean select);
 
-	public DefaultComboBoxModel getGalleries();
+	public DefaultComboBoxModel<Gallery> getGalleries();
 	public Album getCurrentAlbum();
 
-	public JList getPicturesList();
+	public JList<Picture> getPicturesList();
 }

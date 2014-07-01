@@ -20,10 +20,22 @@
  */
 package com.gallery.GalleryRemote.prefs;
 
-import com.gallery.GalleryRemote.Log;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
 
-import java.io.*;
-import java.util.*;
+import com.gallery.GalleryRemote.Log;
 
 /**
  * Properties file for Gallery Remote
@@ -31,6 +43,7 @@ import java.util.*;
  * @author paour
  */
 public class PropertiesFile extends GalleryProperties {
+	private static final long serialVersionUID = -776541388101847577L;
 	public static final String MODULE = "PropsFile";
 
 	protected boolean read = false;
@@ -66,17 +79,18 @@ public class PropertiesFile extends GalleryProperties {
 		this.nick = nick;
 	}
 
-
 	/**
 	 * Overrides default method to track dirty state
 	 */
+	@Override
 	public Object setProperty(String name, String value) {
 		// if we're read-only, see if our defaults can write
 		if (readOnly) {
 			if (defaults != null) {
 				defaults.setProperty(name, value);
 			} else {
-				Log.log(Log.LEVEL_ERROR, MODULE, "Read-only PropertyFile without a default: setProperty was attempted");
+				Log.log(Log.LEVEL_ERROR, MODULE,
+						"Read-only PropertyFile without a default: setProperty was attempted");
 				Log.logStack(Log.LEVEL_ERROR, MODULE);
 			}
 
@@ -92,17 +106,17 @@ public class PropertiesFile extends GalleryProperties {
 		}
 	}
 
-
 	/**
 	 * Change the filename of the file (why would you want to do that?)
 	 * 
-	 * @param name The new filename value
+	 * @param name
+	 *            The new filename value
 	 */
 	public synchronized void setFilename(String name) {
 		if (name == null) {
 			mFilename = name;
 		} else {
-			if (! name.endsWith(".lax") && ! name.endsWith(".properties")) {
+			if (!name.endsWith(".lax") && !name.endsWith(".properties")) {
 				mFilename = name + ".properties";
 			} else {
 				mFilename = name;
@@ -114,28 +128,31 @@ public class PropertiesFile extends GalleryProperties {
 		readOnly = true;
 	}
 
-
 	/**
-	 * Read a property as a string, read the file in first
-	 * so you don't have to explicitly read the file in beforehand.
+	 * Read a property as a string, read the file in first so you don't have to
+	 * explicitly read the file in beforehand.
 	 * 
-	 * @param name Name of the property
+	 * @param name
+	 *            Name of the property
 	 * @return The property value
 	 */
+	@Override
 	public String getProperty(String name) {
 		checkRead();
 
 		return super.getProperty(name);
 	}
 
-	public Enumeration propertyNames() {
+	@Override
+	public Enumeration<?> propertyNames() {
 		checkRead();
 
 		return super.propertyNames();
 	}
 
 	public boolean isOverridden(String name) {
-		return readOnly && get(name) != null && ((String) get(name)).length() != 0;
+		return readOnly && get(name) != null
+				&& ((String) get(name)).length() != 0;
 	}
 
 	protected void checkRead() {
@@ -156,58 +173,65 @@ public class PropertiesFile extends GalleryProperties {
 		}
 	}
 
-
 	/**
 	 * Read the property file from disk
 	 * 
-	 * @throws java.io.FileNotFoundException Description of Exception
+	 * @throws java.io.FileNotFoundException
+	 *             Description of Exception
 	 */
-	public synchronized void read()
-			throws FileNotFoundException {
-		if (mFilename != null) {
-			InputStream fileIn = null;
-			try {
-				// try to get from JAR
-				if (mFilename.indexOf("/") == -1) {
-					// only if the resource is local
-					try {
-						if (!alreadyWarned) {
-							Log.log(Log.LEVEL_TRACE, MODULE, "Trying to find " + mFilename + " in Classpath");
-						}
-						fileIn = PropertiesFile.class.getResourceAsStream("/" + mFilename);
-					} catch (IllegalArgumentException iae) {
-						// Opera throws an exception for invalid filenames...
-						fileIn = null;
-					}
-				}
+	@SuppressWarnings("resource")
+	public synchronized void read() throws FileNotFoundException {
 
-				if (fileIn == null) {
-					// no dice? OK, from cwd then...
-					if (!alreadyWarned) {
-						Log.log(Log.LEVEL_TRACE, MODULE, "Trying to find " + mFilename + " in Current Working Dir");
-					}
-					
-					fileIn = new FileInputStream(mFilename);
-				}
+		if (mFilename == null) {
+			read = true;
+			written = true;
+			return;
+		}
 
-				load(fileIn);
-			} catch (FileNotFoundException fnf) {
-				throw fnf;
-			} catch (IOException e) {
-				// Todo: what should happen here?
-			} finally {
+		InputStream fileIn = null;
+		try {
+			// try to get from JAR
+			if (mFilename.indexOf("/") == -1) {
+				// only if the resource is local
 				try {
-					fileIn.close();
-				} catch (IOException e2) {
-				} catch (NullPointerException e3) {
+					if (!alreadyWarned) {
+						Log.log(Log.LEVEL_TRACE, MODULE, "Trying to find "
+								+ mFilename + " in Classpath");
+					}
+					fileIn = PropertiesFile.class.getResourceAsStream("/"
+							+ mFilename);
+				} catch (IllegalArgumentException iae) {
+					// Opera throws an exception for invalid filenames...
+					fileIn = null;
 				}
+			}
+
+			if (fileIn == null) {
+				// no dice? OK, from cwd then...
+				if (!alreadyWarned) {
+					Log.log(Log.LEVEL_TRACE, MODULE, "Trying to find "
+							+ mFilename + " in Current Working Dir");
+				}
+
+				fileIn = new FileInputStream(mFilename);
+			}
+
+			load(fileIn);
+		} catch (FileNotFoundException fnf) {
+			throw fnf;
+		} catch (IOException e) {
+			// Todo: what should happen here?
+		} finally {
+			try {
+				if (fileIn != null)
+					fileIn.close();
+			} catch (IOException e2) {
 			}
 		}
 
 		read = true;
 		written = true;
 	}
-
 
 	/**
 	 * Write the property file to disk
@@ -237,13 +261,15 @@ public class PropertiesFile extends GalleryProperties {
 		}
 	}
 
+	@Override
 	public String logPropertiesHelper(String name) {
 		Object value = get(name);
 
 		if (value == null) {
 			if (defaults != null) {
 				if (defaults instanceof GalleryProperties) {
-					return ((GalleryProperties) defaults).logPropertiesHelper(name);
+					return ((GalleryProperties) defaults)
+							.logPropertiesHelper(name);
 				} else {
 					return name + "= |" + getProperty(name) + "|";
 				}
@@ -259,30 +285,30 @@ public class PropertiesFile extends GalleryProperties {
 	 * Writes this property list (key and element pairs) in this
 	 * <code>Properties</code> table to the output stream in a format suitable
 	 * for loading into a <code>Properties</code> table using the
-	 * <code>load</code> method.
-	 * The stream is written using the ISO 8859-1 character encoding.
+	 * <code>load</code> method. The stream is written using the ISO 8859-1
+	 * character encoding.
 	 * <p/>
-	 * Properties from the defaults table of this <code>Properties</code>
-	 * table (if any) are <i>not</i> written out by this method.
+	 * Properties from the defaults table of this <code>Properties</code> table
+	 * (if any) are <i>not</i> written out by this method.
 	 * <p/>
 	 * If the header argument is not null, then an ASCII <code>#</code>
-	 * character, the header string, and a line separator are first written
-	 * to the output stream. Thus, the <code>header</code> can serve as an
+	 * character, the header string, and a line separator are first written to
+	 * the output stream. Thus, the <code>header</code> can serve as an
 	 * identifying comment.
 	 * <p/>
 	 * Next, a comment line is always written, consisting of an ASCII
-	 * <code>#</code> character, the current date and time (as if produced
-	 * by the <code>toString</code> method of <code>Date</code> for the
-	 * current time), and a line separator as generated by the Writer.
+	 * <code>#</code> character, the current date and time (as if produced by
+	 * the <code>toString</code> method of <code>Date</code> for the current
+	 * time), and a line separator as generated by the Writer.
 	 * <p/>
 	 * Then every entry in this <code>Properties</code> table is written out,
 	 * one per line. For each entry the key string is written, then an ASCII
-	 * <code>=</code>, then the associated element string. Each character of
-	 * the element string is examined to see whether it should be rendered as
-	 * an escape sequence. The ASCII characters <code>\</code>, tab, newline,
-	 * and carriage return are written as <code>\\</code>, <code>\t</code>,
-	 * <code>\n</code>, and <code>\r</code>, respectively. Characters less
-	 * than <code>&#92;u0020</code> and characters greater than
+	 * <code>=</code>, then the associated element string. Each character of the
+	 * element string is examined to see whether it should be rendered as an
+	 * escape sequence. The ASCII characters <code>\</code>, tab, newline, and
+	 * carriage return are written as <code>\\</code>, <code>\t</code>,
+	 * <code>\n</code>, and <code>\r</code>, respectively. Characters less than
+	 * <code>&#92;u0020</code> and characters greater than
 	 * <code>&#92;u007E</code> are written as <code>&#92;u</code><i>xxxx</i> for
 	 * the appropriate hexadecimal value <i>xxxx</i>. Leading space characters,
 	 * but not embedded or trailing space characters, are written with a
@@ -290,18 +316,24 @@ public class PropertiesFile extends GalleryProperties {
 	 * <code>!</code>, <code>=</code>, and <code>:</code> are written with a
 	 * preceding slash to ensure that they are properly loaded.
 	 * <p/>
-	 * After the entries have been written, the output stream is flushed.  The
+	 * After the entries have been written, the output stream is flushed. The
 	 * output stream remains open after this method returns.
 	 * 
-	 * @param out    an output stream.
-	 * @param header a description of the property list.
-	 * @throws java.io.IOException            if writing this property list to the specified
-	 *                                        output stream throws an <tt>IOException</tt>.
-	 * @throws java.lang.ClassCastException   if this <code>Properties</code> object
-	 *                                        contains any keys or values that are not <code>Strings</code>.
-	 * @throws java.lang.NullPointerException if <code>out</code> is null.
+	 * @param out
+	 *            an output stream.
+	 * @param header
+	 *            a description of the property list.
+	 * @throws java.io.IOException
+	 *             if writing this property list to the specified output stream
+	 *             throws an <tt>IOException</tt>.
+	 * @throws java.lang.ClassCastException
+	 *             if this <code>Properties</code> object contains any keys or
+	 *             values that are not <code>Strings</code>.
+	 * @throws java.lang.NullPointerException
+	 *             if <code>out</code> is null.
 	 * @since 1.2
 	 */
+	@Override
 	public synchronized void store(OutputStream out, String header)
 			throws IOException {
 		BufferedWriter awriter;
@@ -309,16 +341,20 @@ public class PropertiesFile extends GalleryProperties {
 		if (header != null)
 			writeln(awriter, "#" + header);
 		writeln(awriter, "#" + new Date().toString());
-		ArrayList v = new ArrayList(keySet());
+
+		String arr[] = keySet().toArray(new String[0]);
+		ArrayList<String> v = new ArrayList<String>(Arrays.asList(arr));
 		Collections.sort(v);
-		for (Iterator e = v.iterator(); e.hasNext();) {
-			String key = (String) e.next();
+		
+		for (Iterator<String> e = v.iterator(); e.hasNext();) {
+			String key = e.next();
 			String val = (String) get(key);
 			key = saveConvert(key, true);
 
-			/* No need to escape embedded and trailing spaces for value, hence
-			* pass false to flag.
-			*/
+			/*
+			 * No need to escape embedded and trailing spaces for value, hence
+			 * pass false to flag.
+			 */
 			val = saveConvert(val, false);
 			writeln(awriter, key + "=" + val);
 		}
@@ -326,10 +362,9 @@ public class PropertiesFile extends GalleryProperties {
 	}
 
 	/*
-	* Converts unicodes to encoded &#92;uxxxx
-	* and writes out any of the characters in specialSaveChars
-	* with a preceding slash
-	*/
+	 * Converts unicodes to encoded &#92;uxxxx and writes out any of the
+	 * characters in specialSaveChars with a preceding slash
+	 */
 	private String saveConvert(String theString, boolean escapeSpace) {
 		int len = theString.length();
 		StringBuffer outBuffer = new StringBuffer(len * 2);
@@ -337,45 +372,45 @@ public class PropertiesFile extends GalleryProperties {
 		for (int x = 0; x < len; x++) {
 			char aChar = theString.charAt(x);
 			switch (aChar) {
-				case ' ':
-					if (x == 0 || escapeSpace)
-						outBuffer.append('\\');
+			case ' ':
+				if (x == 0 || escapeSpace)
+					outBuffer.append('\\');
 
-					outBuffer.append(' ');
-					break;
-				case '\\':
+				outBuffer.append(' ');
+				break;
+			case '\\':
+				outBuffer.append('\\');
+				outBuffer.append('\\');
+				break;
+			case '\t':
+				outBuffer.append('\\');
+				outBuffer.append('t');
+				break;
+			case '\n':
+				outBuffer.append('\\');
+				outBuffer.append('n');
+				break;
+			case '\r':
+				outBuffer.append('\\');
+				outBuffer.append('r');
+				break;
+			case '\f':
+				outBuffer.append('\\');
+				outBuffer.append('f');
+				break;
+			default:
+				if ((aChar < 0x0020) || (aChar > 0x007e)) {
 					outBuffer.append('\\');
-					outBuffer.append('\\');
-					break;
-				case '\t':
-					outBuffer.append('\\');
-					outBuffer.append('t');
-					break;
-				case '\n':
-					outBuffer.append('\\');
-					outBuffer.append('n');
-					break;
-				case '\r':
-					outBuffer.append('\\');
-					outBuffer.append('r');
-					break;
-				case '\f':
-					outBuffer.append('\\');
-					outBuffer.append('f');
-					break;
-				default:
-					if ((aChar < 0x0020) || (aChar > 0x007e)) {
+					outBuffer.append('u');
+					outBuffer.append(toHex((aChar >> 12) & 0xF));
+					outBuffer.append(toHex((aChar >> 8) & 0xF));
+					outBuffer.append(toHex((aChar >> 4) & 0xF));
+					outBuffer.append(toHex(aChar & 0xF));
+				} else {
+					if (specialSaveChars.indexOf(aChar) != -1)
 						outBuffer.append('\\');
-						outBuffer.append('u');
-						outBuffer.append(toHex((aChar >> 12) & 0xF));
-						outBuffer.append(toHex((aChar >> 8) & 0xF));
-						outBuffer.append(toHex((aChar >> 4) & 0xF));
-						outBuffer.append(toHex(aChar & 0xF));
-					} else {
-						if (specialSaveChars.indexOf(aChar) != -1)
-							outBuffer.append('\\');
-						outBuffer.append(aChar);
-					}
+					outBuffer.append(aChar);
+				}
 			}
 		}
 		return outBuffer.toString();
@@ -389,7 +424,8 @@ public class PropertiesFile extends GalleryProperties {
 	/**
 	 * Convert a nibble to a hex character
 	 * 
-	 * @param	nibble	the nibble to convert.
+	 * @param nibble
+	 *            the nibble to convert.
 	 */
 	private static char toHex(int nibble) {
 		return hexDigit[(nibble & 0xF)];
@@ -398,7 +434,6 @@ public class PropertiesFile extends GalleryProperties {
 	private static final String specialSaveChars = "=: \t\r\n\f#!";
 
 	/** A table of hex digits */
-	private static final char[] hexDigit = {
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-	};
+	private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6',
+			'7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 }

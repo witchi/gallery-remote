@@ -1,7 +1,5 @@
 package com.gallery.GalleryRemote.about;
 
-import java.awt.FontMetrics;
-
 import com.gallery.GalleryRemote.util.GRI18n;
 
 /**
@@ -12,10 +10,12 @@ import com.gallery.GalleryRemote.util.GRI18n;
 class AnimationThread extends Thread {
 	private static final String MODULE = "About";
 	private volatile boolean running = true;
+	private final AboutModel model;
 
-	AnimationThread() {
+	AnimationThread(AboutModel model) {
 		super(GRI18n.getString(MODULE, "aboutAnim"));
 		setPriority(Thread.MIN_PRIORITY);
+		this.model = model;
 	}
 
 	/**
@@ -23,6 +23,7 @@ class AnimationThread extends Thread {
 	 */
 	public void kill() {
 		running = false;
+		this.interrupt();
 	}
 
 	/**
@@ -30,26 +31,25 @@ class AnimationThread extends Thread {
 	 */
 	@Override
 	public void run() {
-		FontMetrics fm = getFontMetrics(getFont());
-		int max = (text.size() * fm.getHeight());
+
 		long start = System.currentTimeMillis();
 
 		while (running) {
-			scrollPosition = initialPosition
+			int scrollPosition = model.getInitialPosition()
 					+ (int) ((System.currentTimeMillis() - start) / 40);
 
-			if (scrollPosition > max) {
-				scrollPosition = initialPosition;
+			if (scrollPosition > model.getMaxTextHeight()) {
+				scrollPosition = model.getInitialPosition();
 				start = System.currentTimeMillis();
 			}
 
 			try {
 				Thread.sleep(100 / 60);
 			} catch (Exception e) {
+				// do nothing
 			}
 
-			repaint(getWidth() / 2 - maxWidth, TOP, maxWidth * 2,
-					getHeight() - TOP - BOTTOM);
+			model.paintAnimation(scrollPosition);
 		}
 	}
 }

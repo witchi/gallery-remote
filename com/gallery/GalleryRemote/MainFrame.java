@@ -90,6 +90,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.gallery.GalleryRemote.about.AboutBox;
 import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.model.Gallery;
 import com.gallery.GalleryRemote.model.Picture;

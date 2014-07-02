@@ -21,19 +21,19 @@ import com.gallery.GalleryRemote.Log;
  * 
  * @author paour
  */
-public class AboutPanel extends JComponent {
+public class AboutPanel extends JComponent implements AboutModel {
 	private static final long serialVersionUID = 539994781856850049L;
 	private static final String MODULE = "About";
 
 	private final int top;
 	private final int bottom;
 
-	ImageIcon image;
-	ArrayList<String> text;
-	int scrollPosition;
-	int maxWidth;
-	FontMetrics fm;
-	int initialPosition;
+	private ImageIcon image;
+	private ArrayList<String> text;
+	private int scrollPosition;
+	private int maxWidth;
+	private FontMetrics fm;
+	private int initialPosition;
 
 	/**
 	 * Constructor for the AboutPanel object
@@ -52,17 +52,30 @@ public class AboutPanel extends JComponent {
 
 		setBorder(new MatteBorder(1, 1, 1, 1, Color.gray));
 
-		text = new ArrayList<String>();
+		text = tokenizeText();
+		maxWidth = calculateMaxTextWidth(text);
+
+		initialPosition = getHeight() - this.bottom - (2 * this.top);
+		scrollPosition = initialPosition;
+	}
+
+	private int calculateMaxTextWidth(ArrayList<String> text) {
+		int w = 0;
+		for (String s : text) {
+			w = Math.max(w, fm.stringWidth(s) + 10);
+		}
+		return w;
+	}
+
+	private ArrayList<String> tokenizeText() {
+		ArrayList<String> tokens = new ArrayList<String>();
 		StringTokenizer st = new StringTokenizer(
 				GalleryRemote.instance().properties.getProperty("aboutText"),
 				"\n");
 		while (st.hasMoreTokens()) {
-			String line = st.nextToken();
-			text.add(line);
-			maxWidth = Math.max(maxWidth, fm.stringWidth(line) + 10);
+			tokens.add(st.nextToken());
 		}
-		initialPosition = getHeight() - this.bottom - (2 * this.top);
-		scrollPosition = initialPosition;
+		return tokens;
 	}
 
 	/**
@@ -113,4 +126,22 @@ public class AboutPanel extends JComponent {
 			y += fm.getHeight();
 		}
 	}
+
+	@Override
+	public int getMaxTextHeight() {
+		return (text.size() * fm.getHeight());
+	}
+
+	@Override
+	public void paintAnimation(int scrollPosition) {
+		this.scrollPosition = scrollPosition;
+		repaint(getWidth() / 2 - maxWidth, this.top, maxWidth * 2, getHeight()
+				- this.top - this.bottom);
+	}
+
+	@Override
+	public int getInitialPosition() {
+		return initialPosition;
+	}
+
 }

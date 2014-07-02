@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.gallery.GalleryRemote;
+package com.gallery.GalleryRemote.about;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -27,7 +27,6 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JDialog;
 
-import com.gallery.GalleryRemote.about.AboutPanel;
 import com.gallery.GalleryRemote.util.DialogUtil;
 import com.gallery.GalleryRemote.util.GRI18n;
 
@@ -37,19 +36,20 @@ import com.gallery.GalleryRemote.util.GRI18n;
  * @author paour
  */
 public class AboutBox extends JDialog {
-	
+
 	private static final long serialVersionUID = 117092856826918304L;
 	private static final String MODULE = "About";
 	private static final int TOP = 5;
 	private static final int BOTTOM = 105;
 	private final AnimationThread thread;
+	private AboutPanel panel;
 
 	/**
 	 * Constructor for the AboutBox object
 	 */
 	public AboutBox() {
 		super();
-		this.thread = new AnimationThread();
+		this.thread = new AnimationThread(getAboutPanel());
 		initUI();
 	}
 
@@ -61,13 +61,21 @@ public class AboutBox extends JDialog {
 	 */
 	public AboutBox(Frame owner) {
 		super(owner);
-		this.thread = new AnimationThread();
+		this.thread = new AnimationThread(getAboutPanel());
 		initUI();
+	}
+
+	private AboutPanel getAboutPanel() {
+		if (panel == null) {
+			panel = new AboutPanel(TOP, BOTTOM);
+		}
+		return panel;
 	}
 
 	private void initUI() {
 		setModal(true);
-		getContentPane().add(new AboutPanel(TOP, BOTTOM), BorderLayout.CENTER);
+
+		getContentPane().add(getAboutPanel(), BorderLayout.CENTER);
 		setTitle(GRI18n.getString(MODULE, "title"));
 
 		pack();
@@ -93,7 +101,7 @@ public class AboutBox extends JDialog {
 		setVisible(false);
 		dispose();
 	}
-	
+
 	/**
 	 * Adds a feature to the Notify attribute of the AboutPanel object
 	 */

@@ -45,15 +45,13 @@ import com.gallery.GalleryRemote.util.HTMLEscaper;
 import com.gallery.GalleryRemote.util.ImageLoaderUtil;
 import com.gallery.GalleryRemote.util.ImageUtils;
 
-public class SlideshowFrame extends PreviewFrame implements Runnable,
-		PreferenceNames, CancellableTransferListener, MouseMotionListener {
+public class SlideshowFrame extends PreviewFrame implements Runnable, PreferenceNames, CancellableTransferListener, MouseMotionListener {
 
 	private static final long serialVersionUID = -7886492893131952256L;
 	public static final String MODULE = "SlideFrame";
 
 	List<Picture> pictures = null;
-	List<Picture> wantDownloaded = Collections
-			.synchronizedList(new ArrayList<Picture>());
+	List<Picture> wantDownloaded = Collections.synchronizedList(new ArrayList<Picture>());
 	Picture userPicture = null;
 	SlideshowPane slideshowPane;
 
@@ -118,15 +116,13 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 				// menu bar
 
 				// Java 1.4 only
-				GraphicsDevice gd = GraphicsEnvironment
-						.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+				GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
 				if (!gd.isFullScreenSupported()) {
 					throw new NoSuchMethodError();
 				}
 
-				Log.log(Log.LEVEL_TRACE, MODULE,
-						"Switching to full-screen mode");
+				Log.log(Log.LEVEL_TRACE, MODULE, "Switching to full-screen mode");
 				DialogUtil.maxSize(this);
 				setVisible(true);
 
@@ -138,8 +134,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 				setVisible(true);
 			}
 		} catch (Throwable e) {
-			Log.log(Log.LEVEL_TRACE, MODULE,
-					"No full-screen mode: using maximized window");
+			Log.log(Log.LEVEL_TRACE, MODULE, "No full-screen mode: using maximized window");
 			DialogUtil.maxSize(this);
 			setVisible(true);
 		}
@@ -168,8 +163,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 
 			showCursor();
 
-			GraphicsDevice gd = GraphicsEnvironment
-					.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+			GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 			if (gd.getFullScreenWindow() == this) {
 				gd.setFullScreenWindow(null);
 			}
@@ -240,9 +234,9 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 						new Thread(SlideshowFrame.this).start();
 					}
 					updateFeedback(FEEDBACK_PAUSE_PLAY);
-
 					updateProgress(loader.pictureShowNow, STATE_SHOWING, false);
-
+					break;
+				default:
 					break;
 				}
 			}
@@ -253,8 +247,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 		slideshowPane = new SlideshowPane();
 		setContentPane(slideshowPane);
 
-		sleepTime = GalleryRemote.instance().properties
-				.getIntProperty(SLIDESHOW_DELAY) * 1000;
+		sleepTime = GalleryRemote.instance().properties.getIntProperty(SLIDESHOW_DELAY) * 1000;
 
 		loader = new ImageLoaderUtil(5, this);
 		loader.setTransferListener(this);
@@ -274,24 +267,19 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			next(false);
 		}
 
-		if (GalleryRemote.instance().properties
-				.getBooleanProperty(SLIDESHOW_PRELOADALL)) {
+		if (GalleryRemote.instance().properties.getBooleanProperty(SLIDESHOW_PRELOADALL)) {
 			Thread t = new Thread() {
 				@Override
 				public void run() {
 					Log.log(Log.LEVEL_TRACE, MODULE, "Preload thread starting");
-					for (Iterator<Picture> it = SlideshowFrame.this.pictures
-							.iterator(); it.hasNext();) {
+					for (Iterator<Picture> it = SlideshowFrame.this.pictures.iterator(); it.hasNext();) {
 						if (shutdown) {
 							break;
 						}
 
-						Picture picture = (Picture) it.next();
-						Log.log(Log.LEVEL_TRACE, MODULE, "Preloading "
-								+ picture);
-						ImageUtils.download(picture, getRootPane().getSize(),
-								GalleryRemote.instance().getCore()
-										.getMainStatusUpdate(), null);
+						Picture picture = it.next();
+						Log.log(Log.LEVEL_TRACE, MODULE, "Preloading " + picture);
+						ImageUtils.download(picture, getRootPane().getSize(), GalleryRemote.instance().getCore().getMainStatusUpdate(), null);
 					}
 					Log.log(Log.LEVEL_TRACE, MODULE, "Preload thread done");
 				}
@@ -314,8 +302,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			try {
 				long sleep;
 
-				while ((sleep = sleepTime
-						- (System.currentTimeMillis() - pictureShownTime)) > 0) {
+				while ((sleep = sleepTime - (System.currentTimeMillis() - pictureShownTime)) > 0) {
 					Thread.sleep(sleep);
 				}
 
@@ -349,8 +336,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 	}
 
 	public boolean next(boolean user) {
-		if (loader.pictureShowWant != null
-				&& wantDownloaded.contains(loader.pictureShowWant)
+		if (loader.pictureShowWant != null && wantDownloaded.contains(loader.pictureShowWant)
 				&& (loader.pictureShowWant != userPicture || user)) {
 			// we no longer want the current picture
 			wantDownloaded.remove(loader.pictureShowWant);
@@ -375,8 +361,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			wantIndex++;
 
 			if (wantIndex >= pictures.size()) {
-				if (GalleryRemote.instance().properties
-						.getBooleanProperty(SLIDESHOW_LOOP)) {
+				if (GalleryRemote.instance().properties.getBooleanProperty(SLIDESHOW_LOOP)) {
 					wantIndex = 0;
 				} else {
 					wantIndex = pictures.size() - 1;
@@ -385,7 +370,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			}
 
 			// display next picture
-			picture = (Picture) pictures.get(wantIndex);
+			picture = pictures.get(wantIndex);
 			Log.log(Log.LEVEL_TRACE, MODULE, "Next picture: " + picture);
 		}
 
@@ -401,8 +386,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 
 			// if user moved to a different picture in the meantime, cancel
 			if (userPicture != picture) {
-				Log.log(Log.LEVEL_TRACE, MODULE,
-						"User skipped again, not even loading " + picture);
+				Log.log(Log.LEVEL_TRACE, MODULE, "User skipped again, not even loading " + picture);
 				return true;
 			}
 		}
@@ -412,9 +396,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 		loader.preparePicture(picture, false, true);
 
 		// and cache the one after it
-		if (wantIndex + 1 < pictures.size()
-				&& (loader.images.get(picture = (Picture) pictures
-						.get(wantIndex + 1))) == null) {
+		if (wantIndex + 1 < pictures.size() && (loader.images.get(picture = pictures.get(wantIndex + 1))) == null) {
 			wantDownloaded.add(picture);
 			loader.imageLoader.loadPicture(picture, false);
 		}
@@ -423,8 +405,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 	}
 
 	public boolean previous(boolean user) {
-		if (loader.pictureShowWant != null
-				&& wantDownloaded.contains(loader.pictureShowWant)
+		if (loader.pictureShowWant != null && wantDownloaded.contains(loader.pictureShowWant)
 				&& (loader.pictureShowWant != userPicture || user)) {
 			// we no longer want the current picture
 			wantDownloaded.remove(loader.pictureShowWant);
@@ -435,8 +416,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			wantIndex--;
 
 			if (wantIndex < 0) {
-				if (GalleryRemote.instance().properties
-						.getBooleanProperty(SLIDESHOW_LOOP)) {
+				if (GalleryRemote.instance().properties.getBooleanProperty(SLIDESHOW_LOOP)) {
 					wantIndex = pictures.size() - 1;
 				} else {
 					wantIndex = 0;
@@ -445,7 +425,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			}
 
 			// display previous picture
-			picture = (Picture) pictures.get(wantIndex);
+			picture = pictures.get(wantIndex);
 		}
 
 		Log.log(Log.LEVEL_TRACE, MODULE, "Previous picture: " + picture);
@@ -459,8 +439,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 
 			// if user moved to a different picture in the meantime, cancel
 			if (userPicture != picture) {
-				Log.log(Log.LEVEL_TRACE, MODULE,
-						"User skipped again, not even loading " + picture);
+				Log.log(Log.LEVEL_TRACE, MODULE, "User skipped again, not even loading " + picture);
 				return true;
 			}
 		} else if (userPicture != null && userPicture != picture) {
@@ -473,9 +452,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 		loader.preparePicture(picture, false, true);
 
 		// and cache the one after it
-		if (wantIndex - 1 > 0
-				&& (loader.images.get(picture = (Picture) pictures
-						.get(wantIndex - 1))) == null) {
+		if (wantIndex - 1 > 0 && (loader.images.get(picture = pictures.get(wantIndex - 1))) == null) {
 			wantDownloaded.add(picture);
 			loader.imageLoader.loadPicture(picture, false);
 		}
@@ -485,24 +462,21 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 
 	@Override
 	public boolean blockPictureReady(Image image, Picture picture) {
-		Log.log(Log.LEVEL_TRACE, MODULE, "blockPictureReady: " + picture
-				+ " - pictureShowWant: " + loader.pictureShowWant);
+		Log.log(Log.LEVEL_TRACE, MODULE, "blockPictureReady: " + picture + " - pictureShowWant: " + loader.pictureShowWant);
 
 		if (picture == userPicture) {
 			userPicture = null;
 		}
 
 		if (picture != loader.pictureShowWant) {
-			Log.log(Log.LEVEL_TRACE, MODULE, "We wanted "
-					+ loader.pictureShowWant + ": ignoring");
+			Log.log(Log.LEVEL_TRACE, MODULE, "We wanted " + loader.pictureShowWant + ": ignoring");
 			updateProgress(loader.pictureShowWant, STATE_NEXTREADY, false);
 			return true;
 		}
 
 		if (picture != null) {
 			if (picture.getCaption() != null) {
-				caption = ImageLoaderUtil.stripTags(
-						HTMLEscaper.unescape(picture.getCaption())).trim();
+				caption = ImageLoaderUtil.stripTags(HTMLEscaper.unescape(picture.getCaption())).trim();
 			} else {
 				caption = null;
 			}
@@ -515,20 +489,13 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 				url = picture.safeGetUrlFull().toString();
 
 				// update view count on Gallery
-				picture.getParentAlbum()
-						.getGallery()
-						.incrementViewCount(
-								picture,
-								GalleryRemote.instance().getCore()
-										.getMainStatusUpdate());
+				picture.getParentAlbum().getGallery().incrementViewCount(picture, GalleryRemote.instance().getCore().getMainStatusUpdate());
 			} else {
 				url = picture.getSource().toString();
 			}
 
 			if (picture.getParentAlbum().getCaption() != null) {
-				album = ImageLoaderUtil.stripTags(
-						HTMLEscaper.unescape(picture.getParentAlbum()
-								.getCaption())).trim();
+				album = ImageLoaderUtil.stripTags(HTMLEscaper.unescape(picture.getParentAlbum().getCaption())).trim();
 			} else {
 				album = null;
 			}
@@ -569,9 +536,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			return;
 		}
 
-		Object[] params = new Object[] { picture.getName(),
-				new Integer(pictures.indexOf(picture) + 1),
-				new Integer(pictures.size()) };
+		Object[] params = new Object[] { picture.getName(), new Integer(pictures.indexOf(picture) + 1), new Integer(pictures.size()) };
 
 		switch (state) {
 		case STATE_SHOWING:
@@ -606,6 +571,9 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			progress = GRI18n.getString(MODULE, "skipping", params);
 			skipping = GRI18n.getString(MODULE, "skippingController", params);
 			break;
+
+		default:
+			break;
 		}
 
 		Log.log(Log.LEVEL_TRACE, MODULE, "updateProgress: " + progress);
@@ -617,8 +585,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 	}
 
 	@Override
-	public boolean dataTransferred(int transferred, int overall,
-			double kbPerSecond, Picture p) {
+	public boolean dataTransferred(int transferred, int overall, double kbPerSecond, Picture p) {
 		if (!wantDownloaded.contains(p) || shutdown) {
 			return false;
 		}
@@ -629,8 +596,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 		if (transferred == overall) {
 			repaint();
 		} else {
-			slideshowPane.paintProgress((Graphics2D) slideshowPane
-					.getGraphics());
+			slideshowPane.paintProgress((Graphics2D) slideshowPane.getGraphics());
 		}
 
 		return true;
@@ -638,8 +604,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 
 	public void updateFeedback(int feedback) {
 		if (feedback != FEEDBACK_NONE) {
-			feedbackUntil = System.currentTimeMillis()
-					+ (feedback == FEEDBACK_HELP ? 6000 : 1500);
+			feedbackUntil = System.currentTimeMillis() + (feedback == FEEDBACK_HELP ? 6000 : 1500);
 
 			synchronized (this) {
 				if (feedbackThread == null) {
@@ -650,8 +615,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 
 							while (running) {
 								try {
-									Thread.sleep(feedbackUntil
-											- System.currentTimeMillis());
+									Thread.sleep(feedbackUntil - System.currentTimeMillis());
 									synchronized (this) {
 										if (System.currentTimeMillis() >= feedbackUntil) {
 											running = false;
@@ -684,10 +648,8 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 	public void hideCursor() {
 		if (transparentCursor == null) {
 			int[] pixels = new int[16 * 16];
-			Image image = Toolkit.getDefaultToolkit().createImage(
-					new MemoryImageSource(16, 16, pixels, 0, 16));
-			transparentCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-					image, new Point(0, 0), "invisiblecursor");
+			Image image = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(16, 16, pixels, 0, 16));
+			transparentCursor = Toolkit.getDefaultToolkit().createCustomCursor(image, new Point(0, 0), "invisiblecursor");
 		}
 
 		setCursor(transparentCursor);
@@ -707,25 +669,18 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 	}
 
 	public void initTransitionDuration() {
-		boolean accelerated = ((Graphics2D) getGraphics())
-				.getDeviceConfiguration().getImageCapabilities()
-				.isAccelerated();
+		boolean accelerated = ((Graphics2D) getGraphics()).getDeviceConfiguration().getImageCapabilities().isAccelerated();
 
-		Log.log(Log.LEVEL_TRACE, MODULE, "Is graphics accelerated: "
-				+ accelerated);
+		Log.log(Log.LEVEL_TRACE, MODULE, "Is graphics accelerated: " + accelerated);
 
-		enableTransitions = accelerated
-				|| GalleryRemote.instance().properties.getBooleanProperty(
-						ALLOW_UNACCELERATED_TRANSITION, false);
-		transitionDuration = enableTransitions ? GalleryRemote.instance().properties
-				.getIntProperty(SLIDESHOW_TRANSITION_DURATION, 3000) : 0;
+		enableTransitions = accelerated || GalleryRemote.instance().properties.getBooleanProperty(ALLOW_UNACCELERATED_TRANSITION, false);
+		transitionDuration = enableTransitions ? GalleryRemote.instance().properties.getIntProperty(SLIDESHOW_TRANSITION_DURATION, 3000) : 0;
 
 		if (transitionDuration == 0) {
 			enableTransitions = false;
 		}
 
-		Log.log(Log.LEVEL_TRACE, MODULE, "Transitions enabled: "
-				+ enableTransitions);
+		Log.log(Log.LEVEL_TRACE, MODULE, "Transitions enabled: " + enableTransitions);
 	}
 
 	class SlideshowPane extends JPanel implements ActionListener {
@@ -746,10 +701,8 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 		public static final int LOCATION_BOT_CENTER = 7;
 		public static final int LOCATION_BOT_RIGHT = 8;
 
-		public final int[] locationToCode = { 12, 10, 14, 22, 20, 24, 32, 30,
-				34 };
-		public HashMap<Integer, Integer> codeToLocation = new HashMap<Integer, Integer>(
-				9);
+		public final int[] locationToCode = { 12, 10, 14, 22, 20, 24, 32, 30, 34 };
+		public HashMap<Integer, Integer> codeToLocation = new HashMap<Integer, Integer>(9);
 
 		BufferedImage feedbackCache = null;
 		int cachedFeedback = 0;
@@ -777,8 +730,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			super();
 
 			for (int i = 0; i < 9; i++) {
-				codeToLocation.put(new Integer(locationToCode[i]), new Integer(
-						i));
+				codeToLocation.put(new Integer(locationToCode[i]), new Integer(i));
 			}
 		}
 
@@ -799,8 +751,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 					previousInfoImage[id] = null;
 				}
 			} else {
-				imageAlpha = ((float) (now - transitionStart))
-						/ transitionDuration;
+				imageAlpha = ((float) (now - transitionStart)) / transitionDuration;
 			}
 
 			repaint();
@@ -815,12 +766,10 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 				ImageLoaderUtil.setSlideshowFont(this);
 				initTransitionDuration();
 				int defaultThickness = getFont().getSize() / 7;
-				thickness = GalleryRemote.instance().properties.getIntProperty(
-						SLIDESHOW_FONTTHICKNESS, defaultThickness);
+				thickness = GalleryRemote.instance().properties.getIntProperty(SLIDESHOW_FONTTHICKNESS, defaultThickness);
 			}
 
-			if (feedback == FEEDBACK_NONE
-					&& feedbackUntil <= System.currentTimeMillis()) {
+			if (feedback == FEEDBACK_NONE && feedbackUntil <= System.currentTimeMillis()) {
 				skipping = null;
 			}
 
@@ -832,8 +781,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 		}
 
 		public void paintPicture(Graphics2D g) {
-			Color c = GalleryRemote.instance().properties
-					.getColorProperty(SLIDESHOW_COLOR);
+			Color c = GalleryRemote.instance().properties.getColorProperty(SLIDESHOW_COLOR);
 			if (c != null) {
 				g.setColor(c);
 			} else {
@@ -844,23 +792,16 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 
 			if (loader.imageShowNow != null && loader.pictureShowWant != null) {
 				if (loader.imageShowNow != currentImageSrc) {
-					Log.log(Log.LEVEL_TRACE, MODULE, "New image: "
-							+ loader.imageShowNow + " - " + currentImageSrc);
+					Log.log(Log.LEVEL_TRACE, MODULE, "New image: " + loader.imageShowNow + " - " + currentImageSrc);
 
 					previousImage = currentImage;
 					previousRect = currentRect;
 
-					currentImage = ImageUtils.rotateImage(loader.imageShowNow,
-							loader.pictureShowWant.getAngle(),
+					currentImage = ImageUtils.rotateImage(loader.imageShowNow, loader.pictureShowWant.getAngle(),
 							loader.pictureShowWant.isFlipped(), this);
 
-					currentRect = new Rectangle(getLocation().x
-							+ (getWidth() - currentImage.getWidth(this)) / 2,
-							getLocation().y
-									+ (getHeight() - currentImage
-											.getHeight(this)) / 2,
-							currentImage.getWidth(this),
-							currentImage.getHeight(this));
+					currentRect = new Rectangle(getLocation().x + (getWidth() - currentImage.getWidth(this)) / 2, getLocation().y
+							+ (getHeight() - currentImage.getHeight(this)) / 2, currentImage.getWidth(this), currentImage.getHeight(this));
 
 					currentImageSrc = loader.imageShowNow;
 
@@ -880,17 +821,13 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 				Log.log(Log.LEVEL_TRACE, MODULE, "Painting alpha=" + imageAlpha);
 
 				if (imageAlpha != 1 && previousImage != null) {
-					g.setComposite(AlphaComposite.getInstance(
-							AlphaComposite.SRC_OVER, 1 - imageAlpha));
-					g.drawImage(previousImage, previousRect.x, previousRect.y,
-							getContentPane());
+					g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1 - imageAlpha));
+					g.drawImage(previousImage, previousRect.x, previousRect.y, getContentPane());
 				}
 
 				if (imageAlpha != 0) {
-					g.setComposite(AlphaComposite.getInstance(
-							AlphaComposite.SRC_OVER, imageAlpha));
-					g.drawImage(currentImage, currentRect.x, currentRect.y,
-							getContentPane());
+					g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, imageAlpha));
+					g.drawImage(currentImage, currentRect.x, currentRect.y, getContentPane());
 				}
 
 				g.setComposite(composite);
@@ -904,39 +841,28 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			Boolean[] locationTransition = new Boolean[9];
 			Boolean[] locationMaybePresent = new Boolean[9];
 
-			concatLocationContent(pf.getIntProperty(SLIDESHOW_CAPTION),
-					caption, true, locationContent, locationTransition,
+			concatLocationContent(pf.getIntProperty(SLIDESHOW_CAPTION), caption, true, locationContent, locationTransition,
 					locationMaybePresent);
-			concatLocationContent(pf.getIntProperty(SLIDESHOW_PROGRESS),
-					progress, false, locationContent, locationTransition,
+			concatLocationContent(pf.getIntProperty(SLIDESHOW_PROGRESS), progress, false, locationContent, locationTransition,
 					locationMaybePresent);
-			concatLocationContent(pf.getIntProperty(SLIDESHOW_EXTRA), extra,
-					true, locationContent, locationTransition,
+			concatLocationContent(pf.getIntProperty(SLIDESHOW_EXTRA), extra, true, locationContent, locationTransition, locationMaybePresent);
+			concatLocationContent(pf.getIntProperty(SLIDESHOW_ALBUM), album, true, locationContent, locationTransition, locationMaybePresent);
+			concatLocationContent(pf.getIntProperty(SLIDESHOW_URL), url, true, locationContent, locationTransition, locationMaybePresent);
+			concatLocationContent(pf.getIntProperty(SLIDESHOW_SUMMARY), summary, true, locationContent, locationTransition,
 					locationMaybePresent);
-			concatLocationContent(pf.getIntProperty(SLIDESHOW_ALBUM), album,
-					true, locationContent, locationTransition,
-					locationMaybePresent);
-			concatLocationContent(pf.getIntProperty(SLIDESHOW_URL), url, true,
-					locationContent, locationTransition, locationMaybePresent);
-			concatLocationContent(pf.getIntProperty(SLIDESHOW_SUMMARY),
-					summary, true, locationContent, locationTransition,
-					locationMaybePresent);
-			concatLocationContent(pf.getIntProperty(SLIDESHOW_DESCRIPTION),
-					description, true, locationContent, locationTransition,
+			concatLocationContent(pf.getIntProperty(SLIDESHOW_DESCRIPTION), description, true, locationContent, locationTransition,
 					locationMaybePresent);
 
 			for (int i = 0; i < 9; i++) {
 				if (locationMaybePresent[i] == Boolean.TRUE) {
-					paintInfo(g, i, locationContent[i], locationToCode[i],
-							locationTransition[i].booleanValue());
+					paintInfo(g, i, locationContent[i], locationToCode[i], locationTransition[i].booleanValue());
 				}
 			}
 		}
 
-		private void concatLocationContent(int code, String content,
-				boolean transition, String[] locationContent,
+		private void concatLocationContent(int code, String content, boolean transition, String[] locationContent,
 				Boolean[] locationTransition, Boolean[] locationMaybePresent) {
-			Integer location = (Integer) codeToLocation.get(new Integer(code));
+			Integer location = codeToLocation.get(new Integer(code));
 			if (location != null) {
 				int l = location.intValue();
 				locationMaybePresent[l] = Boolean.TRUE;
@@ -974,8 +900,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 				if (feedbackCache != null) {
 					feedbackCache.flush();
 				}
-				feedbackCache = new BufferedImage(feedbackWidth + 60,
-						feedbackHeight + 70, BufferedImage.TYPE_INT_ARGB);
+				feedbackCache = new BufferedImage(feedbackWidth + 60, feedbackHeight + 70, BufferedImage.TYPE_INT_ARGB);
 				Graphics2D gc = (Graphics2D) feedbackCache.getGraphics();
 
 				gc.setFont(g.getFont().deriveFont(18.0F));
@@ -983,67 +908,47 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 
 				// background
 				gc.setColor(background);
-				gc.fillRoundRect(0, 0, feedbackWidth, feedbackHeight
-						+ ((feedback & FEEDBACK_HELP) == FEEDBACK_HELP ? 0
-								: -30), 30, 30);
+				gc.fillRoundRect(0, 0, feedbackWidth, feedbackHeight + ((feedback & FEEDBACK_HELP) == FEEDBACK_HELP ? 0 : -30), 30, 30);
 				gc.setColor(normal);
-				gc.drawRoundRect(0, 0, feedbackWidth, feedbackHeight
-						+ ((feedback & FEEDBACK_HELP) == FEEDBACK_HELP ? 0
-								: -30), 30, 30);
+				gc.drawRoundRect(0, 0, feedbackWidth, feedbackHeight + ((feedback & FEEDBACK_HELP) == FEEDBACK_HELP ? 0 : -30), 30, 30);
 
 				// left arrow
-				gc.setColor((feedback & FEEDBACK_PREV) == FEEDBACK_PREV ? hilight
-						: normal);
-				gc.fillPolygon(new int[] { x + 100, x + 100, x + 50, x + 50, x,
-						x + 50, x + 50 }, new int[] { y + 60, y + 90, y + 90,
-						y + 125, y + 75, y + 25, y + 60 }, 7);
-				drawHelp(gc, hilight, fm, x + 50, y + 160,
-						GRI18n.getString(MODULE, "controller.left"));
-				drawHelp(gc, hilight, fm, x + 107, y + 180,
-						GRI18n.getString(MODULE, "controller.mousewheel"));
+				gc.setColor((feedback & FEEDBACK_PREV) == FEEDBACK_PREV ? hilight : normal);
+				gc.fillPolygon(new int[] { x + 100, x + 100, x + 50, x + 50, x, x + 50, x + 50 }, new int[] { y + 60, y + 90, y + 90, y + 125,
+						y + 75, y + 25, y + 60 }, 7);
+				drawHelp(gc, hilight, fm, x + 50, y + 160, GRI18n.getString(MODULE, "controller.left"));
+				drawHelp(gc, hilight, fm, x + 107, y + 180, GRI18n.getString(MODULE, "controller.mousewheel"));
 
 				x += 115;
 
 				// right arrow
-				gc.setColor((feedback & FEEDBACK_NEXT) == FEEDBACK_NEXT ? hilight
-						: normal);
-				gc.fillPolygon(new int[] { x, x, x + 50, x + 50, x + 100,
-						x + 50, x + 50 }, new int[] { y + 60, y + 90, y + 90,
-						y + 125, y + 75, y + 25, y + 60 }, 7);
-				drawHelp(gc, hilight, fm, x + 50, y + 160,
-						GRI18n.getString(MODULE, "controller.right"));
+				gc.setColor((feedback & FEEDBACK_NEXT) == FEEDBACK_NEXT ? hilight : normal);
+				gc.fillPolygon(new int[] { x, x, x + 50, x + 50, x + 100, x + 50, x + 50 }, new int[] { y + 60, y + 90, y + 90, y + 125,
+						y + 75, y + 25, y + 60 }, 7);
+				drawHelp(gc, hilight, fm, x + 50, y + 160, GRI18n.getString(MODULE, "controller.right"));
 
 				x += 130;
 
 				// play/pause
-				gc.setColor((feedback & FEEDBACK_PAUSE_PLAY) == FEEDBACK_PAUSE_PLAY ? hilight
-						: normal);
+				gc.setColor((feedback & FEEDBACK_PAUSE_PLAY) == FEEDBACK_PAUSE_PLAY ? hilight : normal);
 				if (running) {
-					gc.fillPolygon(new int[] { x, x, x + 100 }, new int[] {
-							y + 10, y + 140, y + 75 }, 3);
+					gc.fillPolygon(new int[] { x, x, x + 100 }, new int[] { y + 10, y + 140, y + 75 }, 3);
 				} else {
-					gc.fillPolygon(new int[] { x, x, x + 30, x + 30 },
-							new int[] { y + 10, y + 140, y + 140, y + 10 }, 4);
-					gc.fillPolygon(
-							new int[] { x + 70, x + 70, x + 100, x + 100 },
-							new int[] { y + 10, y + 140, y + 140, y + 10 }, 4);
+					gc.fillPolygon(new int[] { x, x, x + 30, x + 30 }, new int[] { y + 10, y + 140, y + 140, y + 10 }, 4);
+					gc.fillPolygon(new int[] { x + 70, x + 70, x + 100, x + 100 }, new int[] { y + 10, y + 140, y + 140, y + 10 }, 4);
 				}
-				drawHelp(gc, hilight, fm, x + 50, y + 160,
-						GRI18n.getString(MODULE, "controller.space"));
+				drawHelp(gc, hilight, fm, x + 50, y + 160, GRI18n.getString(MODULE, "controller.space"));
 
 				x += 130;
 
 				// stop
 				gc.setColor(normal);
-				gc.fillPolygon(new int[] { x, x, x + 30, x + 70, x + 100,
-						x + 100, x + 70, x + 30 }, new int[] { y + 55, y + 95,
-						y + 125, y + 125, y + 95, y + 55, y + 25, y + 25 }, 8);
-				drawHelp(gc, hilight, fm, x + 50, y + 160,
-						GRI18n.getString(MODULE, "controller.escape"));
+				gc.fillPolygon(new int[] { x, x, x + 30, x + 70, x + 100, x + 100, x + 70, x + 30 }, new int[] { y + 55, y + 95, y + 125,
+						y + 125, y + 95, y + 55, y + 25, y + 25 }, 8);
+				drawHelp(gc, hilight, fm, x + 50, y + 160, GRI18n.getString(MODULE, "controller.escape"));
 			}
 
-			g.drawImage(feedbackCache, feedbackLocation.x, feedbackLocation.y,
-					this);
+			g.drawImage(feedbackCache, feedbackLocation.x, feedbackLocation.y, this);
 		}
 
 		public void paintSkipping(Graphics2D g) {
@@ -1056,9 +961,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 				FontMetrics fm = g.getFontMetrics();
 				g.setColor(hilight);
 				Rectangle2D bounds = fm.getStringBounds(skipping, g);
-				g.drawString(skipping, (int) (x - bounds.getWidth() / 2), y
-						+ ((feedback & FEEDBACK_HELP) == FEEDBACK_HELP ? 270
-								: 240));
+				g.drawString(skipping, (int) (x - bounds.getWidth() / 2), y + ((feedback & FEEDBACK_HELP) == FEEDBACK_HELP ? 270 : 240));
 			}
 		}
 
@@ -1071,8 +974,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			}
 		}
 
-		public void paintInfo(Graphics2D g, int id, String text, int position,
-				boolean transition) {
+		public void paintInfo(Graphics2D g, int id, String text, int position, boolean transition) {
 			if (position == 0)
 				return;
 			if (text == null)
@@ -1120,34 +1022,25 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 					break;
 				}
 
-				ImageLoaderUtil.WrapInfo wrapInfo = ImageLoaderUtil.wrap(g,
-						text, d.width);
+				ImageLoaderUtil.WrapInfo wrapInfo = ImageLoaderUtil.wrap(g, text, d.width);
 
-				infoImage[id] = new BufferedImage(wrapInfo.width + thickness
-						* 2, wrapInfo.height + thickness * 2,
-						BufferedImage.TYPE_INT_ARGB);
+				infoImage[id] = new BufferedImage(wrapInfo.width + thickness * 2, wrapInfo.height + thickness * 2, BufferedImage.TYPE_INT_ARGB);
 
 				Graphics2D g2 = (Graphics2D) infoImage[id].getGraphics();
 				g2.setFont(g.getFont());
-				infoLocation[id] = ImageLoaderUtil.paintAlignedOutline(g2, x,
-						y, thickness, position, wrapInfo, true);
-				Log.log(Log.LEVEL_TRACE, MODULE, "Cached info " + id + " - "
-						+ text);
+				infoLocation[id] = ImageLoaderUtil.paintAlignedOutline(g2, x, y, thickness, position, wrapInfo, true);
+				Log.log(Log.LEVEL_TRACE, MODULE, "Cached info " + id + " - " + text);
 			}
 
 			Composite composite = g.getComposite();
 
 			if (transition && imageAlpha != 1 && previousInfoImage[id] != null) {
-				g.setComposite(AlphaComposite.getInstance(
-						AlphaComposite.SRC_OVER, 1 - imageAlpha));
-				g.drawImage(previousInfoImage[id], previousInfoLocation[id].x,
-						previousInfoLocation[id].y, this);
+				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1 - imageAlpha));
+				g.drawImage(previousInfoImage[id], previousInfoLocation[id].x, previousInfoLocation[id].y, this);
 			}
 
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-					transition ? imageAlpha : 1));
-			g.drawImage(infoImage[id], infoLocation[id].x, infoLocation[id].y,
-					this);
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transition ? imageAlpha : 1));
+			g.drawImage(infoImage[id], infoLocation[id].x, infoLocation[id].y, this);
 
 			g.setComposite(composite);
 
@@ -1157,8 +1050,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			}
 		}
 
-		private void drawHelp(Graphics g, Color hilight, FontMetrics fm, int x,
-				int y, String text) {
+		private void drawHelp(Graphics g, Color hilight, FontMetrics fm, int x, int y, String text) {
 			if ((feedback & FEEDBACK_HELP) != FEEDBACK_HELP)
 				return;
 

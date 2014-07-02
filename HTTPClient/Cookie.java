@@ -36,7 +36,11 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.ProtocolException;
 import java.net.URLDecoder;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * This class represents an http cookie as specified in <a
@@ -81,23 +85,24 @@ public class Cookie implements Serializable {
 	 * Create a cookie.
 	 * 
 	 * @param name
-	 *           the cookie name
+	 *            the cookie name
 	 * @param value
-	 *           the cookie value
+	 *            the cookie value
 	 * @param domain
-	 *           the host this cookie will be sent to
+	 *            the host this cookie will be sent to
 	 * @param path
-	 *           the path prefix for which this cookie will be sent
+	 *            the path prefix for which this cookie will be sent
 	 * @param epxires
-	 *           the Date this cookie expires, null if at end of session
+	 *            the Date this cookie expires, null if at end of session
 	 * @param secure
-	 *           if true this cookie will only be over secure connections
+	 *            if true this cookie will only be over secure connections
 	 * @exception NullPointerException
-	 *               if <var>name</var>, <var>value</var>, <var>domain</var>, or
-	 *               <var>path</var> is null
+	 *                if <var>name</var>, <var>value</var>, <var>domain</var>,
+	 *                or <var>path</var> is null
 	 * @since V0.3-1
 	 */
-	public Cookie(String name, String value, String domain, String path, Date expires, boolean secure) {
+	public Cookie(String name, String value, String domain, String path,
+			Date expires, boolean secure) {
 		if (name == null)
 			throw new NullPointerException("missing name");
 		if (value == null)
@@ -136,9 +141,9 @@ public class Cookie implements Serializable {
 			this.domain = "." + this.domain;
 		path = Util.getPath(req.getRequestURI());
 		/*
-		 * This does not follow netscape's spec at all, but it's the way netscape
-		 * seems to do it, and because people rely on that we therefore also have
-		 * to do it...
+		 * This does not follow netscape's spec at all, but it's the way
+		 * netscape seems to do it, and because people rely on that we therefore
+		 * also have to do it...
 		 */
 		int slash = path.lastIndexOf('/');
 		if (slash >= 0)
@@ -150,14 +155,15 @@ public class Cookie implements Serializable {
 	 * Parses the Set-Cookie header into an array of Cookies.
 	 * 
 	 * @param set_cookie
-	 *           the Set-Cookie header received from the server
+	 *            the Set-Cookie header received from the server
 	 * @param req
-	 *           the request used
+	 *            the request used
 	 * @return an array of Cookies as parsed from the Set-Cookie header
 	 * @exception ProtocolException
-	 *               if an error occurs during parsing
+	 *                if an error occurs during parsing
 	 */
-	protected static Cookie[] parse(String set_cookie, RoRequest req) throws ProtocolException {
+	protected static Cookie[] parse(String set_cookie, RoRequest req)
+			throws ProtocolException {
 		int beg = 0, end = 0;
 		char[] buf = set_cookie.toCharArray();
 		int len = buf.length;
@@ -181,8 +187,9 @@ public class Cookie implements Serializable {
 
 			end = set_cookie.indexOf('=', beg);
 			if (end == -1)
-				throw new ProtocolException("Bad Set-Cookie header: " + set_cookie + "\nNo '=' found " + "for token starting at " + "position "
-						+ beg);
+				throw new ProtocolException("Bad Set-Cookie header: "
+						+ set_cookie + "\nNo '=' found "
+						+ "for token starting at " + "position " + beg);
 			curr.name = set_cookie.substring(beg, end).trim();
 
 			beg = Util.skipSpace(buf, end + 1);
@@ -226,7 +233,8 @@ public class Cookie implements Serializable {
 				}
 
 				// first check for secure, as this is the only one w/o a '='
-				if ((beg + 6 <= len) && set_cookie.regionMatches(true, beg, "secure", 0, 6)) {
+				if ((beg + 6 <= len)
+						&& set_cookie.regionMatches(true, beg, "secure", 0, 6)) {
 					curr.secure = true;
 					beg += 6;
 
@@ -234,7 +242,9 @@ public class Cookie implements Serializable {
 					if (beg < len && buf[beg] == ';') // consume ";"
 						beg = Util.skipSpace(buf, beg + 1);
 					else if (beg < len && buf[beg] != ',')
-						throw new ProtocolException("Bad Set-Cookie header: " + set_cookie + "\nExpected " + "';' or ',' at position " + beg);
+						throw new ProtocolException("Bad Set-Cookie header: "
+								+ set_cookie + "\nExpected "
+								+ "';' or ',' at position " + beg);
 
 					continue;
 				}
@@ -242,8 +252,9 @@ public class Cookie implements Serializable {
 				// alright, must now be of the form x=y
 				end = set_cookie.indexOf('=', beg);
 				if (end == -1)
-					throw new ProtocolException("Bad Set-Cookie header: " + set_cookie + "\nNo '=' found " + "for token starting at "
-							+ "position " + beg);
+					throw new ProtocolException("Bad Set-Cookie header: "
+							+ set_cookie + "\nNo '=' found "
+							+ "for token starting at " + "position " + beg);
 
 				String name = set_cookie.substring(beg, end).trim();
 				beg = Util.skipSpace(buf, end + 1);
@@ -257,13 +268,15 @@ public class Cookie implements Serializable {
 						beg = Util.skipSpace(buf, beg + 1);
 
 					/*
-					 * cut off the weekday if it is there. This is a little tricky
-					 * because the comma is also used between cookies themselves. To
-					 * make sure we don't inadvertantly mistake a date for a weekday
-					 * we only skip letters.
+					 * cut off the weekday if it is there. This is a little
+					 * tricky because the comma is also used between cookies
+					 * themselves. To make sure we don't inadvertantly mistake a
+					 * date for a weekday we only skip letters.
 					 */
 					int pos = beg;
-					while (pos < len && (buf[pos] >= 'a' && buf[pos] <= 'z' || buf[pos] >= 'A' && buf[pos] <= 'Z'))
+					while (pos < len
+							&& (buf[pos] >= 'a' && buf[pos] <= 'z' || buf[pos] >= 'A'
+									&& buf[pos] <= 'Z'))
 						pos++;
 					pos = Util.skipSpace(buf, pos);
 					if (pos < len && buf[pos] == ',' && pos > beg)
@@ -298,7 +311,8 @@ public class Cookie implements Serializable {
 			}
 
 			if (legal) {
-				cookie_arr = Util.resizeArray(cookie_arr, cookie_arr.length + 1);
+				cookie_arr = Util
+						.resizeArray(cookie_arr, cookie_arr.length + 1);
 				cookie_arr[cookie_arr.length - 1] = curr;
 			} else
 				Log.write(Log.COOKI, "Cooki: Ignoring cookie: " + curr);
@@ -311,16 +325,17 @@ public class Cookie implements Serializable {
 	 * Set the given attribute, if valid.
 	 * 
 	 * @param cookie
-	 *           the cookie on which to set the value
+	 *            the cookie on which to set the value
 	 * @param name
-	 *           the name of the attribute
+	 *            the name of the attribute
 	 * @param value
-	 *           the value of the attribute
+	 *            the value of the attribute
 	 * @param set_cookie
-	 *           the complete Set-Cookie header
+	 *            the complete Set-Cookie header
 	 * @return true if the attribute is legal; false otherwise
 	 */
-	private static boolean setAttribute(Cookie cookie, String name, String value, String set_cookie) throws ProtocolException {
+	private static boolean setAttribute(Cookie cookie, String name,
+			String value, String set_cookie) throws ProtocolException {
 		if (name.equalsIgnoreCase("expires")) {
 			if (value.charAt(value.length() - 1) == '\"')
 				value = value.substring(0, value.length() - 1).trim();
@@ -328,32 +343,40 @@ public class Cookie implements Serializable {
 			// This is too strict...
 			// { cookie.expires = Util.parseHttpDate(value); }
 			{
-				cookie.expires = new Date(value);
-			} catch (IllegalArgumentException iae) {
+				DateFormat df = new SimpleDateFormat("dd MMM yyyy kk:mm:ss z");
+				df.setTimeZone(TimeZone.getTimeZone("GMT"));
+				cookie.expires = df.parse(value);
+			} catch (ParseException iae) {
 				/*
 				 * More broken servers to deal with... Ignore expires if it's
-				 * invalid throw new ProtocolException("Bad Set-Cookie header: " +
-				 * set_cookie + "\nInvalid date found at " + "position " + beg);
+				 * invalid throw new ProtocolException("Bad Set-Cookie header: "
+				 * + set_cookie + "\nInvalid date found at " + "position " +
+				 * beg);
 				 */
-				Log.write(Log.COOKI, "Cooki: Bad Set-Cookie header: " + set_cookie + "\n       Invalid date `" + value + "'");
+				Log.write(Log.COOKI, "Cooki: Bad Set-Cookie header: "
+						+ set_cookie + "\n       Invalid date `" + value + "'");
 			}
 		} else if (name.equals("max-age")) // from rfc-2109
 		{
 			if (cookie.expires != null)
 				return true;
-			if (value.charAt(0) == '\"' && value.charAt(value.length() - 1) == '\"')
+			if (value.charAt(0) == '\"'
+					&& value.charAt(value.length() - 1) == '\"')
 				value = value.substring(1, value.length() - 1).trim();
 			int age;
 			try {
 				age = Integer.parseInt(value);
 			} catch (NumberFormatException nfe) {
-				throw new ProtocolException("Bad Set-Cookie header: " + set_cookie + "\nMax-Age '" + value + "' not a number");
+				throw new ProtocolException("Bad Set-Cookie header: "
+						+ set_cookie + "\nMax-Age '" + value + "' not a number");
 			}
 			cookie.expires = new Date(System.currentTimeMillis() + age * 1000L);
 		} else if (name.equalsIgnoreCase("domain")) {
 			// you get everything these days...
 			if (value.length() == 0) {
-				Log.write(Log.COOKI, "Cooki: Bad Set-Cookie header: " + set_cookie + "\n       domain is empty - ignoring domain");
+				Log.write(Log.COOKI, "Cooki: Bad Set-Cookie header: "
+						+ set_cookie
+						+ "\n       domain is empty - ignoring domain");
 				return true;
 			}
 
@@ -367,30 +390,34 @@ public class Cookie implements Serializable {
 
 			// must be the same domain as in the url
 			if (!cookie.domain.endsWith(value)) {
-				Log.write(Log.COOKI, "Cooki: Bad Set-Cookie header: " + set_cookie + "\n       Current domain " + cookie.domain
-						+ " does not match given parsed " + value);
+				Log.write(Log.COOKI, "Cooki: Bad Set-Cookie header: "
+						+ set_cookie + "\n       Current domain "
+						+ cookie.domain + " does not match given parsed "
+						+ value);
 				return false;
 			}
 
 			// add leading dot, if missing
-			if (value.length() != 0 && value.charAt(0) != '.' && !value.equals(cookie.domain))
+			if (value.length() != 0 && value.charAt(0) != '.'
+					&& !value.equals(cookie.domain))
 				value = '.' + value;
 
 			/*
-			 * Netscape's original 2-/3-dot rule really doesn't work because many
-			 * countries use a shallow hierarchy (similar to the special TLDs
-			 * defined in the spec). While the rules in rfc-2965 aren't perfect
-			 * either, they are better. OTOH, some sites use a domain so that the
-			 * host name minus the domain name contains a dot (e.g. host
-			 * x.x.yahoo.com and domain .yahoo.com). So, for the seven special TLDs
-			 * we use the 2-dot rule, and for all others we use the rules in the
-			 * state-man draft instead.
+			 * Netscape's original 2-/3-dot rule really doesn't work because
+			 * many countries use a shallow hierarchy (similar to the special
+			 * TLDs defined in the spec). While the rules in rfc-2965 aren't
+			 * perfect either, they are better. OTOH, some sites use a domain so
+			 * that the host name minus the domain name contains a dot (e.g.
+			 * host x.x.yahoo.com and domain .yahoo.com). So, for the seven
+			 * special TLDs we use the 2-dot rule, and for all others we use the
+			 * rules in the state-man draft instead.
 			 */
 
 			// domain must be either .local or must contain at least
 			// two dots
 			if (!value.equals(".local") && value.indexOf('.', 1) == -1) {
-				Log.write(Log.COOKI, "Cooki: Bad Set-Cookie header: " + set_cookie + "\n       Domain attribute " + value
+				Log.write(Log.COOKI, "Cooki: Bad Set-Cookie header: "
+						+ set_cookie + "\n       Domain attribute " + value
 						+ "isn't .local and doesn't have at " + "least 2 dots");
 				return false;
 			}
@@ -401,13 +428,20 @@ public class Cookie implements Serializable {
 			if (value.length() > 3)
 				top = value.substring(value.length() - 4);
 			if (top == null
-					|| !(top.equalsIgnoreCase(".com") || top.equalsIgnoreCase(".edu") || top.equalsIgnoreCase(".net")
-							|| top.equalsIgnoreCase(".org") || top.equalsIgnoreCase(".gov") || top.equalsIgnoreCase(".mil") || top
+					|| !(top.equalsIgnoreCase(".com")
+							|| top.equalsIgnoreCase(".edu")
+							|| top.equalsIgnoreCase(".net")
+							|| top.equalsIgnoreCase(".org")
+							|| top.equalsIgnoreCase(".gov")
+							|| top.equalsIgnoreCase(".mil") || top
 								.equalsIgnoreCase(".int"))) {
 				int dl = cookie.domain.length(), vl = value.length();
-				if (dl > vl && cookie.domain.substring(0, dl - vl).indexOf('.') != -1) {
-					Log.write(Log.COOKI, "Cooki: Bad Set-Cookie header: " + set_cookie + "\n       Domain attribute " + value
-							+ "is more than one level below " + "current domain " + cookie.domain);
+				if (dl > vl
+						&& cookie.domain.substring(0, dl - vl).indexOf('.') != -1) {
+					Log.write(Log.COOKI, "Cooki: Bad Set-Cookie header: "
+							+ set_cookie + "\n       Domain attribute " + value
+							+ "is more than one level below "
+							+ "current domain " + cookie.domain);
 					return false;
 				}
 			}
@@ -475,12 +509,13 @@ public class Cookie implements Serializable {
 	 * @return true if this cookie has expired
 	 */
 	public boolean hasExpired() {
-		return (expires != null && expires.getTime() <= System.currentTimeMillis());
+		return (expires != null && expires.getTime() <= System
+				.currentTimeMillis());
 	}
 
 	/**
 	 * @param req
-	 *           the request to be sent
+	 *            the request to be sent
 	 * @return true if this cookie should be sent with the request
 	 */
 	protected boolean sendWith(RoRequest req) {
@@ -491,8 +526,10 @@ public class Cookie implements Serializable {
 		if (!eff_host.startsWith("."))
 			eff_host = "." + eff_host;
 
-		return ((domain.charAt(0) == '.' && eff_host.endsWith(domain) || domain.charAt(0) != '.' && eff_host.equals(domain))
-				&& Util.getPath(req.getRequestURI()).startsWith(path) && (!secure || con.getProtocol().equals("https") || con.getProtocol()
+		return ((domain.charAt(0) == '.' && eff_host.endsWith(domain) || domain
+				.charAt(0) != '.' && eff_host.equals(domain))
+				&& Util.getPath(req.getRequestURI()).startsWith(path) && (!secure
+				|| con.getProtocol().equals("https") || con.getProtocol()
 				.equals("shttp")));
 	}
 
@@ -509,7 +546,9 @@ public class Cookie implements Serializable {
 	public boolean equals(Object obj) {
 		if ((obj != null) && (obj instanceof Cookie)) {
 			Cookie other = (Cookie) obj;
-			return (this.name.equals(other.name) && this.path.equals(other.path) && this.domain.equals(other.domain));
+			return (this.name.equals(other.name)
+					&& this.path.equals(other.path) && this.domain
+						.equals(other.domain));
 		}
 		return false;
 	}

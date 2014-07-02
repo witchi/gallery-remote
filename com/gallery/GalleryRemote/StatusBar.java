@@ -191,16 +191,16 @@ public class StatusBar extends JPanel implements StatusUpdate {
 	}
 
 	public void jbInit() {
-		jProgress.setMinimumSize(new Dimension(10, 18));
-		jProgress.setPreferredSize(new Dimension(progressWidth, 18));
-		jProgress.setMaximumSize(new Dimension(progressWidth, 18));
+		jProgress.setMinimumSize(new Dimension(10, 20));
+		jProgress.setPreferredSize(new Dimension(progressWidth, 20));
+		jProgress.setMaximumSize(new Dimension(progressWidth, 20));
 		jProgress.setStringPainted(false);
 
 		jStatus.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED,
 				Color.white, SystemColor.control, SystemColor.control,
 				Color.gray));
-		jStatus.setMinimumSize(new Dimension(100, 18));
-		jStatus.setPreferredSize(new Dimension(100, 18));
+		jStatus.setMinimumSize(new Dimension(100, 20));
+		jStatus.setPreferredSize(new Dimension(100, 20));
 
 		setLayout(new GridBagLayout());
 		add(jStatus, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0,

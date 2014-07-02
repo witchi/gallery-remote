@@ -27,7 +27,7 @@
 
 	<target name="compile" depends="init" description="compile the source">
 		<!-- Compile the java code from ${src} into ${build} -->
-		<javac includeantruntime="false" srcdir="${src}" destdir="${build}" includes="com/**,HTTPClient/**,edu/**" listfiles="on" debug="on" nowarn="off" source="1.6" target="1.6">
+		<javac includeantruntime="false" srcdir="${src}" destdir="${build}" includes="com/**,HTTPClient/**,edu/**" listfiles="on" debug="on" nowarn="off" source="1.7" target="1.7">
 			<classpath>
 				<pathelement location="lib/AppleJavaExtensions.jar" />
 				<pathelement location="lib/metadata-extractor-2.1.jar" />

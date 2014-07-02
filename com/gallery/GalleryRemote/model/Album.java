@@ -158,7 +158,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	public void removeRemotePictures() {
 		int l = pictures.size();
 		for (Iterator<Picture> it = pictures.iterator(); it.hasNext();) {
-			Picture picture = (Picture) it.next();
+			Picture picture = it.next();
 			if (picture.isOnline()) {
 				it.remove();
 			}
@@ -209,16 +209,6 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 
 		return autoResize;
 	}
-
-	/**
-	 * Sets the gallery attribute of the Album object
-	 * 
-	 * @param gallery
-	 *           The new gallery
-	 */
-	/*
-	 * public void setGallery(Gallery gallery) { this.gallery = gallery; }
-	 */
 
 	/**
 	 * Gets the gallery attribute of the Album object
@@ -382,11 +372,8 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 		Collections.sort(pictures, new Comparator<Picture>() {
 
 			@Override
-			public int compare(Picture o1, Picture o2) {
+			public int compare(Picture p1, Picture p2) {
 				Date d1 = null, d2 = null;
-
-				Picture p1 = (Picture) o1;
-				Picture p2 = (Picture) o2;
 
 				if (p1.getExifData() != null) {
 					d1 = p1.getExifData().getCreationDate();
@@ -487,7 +474,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 * @return The Picture
 	 */
 	public Picture getPicture(int n) {
-		return (Picture) pictures.get(n);
+		return pictures.get(n);
 	}
 
 	/**
@@ -584,7 +571,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	 */
 	public long getPictureFileSize() {
 		if (pictureFileSize == null) {
-			pictureFileSize = new Long(getPictureFileSize((Picture[]) pictures.toArray(new Picture[0])));
+			pictureFileSize = new Long(getPictureFileSize(pictures.toArray(new Picture[0])));
 		}
 
 		return pictureFileSize.longValue();
@@ -776,7 +763,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 		ArrayList<Picture> uploadable = new ArrayList<Picture>();
 
 		for (Iterator<Picture> it = pictures.iterator(); it.hasNext();) {
-			Picture picture = (Picture) it.next();
+			Picture picture = it.next();
 			if (!picture.isOnline()) {
 				uploadable.add(picture);
 			}
@@ -789,7 +776,7 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 		this.pictures = pictures;
 
 		for (Iterator<Picture> e = pictures.iterator(); e.hasNext();) {
-			((Picture) e.next()).setParent(this);
+			e.next().setParent(this);
 		}
 
 		fireContentsChanged(this, 0, pictures.size() - 1);
@@ -810,9 +797,8 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 
 		if (getParentAlbum() != null) {
 			return getParentAlbum().depthHelper(depth + 1);
-		} else {
-			return depth;
 		}
+		return depth;
 	}
 
 	public static final String INDENT_QUANTUM = "     ";
@@ -820,38 +806,9 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	String indentHelper(String indent) {
 		if (getParentAlbum() != null) {
 			return getParentAlbum().indentHelper(indent + INDENT_QUANTUM);
-		} else {
-			return indent;
 		}
+		return indent;
 	}
-
-	/*
-	 * void notifyListeners() { if (!suppressEvents) { fireContentsChanged(this,
-	 * 0, pictures.size()); if (gallery != null) { gallery.albumChanged(this); }
-	 * } }
-	 */
-
-	/*
-	 * public ArrayList getSubAlbums() { return subAlbums; }
-	 */
-
-	/*
-	 * public void addSubAlbum(Album a) { subAlbums.add(a);
-	 * 
-	 * if (!suppressEvents) { //gallery.fireTreeNodesInserted(this,
-	 * gallery.getObjectArrayForAlbum(this), // new int[] { subAlbums.indexOf(a)
-	 * }, // new Object[] { a }); gallery.fireTreeStructureChanged(gallery,
-	 * gallery.getPathForAlbum(this)); } }
-	 * 
-	 * public void removeSubAlbum(Album a) { int index = subAlbums.indexOf(a); if
-	 * (index != -1) { subAlbums.remove(a);
-	 * 
-	 * if (!suppressEvents) { //gallery.fireTreeNodesRemoved(this,
-	 * gallery.getObjectArrayForAlbum(this), // new int[] { index }, // new
-	 * Object[] { a }); gallery.fireTreeStructureChanged(gallery,
-	 * gallery.getPathForAlbum(this)); //gallery.fireTreeStructureChanged(this,
-	 * new TreePath(gallery.root)); } } }
-	 */
 
 	public Boolean getOverrideResize() {
 		return overrideResize;
@@ -888,34 +845,30 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	public boolean getResize() {
 		if (overrideResize != null) {
 			return overrideResize.booleanValue();
-		} else {
-			return GalleryRemote.instance().properties.getBooleanProperty(RESIZE_BEFORE_UPLOAD);
 		}
+		return GalleryRemote.instance().properties.getBooleanProperty(RESIZE_BEFORE_UPLOAD);
 	}
 
 	public boolean getResizeDefault() {
 		if (overrideResizeDefault != null) {
 			return overrideResizeDefault.booleanValue();
-		} else {
-			return GalleryRemote.instance().properties.getIntDimensionProperty(RESIZE_TO) == 0;
 		}
+		return GalleryRemote.instance().properties.getIntDimensionProperty(RESIZE_TO) == 0;
 	}
 
 	public int getResizeDimension() {
 		if (overrideResizeDimension != -1) {
 			return overrideResizeDimension;
-		} else {
-			return GalleryRemote.instance().properties.getIntDimensionProperty(RESIZE_TO);
 		}
+		return GalleryRemote.instance().properties.getIntDimensionProperty(RESIZE_TO);
 	}
 
 	public boolean getAddToBeginning() {
 		if (overrideAddToBeginning != null) {
 			return overrideAddToBeginning.booleanValue();
-		} else {
-			// todo
-			return false;
 		}
+		// TODO
+		return false;
 	}
 
 	public boolean isHasFetchedImages() {
@@ -1000,6 +953,15 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 	@SuppressWarnings("unchecked")
 	@Override
 	public Enumeration<Album> children() {
-		return (Enumeration<Album>) super.children();
+		return super.children();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+	   result = prime * result + (gallery == null ? 0 : gallery.hashCode());
+	   result = prime * result + (name == null ? 0 : name.hashCode());
+	   return result;
 	}
 }

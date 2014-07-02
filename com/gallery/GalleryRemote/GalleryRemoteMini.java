@@ -9,11 +9,11 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: paour
- * Date: Jan 14, 2004
+ * @author paour
+ * @version Jan 14, 2004
  */
 public class GalleryRemoteMini extends GalleryRemote {
+	@Override
 	protected void initializeGR() {
 		super.initializeGR();
 
@@ -22,14 +22,13 @@ public class GalleryRemoteMini extends GalleryRemote {
 		Log.startLog(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
 	}
 
+	@Override
 	public void createProperties() {
 		super.createProperties();
 
 		properties = getAppletOverrides(properties, "GRDefault_");
 
-		File f = new File(System.getProperty("user.home")
-				+ File.separator + ".GalleryRemote"
-				+ File.separator);
+		File f = new File(System.getProperty("user.home") + File.separator + ".GalleryRemote" + File.separator);
 
 		f.mkdirs();
 
@@ -44,14 +43,15 @@ public class GalleryRemoteMini extends GalleryRemote {
 		}
 
 		properties = new PropertiesFile(properties, pf.getPath(), "user");
-
 		properties = getAppletOverrides(properties, "GROverride_");
 	}
 
+	@Override
 	public Frame getMainFrame() {
 		return DialogUtil.findParentWindow(applet);
 	}
 
+	@Override
 	public GalleryRemoteCore getCore() {
 		return (GalleryRemoteCore) applet;
 	}

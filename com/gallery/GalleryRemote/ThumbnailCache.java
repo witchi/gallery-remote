@@ -58,12 +58,8 @@ public class ThumbnailCache implements Runnable {
 	public void run() {
 		Thread.yield();
 		int loaded = 0;
-		GalleryRemote
-				.instance()
-				.getCore()
-				.getMainStatusUpdate()
-				.startProgress(StatusUpdate.LEVEL_CACHE, 0, toLoad.size(),
-						GRI18n.getString(MODULE, "loadThmb"), false);
+		GalleryRemote.instance().getCore().getMainStatusUpdate()
+				.startProgress(StatusUpdate.LEVEL_CACHE, 0, toLoad.size(), GRI18n.getString(MODULE, "loadThmb"), false);
 		// Log.log(Log.TRACE, MODULE, "Starting " + iFilename);
 		while (!toLoad.isEmpty()) {
 			Picture p = toLoad.pop();
@@ -71,17 +67,13 @@ public class ThumbnailCache implements Runnable {
 
 			if (!thumbnails.containsKey(p)) {
 				if (p.isOnline()) {
-					Log.log(Log.LEVEL_TRACE, MODULE,
-							"Fetching thumbnail " + p.getUrlThumbnail());
+					Log.log(Log.LEVEL_TRACE, MODULE, "Fetching thumbnail " + p.getUrlThumbnail());
 					try {
-						URLConnection conn = ImageUtils.openUrlConnection(
-								p.getUrlThumbnail(), p);
+						URLConnection conn = ImageUtils.openUrlConnection(p.getUrlThumbnail(), p);
 						conn.connect();
 
-						ImageReader reader = (ImageReader) ImageIO
-								.getImageReadersByFormatName("jpeg").next();
-						ImageInputStream inputStream = ImageIO
-								.createImageInputStream(conn.getInputStream());
+						ImageReader reader = ImageIO.getImageReadersByFormatName("jpeg").next();
+						ImageInputStream inputStream = ImageIO.createImageInputStream(conn.getInputStream());
 						reader.setInput(inputStream);
 
 						i = reader.read(0);
@@ -95,15 +87,11 @@ public class ThumbnailCache implements Runnable {
 
 					if (i != null) {
 						Image scaled;
-						Dimension newD = ImageUtils
-								.getSizeKeepRatio(new Dimension(
-										((BufferedImage) i).getWidth(),
-										((BufferedImage) i).getHeight()),
-										GalleryRemote.instance().properties
-												.getThumbnailSize(), true);
+						Dimension newD = ImageUtils.getSizeKeepRatio(
+								new Dimension(((BufferedImage) i).getWidth(), ((BufferedImage) i).getHeight()),
+								GalleryRemote.instance().properties.getThumbnailSize(), true);
 						if (newD != null) {
-							scaled = i.getScaledInstance(newD.width,
-									newD.height, Image.SCALE_FAST);
+							scaled = i.getScaledInstance(newD.width, newD.height, Image.SCALE_FAST);
 							i.flush();
 							i = scaled;
 						}
@@ -111,34 +99,23 @@ public class ThumbnailCache implements Runnable {
 						i = ImageUtils.unrecognizedThumbnail;
 					}
 				} else {
-					i = ImageUtils.load(p.getSource().getPath(),
-							GalleryRemote.instance().properties.getThumbnailSize(),
-							ImageUtils.THUMB);
+					i = ImageUtils.load(p.getSource().getPath(), GalleryRemote.instance().properties.getThumbnailSize(), ImageUtils.THUMB);
 				}
 
 				thumbnails.put(p, i);
 
 				loaded++;
 
-				Log.log(Log.LEVEL_TRACE, MODULE, "update progress " + loaded
-						+ "/" + (loaded + toLoad.size()));
-				GalleryRemote
-						.instance()
-						.getCore()
-						.getMainStatusUpdate()
-						.updateProgressValue(StatusUpdate.LEVEL_CACHE, loaded,
-								loaded + toLoad.size());
+				Log.log(Log.LEVEL_TRACE, MODULE, "update progress " + loaded + "/" + (loaded + toLoad.size()));
+				GalleryRemote.instance().getCore().getMainStatusUpdate()
+						.updateProgressValue(StatusUpdate.LEVEL_CACHE, loaded, loaded + toLoad.size());
 				GalleryRemote.instance().getCore().thumbnailLoadedNotify();
 			}
 		}
 		stillRunning = false;
 
-		GalleryRemote
-				.instance()
-				.getCore()
-				.getMainStatusUpdate()
-				.stopProgress(StatusUpdate.LEVEL_CACHE,
-						GRI18n.getString(MODULE, "thmbLoaded"));
+		GalleryRemote.instance().getCore().getMainStatusUpdate()
+				.stopProgress(StatusUpdate.LEVEL_CACHE, GRI18n.getString(MODULE, "thmbLoaded"));
 
 		// Log.log(Log.TRACE, MODULE, "Ending");
 	}
@@ -160,7 +137,7 @@ public class ThumbnailCache implements Runnable {
 	 * Ask for several thumnails to be loaded
 	 * 
 	 * @param pictures
-	 *            enumeration of Picture objects that should be loaded
+	 *           enumeration of Picture objects that should be loaded
 	 */
 	public void preloadThumbnails(Iterator<Picture> pictures) {
 		Log.log(Log.LEVEL_TRACE, MODULE, "preloadThumbnails");

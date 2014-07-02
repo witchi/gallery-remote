@@ -29,10 +29,10 @@ import com.gallery.GalleryRemote.util.ImageLoaderUtil;
 import com.gallery.GalleryRemote.util.ImageUtils;
 
 /**
- * Created by IntelliJ IDEA. User: paour Date: Jan 14, 2004
+ * @author paour
+ * @version Jan 14, 2004
  */
-public class GalleryRemoteScreenSaver extends GalleryRemote implements
-		GalleryRemoteCore, PreferenceNames, ListDataListener,
+public class GalleryRemoteScreenSaver extends GalleryRemote implements GalleryRemoteCore, PreferenceNames, ListDataListener,
 		ImageLoaderUtil.ImageLoaderUser {
 
 	DefaultComboBoxModel<Gallery> galleries = null;
@@ -56,8 +56,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 
 		CoreUtils.initCore();
 
-		Log.startLog(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL),
-				instance().properties.getBooleanProperty("toSysOut"));
+		Log.startLog(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
 
 		startup();
 	}
@@ -70,8 +69,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 	public void createProperties() {
 		super.createProperties();
 
-		File f = new File(System.getProperty("user.home") + File.separator
-				+ ".GalleryRemote" + File.separator);
+		File f = new File(System.getProperty("user.home") + File.separator + ".GalleryRemote" + File.separator);
 
 		f.mkdirs();
 
@@ -106,8 +104,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 	public void startup() {
 		ScreensaverSettings settings = context.getSettings();
 		// settings.loadSettings("Gallery");
-		Log.log(Log.LEVEL_TRACE, MODULE, "Screensaver settings: "
-				+ settings.getProperties().toString());
+		Log.log(Log.LEVEL_TRACE, MODULE, "Screensaver settings: " + settings.getProperties().toString());
 
 		Properties p = settings.getProperties();
 
@@ -120,20 +117,17 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 			try {
 				p.load(new URL(curl).openStream());
 			} catch (IOException e) {
-				Log.log(Log.LEVEL_CRITICAL, MODULE,
-						"Error trying to get configuration file: " + curl);
+				Log.log(Log.LEVEL_CRITICAL, MODULE, "Error trying to get configuration file: " + curl);
 				Log.logException(Log.LEVEL_CRITICAL, MODULE, e);
 			}
 
-			Log.log(Log.LEVEL_TRACE, MODULE, "Fetched settings: "
-					+ settings.getProperties().toString());
+			Log.log(Log.LEVEL_TRACE, MODULE, "Fetched settings: " + settings.getProperties().toString());
 		}
 
 		String url = p.getProperty("url");
 		if (url != null) {
 			gallery.setStUrlString(url);
-			if (p.getProperty("username") == null
-					|| p.getProperty("username").trim().length() == 0) {
+			if (p.getProperty("username") == null || p.getProperty("username").trim().length() == 0) {
 				gallery.cookieLogin = true;
 			} else {
 				gallery.setUsername(p.getProperty("username"));
@@ -141,12 +135,9 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 			}
 			gallery.setType(Gallery.TYPE_STANDALONE);
 
-			properties.setBooleanProperty(SLIDESHOW_RECURSIVE,
-					p.getProperty("recursive") != null);
-			properties.setBooleanProperty(SLIDESHOW_LOWREZ,
-					p.getProperty("hires") == null);
-			properties.setBooleanProperty(SLIDESHOW_NOSTRETCH,
-					p.getProperty("stretch") == null);
+			properties.setBooleanProperty(SLIDESHOW_RECURSIVE, p.getProperty("recursive") != null);
+			properties.setBooleanProperty(SLIDESHOW_LOWREZ, p.getProperty("hires") == null);
+			properties.setBooleanProperty(SLIDESHOW_NOSTRETCH, p.getProperty("stretch") == null);
 			delay = Integer.parseInt(p.getProperty("delay")) * 1000;
 			String albums = p.getProperty("album");
 			String[] albumsA = albums.split(",");
@@ -158,8 +149,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 			album.setName(albumsA[new Random().nextInt(albumsA.length)]);
 			album.addListDataListener(this);
 
-			album.fetchAlbumImages(statusUpdate, GalleryRemote.instance().properties
-					.getBooleanProperty(SLIDESHOW_RECURSIVE), 200, true);
+			album.fetchAlbumImages(statusUpdate, GalleryRemote.instance().properties.getBooleanProperty(SLIDESHOW_RECURSIVE), 200, true);
 		} else {
 			hasSettings = false;
 		}
@@ -174,8 +164,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 			picturesList = new ArrayList<Picture>(album.getPicturesList());
 		}
 
-		Picture p = (Picture) picturesList.get((int) Math.floor(Math.random()
-				* picturesList.size()));
+		Picture p = picturesList.get((int) Math.floor(Math.random() * picturesList.size()));
 		picturesList.remove(p);
 
 		loader.preparePicture(p, true, true);
@@ -263,8 +252,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 
 	@Override
 	public void pictureReady() {
-		Log.log(Log.LEVEL_TRACE, MODULE,
-				"PictureReady, letting screensaver thread update");
+		Log.log(Log.LEVEL_TRACE, MODULE, "PictureReady, letting screensaver thread update");
 		newImage = true;
 
 		new Thread() {

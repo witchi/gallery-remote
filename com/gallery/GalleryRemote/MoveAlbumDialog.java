@@ -20,17 +20,27 @@
  */
 package com.gallery.GalleryRemote;
 
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+
 import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.model.Gallery;
 import com.gallery.GalleryRemote.util.DialogUtil;
 import com.gallery.GalleryRemote.util.GRI18n;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Vector;
-import java.util.Enumeration;
 
 /**
  * Description of the Class
@@ -38,15 +48,14 @@ import java.util.Enumeration;
  * @author paour
  * @created October 18, 2002
  */
-public class MoveAlbumDialog extends JDialog
-		implements ActionListener {
+public class MoveAlbumDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = -5217703609161413941L;
 	public final static String MODULE = "MoveAlbum";
 
 	Gallery gallery = null;
 	Album album = null;
-	//Album rootAlbum = null;
+	// Album rootAlbum = null;
 
 	JLabel jLabel2 = new JLabel();
 	JLabel jLabel3 = new JLabel();
@@ -61,13 +70,15 @@ public class MoveAlbumDialog extends JDialog
 
 	Album newParent = null;
 
-
 	/**
 	 * Constructor for the NewAlbumDialog object
 	 * 
-	 * @param owner        Description of Parameter
-	 * @param gallery      Description of Parameter
-	 * @param defaultAlbum Description of Parameter
+	 * @param owner
+	 *           Description of Parameter
+	 * @param gallery
+	 *           Description of Parameter
+	 * @param defaultAlbum
+	 *           Description of Parameter
 	 */
 	public MoveAlbumDialog(Frame owner, Gallery gallery, Album album) {
 		super(owner, true);
@@ -83,17 +94,16 @@ public class MoveAlbumDialog extends JDialog
 		setVisible(true);
 	}
 
-
 	private void jbInit() {
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.setModal(true);
 		this.setTitle(GRI18n.getString(MODULE, "title"));
 
 		Vector<Album> albums = new Vector<Album>(gallery.getFlatAlbumList());
-		//rootAlbum = new Album(gallery);
-		//rootAlbum.setSuppressEvents(true);
-		//rootAlbum.setTitle(GRI18n.getString(MODULE, "rootAlbmTitle"));
-		//rootAlbum.setName("root.root");
+		// rootAlbum = new Album(gallery);
+		// rootAlbum.setSuppressEvents(true);
+		// rootAlbum.setTitle(GRI18n.getString(MODULE, "rootAlbmTitle"));
+		// rootAlbum.setName("root.root");
 		Object rootAlbum = gallery.getRoot();
 		if (album.getParentAlbum() == rootAlbum) {
 			albums.remove(rootAlbum);
@@ -107,18 +117,22 @@ public class MoveAlbumDialog extends JDialog
 		jCancel.setActionCommand("Cancel");
 		jOk.setText(GRI18n.getString("Common", "OK"));
 		jOk.setActionCommand("OK");
-		jAlbumName.setText(GRI18n.getString(MODULE, "moveAlbm", new String[] {album.getName()}));
+		jAlbumName.setText(GRI18n.getString(MODULE, "moveAlbm", new String[] { album.getName() }));
 
 		jLabel2.setText(GRI18n.getString(MODULE, "parentAlbm"));
 
-		this.getContentPane().add(jLabel2, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 4));
-		this.getContentPane().add(jAlbumName, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0
-				, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(jAlbum, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 5), 0, 0));
-		this.getContentPane().add(jPanel2, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(jLabel2,
+				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 4));
+		this.getContentPane().add(
+				jAlbumName,
+				new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0,
+						0));
+		this.getContentPane().add(
+				jAlbum,
+				new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 5),
+						0, 0));
+		this.getContentPane().add(jPanel2,
+				new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 		jPanel2.setLayout(new GridLayout(1, 2, 5, 0));
 		jPanel2.add(jCancel, null);
@@ -132,7 +146,7 @@ public class MoveAlbumDialog extends JDialog
 
 	public void removeChildren(Vector<Album> albums, Album album) {
 		for (Enumeration<Album> it = album.children(); it.hasMoreElements();) {
-			Album subAlbum = (Album) it.nextElement();
+			Album subAlbum = it.nextElement();
 			removeChildren(albums, subAlbum);
 		}
 
@@ -142,8 +156,10 @@ public class MoveAlbumDialog extends JDialog
 	/**
 	 * Description of the Method
 	 * 
-	 * @param e Description of Parameter
+	 * @param e
+	 *           Description of Parameter
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		Log.log(Log.LEVEL_INFO, MODULE, "Command selected " + command);
@@ -152,9 +168,9 @@ public class MoveAlbumDialog extends JDialog
 			setVisible(false);
 		} else if (command.equals("OK")) {
 			newParent = (Album) jAlbum.getSelectedItem();
-			//if (newParent == rootAlbum) {
-			//	newParent = null;
-			//}
+			// if (newParent == rootAlbum) {
+			// newParent = null;
+			// }
 
 			setVisible(false);
 		}
@@ -164,4 +180,3 @@ public class MoveAlbumDialog extends JDialog
 		return newParent;
 	}
 }
-

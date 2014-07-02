@@ -15,6 +15,7 @@ import edu.stanford.ejalbert.BrowserLauncher;
  * Created by IntelliJ IDEA. User: paour Date: Dec 16, 2003
  */
 public class BrowserLink extends JLabel implements MouseListener {
+
 	private static final long serialVersionUID = 6359091486724234508L;
 	public static final String MODULE = "BrowserLink";
 	String url = null;
@@ -35,6 +36,7 @@ public class BrowserLink extends JLabel implements MouseListener {
 		addMouseListener(this);
 	}
 
+	@Override
 	public void setText(String text) {
 		url = text;
 
@@ -50,6 +52,7 @@ public class BrowserLink extends JLabel implements MouseListener {
 	}
 
 	/* MouseListener Interface */
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		try {
 			BrowserLauncher.openURL(url);
@@ -58,15 +61,19 @@ public class BrowserLink extends JLabel implements MouseListener {
 		}
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 }

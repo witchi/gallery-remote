@@ -88,20 +88,14 @@ public abstract class GalleryRemote implements PreferenceNames {
 	protected void initializeGR() {
 		try {
 			try {
-				UIManager.setLookAndFeel(UIManager
-						.getSystemLookAndFeelClassName());
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (Exception e) {
 			}
 
-			if (Float.parseFloat(System
-					.getProperty("java.specification.version")) < 1.39) {
-				JOptionPane
-						.showMessageDialog(
-								null,
-								"Gallery Remote is not supported on Java "
-										+ "Virtual Machines older than 1.4. Please install a recent VM "
-										+ "and try running Gallery Remote again.",
-								"VM too old", JOptionPane.ERROR_MESSAGE);
+			if (Float.parseFloat(System.getProperty("java.specification.version")) < 1.39) {
+				JOptionPane.showMessageDialog(null, "Gallery Remote is not supported on Java "
+						+ "Virtual Machines older than 1.4. Please install a recent VM " + "and try running Gallery Remote again.", "VM too old",
+						JOptionPane.ERROR_MESSAGE);
 
 				System.exit(1);
 			}
@@ -109,12 +103,10 @@ public abstract class GalleryRemote implements PreferenceNames {
 			createProperties();
 
 			// log system properties
-			new GalleryProperties(System.getProperties()).logProperties(
-					Log.LEVEL_INFO, "SysProps");
+			new GalleryProperties(System.getProperties()).logProperties(Log.LEVEL_INFO, "SysProps");
 
 			// log system environment
-			new GalleryProperties(System.getenv()).logProperties(
-					Log.LEVEL_INFO, "SysEnv");
+			new GalleryProperties(System.getenv()).logProperties(Log.LEVEL_INFO, "SysEnv");
 
 			// log properties
 			properties.logProperties(Log.LEVEL_TRACE, "UsrProps");
@@ -131,13 +123,10 @@ public abstract class GalleryRemote implements PreferenceNames {
 	}
 
 	private void setFontOverrides() {
-		String name = properties
-				.getProperty(PreferenceNames.FONT_OVERRIDE_NAME);
+		String name = properties.getProperty(PreferenceNames.FONT_OVERRIDE_NAME);
 		if (name != null) {
-			int style = properties
-					.getIntProperty(PreferenceNames.FONT_OVERRIDE_STYLE);
-			int size = properties
-					.getIntProperty(PreferenceNames.FONT_OVERRIDE_SIZE);
+			int style = properties.getIntProperty(PreferenceNames.FONT_OVERRIDE_STYLE);
+			int size = properties.getIntProperty(PreferenceNames.FONT_OVERRIDE_SIZE);
 
 			FontUIResource fur = new FontUIResource(name, style, size);
 			UIManager.put("Label.font", fur);
@@ -176,8 +165,7 @@ public abstract class GalleryRemote implements PreferenceNames {
 			setStaticProperties();
 
 			try {
-				singleton = (GalleryRemote) Class.forName(className)
-						.newInstance();
+				singleton = (GalleryRemote) Class.forName(className).newInstance();
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -187,22 +175,15 @@ public abstract class GalleryRemote implements PreferenceNames {
 			}
 
 			singleton.applet = applet;
-
-			// singleton.run();
-
 			return true;
-		} else {
-			System.err
-					.println("Trying to instanciate Gallery Remote more than once...");
-			Thread.dumpStack();
-
-			return false;
 		}
+		System.err.println("Trying to instanciate Gallery Remote more than once...");
+		Thread.dumpStack();
+		return false;
 	}
 
 	public static void shutdownInstance() {
 		System.out.println("Shutting down Gallery Remote");
-
 		singleton = null;
 	}
 
@@ -218,16 +199,14 @@ public abstract class GalleryRemote implements PreferenceNames {
 
 		Iterator<String> i = Arrays.asList(args).iterator();
 		while (i.hasNext()) {
-			String sw = (String) i.next();
+			String sw = i.next();
 
 			if (sw.equals("-url") && i.hasNext()) {
-				url = (String) i.next();
-				Log.log(Log.LEVEL_TRACE, MODULE, "Command-line switch: url="
-						+ url);
+				url = i.next();
+				Log.log(Log.LEVEL_TRACE, MODULE, "Command-line switch: url=" + url);
 			} else if (sw.equals("-username") && i.hasNext()) {
-				username = (String) i.next();
-				Log.log(Log.LEVEL_TRACE, MODULE,
-						"Command-line switch: username=" + username);
+				username = i.next();
+				Log.log(Log.LEVEL_TRACE, MODULE, "Command-line switch: username=" + username);
 			}
 		}
 
@@ -236,9 +215,7 @@ public abstract class GalleryRemote implements PreferenceNames {
 			int j = 0;
 			boolean found = false;
 			while (instance().properties.containsKey(GURL + j)) {
-				if (instance().properties.getProperty(GURL + j).equals(url)
-						&& instance().properties.getProperty(USERNAME + j).equals(
-								username)) {
+				if (instance().properties.getProperty(GURL + j).equals(url) && instance().properties.getProperty(USERNAME + j).equals(username)) {
 					// we have probably already loaded and saved thus URL,
 					// nothing to do
 					found = true;
@@ -256,18 +233,15 @@ public abstract class GalleryRemote implements PreferenceNames {
 					instance().properties.setProperty(USERNAME + j, username);
 				}
 
-				instance().properties.setBooleanProperty(AUTO_LOAD_ON_STARTUP + j,
-						true);
+				instance().properties.setBooleanProperty(AUTO_LOAD_ON_STARTUP + j, true);
 
 				try {
-					Gallery g = Gallery.readFromProperties(instance().properties, j,
-							instance().getCore().getMainStatusUpdate());
+					Gallery g = Gallery.readFromProperties(instance().properties, j, instance().getCore().getMainStatusUpdate());
 					if (g != null) {
 						instance().getCore().getGalleries().addElement(g);
 					}
 				} catch (Exception e) {
-					Log.log(Log.LEVEL_ERROR, MODULE,
-							"Error trying to load Gallery profile " + i);
+					Log.log(Log.LEVEL_ERROR, MODULE, "Error trying to load Gallery profile " + i);
 					Log.logException(Log.LEVEL_ERROR, MODULE, e);
 				}
 			}
@@ -277,8 +251,7 @@ public abstract class GalleryRemote implements PreferenceNames {
 	}
 
 	public static void setStaticProperties() {
-		System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-				"Gallery Remote");
+		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Gallery Remote");
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("apple.awt.showGrowBox", "false");
 		System.setProperty("apple.awt.brushMetalLook", "true");
@@ -294,22 +267,20 @@ public abstract class GalleryRemote implements PreferenceNames {
 		// this isn't such a good idea, it crashes with some NVidia drivers
 		/*
 		 * try { if
-		 * (Float.parseFloat(System.getProperty("java.specification.version"))
-		 * >= 1.6) { System.setProperty("sun.java2d.opengl", "true"); } } catch
+		 * (Float.parseFloat(System.getProperty("java.specification.version")) >=
+		 * 1.6) { System.setProperty("sun.java2d.opengl", "true"); } } catch
 		 * (RuntimeException e) { Log.log(Log.LEVEL_ERROR,
 		 * "Couldn't get property java.specification.version: " +
 		 * System.getProperty("java.specification.version")); }
 		 */
 
 		/*
-		 * try { // purposely not using secure class loading... Class
-		 * unsignedTest =
-		 * Class.forName("com.gallery.GalleryRemote.insecureutil.UnsignedTest");
+		 * try { // purposely not using secure class loading... Class unsignedTest
+		 * = Class.forName("com.gallery.GalleryRemote.insecureutil.UnsignedTest");
 		 * Log.log(Log.LEVEL_TRACE, MODULE, "isSignedByGallery: " +
 		 * isSignedByGallery(unsignedTest));
 		 * 
-		 * if (isSignedByGallery(unsignedTest)) { Log.log(Log.LEVEL_TRACE,
-		 * MODULE,
+		 * if (isSignedByGallery(unsignedTest)) { Log.log(Log.LEVEL_TRACE, MODULE,
 		 * "Not signed by us, we should not execute method... but do it to test..."
 		 * ); } Method createFile = unsignedTest.getMethod("createFile", null);
 		 * createFile.invoke(null, null);
@@ -323,14 +294,12 @@ public abstract class GalleryRemote implements PreferenceNames {
 	public static boolean isSignedByGallery(Class<?> c) {
 		if (GalleryRemote.class.getSigners() == null) {
 			// the main class is unsigned so we can't expect others to be signed
-			Log.log(Log.LEVEL_INFO, MODULE,
-					"GalleryRemote is not signed: none of the other classes need to be signed");
+			Log.log(Log.LEVEL_INFO, MODULE, "GalleryRemote is not signed: none of the other classes need to be signed");
 			return true;
 		}
 
 		Object[] signers = c.getSigners();
-		if (signers != null
-				&& signers instanceof java.security.cert.Certificate[]) {
+		if (signers != null && signers instanceof java.security.cert.Certificate[]) {
 			java.security.cert.Certificate[] certs = (java.security.cert.Certificate[]) signers;
 
 			for (int i = 0; i < certs.length; i++) {
@@ -344,16 +313,13 @@ public abstract class GalleryRemote implements PreferenceNames {
 		return false;
 	}
 
-	public static Class<?> secureClassForName(String name)
-			throws ClassNotFoundException {
+	public static Class<?> secureClassForName(String name) throws ClassNotFoundException {
 		Log.log(Log.LEVEL_INFO, MODULE, "Trying to securely load " + name);
 		Class<?> c = Class.forName(name);
 		if (isSignedByGallery(c)) {
 			return c;
-		} else {
-			throw new ClassNotFoundException(
-					"The class is not signed by Gallery, so we're not going to load it");
 		}
+		throw new ClassNotFoundException("The class is not signed by Gallery, so we're not going to load it");
 	}
 
 	public void createProperties() {
@@ -361,22 +327,8 @@ public abstract class GalleryRemote implements PreferenceNames {
 		properties.setReadOnly();
 	}
 
-	/*
-	 * public PropertiesFile createAppletOverride(PropertiesFile p) {
-	 * PropertiesFile override;
-	 * 
-	 * if (p == null) { override = new PropertiesFile(defaults); } else {
-	 * override = new PropertiesFile(p); }
-	 * 
-	 * override.setReadOnly();
-	 * 
-	 * return override; }
-	 */
-
-	public PropertiesFile getAppletOverrides(PropertiesFile defaults,
-			String prefix) {
-		Log.log(Log.LEVEL_TRACE, MODULE,
-				"Getting applet parameters for prefix " + prefix);
+	public PropertiesFile getAppletOverrides(PropertiesFile defaults, String prefix) {
+		Log.log(Log.LEVEL_TRACE, MODULE, "Getting applet parameters for prefix " + prefix);
 
 		PropertiesFile p = new PropertiesFile(defaults, null, prefix);
 
@@ -385,8 +337,7 @@ public abstract class GalleryRemote implements PreferenceNames {
 			String value = applet.getParameter(prefix + name);
 
 			if (value != null && value.length() != 0) {
-				Log.log(Log.LEVEL_TRACE, MODULE, "Got: " + name + "= |" + value
-						+ "|");
+				Log.log(Log.LEVEL_TRACE, MODULE, "Got: " + name + "= |" + value + "|");
 				p.setProperty(name, value);
 			}
 		}
@@ -408,10 +359,8 @@ public abstract class GalleryRemote implements PreferenceNames {
 				ACCELERATOR_MASK = ActionEvent.META_MASK;
 			}
 
-			iComputer = new ImageIcon(
-					GalleryRemote.class.getResource("/computer.gif"));
-			iUploading = new ImageIcon(
-					GalleryRemote.class.getResource("/uploading.gif"));
+			iComputer = new ImageIcon(GalleryRemote.class.getResource("/computer.gif"));
+			iUploading = new ImageIcon(GalleryRemote.class.getResource("/uploading.gif"));
 		} catch (Exception e) {
 			Log.logException(Log.LEVEL_ERROR, MODULE, e);
 		}

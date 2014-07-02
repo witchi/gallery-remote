@@ -104,8 +104,7 @@ public class AuthorizationInfo implements Cloneable {
 	private static AuthorizationHandler AuthHandler = new DefaultAuthHandler();
 
 	static {
-		CntxtList.put(HTTPConnection.getDefaultContext(),
-				new Hashtable<AuthorizationInfo, AuthorizationInfo>());
+		CntxtList.put(HTTPConnection.getDefaultContext(), new Hashtable<AuthorizationInfo, AuthorizationInfo>());
 	}
 
 	// the instance oriented stuff
@@ -146,9 +145,9 @@ public class AuthorizationInfo implements Cloneable {
 	 * Creates an new info structure for the specified host and port.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 */
 	AuthorizationInfo(String host, int port) {
 		this.host = host.trim().toLowerCase();
@@ -160,20 +159,19 @@ public class AuthorizationInfo implements Cloneable {
 	 * specified scheme, realm, params. The cookie is set to null.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param scheme
-	 *            the scheme
+	 *           the scheme
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @param params
-	 *            the parameters as an array of name/value pairs, or null
+	 *           the parameters as an array of name/value pairs, or null
 	 * @param info
-	 *            arbitrary extra info, or null
+	 *           arbitrary extra info, or null
 	 */
-	public AuthorizationInfo(String host, int port, String scheme,
-			String realm, NVPair params[], Object info) {
+	public AuthorizationInfo(String host, int port, String scheme, String realm, NVPair params[], Object info) {
 		this.scheme = scheme.trim();
 		this.host = host.trim().toLowerCase();
 		this.port = port;
@@ -192,20 +190,19 @@ public class AuthorizationInfo implements Cloneable {
 	 * array, and the extra_info is set to null.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param scheme
-	 *            the scheme
+	 *           the scheme
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @param cookie
-	 *            for the "Basic" scheme this is the base64-encoded
-	 *            username/password; for the "NTLM" scheme this is the
-	 *            base64-encoded username/password message.
+	 *           for the "Basic" scheme this is the base64-encoded
+	 *           username/password; for the "NTLM" scheme this is the
+	 *           base64-encoded username/password message.
 	 */
-	public AuthorizationInfo(String host, int port, String scheme,
-			String realm, String cookie) {
+	public AuthorizationInfo(String host, int port, String scheme, String realm, String cookie) {
 		this.scheme = scheme.trim();
 		this.host = host.trim().toLowerCase();
 		this.port = port;
@@ -220,7 +217,7 @@ public class AuthorizationInfo implements Cloneable {
 	 * Creates a new copy of the given AuthorizationInfo.
 	 * 
 	 * @param templ
-	 *            the info to copy
+	 *           the info to copy
 	 */
 	AuthorizationInfo(AuthorizationInfo templ) {
 		this.scheme = templ.scheme;
@@ -229,8 +226,7 @@ public class AuthorizationInfo implements Cloneable {
 		this.realm = templ.realm;
 		this.cookie = templ.cookie;
 
-		this.auth_params = Util.resizeArray(templ.auth_params,
-				templ.auth_params.length);
+		this.auth_params = Util.resizeArray(templ.auth_params, templ.auth_params.length);
 
 		this.extra_info = templ.extra_info;
 	}
@@ -245,21 +241,19 @@ public class AuthorizationInfo implements Cloneable {
 	 * 
 	 * <P>
 	 * If no handler is set then a {@link DefaultAuthHandler default handler} is
-	 * used. This handler currently only handles the "Basic" and "Digest"
-	 * schemes and brings up a popup which prompts for the username and
-	 * password.
+	 * used. This handler currently only handles the "Basic" and "Digest" schemes
+	 * and brings up a popup which prompts for the username and password.
 	 * 
 	 * <P>
 	 * The default handler can be disabled by setting the auth handler to
 	 * <var>null</var>.
 	 * 
 	 * @param handler
-	 *            the new authorization handler
+	 *           the new authorization handler
 	 * @return the old authorization handler
 	 * @see AuthorizationHandler
 	 */
-	public static AuthorizationHandler setAuthHandler(
-			AuthorizationHandler handler) {
+	public static AuthorizationHandler setAuthHandler(AuthorizationHandler handler) {
 		AuthorizationHandler tmp = AuthHandler;
 		AuthHandler = handler;
 
@@ -277,23 +271,21 @@ public class AuthorizationInfo implements Cloneable {
 	}
 
 	/**
-	 * Searches for the authorization info using the given host, port, scheme
-	 * and realm. The context is the default context.
+	 * Searches for the authorization info using the given host, port, scheme and
+	 * realm. The context is the default context.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param scheme
-	 *            the scheme
+	 *           the scheme
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @return a pointer to the authorization data or null if not found
 	 */
-	public static AuthorizationInfo getAuthorization(String host, int port,
-			String scheme, String realm) {
-		return getAuthorization(host, port, scheme, realm,
-				HTTPConnection.getDefaultContext());
+	public static AuthorizationInfo getAuthorization(String host, int port, String scheme, String realm) {
+		return getAuthorization(host, port, scheme, realm, HTTPConnection.getDefaultContext());
 	}
 
 	/**
@@ -301,26 +293,23 @@ public class AuthorizationInfo implements Cloneable {
 	 * host, port, scheme and realm.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param scheme
-	 *            the scheme
+	 *           the scheme
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @param context
-	 *            the context this info is associated with
+	 *           the context this info is associated with
 	 * @return a pointer to the authorization data or null if not found
 	 */
-	public static synchronized AuthorizationInfo getAuthorization(String host,
-			int port, String scheme, String realm, Object context) {
-		Hashtable<AuthorizationInfo, AuthorizationInfo> AuthList = Util
-				.getList(CntxtList, context);
+	public static synchronized AuthorizationInfo getAuthorization(String host, int port, String scheme, String realm, Object context) {
+		Hashtable<AuthorizationInfo, AuthorizationInfo> AuthList = Util.getList(CntxtList, context);
 
-		AuthorizationInfo auth_info = new AuthorizationInfo(host, port, scheme,
-				realm, (NVPair[]) null, null);
+		AuthorizationInfo auth_info = new AuthorizationInfo(host, port, scheme, realm, (NVPair[]) null, null);
 
-		return (AuthorizationInfo) AuthList.get(auth_info);
+		return AuthList.get(auth_info);
 	}
 
 	/**
@@ -328,68 +317,59 @@ public class AuthorizationInfo implements Cloneable {
 	 * the list.
 	 * 
 	 * @param auth_info
-	 *            any info needed by the AuthHandler; at a minimum the host,
-	 *            scheme and realm should be set.
+	 *           any info needed by the AuthHandler; at a minimum the host,
+	 *           scheme and realm should be set.
 	 * @param req
-	 *            the request which initiated this query
+	 *           the request which initiated this query
 	 * @param resp
-	 *            the full response
+	 *           the full response
 	 * @return a structure containing the requested info, or null if either no
 	 *         AuthHandler is set or the user canceled the request.
 	 * @exception AuthSchemeNotImplException
-	 *                if this is thrown by the AuthHandler.
+	 *               if this is thrown by the AuthHandler.
 	 */
-	static AuthorizationInfo queryAuthHandler(AuthorizationInfo auth_info,
-			RoRequest req, RoResponse resp) throws AuthSchemeNotImplException,
-			IOException {
+	static AuthorizationInfo queryAuthHandler(AuthorizationInfo auth_info, RoRequest req, RoResponse resp)
+			throws AuthSchemeNotImplException, IOException {
 		if (AuthHandler == null)
 			return null;
 
-		AuthorizationInfo new_info = AuthHandler.getAuthorization(auth_info,
-				req, resp);
+		AuthorizationInfo new_info = AuthHandler.getAuthorization(auth_info, req, resp);
 		if (new_info != null) {
 			if (req != null)
-				addAuthorization((AuthorizationInfo) new_info.clone(), req
-						.getConnection().getContext());
+				addAuthorization((AuthorizationInfo) new_info.clone(), req.getConnection().getContext());
 			else
-				addAuthorization((AuthorizationInfo) new_info.clone(),
-						HTTPConnection.getDefaultContext());
+				addAuthorization((AuthorizationInfo) new_info.clone(), HTTPConnection.getDefaultContext());
 		}
 
 		return new_info;
 	}
 
 	/**
-	 * Searches for the authorization info using the host, port, scheme and
-	 * realm from the given info struct. If not found it queries the AuthHandler
-	 * (if set).
+	 * Searches for the authorization info using the host, port, scheme and realm
+	 * from the given info struct. If not found it queries the AuthHandler (if
+	 * set).
 	 * 
 	 * @param auth_info
-	 *            the AuthorizationInfo
+	 *           the AuthorizationInfo
 	 * @param req
-	 *            the request which initiated this query
+	 *           the request which initiated this query
 	 * @param resp
-	 *            the full response
+	 *           the full response
 	 * @param query_auth_h
-	 *            if true, query the auth-handler if no info found.
+	 *           if true, query the auth-handler if no info found.
 	 * @return a pointer to the authorization data or null if not found
 	 * @exception AuthSchemeNotImplException
-	 *                If thrown by the AuthHandler.
+	 *               If thrown by the AuthHandler.
 	 */
-	static synchronized AuthorizationInfo getAuthorization(
-			AuthorizationInfo auth_info, RoRequest req, RoResponse resp,
-			boolean query_auth_h) throws AuthSchemeNotImplException,
-			IOException {
+	static synchronized AuthorizationInfo getAuthorization(AuthorizationInfo auth_info, RoRequest req, RoResponse resp, boolean query_auth_h)
+			throws AuthSchemeNotImplException, IOException {
 		Hashtable<AuthorizationInfo, AuthorizationInfo> AuthList;
 		if (req != null)
-			AuthList = Util
-					.getList(CntxtList, req.getConnection().getContext());
+			AuthList = Util.getList(CntxtList, req.getConnection().getContext());
 		else
-			AuthList = Util.getList(CntxtList,
-					HTTPConnection.getDefaultContext());
+			AuthList = Util.getList(CntxtList, HTTPConnection.getDefaultContext());
 
-		AuthorizationInfo new_info = (AuthorizationInfo) AuthList
-				.get(auth_info);
+		AuthorizationInfo new_info = AuthList.get(auth_info);
 
 		if (new_info == null && query_auth_h)
 			new_info = queryAuthHandler(auth_info, req, resp);
@@ -402,29 +382,26 @@ public class AuthorizationInfo implements Cloneable {
 	 * Queries the AuthHandler if not found in list.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param scheme
-	 *            the scheme
+	 *           the scheme
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @param req
-	 *            the request which initiated this query
+	 *           the request which initiated this query
 	 * @param resp
-	 *            the full response
+	 *           the full response
 	 * @param query_auth_h
-	 *            if true, query the auth-handler if no info found.
+	 *           if true, query the auth-handler if no info found.
 	 * @return a pointer to the authorization data or null if not found
 	 * @exception AuthSchemeNotImplException
-	 *                If thrown by the AuthHandler.
+	 *               If thrown by the AuthHandler.
 	 */
-	static AuthorizationInfo getAuthorization(String host, int port,
-			String scheme, String realm, RoRequest req, RoResponse resp,
-			boolean query_auth_h) throws AuthSchemeNotImplException,
-			IOException {
-		return getAuthorization(new AuthorizationInfo(host, port, scheme,
-				realm, (NVPair[]) null, null), req, resp, query_auth_h);
+	static AuthorizationInfo getAuthorization(String host, int port, String scheme, String realm, RoRequest req, RoResponse resp,
+			boolean query_auth_h) throws AuthSchemeNotImplException, IOException {
+		return getAuthorization(new AuthorizationInfo(host, port, scheme, realm, (NVPair[]) null, null), req, resp, query_auth_h);
 	}
 
 	/**
@@ -433,7 +410,7 @@ public class AuthorizationInfo implements Cloneable {
 	 * and params are replaced with the new data.
 	 * 
 	 * @param auth_info
-	 *            the AuthorizationInfo to add
+	 *           the AuthorizationInfo to add
 	 */
 	public static void addAuthorization(AuthorizationInfo auth_info) {
 		addAuthorization(auth_info, HTTPConnection.getDefaultContext());
@@ -445,18 +422,15 @@ public class AuthorizationInfo implements Cloneable {
 	 * with the new data.
 	 * 
 	 * @param auth_info
-	 *            the AuthorizationInfo to add
+	 *           the AuthorizationInfo to add
 	 * @param context
-	 *            the context to associate this info with
+	 *           the context to associate this info with
 	 */
-	public static void addAuthorization(AuthorizationInfo auth_info,
-			Object context) {
-		Hashtable<AuthorizationInfo, AuthorizationInfo> AuthList = Util
-				.getList(CntxtList, context);
+	public static void addAuthorization(AuthorizationInfo auth_info, Object context) {
+		Hashtable<AuthorizationInfo, AuthorizationInfo> AuthList = Util.getList(CntxtList, context);
 
 		// merge path list
-		AuthorizationInfo old_info = (AuthorizationInfo) AuthList
-				.get(auth_info);
+		AuthorizationInfo old_info = AuthList.get(auth_info);
 		if (old_info != null) {
 			int ol = old_info.paths.length, al = auth_info.paths.length;
 
@@ -477,24 +451,22 @@ public class AuthorizationInfo implements Cloneable {
 	 * and params are replaced with the new data.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param scheme
-	 *            the scheme
+	 *           the scheme
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @param cookie
-	 *            the cookie
+	 *           the cookie
 	 * @param params
-	 *            an array of name/value pairs of parameters
+	 *           an array of name/value pairs of parameters
 	 * @param info
-	 *            arbitrary extra auth info
+	 *           arbitrary extra auth info
 	 */
-	public static void addAuthorization(String host, int port, String scheme,
-			String realm, String cookie, NVPair params[], Object info) {
-		addAuthorization(host, port, scheme, realm, cookie, params, info,
-				HTTPConnection.getDefaultContext());
+	public static void addAuthorization(String host, int port, String scheme, String realm, String cookie, NVPair params[], Object info) {
+		addAuthorization(host, port, scheme, realm, cookie, params, info, HTTPConnection.getDefaultContext());
 	}
 
 	/**
@@ -503,27 +475,25 @@ public class AuthorizationInfo implements Cloneable {
 	 * with the new data.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param scheme
-	 *            the scheme
+	 *           the scheme
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @param cookie
-	 *            the cookie
+	 *           the cookie
 	 * @param params
-	 *            an array of name/value pairs of parameters
+	 *           an array of name/value pairs of parameters
 	 * @param info
-	 *            arbitrary extra auth info
+	 *           arbitrary extra auth info
 	 * @param context
-	 *            the context to associate this info with
+	 *           the context to associate this info with
 	 */
-	public static void addAuthorization(String host, int port, String scheme,
-			String realm, String cookie, NVPair params[], Object info,
+	public static void addAuthorization(String host, int port, String scheme, String realm, String cookie, NVPair params[], Object info,
 			Object context) {
-		AuthorizationInfo auth = new AuthorizationInfo(host, port, scheme,
-				realm, cookie);
+		AuthorizationInfo auth = new AuthorizationInfo(host, port, scheme, realm, cookie);
 		if (params != null && params.length > 0)
 			auth.auth_params = Util.resizeArray(params, params.length);
 		auth.extra_info = info;
@@ -533,24 +503,22 @@ public class AuthorizationInfo implements Cloneable {
 
 	/**
 	 * Adds an authorization entry for the "Basic" authorization scheme to the
-	 * list using the default context. If an entry already exists for the
-	 * "Basic" scheme and the specified realm then it is overwritten.
+	 * list using the default context. If an entry already exists for the "Basic"
+	 * scheme and the specified realm then it is overwritten.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @param user
-	 *            the username
+	 *           the username
 	 * @param passwd
-	 *            the password
+	 *           the password
 	 */
-	public static void addBasicAuthorization(String host, int port,
-			String realm, String user, String passwd) {
-		addAuthorization(host, port, "Basic", realm,
-				Codecs.base64Encode(user + ":" + passwd), (NVPair[]) null, null);
+	public static void addBasicAuthorization(String host, int port, String realm, String user, String passwd) {
+		addAuthorization(host, port, "Basic", realm, Codecs.base64Encode(user + ":" + passwd), (NVPair[]) null, null);
 	}
 
 	/**
@@ -559,23 +527,20 @@ public class AuthorizationInfo implements Cloneable {
 	 * realm then it is overwritten.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @param user
-	 *            the username
+	 *           the username
 	 * @param passwd
-	 *            the password
+	 *           the password
 	 * @param context
-	 *            the context to associate this info with
+	 *           the context to associate this info with
 	 */
-	public static void addBasicAuthorization(String host, int port,
-			String realm, String user, String passwd, Object context) {
-		addAuthorization(host, port, "Basic", realm,
-				Codecs.base64Encode(user + ":" + passwd), (NVPair[]) null,
-				null, context);
+	public static void addBasicAuthorization(String host, int port, String realm, String user, String passwd, Object context) {
+		addAuthorization(host, port, "Basic", realm, Codecs.base64Encode(user + ":" + passwd), (NVPair[]) null, null, context);
 	}
 
 	/**
@@ -584,44 +549,40 @@ public class AuthorizationInfo implements Cloneable {
 	 * "Digest" scheme and the specified realm then it is overwritten.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @param user
-	 *            the username
+	 *           the username
 	 * @param passwd
-	 *            the password
+	 *           the password
 	 */
-	public static void addDigestAuthorization(String host, int port,
-			String realm, String user, String passwd) {
-		addDigestAuthorization(host, port, realm, user, passwd,
-				HTTPConnection.getDefaultContext());
+	public static void addDigestAuthorization(String host, int port, String realm, String user, String passwd) {
+		addDigestAuthorization(host, port, realm, user, passwd, HTTPConnection.getDefaultContext());
 	}
 
 	/**
 	 * Adds an authorization entry for the "Digest" authorization scheme to the
-	 * list. If an entry already exists for the "Digest" scheme and the
-	 * specified realm then it is overwritten.
+	 * list. If an entry already exists for the "Digest" scheme and the specified
+	 * realm then it is overwritten.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @param user
-	 *            the username
+	 *           the username
 	 * @param passwd
-	 *            the password
+	 *           the password
 	 * @param context
-	 *            the context to associate this info with
+	 *           the context to associate this info with
 	 */
-	public static void addDigestAuthorization(String host, int port,
-			String realm, String user, String passwd, Object context) {
-		AuthorizationInfo prev = getAuthorization(host, port, "Digest", realm,
-				context);
+	public static void addDigestAuthorization(String host, int port, String realm, String user, String passwd, Object context) {
+		AuthorizationInfo prev = getAuthorization(host, port, "Digest", realm, context);
 		NVPair[] params;
 
 		if (prev == null) {
@@ -640,20 +601,18 @@ public class AuthorizationInfo implements Cloneable {
 			}
 		}
 
-		String[] extra = { MD5.hexDigest(user + ":" + realm + ":" + passwd),
-				null, null };
+		String[] extra = { MD5.hexDigest(user + ":" + realm + ":" + passwd), null, null };
 
-		addAuthorization(host, port, "Digest", realm, null, params, extra,
-				context);
+		addAuthorization(host, port, "Digest", realm, null, params, extra, context);
 	}
 
 	/**
-	 * Removes an authorization entry from the list using the default context.
-	 * If no entry for the specified host, port, scheme and realm exists then
-	 * this does nothing.
+	 * Removes an authorization entry from the list using the default context. If
+	 * no entry for the specified host, port, scheme and realm exists then this
+	 * does nothing.
 	 * 
 	 * @param auth_info
-	 *            the AuthorizationInfo to remove
+	 *           the AuthorizationInfo to remove
 	 */
 	public static void removeAuthorization(AuthorizationInfo auth_info) {
 		removeAuthorization(auth_info, HTTPConnection.getDefaultContext());
@@ -664,35 +623,31 @@ public class AuthorizationInfo implements Cloneable {
 	 * specified host, port, scheme and realm exists then this does nothing.
 	 * 
 	 * @param auth_info
-	 *            the AuthorizationInfo to remove
+	 *           the AuthorizationInfo to remove
 	 * @param context
-	 *            the context this info is associated with
+	 *           the context this info is associated with
 	 */
-	public static void removeAuthorization(AuthorizationInfo auth_info,
-			Object context) {
-		Hashtable<AuthorizationInfo, AuthorizationInfo> AuthList = Util
-				.getList(CntxtList, context);
+	public static void removeAuthorization(AuthorizationInfo auth_info, Object context) {
+		Hashtable<AuthorizationInfo, AuthorizationInfo> AuthList = Util.getList(CntxtList, context);
 		AuthList.remove(auth_info);
 	}
 
 	/**
-	 * Removes an authorization entry from the list using the default context.
-	 * If no entry for the specified host, port, scheme and realm exists then
-	 * this does nothing.
+	 * Removes an authorization entry from the list using the default context. If
+	 * no entry for the specified host, port, scheme and realm exists then this
+	 * does nothing.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param scheme
-	 *            the scheme
+	 *           the scheme
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 */
-	public static void removeAuthorization(String host, int port,
-			String scheme, String realm) {
-		removeAuthorization(new AuthorizationInfo(host, port, scheme, realm,
-				(NVPair[]) null, null));
+	public static void removeAuthorization(String host, int port, String scheme, String realm) {
+		removeAuthorization(new AuthorizationInfo(host, port, scheme, realm, (NVPair[]) null, null));
 	}
 
 	/**
@@ -700,30 +655,28 @@ public class AuthorizationInfo implements Cloneable {
 	 * specified host, port, scheme and realm exists then this does nothing.
 	 * 
 	 * @param host
-	 *            the host
+	 *           the host
 	 * @param port
-	 *            the port
+	 *           the port
 	 * @param scheme
-	 *            the scheme
+	 *           the scheme
 	 * @param realm
-	 *            the realm
+	 *           the realm
 	 * @param context
-	 *            the context this info is associated with
+	 *           the context this info is associated with
 	 */
-	public static void removeAuthorization(String host, int port,
-			String scheme, String realm, Object context) {
-		removeAuthorization(new AuthorizationInfo(host, port, scheme, realm,
-				(NVPair[]) null, null), context);
+	public static void removeAuthorization(String host, int port, String scheme, String realm, Object context) {
+		removeAuthorization(new AuthorizationInfo(host, port, scheme, realm, (NVPair[]) null, null), context);
 	}
 
 	/**
-	 * Tries to find the candidate in the current list of auth info for the
-	 * given request. The paths associated with each auth info are examined, and
-	 * the one with either the nearest direct parent or child is chosen. This is
-	 * used for preemptively sending auth info.
+	 * Tries to find the candidate in the current list of auth info for the given
+	 * request. The paths associated with each auth info are examined, and the
+	 * one with either the nearest direct parent or child is chosen. This is used
+	 * for preemptively sending auth info.
 	 * 
 	 * @param req
-	 *            the Request
+	 *           the Request
 	 * @return an AuthorizationInfo containing the info for the best match, or
 	 *         null if none found.
 	 */
@@ -734,11 +687,10 @@ public class AuthorizationInfo implements Cloneable {
 
 		// First search for an exact match
 
-		Hashtable<AuthorizationInfo, AuthorizationInfo> AuthList = Util
-				.getList(CntxtList, req.getConnection().getContext());
+		Hashtable<AuthorizationInfo, AuthorizationInfo> AuthList = Util.getList(CntxtList, req.getConnection().getContext());
 		Enumeration<AuthorizationInfo> list = AuthList.elements();
 		while (list.hasMoreElements()) {
-			AuthorizationInfo info = (AuthorizationInfo) list.nextElement();
+			AuthorizationInfo info = list.nextElement();
 
 			if (!info.host.equals(host) || info.port != port)
 				continue;
@@ -758,7 +710,7 @@ public class AuthorizationInfo implements Cloneable {
 
 		list = AuthList.elements();
 		while (list.hasMoreElements()) {
-			AuthorizationInfo info = (AuthorizationInfo) list.nextElement();
+			AuthorizationInfo info = list.nextElement();
 
 			if (!info.host.equals(host) || info.port != port)
 				continue;
@@ -766,8 +718,7 @@ public class AuthorizationInfo implements Cloneable {
 			String[] paths = info.paths;
 			for (int idx = 0; idx < paths.length; idx++) {
 				// strip the last path segment, leaving a trailing "/"
-				String ibase = paths[idx].substring(0,
-						paths[idx].lastIndexOf('/') + 1);
+				String ibase = paths[idx].substring(0, paths[idx].lastIndexOf('/') + 1);
 
 				if (base.equals(ibase))
 					return info;
@@ -804,7 +755,7 @@ public class AuthorizationInfo implements Cloneable {
 	 * used for deciding when to preemptively send auth info.
 	 * 
 	 * @param resource
-	 *            the resource from which to extract the path
+	 *           the resource from which to extract the path
 	 */
 	public synchronized void addPath(String resource) {
 		String path = Util.getPath(resource);
@@ -824,17 +775,15 @@ public class AuthorizationInfo implements Cloneable {
 	 * structures for the specified host and port.
 	 * 
 	 * @param challenge
-	 *            a string containing authentication info. This must have the
-	 *            same format as value part of a WWW-authenticate response
-	 *            header field, and may contain multiple authentication
-	 *            challenges.
+	 *           a string containing authentication info. This must have the same
+	 *           format as value part of a WWW-authenticate response header
+	 *           field, and may contain multiple authentication challenges.
 	 * @param req
-	 *            the original request.
+	 *           the original request.
 	 * @exception ProtocolException
-	 *                if any error during the parsing occurs.
+	 *               if any error during the parsing occurs.
 	 */
-	static AuthorizationInfo[] parseAuthString(String challenge, RoRequest req,
-			RoResponse resp) throws ProtocolException {
+	static AuthorizationInfo[] parseAuthString(String challenge, RoRequest req, RoResponse resp) throws ProtocolException {
 		int beg = 0, end = 0;
 		char[] buf = challenge.toCharArray();
 		int len = buf.length;
@@ -861,17 +810,14 @@ public class AuthorizationInfo implements Cloneable {
 				throw new ProtocolException(ioe.toString());
 			}
 			if (sts == 401)
-				curr = new AuthorizationInfo(req.getConnection().getHost(), req
-						.getConnection().getPort());
+				curr = new AuthorizationInfo(req.getConnection().getHost(), req.getConnection().getPort());
 			else
-				curr = new AuthorizationInfo(
-						req.getConnection().getProxyHost(), req.getConnection()
-								.getProxyPort());
+				curr = new AuthorizationInfo(req.getConnection().getProxyHost(), req.getConnection().getProxyPort());
 
 			/*
 			 * Hack for schemes like NTLM which don't have any params or cookie.
-			 * Mickeysoft, hello? What were you morons thinking here? I suppose
-			 * you weren't, as usual, huh?
+			 * Mickeysoft, hello? What were you morons thinking here? I suppose you
+			 * weren't, as usual, huh?
 			 */
 			if (buf[end - 1] == ',') {
 				curr.scheme = challenge.substring(beg, end - 1);
@@ -881,8 +827,7 @@ public class AuthorizationInfo implements Cloneable {
 
 				pos_ref[0] = beg;
 				pos_ref[1] = end;
-				Vector<NVPair> params = parseParams(challenge, buf, pos_ref,
-						len, curr);
+				Vector<NVPair> params = parseParams(challenge, buf, pos_ref, len, curr);
 				beg = pos_ref[0];
 				end = pos_ref[1];
 
@@ -894,8 +839,8 @@ public class AuthorizationInfo implements Cloneable {
 
 			if (curr.realm == null)
 				/*
-				 * Can't do this if we're supposed to allow for broken schemes
-				 * such as NTLM, Kerberos, and PEM.
+				 * Can't do this if we're supposed to allow for broken schemes such
+				 * as NTLM, Kerberos, and PEM.
 				 * 
 				 * throw new ProtocolException("Bad Authentication header " +
 				 * "format: " + challenge + "\nNo realm value found");
@@ -909,8 +854,7 @@ public class AuthorizationInfo implements Cloneable {
 		return auth_arr;
 	}
 
-	private static final Vector<NVPair> parseParams(String challenge,
-			char[] buf, int[] pos_ref, int len, AuthorizationInfo curr)
+	private static final Vector<NVPair> parseParams(String challenge, char[] buf, int[] pos_ref, int len, AuthorizationInfo curr)
 			throws ProtocolException {
 		int beg = pos_ref[0];
 		int end = pos_ref[1];
@@ -926,9 +870,7 @@ public class AuthorizationInfo implements Cloneable {
 			if (!first) // expect ","
 			{
 				if (buf[beg] != ',')
-					throw new ProtocolException("Bad Authentication header "
-							+ "format: '" + challenge
-							+ "'\nExpected \",\" at position " + beg);
+					throw new ProtocolException("Bad Authentication header " + "format: '" + challenge + "'\nExpected \",\" at position " + beg);
 
 				beg = Util.skipSpace(buf, beg + 1); // find param name
 				if (beg == len)
@@ -944,14 +886,11 @@ public class AuthorizationInfo implements Cloneable {
 
 			// extract name
 			end = beg + 1;
-			while (end < len && !Character.isWhitespace(buf[end])
-					&& buf[end] != '=' && buf[end] != ',')
+			while (end < len && !Character.isWhitespace(buf[end]) && buf[end] != '=' && buf[end] != ',')
 				end++;
 
 			// hack to deal with schemes which use cookies in challenge
-			if (first
-					&& (end == len || buf[end] == '='
-							&& (end + 1 == len || (buf[end + 1] == '=' && end + 2 == len)))) {
+			if (first && (end == len || buf[end] == '=' && (end + 1 == len || (buf[end + 1] == '=' && end + 2 == len)))) {
 				curr.cookie = challenge.substring(beg, len);
 				beg = len;
 				break;
@@ -973,18 +912,14 @@ public class AuthorizationInfo implements Cloneable {
 			{
 				beg = Util.skipSpace(buf, beg + 1);
 				if (beg == len)
-					throw new ProtocolException("Bad Authentication header "
-							+ "format: " + challenge
-							+ "\nUnexpected EOL after token" + " at position "
-							+ (end - 1));
+					throw new ProtocolException("Bad Authentication header " + "format: " + challenge + "\nUnexpected EOL after token"
+							+ " at position " + (end - 1));
 				if (buf[beg] != '"') // it's a token
 				{
 					end = Util.skipToken(buf, beg);
 					if (end == beg)
-						throw new ProtocolException(
-								"Bad Authentication header " + "format: "
-										+ challenge + "\nToken expected at "
-										+ "position " + beg);
+						throw new ProtocolException("Bad Authentication header " + "format: " + challenge + "\nToken expected at " + "position "
+								+ beg);
 					param_value = challenge.substring(beg, end);
 				} else // it's a quoted-string
 				{
@@ -993,13 +928,9 @@ public class AuthorizationInfo implements Cloneable {
 						end = challenge.indexOf('"', end + 1);
 					while (end != -1 && challenge.charAt(end - 1) == '\\');
 					if (end == -1)
-						throw new ProtocolException(
-								"Bad Authentication header " + "format: "
-										+ challenge + "\nClosing <\"> for "
-										+ "quoted-string starting at position "
-										+ beg + " not found");
-					param_value = Util.dequoteString(challenge.substring(beg,
-							end));
+						throw new ProtocolException("Bad Authentication header " + "format: " + challenge + "\nClosing <\"> for "
+								+ "quoted-string starting at position " + beg + " not found");
+					param_value = Util.dequoteString(challenge.substring(beg, end));
 					end++;
 				}
 			} else
@@ -1071,7 +1002,7 @@ public class AuthorizationInfo implements Cloneable {
 	 * Set the cookie
 	 * 
 	 * @param cookie
-	 *            the new cookie
+	 *           the new cookie
 	 * @since V0.3-1
 	 */
 	public final void setCookie(String cookie) {
@@ -1091,7 +1022,7 @@ public class AuthorizationInfo implements Cloneable {
 	 * Set the authentication parameters.
 	 * 
 	 * @param an
-	 *            array of name/value pairs.
+	 *           array of name/value pairs.
 	 */
 	public final void setParams(NVPair[] params) {
 		if (params != null)
@@ -1113,7 +1044,7 @@ public class AuthorizationInfo implements Cloneable {
 	 * Set the extra info.
 	 * 
 	 * @param info
-	 *            the extra info
+	 *           the extra info
 	 */
 	public final void setExtraInfo(Object info) {
 		extra_info = info;
@@ -1125,6 +1056,7 @@ public class AuthorizationInfo implements Cloneable {
 	 * 
 	 * @return a String containing all info.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer field = new StringBuffer(100);
 
@@ -1145,8 +1077,7 @@ public class AuthorizationInfo implements Cloneable {
 				field.append(auth_params[idx].getName());
 				if (auth_params[idx].getValue() != null) {
 					field.append("=\"");
-					field.append(Util.quoteString(auth_params[idx].getValue(),
-							"\\\""));
+					field.append(Util.quoteString(auth_params[idx].getValue(), "\\\""));
 					field.append('"');
 				}
 			}
@@ -1156,12 +1087,13 @@ public class AuthorizationInfo implements Cloneable {
 	}
 
 	/**
-	 * Produces a hash code based on host, scheme and realm. Port is not
-	 * included for simplicity (and because it probably won't make much
-	 * difference). Used in the AuthorizationInfo.AuthList hash table.
+	 * Produces a hash code based on host, scheme and realm. Port is not included
+	 * for simplicity (and because it probably won't make much difference). Used
+	 * in the AuthorizationInfo.AuthList hash table.
 	 * 
 	 * @return the hash code
 	 */
+	@Override
 	public int hashCode() {
 		return (host + scheme.toLowerCase() + realm).hashCode();
 	}
@@ -1171,25 +1103,23 @@ public class AuthorizationInfo implements Cloneable {
 	 * and realm match. Used in the AuthorizationInfo.AuthList hash table.
 	 * 
 	 * @param obj
-	 *            another AuthorizationInfo against which this one is to be
-	 *            compared.
-	 * @return true if they match in the above mentioned fields; false
-	 *         otherwise.
+	 *           another AuthorizationInfo against which this one is to be
+	 *           compared.
+	 * @return true if they match in the above mentioned fields; false otherwise.
 	 */
+	@Override
 	public boolean equals(Object obj) {
-		if ((obj != null) && (obj instanceof AuthorizationInfo)) {
-			AuthorizationInfo auth = (AuthorizationInfo) obj;
-			if (host.equals(auth.host) && (port == auth.port)
-					&& scheme.equalsIgnoreCase(auth.scheme)
-					&& realm.equals(auth.realm))
-				return true;
+		if (!(obj instanceof AuthorizationInfo)) {
+			return false;
 		}
-		return false;
+		AuthorizationInfo auth = (AuthorizationInfo) obj;
+		return (host.equals(auth.host) && (port == auth.port) && scheme.equalsIgnoreCase(auth.scheme) && realm.equals(auth.realm));
 	}
 
 	/**
 	 * @return a clone of this AuthorizationInfo using a deep copy
 	 */
+	@Override
 	public Object clone() {
 		AuthorizationInfo ai;
 		try {
@@ -1197,9 +1127,7 @@ public class AuthorizationInfo implements Cloneable {
 			ai.auth_params = Util.resizeArray(auth_params, auth_params.length);
 			try {
 				// ai.extra_info = extra_info.clone();
-				ai.extra_info = extra_info.getClass()
-						.getMethod("clone", (Class<?>[]) null)
-						.invoke(extra_info, (Object[]) null);
+				ai.extra_info = extra_info.getClass().getMethod("clone", (Class<?>[]) null).invoke(extra_info, (Object[]) null);
 			} catch (Throwable t) {
 			}
 			ai.paths = new String[paths.length];

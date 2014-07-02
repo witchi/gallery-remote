@@ -68,6 +68,7 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 	public GalleryProperties() {
 	}
 
+	@Override
 	public String getProperty(String key) {
 		return getProperty(key, false);
 	}
@@ -75,14 +76,12 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 	public String getProperty(String key, boolean emptySignificant) {
 		Object oval = super.get(key);
 		String sval = (oval instanceof String) ? (String) oval : null;
-		String value = ((sval == null || (sval.length() == 0 && !emptySignificant)) && (defaults != null)) ? defaults
-				.getProperty(key) : sval;
+		String value = ((sval == null || (sval.length() == 0 && !emptySignificant)) && (defaults != null)) ? defaults.getProperty(key) : sval;
 
 		if (value == null || (value.length() == 0 && !emptySignificant)) {
 			return null;
-		} else {
-			return value;
 		}
+		return value;
 	}
 
 	public void copyProperties(Properties source) {
@@ -93,8 +92,7 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 			String currentValue = getProperty(name);
 
 			// don't override existing property with empty one
-			if ((currentValue == null || currentValue.length() == 0)
-					|| (value != null && value.length() != 0)) {
+			if ((currentValue == null || currentValue.length() == 0) || (value != null && value.length() != 0)) {
 				super.setProperty(name, value);
 			}
 		}
@@ -143,8 +141,7 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 
 					// Skip over one non whitespace key value separators if any
 					if (valueIndex < len)
-						if (strictKeyValueSeparators.indexOf(line
-								.charAt(valueIndex)) != -1)
+						if (strictKeyValueSeparators.indexOf(line.charAt(valueIndex)) != -1)
 							valueIndex++;
 
 					// Skip over white space after other separators if any
@@ -154,8 +151,7 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 						valueIndex++;
 					}
 					String key = line.substring(keyStart, separatorIndex);
-					String value = (separatorIndex < len) ? line.substring(
-							valueIndex, len) : "";
+					String value = (separatorIndex < len) ? line.substring(valueIndex, len) : "";
 
 					// Convert then store key and value
 					put(loadConvert(key), loadConvert(value));
@@ -208,8 +204,7 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 							value = (value << 4) + 10 + aChar - 'A';
 							break;
 						default:
-							throw new IllegalArgumentException(
-									"Malformed \\uxxxx encoding.");
+							throw new IllegalArgumentException("Malformed \\uxxxx encoding.");
 						}
 					}
 					outBuffer.append((char) value);
@@ -234,9 +229,8 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 		String currentDirectory = getProperty("filedialogPath");
 		if (currentDirectory != null) {
 			return new File(currentDirectory);
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	public void setCurrentDirectory(File currentDirectory) {
@@ -333,13 +327,10 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 
 		StringTokenizer st;
 		if ((st = new StringTokenizer(value, ",")).countTokens() == 2) {
-			return new Dimension(Integer.parseInt(st.nextToken()),
-					Integer.parseInt(st.nextToken()));
-		} else {
-			Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key + " = " + value
-					+ " is missing or malformed (should be width,height)");
-			return null;
+			return new Dimension(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
 		}
+		Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key + " = " + value + " is missing or malformed (should be width,height)");
+		return null;
 	}
 
 	public void setDimensionProperty(String key, Dimension d) {
@@ -374,14 +365,10 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 
 		StringTokenizer st;
 		if ((st = new StringTokenizer(value, ",")).countTokens() == 3) {
-			return new Color(Integer.parseInt(st.nextToken()),
-					Integer.parseInt(st.nextToken()), Integer.parseInt(st
-							.nextToken()));
-		} else {
-			Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key + " = " + value
-					+ " is missing or malformed (should be red,green,blue)");
-			return null;
+			return new Color(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
 		}
+		Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key + " = " + value + " is missing or malformed (should be red,green,blue)");
+		return null;
 	}
 
 	public void setColorProperty(String key, Color c) {
@@ -395,36 +382,29 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 
 		StringTokenizer st;
 		if ((st = new StringTokenizer(value, ",")).countTokens() == 4) {
-			return new Rectangle(Integer.parseInt(st.nextToken()),
-					Integer.parseInt(st.nextToken()), Integer.parseInt(st
-							.nextToken()), Integer.parseInt(st.nextToken()));
-		} else {
-			Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key
-					+ " is missing or malformed (should be x,y,width,height)");
-			return null;
+			return new Rectangle(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
+					Integer.parseInt(st.nextToken()));
 		}
+		Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key + " is missing or malformed (should be x,y,width,height)");
+		return null;
 	}
 
 	public void setRectangleProperty(String key, Rectangle rect) {
-		setProperty(key, ((int) rect.getX()) + "," + ((int) rect.getY()) + ","
-				+ ((int) rect.getWidth()) + "," + ((int) rect.getHeight()));
+		setProperty(key, ((int) rect.getX()) + "," + ((int) rect.getY()) + "," + ((int) rect.getWidth()) + "," + ((int) rect.getHeight()));
 	}
 
 	public boolean getBooleanProperty(String key) {
 		String booleanS = getProperty(key);
 
 		if (booleanS != null) {
-			if (booleanS.equalsIgnoreCase("yes")
-					|| booleanS.equalsIgnoreCase("true")) {
+			if (booleanS.equalsIgnoreCase("yes") || booleanS.equalsIgnoreCase("true")) {
 				return true;
-			} else if (booleanS.equalsIgnoreCase("no")
-					|| booleanS.equalsIgnoreCase("false")) {
+			} else if (booleanS.equalsIgnoreCase("no") || booleanS.equalsIgnoreCase("false")) {
 				return false;
 			}
 		}
 
-		throw new NumberFormatException("Parameter " + key + " = " + booleanS
-				+ " is missing or malformed (should be true/yes or false/no)");
+		throw new NumberFormatException("Parameter " + key + " = " + booleanS + " is missing or malformed (should be true/yes or false/no)");
 	}
 
 	public boolean getBooleanProperty(String key, boolean defaultValue) {
@@ -444,8 +424,7 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 		try {
 			return Integer.valueOf(intS).intValue();
 		} catch (Exception e) {
-			throw new NumberFormatException("Parameter " + key + " = " + intS
-					+ " is missing or malformed (should be an integer value)");
+			throw new NumberFormatException("Parameter " + key + " = " + intS + " is missing or malformed (should be an integer value)");
 		}
 	}
 
@@ -469,9 +448,7 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 		try {
 			return Base64.decode(base64S);
 		} catch (Error e) {
-			throw new NumberFormatException("Parameter " + key + " = "
-					+ base64S
-					+ " is missing or malformed (should be a Base64 value)");
+			throw new NumberFormatException("Parameter " + key + " = " + base64S + " is missing or malformed (should be a Base64 value)");
 		}
 	}
 
@@ -487,12 +464,8 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 		try {
 			return dateFormat.parse(dateS);
 		} catch (ParseException e) {
-			throw new NumberFormatException(
-					"Parameter "
-							+ key
-							+ " = "
-							+ dateS
-							+ " is missing or malformed (should be a Date value (yyyy/mm/dd))");
+			throw new NumberFormatException("Parameter " + key + " = " + dateS
+					+ " is missing or malformed (should be a Date value (yyyy/mm/dd))");
 		}
 	}
 
@@ -500,14 +473,14 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 		setProperty(key, dateFormat.format(date));
 	}
 
+	@Override
 	public String getProperty(String key, String defaultValue) {
 		String tmp = getProperty(key);
 
 		if (tmp == null) {
 			return defaultValue;
-		} else {
-			return tmp;
 		}
+		return tmp;
 	}
 
 	public void logProperties(int level, String module) {

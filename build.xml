@@ -89,7 +89,6 @@
 		<signjar jar="GalleryRemote.jar" alias="gallery" storepass="gallery" />
 	</target>
 
-	<!--target name="applet_jar" depends="clean,compile,mac_img_jar" description="create a jar for the applet version of GR"-->
 	<target name="applet_jar" depends="compile,applet_img_jar" description="create a jar for the applet version of GR">
 
 		<jar destfile="GalleryRemoteApplet.jar" index="true">
@@ -114,7 +113,6 @@
 				<excludesfile name="AppletExcludes.txt" />
 			</fileset>
 			<fileset dir="." includes="*.properties" excludes="postchangelog.properties" />
-			<!--fileset dir="${img}" includes="computer.gif, uploading.gif" /-->
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 			</manifest>
@@ -183,27 +181,13 @@
 		<delete dir="Gallery Remote.app" />
 	</target>
 
-	<target name="installer" depends="jar" description="Build the installer">
-		<!--target name="installer"
-  description="Build the installer" -->
-
-		<taskdef name="buildinstaller" classname="com.zerog.ia.integration.ant.InstallAnywhereAntTask" classpath="${iafolder}/resource/build/iaant.jar" />
-
-		<buildinstaller IAProjectFile="${basedir}/gallery_remote.iap_xml" IALocation="${iafolder}" BuildWindowsWithVM="true" BuildWindowsWithoutVM="true" BuildLinuxWithVM="true" BuildLinuxWithoutVM="true" BuildSolarisWithoutVM="true" BuildMacOSX="true" BuildPureJava="true" />
-	</target>
-
 	<target name="img_jar" description="create a jar of the images">
-
-		<!--copy file="imagemagick/macos/im.properties" tofile="${img}/im.properties"/>
-  <copy file="jpegtran/macos/jpegtran.properties" tofile="${img}/jpegtran.properties"/-->
 
 		<jar destfile="img.jar">
 			<fileset dir="${img}" />
 			<fileset dir="." includes="rar_about_gr1.png" />
 		</jar>
 
-		<!--delete file="${img}/im.properties"/>
-  <delete file="${img}/jpegtran.properties"/-->
 		<signjar jar="img.jar" alias="gallery" storepass="gallery" />
 	</target>
 
@@ -253,17 +237,11 @@
 
 		<move file="${install}/Windows/NoVM/InstallGalleryRemote.exe" tofile="${install}/staging/GalleryRemote.${version}.Win32.NoVM.exe" />
 		<move file="${install}/Windows/VM/InstallGalleryRemote.exe" tofile="${install}/staging/GalleryRemote.${version}.Win32.VM.exe" />
-		<!--move file="${install}/MacOSX/InstallGalleryRemote.zip" tofile="${install}/staging/GalleryRemote.${version}.MacOSX.NoVM.zip"/-->
 		<move file="${install}/Linux/NoVM/InstallGalleryRemote.bin" tofile="${install}/staging/GalleryRemote.${version}.Linux.NoVM.bin" />
 		<move file="${install}/Linux/VM/InstallGalleryRemote.bin" tofile="${install}/staging/GalleryRemote.${version}.Linux.VM.bin" />
 		<move file="${install}/Solaris/NoVM/InstallGalleryRemote.bin" tofile="${install}/staging/GalleryRemote.${version}.Solaris.NoVM.bin" />
 		<move file="${install}/GenericUnix/InstallGalleryRemote.bin" tofile="${install}/staging/GalleryRemote.${version}.Unix.NoVM.bin" />
 		<move file="${install}/Java/InstallGalleryRemote.jar" tofile="${install}/staging/GalleryRemote.${version}.jar" />
-	</target>
-
-	<target name="post" description="Posts ChangeLog to menalto.com">
-		<taskdef name="postchangelog" classpath="GalleryRemote.jar" classname="com.gallery.GalleryRemote.util.PostChangeLog" />
-		<postchangelog />
 	</target>
 
 	<target name="create_keystore" description="Creates a self-signed certificate">
@@ -361,9 +339,6 @@
 			<fileset dir="${basedir}">
 				<include name="COPYING" />
 			</fileset>
-			<!--fileset dir="${src}/doc/win32">
-        <include name="README.txt" />
-      </fileset-->
 		</copy>
 		<zip destfile="${dist}/${screensavershort}-win32.zip" basedir="${dist}" includes="${screensavershort}-win32/**" />
 
@@ -383,9 +358,6 @@
 			<fileset dir="${basedir}">
 				<include name="COPYING" />
 			</fileset>
-			<!--fileset dir="${src}/doc/unix">
-        <include name="README.txt" />
-      </fileset-->
 		</copy>
 		<zip destfile="${dist}/${screensavershortfull}.${version}.Unix.zip" basedir="${dist}" includes="${screensavershortfull}.${version}.Unix/**" />
 	</target>
@@ -413,8 +385,6 @@
 				<pathelement location="GalleryRemoteScreenSaver.jar" />
 				<pathelement location="lib/saverbeans-api.jar" />
 			</classpath>
-			<!--jvmarg value="-Xdebug" />
-      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005" /-->
 			<arg value="${screensaver.class}" />
 			<arg line="${debug.params}" />
 		</java>

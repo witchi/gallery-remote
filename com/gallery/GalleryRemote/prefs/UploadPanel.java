@@ -26,10 +26,10 @@ import com.gallery.GalleryRemote.Log;
 import com.gallery.GalleryRemote.util.GRI18n;
 
 /**
- * Created by IntelliJ IDEA. User: paour Date: May 8, 2003
+ * @author paour
+ * @version May 8, 2003
  */
-public class UploadPanel extends PreferencePanel implements ActionListener,
-		PreferenceNames {
+public class UploadPanel extends PreferencePanel implements ActionListener, PreferenceNames {
 	private static final long serialVersionUID = -7460696985678263021L;
 	public static final String MODULE = "UploadPa";
 
@@ -62,13 +62,14 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 
 	public static Vector<ResizeSize> defaultSizes = new Vector<ResizeSize>();
 
+	@Override
 	public JLabel getIcon() {
 		return icon;
 	}
 
+	@Override
 	public void readProperties(PropertiesFile props) {
-		resizeBeforeUpload.setSelected(props
-				.getBooleanProperty(RESIZE_BEFORE_UPLOAD));
+		resizeBeforeUpload.setSelected(props.getBooleanProperty(RESIZE_BEFORE_UPLOAD));
 		int size = props.getIntDimensionProperty(RESIZE_TO);
 
 		if (size == 0) {
@@ -83,33 +84,26 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 		int autoCaption = props.getAutoCaptions();
 		setCaptionNone.setSelected(autoCaption == AUTO_CAPTIONS_NONE);
 
-		setCaptionWithFilename
-				.setSelected(autoCaption == AUTO_CAPTIONS_FILENAME);
-		captionStripExtension.setSelected(props
-				.getBooleanProperty(CAPTION_STRIP_EXTENSION));
+		setCaptionWithFilename.setSelected(autoCaption == AUTO_CAPTIONS_FILENAME);
+		captionStripExtension.setSelected(props.getBooleanProperty(CAPTION_STRIP_EXTENSION));
 
-		setCaptionWithMetaComment
-				.setSelected(autoCaption == AUTO_CAPTIONS_COMMENT);
+		setCaptionWithMetaComment.setSelected(autoCaption == AUTO_CAPTIONS_COMMENT);
 
-		setCaptionWithMetaComment
-				.setSelected(autoCaption == AUTO_CAPTIONS_DATE);
+		setCaptionWithMetaComment.setSelected(autoCaption == AUTO_CAPTIONS_DATE);
 
-		htmlEscapeCaptionsNot.setSelected(!props
-				.getBooleanProperty(HTML_ESCAPE_CAPTIONS));
+		htmlEscapeCaptionsNot.setSelected(!props.getBooleanProperty(HTML_ESCAPE_CAPTIONS));
 		exifAutorotate.setSelected(props.getBooleanProperty(EXIF_AUTOROTATE));
 
 		resetUIState();
 	}
 
 	public static void setupComboValue(int size, JComboBox<ResizeSize> resizeTo) {
-		MutableComboBoxModel<ResizeSize> model = (MutableComboBoxModel<ResizeSize>) resizeTo
-				.getModel();
+		MutableComboBoxModel<ResizeSize> model = (MutableComboBoxModel<ResizeSize>) resizeTo.getModel();
 		boolean found = false;
 
 		for (int i = 0; i < model.getSize(); i++) {
 			Object item = model.getElementAt(i);
-			if ((item instanceof ResizeSize && ((ResizeSize) item).size == size)
-					|| String.valueOf(size).equals(item)) {
+			if ((item instanceof ResizeSize && ((ResizeSize) item).size == size) || String.valueOf(size).equals(item)) {
 				resizeTo.setSelectedIndex(i);
 				found = true;
 				break;
@@ -129,9 +123,9 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 		}
 	}
 
+	@Override
 	public void writeProperties(PropertiesFile props) {
-		props.setBooleanProperty(RESIZE_BEFORE_UPLOAD,
-				resizeBeforeUpload.isSelected());
+		props.setBooleanProperty(RESIZE_BEFORE_UPLOAD, resizeBeforeUpload.isSelected());
 		if (resizeBeforeUpload.isSelected()) {
 			int i = -1;
 
@@ -145,8 +139,7 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 					// }
 					i = Integer.parseInt(resizeTo.getSelectedItem().toString());
 				} catch (Exception e) {
-					Log.log(Log.LEVEL_ERROR, MODULE,
-							"resizeTo size should be integer numbers");
+					Log.log(Log.LEVEL_ERROR, MODULE, "resizeTo size should be integer numbers");
 				}
 			}
 
@@ -155,17 +148,13 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 			}
 		}
 
-		props.setAutoCaptions((setCaptionWithFilename.isSelected() ? AUTO_CAPTIONS_FILENAME
-				: 0)
-				+ (setCaptionWithMetaComment.isSelected() ? AUTO_CAPTIONS_COMMENT
-						: 0)
+		props.setAutoCaptions((setCaptionWithFilename.isSelected() ? AUTO_CAPTIONS_FILENAME : 0)
+				+ (setCaptionWithMetaComment.isSelected() ? AUTO_CAPTIONS_COMMENT : 0)
 				+ (setCaptionWithMetaDate.isSelected() ? AUTO_CAPTIONS_DATE : 0));
 
-		props.setBooleanProperty(CAPTION_STRIP_EXTENSION,
-				captionStripExtension.isSelected());
+		props.setBooleanProperty(CAPTION_STRIP_EXTENSION, captionStripExtension.isSelected());
 
-		props.setBooleanProperty(HTML_ESCAPE_CAPTIONS,
-				!htmlEscapeCaptionsNot.isSelected());
+		props.setBooleanProperty(HTML_ESCAPE_CAPTIONS, !htmlEscapeCaptionsNot.isSelected());
 		props.setBooleanProperty(EXIF_AUTOROTATE, exifAutorotate.isSelected());
 	}
 
@@ -176,19 +165,16 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 
 			if (resizeToForce.isSelected()) {
 				resizeTo.setEnabled(true);
-				resizeTo.setBackground(UIManager
-						.getColor("TextField.background"));
+				resizeTo.setBackground(UIManager.getColor("TextField.background"));
 			} else {
 				resizeTo.setEnabled(false);
-				resizeTo.setBackground(UIManager
-						.getColor("TextField.inactiveBackground"));
+				resizeTo.setBackground(UIManager.getColor("TextField.inactiveBackground"));
 			}
 		} else {
 			resizeToDefault.setEnabled(false);
 			resizeToForce.setEnabled(false);
 			resizeTo.setEnabled(false);
-			resizeTo.setBackground(UIManager
-					.getColor("TextField.inactiveBackground"));
+			resizeTo.setBackground(UIManager.getColor("TextField.inactiveBackground"));
 		}
 
 		if (setCaptionWithFilename.isSelected()) {
@@ -198,6 +184,7 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 		}
 	}
 
+	@Override
 	public void buildUI() {
 		jbInit();
 	}
@@ -210,94 +197,69 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 		resizeTo.setToolTipText(GRI18n.getString(MODULE, "res2W"));
 		resizeTo.setRenderer(new SizeListRenderer());
 
-		jPanel1.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(
-				Color.white, new Color(148, 145, 140)), GRI18n.getString(
-				MODULE, "res_rot")));
+		jPanel1.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(Color.white, new Color(148, 145, 140)), GRI18n.getString(MODULE,
+				"res_rot")));
 		jPanel2.setLayout(new GridBagLayout());
 		// setCaptionNone.setToolTipText(GRI18n.getString(MODULE,
 		// "captNoneTip"));
 		setCaptionNone.setText(GRI18n.getString(MODULE, "captNone"));
-		setCaptionWithFilename.setToolTipText(GRI18n.getString(MODULE,
-				"captTip"));
+		setCaptionWithFilename.setToolTipText(GRI18n.getString(MODULE, "captTip"));
 		setCaptionWithFilename.setText(GRI18n.getString(MODULE, "capt"));
-		captionStripExtension.setToolTipText(GRI18n.getString(MODULE,
-				"stripExtTip"));
+		captionStripExtension.setToolTipText(GRI18n.getString(MODULE, "stripExtTip"));
 		captionStripExtension.setText(GRI18n.getString(MODULE, "stripExt"));
-		setCaptionWithMetaComment.setToolTipText(GRI18n.getString(MODULE,
-				"captMetadataTip"));
-		setCaptionWithMetaComment.setText(GRI18n.getString(MODULE,
-				"captMetadata"));
-		setCaptionWithMetaDate.setToolTipText(GRI18n.getString(MODULE,
-				"captMetadataTimeTip"));
-		setCaptionWithMetaDate.setText(GRI18n.getString(MODULE,
-				"captMetadataTime"));
-		jPanel2.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(
-				Color.white, new Color(148, 145, 140)), GRI18n.getString(
-				MODULE, "captions")));
-		resizeBeforeUpload.setToolTipText(GRI18n.getString(MODULE,
-				"resBfrUpldTip"));
+		setCaptionWithMetaComment.setToolTipText(GRI18n.getString(MODULE, "captMetadataTip"));
+		setCaptionWithMetaComment.setText(GRI18n.getString(MODULE, "captMetadata"));
+		setCaptionWithMetaDate.setToolTipText(GRI18n.getString(MODULE, "captMetadataTimeTip"));
+		setCaptionWithMetaDate.setText(GRI18n.getString(MODULE, "captMetadataTime"));
+		jPanel2.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(Color.white, new Color(148, 145, 140)), GRI18n.getString(MODULE,
+				"captions")));
+		resizeBeforeUpload.setToolTipText(GRI18n.getString(MODULE, "resBfrUpldTip"));
 		resizeBeforeUpload.setText(GRI18n.getString(MODULE, "resBfrUpld"));
 		resizeToDefault.setToolTipText(GRI18n.getString(MODULE, "res2Def"));
 		resizeToDefault.setText(GRI18n.getString(MODULE, "res2Def"));
 		resizeToForce.setToolTipText(GRI18n.getString(MODULE, "res2FrcTip"));
 		resizeToForce.setText(GRI18n.getString(MODULE, "res2Frc"));
-		htmlEscapeCaptionsNot.setToolTipText(GRI18n.getString(MODULE,
-				"escCaptTip"));
+		htmlEscapeCaptionsNot.setToolTipText(GRI18n.getString(MODULE, "escCaptTip"));
 		htmlEscapeCaptionsNot.setText(GRI18n.getString(MODULE, "escCapt"));
 		exifAutorotate.setToolTipText(GRI18n.getString(MODULE, "autoRotTip"));
 		exifAutorotate.setText(GRI18n.getString(MODULE, "autoRot"));
 
-		this.add(jPanel1, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-				new Insets(0, 0, 5, 0), 0, 0));
-		jPanel1.add(resizeTo, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
-				GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+		this.add(jPanel1, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				0, 0, 5, 0), 0, 0));
+		jPanel1.add(resizeTo, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 				new Insets(0, 0, 0, 0), 0, 0));
-		jPanel1.add(resizeToDefault, new GridBagConstraints(0, 1, 2, 1, 0.0,
-				0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+		jPanel1.add(resizeToDefault, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
 				new Insets(0, 20, 0, 0), 0, 0));
-		jPanel1.add(resizeToForce, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-				GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,
-						20, 0, 0), 0, 0));
-		jPanel1.add(exifAutorotate, new GridBagConstraints(0, 3, 5, 1, 1.0,
-				0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+		jPanel1.add(resizeToForce, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(
+				0, 20, 0, 0), 0, 0));
+		jPanel1.add(exifAutorotate, new GridBagConstraints(0, 3, 5, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 				new Insets(0, 0, 0, 0), 0, 0));
 		// jPanel1.add(jLabel2, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0
 		// , GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5,
 		// 0, 5), 0, 0));
-		jPanel1.add(jPanel6, new GridBagConstraints(4, 1, 1, 1, 1.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+		jPanel1.add(jPanel6, new GridBagConstraints(4, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
 				new Insets(0, 0, 0, 0), 0, 0));
-		jPanel1.add(resizeBeforeUpload, new GridBagConstraints(0, 0, 4, 1, 0.0,
-				0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+		jPanel1.add(resizeBeforeUpload, new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
 				new Insets(0, 0, 0, 0), 0, 0));
 
-		this.add(jPanel2, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-				new Insets(0, 0, 5, 0), 0, 0));
-		jPanel2.add(setCaptionNone, new GridBagConstraints(0, 0, 1, 1, 0.0,
-				0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+		this.add(jPanel2, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				0, 0, 5, 0), 0, 0));
+		jPanel2.add(setCaptionNone, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
 				new Insets(0, 0, 0, 0), 0, 0));
-		jPanel2.add(setCaptionWithFilename, new GridBagConstraints(0, 1, 1, 1,
-				0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+		jPanel2.add(setCaptionWithFilename, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
 				new Insets(0, 0, 0, 0), 0, 0));
-		jPanel2.add(captionStripExtension, new GridBagConstraints(0, 2, 1, 1,
-				1.0, 0.0, GridBagConstraints.WEST,
+		jPanel2.add(captionStripExtension, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(0, 20, 0, 0), 0, 0));
 
-		jPanel2.add(setCaptionWithMetaComment, new GridBagConstraints(0, 3, 1,
-				1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+		jPanel2.add(setCaptionWithMetaComment, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
 				new Insets(0, 0, 0, 0), 0, 0));
-		jPanel2.add(setCaptionWithMetaDate, new GridBagConstraints(0, 4, 1, 1,
-				0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+		jPanel2.add(setCaptionWithMetaDate, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
 				new Insets(0, 0, 0, 0), 0, 0));
 
-		jPanel2.add(htmlEscapeCaptionsNot, new GridBagConstraints(0, 5, 1, 1,
-				0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+		jPanel2.add(htmlEscapeCaptionsNot, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
 				new Insets(0, 0, 0, 0), 0, 0));
-		this.add(jPanel7, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
-						0, 0, 0, 0), 0, 0));
+		this.add(jPanel7, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0,
+				0, 0), 0, 0));
 
 		buttonGroup1.add(resizeToDefault);
 		buttonGroup1.add(resizeToForce);
@@ -317,6 +279,7 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 		setCaptionWithMetaDate.addActionListener(this);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		resetUIState();
 	}
@@ -330,6 +293,7 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 			this.desc = desc;
 		}
 
+		@Override
 		public String toString() {
 			return String.valueOf(size);
 		}
@@ -338,11 +302,9 @@ public class UploadPanel extends PreferencePanel implements ActionListener,
 	public static class SizeListRenderer extends DefaultListCellRenderer {
 		private static final long serialVersionUID = -3890114227060178524L;
 
-		public Component getListCellRendererComponent(JList<?> list,
-				Object value, int index, boolean isSelected,
-				boolean cellHasFocus) {
-			super.getListCellRendererComponent(list, value, index, isSelected,
-					cellHasFocus);
+		@Override
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+			super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
 			if (value instanceof ResizeSize) {
 				this.setText(((ResizeSize) value).desc);

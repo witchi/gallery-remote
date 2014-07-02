@@ -37,7 +37,7 @@ public class AddFileDialog {
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		fc.setMultiSelectionEnabled(true);
 
-		File currentDirectory = GalleryRemote._().properties.getCurrentDirectory();
+		File currentDirectory = GalleryRemote.instance().properties.getCurrentDirectory();
 		if (currentDirectory != null) {
 			fc.setCurrentDirectory(currentDirectory);
 		}
@@ -46,7 +46,7 @@ public class AddFileDialog {
 
 		int retval = fc.showDialog(parent, GRI18n.getString(MODULE, "Add"));
 		if (retval != JFileChooser.CANCEL_OPTION) {
-			GalleryRemote._().properties.setCurrentDirectory(fc.getCurrentDirectory());
+			GalleryRemote.instance().properties.setCurrentDirectory(fc.getCurrentDirectory());
 
 			File[] files = fc.getSelectedFiles();
 

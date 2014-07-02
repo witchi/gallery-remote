@@ -140,10 +140,10 @@ public class Picture extends GalleryItem implements Serializable,
 	public void setSource(File source) {
 		this.source = source;
 
-		if (GalleryRemote._().properties.getAutoCaptions() == AUTO_CAPTIONS_FILENAME) {
+		if (GalleryRemote.instance().properties.getAutoCaptions() == AUTO_CAPTIONS_FILENAME) {
 			String filename = source.getName();
 
-			if (GalleryRemote._().properties
+			if (GalleryRemote.instance().properties
 					.getBooleanProperty(CAPTION_STRIP_EXTENSION)) {
 				int i = filename.lastIndexOf(".");
 
@@ -153,10 +153,10 @@ public class Picture extends GalleryItem implements Serializable,
 			}
 
 			setCaption(filename);
-		} else if (GalleryRemote._().properties.getAutoCaptions() == AUTO_CAPTIONS_COMMENT
+		} else if (GalleryRemote.instance().properties.getAutoCaptions() == AUTO_CAPTIONS_COMMENT
 				&& getExifData() != null && getExifData().getCaption() != null) {
 			setCaption(getExifData().getCaption());
-		} else if (GalleryRemote._().properties.getAutoCaptions() == AUTO_CAPTIONS_DATE
+		} else if (GalleryRemote.instance().properties.getAutoCaptions() == AUTO_CAPTIONS_DATE
 				&& getExifData() != null
 				&& getExifData().getCreationDate() != null) {
 			setCaption(getExifData().getCreationDate().toString());
@@ -214,7 +214,7 @@ public class Picture extends GalleryItem implements Serializable,
 					i = l;
 				} else {
 					// server can't tell us how to resize, try default
-					i = GalleryRemote._().properties
+					i = GalleryRemote.instance().properties
 							.getIntDimensionProperty(RESIZE_TO_DEFAULT);
 				}
 			}

@@ -418,7 +418,7 @@ public class PictureInspector extends JPanel implements ActionListener,
 		// Log.logStack(Log.TRACE, MODULE);
 		this.pictures = pictures;
 
-		jIcon.setPreferredSize(new Dimension(0, GalleryRemote._().properties
+		jIcon.setPreferredSize(new Dimension(0, GalleryRemote.instance().properties
 				.getThumbnailSize().height
 				+ emptyIconHeight
 				+ jIcon.getIconTextGap()));

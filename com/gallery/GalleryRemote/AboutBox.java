@@ -131,7 +131,7 @@ public class AboutBox extends JDialog {
 
 			text = new ArrayList<String>();
 			StringTokenizer st = new StringTokenizer(
-					GalleryRemote._().properties.getProperty("aboutText"), "\n");
+					GalleryRemote.instance().properties.getProperty("aboutText"), "\n");
 			while (st.hasMoreTokens()) {
 				String line = st.nextToken();
 				text.add(line);
@@ -167,7 +167,7 @@ public class AboutBox extends JDialog {
 
 			FontMetrics fm = g.getFontMetrics();
 
-			String version = GalleryRemote._().properties
+			String version = GalleryRemote.instance().properties
 					.getProperty("version");
 			g.drawString(version, (getWidth() - fm.stringWidth(version)) / 2,
 					getHeight() - 5);

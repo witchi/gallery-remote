@@ -180,7 +180,7 @@ public class StatusBar extends JPanel implements StatusUpdate {
 
 	@Override
 	public void setInProgress(boolean inProgress) {
-		GalleryRemote._().getCore().setInProgress(inProgress);
+		GalleryRemote.instance().getCore().setInProgress(inProgress);
 	}
 
 	@Override

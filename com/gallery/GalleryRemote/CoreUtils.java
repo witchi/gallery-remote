@@ -17,7 +17,7 @@ public class CoreUtils {
 	static GalleryRemoteCore core = null;
 
 	public static void initCore() {
-		core = GalleryRemote._().getCore();
+		core = GalleryRemote.instance().getCore();
 	}
 
 	public static void deleteSelectedPictures() {
@@ -168,7 +168,7 @@ public class CoreUtils {
 						// setForeground(Color.black);
 					}
 
-					if (GalleryRemote._().properties.getShowThumbnails()) {
+					if (GalleryRemote.instance().properties.getShowThumbnails()) {
 						Image icon = core.getThumbnail(p);
 						if (icon != null) {
 							Icon iicon = getIcon();
@@ -178,7 +178,7 @@ public class CoreUtils {
 							((ImageIcon) iicon).setImage(icon);
 
 							setIconTextGap(4
-									+ GalleryRemote._().properties
+									+ GalleryRemote.instance().properties
 											.getThumbnailSize().width
 									- icon.getWidth(this));
 						}
@@ -192,7 +192,7 @@ public class CoreUtils {
 					} else {
 						File f = p.getSource();
 						text.append(f.getName());
-						if (GalleryRemote._().properties.getShowPath()) {
+						if (GalleryRemote.instance().properties.getShowPath()) {
 							text.append(" [").append(f.getParent())
 									.append("]</p>");
 						}

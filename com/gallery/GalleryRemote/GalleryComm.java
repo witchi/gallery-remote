@@ -236,7 +236,7 @@ public abstract class GalleryComm implements PreferenceNames {
 	public static GalleryComm getCommInstance(StatusUpdate su, URL url,
 			Gallery g) {
 		try {
-			GalleryProperties p = GalleryRemote._().properties;
+			GalleryProperties p = GalleryRemote.instance().properties;
 
 			// set proxy info
 			String proxyList = System

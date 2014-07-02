@@ -27,7 +27,7 @@
 
 	<target name="compile" depends="init" description="compile the source">
 		<!-- Compile the java code from ${src} into ${build} -->
-		<javac includeantruntime="false" srcdir="${src}" destdir="${build}" includes="com/**,HTTPClient/**,edu/**" listfiles="on" debug="on" nowarn="on" source="1.6" target="1.6">
+		<javac includeantruntime="false" srcdir="${src}" destdir="${build}" includes="com/**,HTTPClient/**,edu/**" listfiles="on" debug="on" nowarn="off" source="1.6" target="1.6">
 			<classpath>
 				<pathelement location="lib/AppleJavaExtensions.jar" />
 				<pathelement location="lib/metadata-extractor-2.1.jar" />
@@ -36,6 +36,7 @@
 				<pathelement location="lib/ant.jar" />
 			</classpath>
 			<compilerarg value="-XDignore.symbol.file" />
+			<compilerarg value="-Xlint:deprecation" />
 		</javac>
 
 		<!-- other files needed -->

@@ -39,7 +39,7 @@ public class GRApplet extends JApplet {
 		initGalleryRemote();
 
 		if (hasStarted) {
-			GalleryRemote._().initializeGR();
+			GalleryRemote.instance().initializeGR();
 
 			String localeString = getParameter("gr_locale");
 			if (localeString != null && localeString.length() > 1) {
@@ -53,7 +53,7 @@ public class GRApplet extends JApplet {
 			new Thread() {
 				@Override
 				public void run() {
-					GalleryRemote._().runGR();
+					GalleryRemote.instance().runGR();
 				}
 			}.start();
 		} else {
@@ -89,8 +89,8 @@ public class GRApplet extends JApplet {
 	public void stop() {
 		System.out.println("Applet stop");
 		// don't shutdown the applet if it didn't transitionStart...
-		if (hasStarted && GalleryRemote._() != null) {
-			GalleryRemote._().getCore().shutdown();
+		if (hasStarted && GalleryRemote.instance() != null) {
+			GalleryRemote.instance().getCore().shutdown();
 		}
 
 		ImageUtils.purgeTemp();
@@ -106,7 +106,7 @@ public class GRApplet extends JApplet {
 	protected AppletInfo getGRAppletInfo() {
 		AppletInfo info = new AppletInfo();
 
-		info.gallery = new Gallery(GalleryRemote._().getCore()
+		info.gallery = new Gallery(GalleryRemote.instance().getCore()
 				.getMainStatusUpdate());
 		info.gallery.setBlockWrites(true);
 

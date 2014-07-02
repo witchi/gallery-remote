@@ -47,11 +47,11 @@ public class GRScreenSaver
 		if (!hasStarted) {
 			GalleryRemote.createInstance(coreClass, null);
 			hasStarted = true;
-			grss = (GalleryRemoteScreenSaver) GalleryRemote._().getCore();
+			grss = (GalleryRemoteScreenSaver) GalleryRemote.instance().getCore();
 			grss.setContext(getContext());
-			GalleryRemote._().initializeGR();
+			GalleryRemote.instance().initializeGR();
 
-			thickness = GalleryRemote._().properties.getIntProperty(SLIDESHOW_FONTTHICKNESS, 1);
+			thickness = GalleryRemote.instance().properties.getIntProperty(SLIDESHOW_FONTTHICKNESS, 1);
 		}
 	}
 
@@ -102,7 +102,7 @@ public class GRScreenSaver
 			int dy = (height - img.getHeight(c)) / 2;
 			g.drawImage(img, dx, dy, c);
 
-			g.setColor(GalleryRemote._().properties.getColorProperty(PreferenceNames.SLIDESHOW_COLOR));
+			g.setColor(GalleryRemote.instance().properties.getColorProperty(PreferenceNames.SLIDESHOW_COLOR));
 			g.fillRect(0, 0, dx, height);
 			g.fillRect(width - dx, 0, width, height);
 			g.fillRect(dx, 0, width - dx, dy);
@@ -125,7 +125,7 @@ public class GRScreenSaver
 	}
 
 	public void destroy() {
-		GalleryRemote._().getCore().shutdown();
+		GalleryRemote.instance().getCore().shutdown();
 
 		// for the screensaver, it makes sense to keep the temp files around, they'll come useful again...
 		//ImageUtils.purgeTemp();

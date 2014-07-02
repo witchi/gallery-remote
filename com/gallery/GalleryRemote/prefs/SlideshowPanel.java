@@ -121,7 +121,7 @@ public class SlideshowPanel extends PreferencePanel implements PreferenceNames {
 		if (jNoStretch.isSelected() != props
 				.getBooleanProperty(SLIDESHOW_NOSTRETCH)) {
 			ImageUtils.purgeTemp();
-			GalleryRemote._().getCore().flushMemory();
+			GalleryRemote.instance().getCore().flushMemory();
 		}
 
 		props.setIntProperty(SLIDESHOW_PROGRESS,
@@ -154,8 +154,8 @@ public class SlideshowPanel extends PreferencePanel implements PreferenceNames {
 		} else {
 			props.setProperty(SLIDESHOW_COLOR, null);
 		}
-		GalleryRemoteCore core = GalleryRemote._().getCore();
-		if (!GalleryRemote._().isAppletMode()) {
+		GalleryRemoteCore core = GalleryRemote.instance().getCore();
+		if (!GalleryRemote.instance().isAppletMode()) {
 			((MainFrame) core).previewFrame.repaint();
 		}
 	}

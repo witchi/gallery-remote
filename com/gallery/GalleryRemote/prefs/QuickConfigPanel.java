@@ -87,7 +87,7 @@ public class QuickConfigPanel extends PreferencePanel implements ActionListener 
 			newProps.load(content);
 
 			StringBuffer overridden = new StringBuffer("<ul>");
-			GalleryProperties props = GalleryRemote._().properties;
+			GalleryProperties props = GalleryRemote.instance().properties;
 			boolean newGallery = false;
 
 			Iterator<Object> it = newProps.keySet().iterator();
@@ -100,12 +100,12 @@ public class QuickConfigPanel extends PreferencePanel implements ActionListener 
 						// add Gallery access settings
 
 						Gallery g = Gallery.readFromProperties(newProps, 99,
-								GalleryRemote._().getCore()
+								GalleryRemote.instance().getCore()
 										.getMainStatusUpdate(), false);
 						if (g != null) {
-							g.setPrefsIndex(GalleryRemote._().getCore()
+							g.setPrefsIndex(GalleryRemote.instance().getCore()
 									.getGalleries().getSize());
-							GalleryRemote._().getCore().getGalleries()
+							GalleryRemote.instance().getCore().getGalleries()
 									.addElement(g);
 							newGallery = true;
 

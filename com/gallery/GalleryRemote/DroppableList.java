@@ -240,7 +240,7 @@ public class DroppableList extends JList<Picture> implements
 						+ " new files(s) to list at index " + listIndex);
 
 				GalleryRemote
-						._()
+						.instance()
 						.getCore()
 						.addPictures((File[]) fileList.toArray(new File[0]),
 								listIndex, false);
@@ -254,7 +254,7 @@ public class DroppableList extends JList<Picture> implements
 						+ " new pictures(s) to list at index " + listIndex);
 
 				GalleryRemote
-						._()
+						.instance()
 						.getCore()
 						.addPictures(
 								(Picture[]) pictureList.toArray(new Picture[0]),
@@ -295,7 +295,7 @@ public class DroppableList extends JList<Picture> implements
 						+ " new files(s) to list at index " + listIndex);
 
 				GalleryRemote
-						._()
+						.instance()
 						.getCore()
 						.addPictures((File[]) fileList.toArray(new File[0]),
 								listIndex, false);
@@ -338,7 +338,7 @@ public class DroppableList extends JList<Picture> implements
 					.getDragSourceContext().getTransferable();
 
 			for (Iterator<Picture> it = ps.iterator(); it.hasNext();) {
-				GalleryRemote._().getCore().getCurrentAlbum()
+				GalleryRemote.instance().getCore().getCurrentAlbum()
 						.removePicture((Picture) it.next());
 			}
 		}

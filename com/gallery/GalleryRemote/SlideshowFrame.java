@@ -149,7 +149,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 		// todo: this is a hack to prevent painting problems (the status bar
 		// paints
 		// on top of the slide show)
-		Frame mainFrame = GalleryRemote._().getMainFrame();
+		Frame mainFrame = GalleryRemote.instance().getMainFrame();
 		if (mainFrame != null) {
 			mainFrame.setVisible(false);
 		}
@@ -176,8 +176,8 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 
 			super.setVisible(false);
 
-			if (GalleryRemote._() != null) {
-				Frame mainFrame = GalleryRemote._().getMainFrame();
+			if (GalleryRemote.instance() != null) {
+				Frame mainFrame = GalleryRemote.instance().getMainFrame();
 				if (mainFrame != null) {
 					mainFrame.setVisible(true);
 				}
@@ -253,7 +253,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 		slideshowPane = new SlideshowPane();
 		setContentPane(slideshowPane);
 
-		sleepTime = GalleryRemote._().properties
+		sleepTime = GalleryRemote.instance().properties
 				.getIntProperty(SLIDESHOW_DELAY) * 1000;
 
 		loader = new ImageLoaderUtil(5, this);
@@ -261,7 +261,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 	}
 
 	public void start(ArrayList<Picture> pictures) {
-		if (GalleryRemote._().properties.getBooleanProperty(SLIDESHOW_RANDOM)) {
+		if (GalleryRemote.instance().properties.getBooleanProperty(SLIDESHOW_RANDOM)) {
 			this.pictures = new ArrayList<Picture>(pictures);
 			Collections.shuffle(this.pictures);
 		} else {
@@ -274,7 +274,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			next(false);
 		}
 
-		if (GalleryRemote._().properties
+		if (GalleryRemote.instance().properties
 				.getBooleanProperty(SLIDESHOW_PRELOADALL)) {
 			Thread t = new Thread() {
 				@Override
@@ -290,7 +290,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 						Log.log(Log.LEVEL_TRACE, MODULE, "Preloading "
 								+ picture);
 						ImageUtils.download(picture, getRootPane().getSize(),
-								GalleryRemote._().getCore()
+								GalleryRemote.instance().getCore()
 										.getMainStatusUpdate(), null);
 					}
 					Log.log(Log.LEVEL_TRACE, MODULE, "Preload thread done");
@@ -375,7 +375,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			wantIndex++;
 
 			if (wantIndex >= pictures.size()) {
-				if (GalleryRemote._().properties
+				if (GalleryRemote.instance().properties
 						.getBooleanProperty(SLIDESHOW_LOOP)) {
 					wantIndex = 0;
 				} else {
@@ -435,7 +435,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 			wantIndex--;
 
 			if (wantIndex < 0) {
-				if (GalleryRemote._().properties
+				if (GalleryRemote.instance().properties
 						.getBooleanProperty(SLIDESHOW_LOOP)) {
 					wantIndex = pictures.size() - 1;
 				} else {
@@ -519,7 +519,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 						.getGallery()
 						.incrementViewCount(
 								picture,
-								GalleryRemote._().getCore()
+								GalleryRemote.instance().getCore()
 										.getMainStatusUpdate());
 			} else {
 				url = picture.getSource().toString();
@@ -715,9 +715,9 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 				+ accelerated);
 
 		enableTransitions = accelerated
-				|| GalleryRemote._().properties.getBooleanProperty(
+				|| GalleryRemote.instance().properties.getBooleanProperty(
 						ALLOW_UNACCELERATED_TRANSITION, false);
-		transitionDuration = enableTransitions ? GalleryRemote._().properties
+		transitionDuration = enableTransitions ? GalleryRemote.instance().properties
 				.getIntProperty(SLIDESHOW_TRANSITION_DURATION, 3000) : 0;
 
 		if (transitionDuration == 0) {
@@ -815,7 +815,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 				ImageLoaderUtil.setSlideshowFont(this);
 				initTransitionDuration();
 				int defaultThickness = getFont().getSize() / 7;
-				thickness = GalleryRemote._().properties.getIntProperty(
+				thickness = GalleryRemote.instance().properties.getIntProperty(
 						SLIDESHOW_FONTTHICKNESS, defaultThickness);
 			}
 
@@ -832,7 +832,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 		}
 
 		public void paintPicture(Graphics2D g) {
-			Color c = GalleryRemote._().properties
+			Color c = GalleryRemote.instance().properties
 					.getColorProperty(SLIDESHOW_COLOR);
 			if (c != null) {
 				g.setColor(c);
@@ -898,7 +898,7 @@ public class SlideshowFrame extends PreviewFrame implements Runnable,
 		}
 
 		public void paintInfo(Graphics2D g) {
-			PropertiesFile pf = GalleryRemote._().properties;
+			PropertiesFile pf = GalleryRemote.instance().properties;
 
 			String[] locationContent = new String[9];
 			Boolean[] locationTransition = new Boolean[9];

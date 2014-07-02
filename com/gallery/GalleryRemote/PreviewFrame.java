@@ -60,9 +60,9 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 
 	public void initComponents() {
 		setTitle(GRI18n.getString(MODULE, "title"));
-		setIconImage(GalleryRemote._().getMainFrame().getIconImage());
+		setIconImage(GalleryRemote.instance().getMainFrame().getIconImage());
 
-		setBounds(GalleryRemote._().properties.getPreviewBounds());
+		setBounds(GalleryRemote.instance().properties.getPreviewBounds());
 		setContentPane(new ImageContentPane());
 
 		addComponentListener(new ComponentAdapter() {
@@ -75,7 +75,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 		addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
 			public void windowActivated(java.awt.event.WindowEvent e) {
-				MainFrame mainFrame = (MainFrame) GalleryRemote._()
+				MainFrame mainFrame = (MainFrame) GalleryRemote.instance()
 						.getMainFrame();
 
 				if (mainFrame.activating == PreviewFrame.this) {
@@ -108,7 +108,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 		setGlassPane(glass);
 		glass.setVisible(true);
 		loader = new ImageLoaderUtil(
-				GalleryRemote._().properties.getIntProperty("cacheSize", 10),
+				GalleryRemote.instance().properties.getIntProperty("cacheSize", 10),
 				this);
 	}
 
@@ -162,7 +162,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 		@Override
 		public void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g;
-			Color c = GalleryRemote._().properties
+			Color c = GalleryRemote.instance().properties
 					.getColorProperty(SLIDESHOW_COLOR);
 			if (c != null) {
 				g.setColor(c);
@@ -333,9 +333,9 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 		}
 
 		private void drawThirds(Graphics g, Rectangle r) {
-			if (GalleryRemote._().properties.getBooleanProperty(
+			if (GalleryRemote.instance().properties.getBooleanProperty(
 					PREVIEW_DRAW_THIRDS, false)
-					|| "thirds".equals(GalleryRemote._().properties
+					|| "thirds".equals(GalleryRemote.instance().properties
 							.getProperty(PREVIEW_DRAW_THIRDS))) {
 				g.drawLine(r.x + r.width / 3, r.y, r.x + r.width / 3, r.y
 						+ r.height);
@@ -345,7 +345,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 						+ r.height / 3);
 				g.drawLine(r.x, r.y + r.height * 2 / 3, r.x + r.width, r.y
 						+ r.height * 2 / 3);
-			} else if ("golden".equals(GalleryRemote._().properties
+			} else if ("golden".equals(GalleryRemote.instance().properties
 					.getProperty(PREVIEW_DRAW_THIRDS))) {
 				double p = 1.6180339887499;
 				double gw = r.width * p / (2 * p + 1);

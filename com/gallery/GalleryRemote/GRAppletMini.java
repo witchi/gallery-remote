@@ -89,7 +89,7 @@ public class GRAppletMini extends GRApplet implements GalleryRemoteCore,
 	public void initUI() {
 		// update the look and feel
 		SwingUtilities.updateComponentTreeUI(this);
-		int appletFontSize = GalleryRemote._().properties.getIntProperty(
+		int appletFontSize = GalleryRemote.instance().properties.getIntProperty(
 				APPLET_FONTSIZE, 0);
 		if (appletFontSize != 0) {
 			// the default font for many components is too big on Mac and Linux
@@ -139,26 +139,26 @@ public class GRAppletMini extends GRApplet implements GalleryRemoteCore,
 		jPicturesList.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, null);
 		jPicturesList.setCellRenderer(new CoreUtils.FileCellRenderer());
 
-		jResize.setSelected(GalleryRemote._().properties
+		jResize.setSelected(GalleryRemote.instance().properties
 				.getBooleanProperty(RESIZE_BEFORE_UPLOAD));
-		jThumbnails.setSelected(GalleryRemote._().properties
+		jThumbnails.setSelected(GalleryRemote.instance().properties
 				.getShowThumbnails());
-		setShowThumbnails(GalleryRemote._().properties.getShowThumbnails());
+		setShowThumbnails(GalleryRemote.instance().properties.getShowThumbnails());
 
 		jStatusBar.setStatus(GRI18n.getString("MainFrame", "selPicToAdd"));
 	}
 
 	@Override
 	public void shutdown() {
-		if (hasStarted && GalleryRemote._() != null) {
+		if (hasStarted && GalleryRemote.instance() != null) {
 			// this is also executed from GRAppletSlideshow
 			if (jDivider != null) {
-				GalleryRemote._().properties.setIntProperty(
+				GalleryRemote.instance().properties.setIntProperty(
 						APPLET_DIVIDER_LOCATION, jDivider.getDividerLocation());
 			}
 
 			ImageUtils.purgeTemp();
-			GalleryRemote._().properties.write();
+			GalleryRemote.instance().properties.write();
 			GalleryRemote.shutdownInstance();
 		}
 	}
@@ -307,7 +307,7 @@ public class GRAppletMini extends GRApplet implements GalleryRemoteCore,
 				+ "            ");
 		jScrollPane.getViewport().add(jPicturesList, null);
 
-		if (!GalleryRemote._().properties.getBooleanProperty(
+		if (!GalleryRemote.instance().properties.getBooleanProperty(
 				APPLET_SHOW_RESIZE, true)) {
 			jResize.setVisible(false);
 		}
@@ -321,7 +321,7 @@ public class GRAppletMini extends GRApplet implements GalleryRemoteCore,
 		jDivider.setBorder(null);
 		jDivider.setOneTouchExpandable(true);
 		// jDivider.setResizeWeight(.75);
-		jDivider.setDividerLocation(GalleryRemote._().properties
+		jDivider.setDividerLocation(GalleryRemote.instance().properties
 				.getIntProperty(APPLET_DIVIDER_LOCATION));
 
 		jScrollPane.setMinimumSize(new Dimension(100, 0));
@@ -471,7 +471,7 @@ public class GRAppletMini extends GRApplet implements GalleryRemoteCore,
 				}
 			});
 		} else if (source == jResize) {
-			GalleryRemote._().properties.setBooleanProperty(
+			GalleryRemote.instance().properties.setBooleanProperty(
 					RESIZE_BEFORE_UPLOAD, jResize.isSelected());
 		} else if (source == jThumbnails) {
 			setShowThumbnails(jThumbnails.isSelected());
@@ -555,14 +555,14 @@ public class GRAppletMini extends GRApplet implements GalleryRemoteCore,
 	}
 
 	public void setShowThumbnails(boolean show) {
-		if (show != GalleryRemote._().properties.getShowThumbnails()) {
-			GalleryRemote._().properties.setShowThumbnails(show);
+		if (show != GalleryRemote.instance().properties.getShowThumbnails()) {
+			GalleryRemote.instance().properties.setShowThumbnails(show);
 		}
 
 		if (show) {
 			preloadThumbnails(album.getPictures());
 
-			jPicturesList.setFixedCellHeight(GalleryRemote._().properties
+			jPicturesList.setFixedCellHeight(GalleryRemote.instance().properties
 					.getThumbnailSize().height + 4);
 		} else {
 			if (thumbnailCache != null) {

@@ -159,7 +159,7 @@ public class PreferencesDialog extends JDialog implements
 		String className = pp.getClass().getName();
 		Log.log(Log.LEVEL_TRACE, MODULE, "Showing panel: " + className);
 
-		pp.readPropertiesFirst(GalleryRemote._().properties);
+		pp.readPropertiesFirst(GalleryRemote.instance().properties);
 		jPanelsLayout.show(jPanels, className);
 
 		jRevert.setEnabled(pp.isReversible());
@@ -173,7 +173,7 @@ public class PreferencesDialog extends JDialog implements
 		Log.log(Log.LEVEL_INFO, MODULE, "Command selected " + cmd);
 
 		if (cmd.equals("OK")) {
-			GalleryRemote._().properties.uncache();
+			GalleryRemote.instance().properties.uncache();
 
 			Enumeration<PreferencePanel> enumeration = panels.elements();
 			while (enumeration.hasMoreElements()) {
@@ -184,7 +184,7 @@ public class PreferencesDialog extends JDialog implements
 					Log.log(Log.LEVEL_TRACE, MODULE,
 							"Writing properties for panel " + pp.getClass());
 
-					pp.writeProperties(GalleryRemote._().properties);
+					pp.writeProperties(GalleryRemote.instance().properties);
 				}
 			}
 
@@ -199,7 +199,7 @@ public class PreferencesDialog extends JDialog implements
 		} else if (cmd.equals("revert")) {
 			PreferencePanel pp = (PreferencePanel) jIcons.getSelectedValue();
 			Log.log(Log.LEVEL_TRACE, MODULE, "Reverting panel " + pp.getClass());
-			pp.readProperties(GalleryRemote._().properties);
+			pp.readProperties(GalleryRemote.instance().properties);
 		}
 	}
 

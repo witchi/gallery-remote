@@ -213,11 +213,11 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	public void initMainFrame() {
 		macOSXRegistration();
 
-		PropertiesFile p = GalleryRemote._().properties;
+		PropertiesFile p = GalleryRemote.instance().properties;
 
 		// load galleries
 		galleries = new DefaultComboBoxModel<Gallery>();
-		if (!GalleryRemote._().isAppletMode()) {
+		if (!GalleryRemote.instance().isAppletMode()) {
 			int i = 0;
 			while (true) {
 				try {
@@ -234,7 +234,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 			}
 		} else {
 			// Gallery g = new Gallery(jStatusBar);
-			Applet applet = GalleryRemote._().getApplet();
+			Applet applet = GalleryRemote.instance().getApplet();
 
 			GRApplet.AppletInfo info = ((GRApplet) applet).getGRAppletInfo();
 
@@ -264,7 +264,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 			Log.logException(Log.LEVEL_CRITICAL, MODULE, e);
 		}
 
-		setBounds(GalleryRemote._().properties.getMainBounds());
+		setBounds(GalleryRemote.instance().properties.getMainBounds());
 		setJMenuBar(jMenuBar1);
 
 		jGalleryCombo.setEditable(false);
@@ -298,8 +298,8 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 
 		setGalleries(galleries);
 
-		jInspectorDivider.setDividerLocation(GalleryRemote._().properties.getIntProperty("inspectorDividerLocation"));
-		jAlbumPictureDivider.setDividerLocation(GalleryRemote._().properties.getIntProperty("albumPictureDividerLocation"));
+		jInspectorDivider.setDividerLocation(GalleryRemote.instance().properties.getIntProperty("inspectorDividerLocation"));
+		jAlbumPictureDivider.setDividerLocation(GalleryRemote.instance().properties.getIntProperty("albumPictureDividerLocation"));
 
 		setVisible(true);
 
@@ -312,15 +312,15 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 			}
 		});
 
-		if (GalleryRemote._().properties.getShowPreview()) {
+		if (GalleryRemote.instance().properties.getShowPreview()) {
 			previewFrame.setVisible(true);
 		}
 
 		toFront();
 
-		readPreferences(GalleryRemote._().properties);
+		readPreferences(GalleryRemote.instance().properties);
 
-		if (GalleryRemote._().isAppletMode()) {
+		if (GalleryRemote.instance().isAppletMode()) {
 			/*
 			 * Gallery g = getCurrentGallery(); g.getComm(jStatusBar).isLoggedIn =
 			 * true;
@@ -417,7 +417,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 			Log.log(Log.LEVEL_INFO, MODULE, "Shutting down GR");
 
 			try {
-				PropertiesFile p = GalleryRemote._().properties;
+				PropertiesFile p = GalleryRemote.instance().properties;
 
 				p.setMainBounds(getBounds());
 				p.setPreviewBounds(previewFrame.getBounds());
@@ -447,7 +447,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 			Log.log(Log.LEVEL_INFO, MODULE, "Shutting down log");
 			Log.shutdown();
 
-			if (!GalleryRemote._().isAppletMode()) {
+			if (!GalleryRemote.instance().isAppletMode()) {
 				if (!halt) {
 					// no need for this in halt mode
 					Runtime.getRuntime().exit(0);
@@ -455,7 +455,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 				 * else { Runtime.getRuntime().exit(0); }
 				 */
 			} else {
-				((GRApplet) GalleryRemote._().getApplet()).hasShutdown();
+				((GRApplet) GalleryRemote.instance().getApplet()).hasShutdown();
 				GalleryRemote.shutdownInstance();
 			}
 		}
@@ -567,7 +567,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 					sel = -1;
 				}
 
-				if (GalleryRemote._().properties.getShowPreview() && previewFrame != null) {
+				if (GalleryRemote.instance().properties.getShowPreview() && previewFrame != null) {
 					if (sel != -1) {
 						previewFrame.loader.preparePicture(currentAlbum.getPicture(sel), true, true);
 					} else {
@@ -816,7 +816,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	 * Sort the files alphabetically
 	 */
 	public void sortPictures() {
-		int sortType = GalleryRemote._().properties.getIntProperty(SORT_TYPE);
+		int sortType = GalleryRemote.instance().properties.getIntProperty(SORT_TYPE);
 		switch (sortType) {
 		case SORT_TYPE_FILENAME:
 			getCurrentAlbum().sortPicturesAlphabetically();
@@ -836,7 +836,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	}
 
 	public void setSortType(int sortType) {
-		GalleryRemote._().properties.setIntProperty(SORT_TYPE, sortType);
+		GalleryRemote.instance().properties.setIntProperty(SORT_TYPE, sortType);
 
 		jSortButton.setText(GRI18n.getString(MODULE, "sortBtnTxt", new Object[] { GRI18n.getString(MODULE, "sort." + sortType) }));
 	}
@@ -874,12 +874,12 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 			return;
 		}
 
-		String newAlbumName = getCurrentGallery().doNewAlbum(newAlbum, GalleryRemote._().getCore().getMainStatusUpdate());
+		String newAlbumName = getCurrentGallery().doNewAlbum(newAlbum, GalleryRemote.instance().getCore().getMainStatusUpdate());
 		if (!newAlbumName.equals(newAlbum.getName())) {
 			newAlbum.setName(newAlbumName);
 		}
 
-		newAlbum.fetchAlbumProperties(GalleryRemote._().getCore().getMainStatusUpdate());
+		newAlbum.fetchAlbumProperties(GalleryRemote.instance().getCore().getMainStatusUpdate());
 
 		// todo: this is too drastic...
 		getCurrentGallery().reload();
@@ -932,14 +932,14 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	 *           The new showThumbmails value
 	 */
 	public void setShowThumbnails(boolean show) {
-		GalleryRemote._().properties.setShowThumbnails(show);
+		GalleryRemote.instance().properties.setShowThumbnails(show);
 
 		if (show) {
 			if (getCurrentAlbum() != null) {
 				preloadThumbnails(getCurrentAlbum().getPictures());
 			}
 
-			jPicturesList.setFixedCellHeight(GalleryRemote._().properties.getThumbnailSize().height + 4);
+			jPicturesList.setFixedCellHeight(GalleryRemote.instance().properties.getThumbnailSize().height + 4);
 		} else {
 			thumbnailCache.cancelLoad();
 			jPicturesList.setFixedCellHeight(-1);
@@ -953,7 +953,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	 *           The new showPreview value
 	 */
 	public void setShowPreview(boolean show) {
-		GalleryRemote._().properties.setShowPreview(show);
+		GalleryRemote.instance().properties.setShowPreview(show);
 		if (show) {
 			previewFrame.setVisible(true);
 			previewFrame.loader.preparePicture((Picture) jPicturesList.getSelectedValue(), true, true);
@@ -1169,7 +1169,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		setupKeyboardHandling(jPictureScroll);
 		setupKeyboardHandling(jAlbumScroll);
 
-		if (!GalleryRemote._().isAppletMode()) {
+		if (!GalleryRemote.instance().isAppletMode()) {
 			this.getContentPane().add(
 					jTopPanel,
 					new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2,
@@ -1268,7 +1268,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 			jSortCombo.addItem(new SortType(i, GRI18n.getString(MODULE, "sort." + i)));
 		}
 
-		jSortCombo.setSelectedIndex(GalleryRemote._().properties.getIntProperty(SORT_TYPE) - 1);
+		jSortCombo.setSelectedIndex(GalleryRemote.instance().properties.getIntProperty(SORT_TYPE) - 1);
 	}// }}}
 
 	private void setupKeyboardHandling(JComponent c) {
@@ -1510,7 +1510,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	}
 
 	private void showPreferencesDialog(String panel) {
-		PropertiesFile oldProperties = (PropertiesFile) GalleryRemote._().properties.clone();
+		PropertiesFile oldProperties = (PropertiesFile) GalleryRemote.instance().properties.clone();
 		PreferencesDialog pd = new PreferencesDialog(this);
 
 		if (panel != null) {
@@ -1527,7 +1527,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	}
 
 	public void readPreferences(PropertiesFile op) {
-		PropertiesFile p = GalleryRemote._().properties;
+		PropertiesFile p = GalleryRemote.instance().properties;
 		p.write();
 
 		jCheckBoxMenuThumbnails.setSelected(p.getShowThumbnails());
@@ -1775,10 +1775,10 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		for (int i = 0; i < galleries.getSize(); i++) {
 			Gallery gg = (Gallery) galleries.getElementAt(i);
 			gg.setPrefsIndex(i);
-			gg.writeToProperties(GalleryRemote._().properties);
+			gg.writeToProperties(GalleryRemote.instance().properties);
 		}
 
-		Gallery.removeFromProperties(GalleryRemote._().properties, galleries.getSize());
+		Gallery.removeFromProperties(GalleryRemote.instance().properties, galleries.getSize());
 	}
 
 	/**
@@ -1797,7 +1797,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		} else if (item == jCheckBoxMenuPreview) {
 			setShowPreview(e.getStateChange() == ItemEvent.SELECTED);
 		} else if (item == jCheckBoxMenuPath) {
-			GalleryRemote._().properties.setShowPath((e.getStateChange() == ItemEvent.SELECTED) ? true : false);
+			GalleryRemote.instance().properties.setShowPath((e.getStateChange() == ItemEvent.SELECTED) ? true : false);
 			jPicturesList.repaint();
 		} /*
 			 * else if ( item == album ) { updatePicturesList( (Album) (

@@ -307,7 +307,7 @@ public class AlbumInspector extends JPanel implements ActionListener,
 			Album newParent = mad.getNewParent();
 
 			if (newParent != null) {
-				album.moveAlbumTo(GalleryRemote._().getCore()
+				album.moveAlbumTo(GalleryRemote.instance().getCore()
 						.getMainStatusUpdate(), newParent);
 
 				// todo: this is too drastic...
@@ -342,7 +342,7 @@ public class AlbumInspector extends JPanel implements ActionListener,
 			int newOverrideDimension = Integer.parseInt(text);
 
 			if (overrideDimension != -1
-					|| (newOverrideDimension != GalleryRemote._().properties
+					|| (newOverrideDimension != GalleryRemote.instance().properties
 							.getIntDimensionProperty(RESIZE_TO))) {
 				Log.log(Log.LEVEL_TRACE, MODULE, "Overriding dimension to "
 						+ newOverrideDimension);

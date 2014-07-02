@@ -370,7 +370,7 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts,
 
 			if ((username == null || username.length() == 0) && !g.cookieLogin) {
 				username = (String) JOptionPane.showInputDialog(GalleryRemote
-						._().getMainFrame(), GRI18n.getString(MODULE,
+						.instance().getMainFrame(), GRI18n.getString(MODULE,
 						"usernameLbl"), GRI18n.getString(MODULE, "username"),
 						JOptionPane.PLAIN_MESSAGE, null, null, null);
 
@@ -382,7 +382,7 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts,
 			if (username != null
 					&& (password == null || password.length() == 0)) {
 				password = (String) JOptionPane.showInputDialog(GalleryRemote
-						._().getMainFrame(), GRI18n.getString(MODULE,
+						.instance().getMainFrame(), GRI18n.getString(MODULE,
 						"passwdLbl"), GRI18n.getString(MODULE, "passwd"),
 						JOptionPane.PLAIN_MESSAGE, null, null, null);
 
@@ -555,13 +555,13 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts,
 
 				if (su instanceof UploadProgress) {
 					if (((UploadProgress) su).isShutdown()) {
-						GalleryRemote._().getCore().shutdown(true);
+						GalleryRemote.instance().getCore().shutdown(true);
 					}
 				}
 
 				g.setDirty(false);
 
-				GalleryRemote._().getCore().flushMemory();
+				GalleryRemote.instance().getCore().flushMemory();
 			} else {
 				su.stopProgress(StatusUpdate.LEVEL_UPLOAD_ALL,
 						GRI18n.getString(MODULE, "upFailed"));
@@ -573,7 +573,7 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts,
 				boolean utf8 = p.getParentAlbum().getGallery()
 						.getGalleryVersion() == 2;
 				boolean escapeCaptions = !utf8
-						&& GalleryRemote._().properties
+						&& GalleryRemote.instance().properties
 								.getBooleanProperty(HTML_ESCAPE_CAPTIONS);
 				transferListener.currentFile = p.toString();
 
@@ -979,7 +979,7 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts,
 							 * JOptionPane.ERROR_MESSAGE);
 							 */
 
-							if (!GalleryRemote._().properties
+							if (!GalleryRemote.instance().properties
 									.getBooleanProperty(SUPPRESS_WARNING_CORRUPTED)) {
 								UrlMessageDialog md = new UrlMessageDialog(
 										GRI18n.getString(
@@ -1001,7 +1001,7 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts,
 												.toString(), null);
 
 								if (md.dontShow()) {
-									GalleryRemote._().properties
+									GalleryRemote.instance().properties
 											.setBooleanProperty(
 													SUPPRESS_WARNING_CORRUPTED,
 													true);
@@ -1126,7 +1126,7 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts,
 					GRI18n.getString(MODULE, "newAlbm", new Object[] {
 							albumName, g.toString() }));
 
-			boolean escapeCaptions = GalleryRemote._().properties
+			boolean escapeCaptions = GalleryRemote.instance().properties
 					.getBooleanProperty(HTML_ESCAPE_CAPTIONS);
 			boolean utf8 = !escapeCaptions
 					&& parentAlbum.getGallery().getGalleryVersion() == 2;
@@ -1246,7 +1246,7 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts,
 				boolean isDirty = a.getGallery().isDirty();
 				a.addPictures(newPictures);
 				a.getGallery().setDirty(isDirty);
-				GalleryRemote._().getCore()
+				GalleryRemote.instance().getCore()
 						.preloadThumbnails(newPictures.iterator());
 
 				su.stopProgress(StatusUpdate.LEVEL_GENERIC, GRI18n.getString(

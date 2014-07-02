@@ -165,7 +165,7 @@ public abstract class GalleryRemote implements PreferenceNames {
 
 	public abstract GalleryRemoteCore getCore();
 
-	public static GalleryRemote _() {
+	public static GalleryRemote instance() {
 		return singleton;
 	}
 
@@ -210,7 +210,7 @@ public abstract class GalleryRemote implements PreferenceNames {
 	public static void main(String[] args) {
 		createInstance("com.gallery.GalleryRemote.GalleryRemoteMainFrame", null);
 
-		_().initializeGR();
+		instance().initializeGR();
 
 		// Analyze command-line
 		String url = null;
@@ -235,9 +235,9 @@ public abstract class GalleryRemote implements PreferenceNames {
 			// we got a URL on the command-line
 			int j = 0;
 			boolean found = false;
-			while (_().properties.containsKey(GURL + j)) {
-				if (_().properties.getProperty(GURL + j).equals(url)
-						&& _().properties.getProperty(USERNAME + j).equals(
+			while (instance().properties.containsKey(GURL + j)) {
+				if (instance().properties.getProperty(GURL + j).equals(url)
+						&& instance().properties.getProperty(USERNAME + j).equals(
 								username)) {
 					// we have probably already loaded and saved thus URL,
 					// nothing to do
@@ -250,20 +250,20 @@ public abstract class GalleryRemote implements PreferenceNames {
 
 			if (!found) {
 				// add it
-				_().properties.setProperty(GURL + j, url);
+				instance().properties.setProperty(GURL + j, url);
 
 				if (username != null) {
-					_().properties.setProperty(USERNAME + j, username);
+					instance().properties.setProperty(USERNAME + j, username);
 				}
 
-				_().properties.setBooleanProperty(AUTO_LOAD_ON_STARTUP + j,
+				instance().properties.setBooleanProperty(AUTO_LOAD_ON_STARTUP + j,
 						true);
 
 				try {
-					Gallery g = Gallery.readFromProperties(_().properties, j,
-							_().getCore().getMainStatusUpdate());
+					Gallery g = Gallery.readFromProperties(instance().properties, j,
+							instance().getCore().getMainStatusUpdate());
 					if (g != null) {
-						_().getCore().getGalleries().addElement(g);
+						instance().getCore().getGalleries().addElement(g);
 					}
 				} catch (Exception e) {
 					Log.log(Log.LEVEL_ERROR, MODULE,
@@ -273,7 +273,7 @@ public abstract class GalleryRemote implements PreferenceNames {
 			}
 		}
 
-		_().runGR();
+		instance().runGR();
 	}
 
 	public static void setStaticProperties() {

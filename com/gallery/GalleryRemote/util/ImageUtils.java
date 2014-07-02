@@ -160,7 +160,7 @@ public class ImageUtils {
 			cmd.add(filename);
 
 			cmd.add("-resize");
-			if (GalleryRemote._().properties
+			if (GalleryRemote.instance().properties
 					.getBooleanProperty(PreferenceNames.SLIDESHOW_NOSTRETCH)) {
 				cmd.add(d.width + "x" + d.height + ">");
 			} else {
@@ -218,7 +218,7 @@ public class ImageUtils {
 			r = loadJava(
 					filename,
 					d,
-					GalleryRemote._().properties
+					GalleryRemote.instance().properties
 							.getBooleanProperty(PreferenceNames.SLIDESHOW_NOSTRETCH));
 		}
 
@@ -357,12 +357,12 @@ public class ImageUtils {
 	public static File resizeJava(String filename, Dimension d) {
 		File r;
 
-		if (!GalleryRemote._().properties
+		if (!GalleryRemote.instance().properties
 				.getBooleanProperty(PreferenceNames.USE_JAVA_RESIZE)) {
 			return null;
 		}
 
-		if (!GalleryRemote._().properties
+		if (!GalleryRemote.instance().properties
 				.getBooleanProperty(PreferenceNames.SUPPRESS_WARNING_JAVA)) {
 			if (stopUsingJavaResize()) {
 				return null;
@@ -800,7 +800,7 @@ public class ImageUtils {
 			if ((d.width > p.getSizeResized().width
 					|| d.height > p.getSizeResized().height || fullInfo.file
 						.exists())
-					&& !GalleryRemote._().properties
+					&& !GalleryRemote.instance().properties
 							.getBooleanProperty(PreferenceNames.SLIDESHOW_LOWREZ)) {
 				pictureUrl = fullInfo.url;
 				// pictureDimension = p.getSizeFull();
@@ -1083,12 +1083,12 @@ public class ImageUtils {
 
 				// allow overriding from main property file
 				p = new GalleryProperties(pt);
-				GalleryRemote._().defaults.copyProperties(p);
+				GalleryRemote.instance().defaults.copyProperties(p);
 			} else {
-				p = GalleryRemote._().defaults;
+				p = GalleryRemote.instance().defaults;
 			}
 
-			p = GalleryRemote._().properties;
+			p = GalleryRemote.instance().properties;
 
 			useIM = p.getBooleanProperty("im.enabled");
 			Log.log(Log.LEVEL_INFO, MODULE, "im.enabled: " + useIM);
@@ -1218,11 +1218,11 @@ public class ImageUtils {
 
 		defaultThumbnail = loadJava(
 				ImageUtils.class.getResource(DEFAULT_RESOURCE),
-				GalleryRemote._().properties.getThumbnailSize(), true);
+				GalleryRemote.instance().properties.getThumbnailSize(), true);
 
 		unrecognizedThumbnail = loadJava(
 				ImageUtils.class.getResource(UNRECOGNIZED_RESOURCE),
-				GalleryRemote._().properties.getThumbnailSize(), true);
+				GalleryRemote.instance().properties.getThumbnailSize(), true);
 
 		// Making sure jpegtran works
 		try {
@@ -1241,12 +1241,12 @@ public class ImageUtils {
 
 				// allow overriding from main property file
 				p = new GalleryProperties(pt);
-				GalleryRemote._().defaults.copyProperties(p);
+				GalleryRemote.instance().defaults.copyProperties(p);
 			} else {
-				p = GalleryRemote._().defaults;
+				p = GalleryRemote.instance().defaults;
 			}
 
-			p = GalleryRemote._().properties;
+			p = GalleryRemote.instance().properties;
 
 			useJpegtran = p.getBooleanProperty("jp.enabled");
 			useJpegtranCrop = p.getBooleanProperty("jp.crop.enabled");
@@ -1548,17 +1548,17 @@ public class ImageUtils {
 	static void stopUsingIM() {
 		useIM = false;
 
-		if (!GalleryRemote._().properties.getBooleanProperty(
+		if (!GalleryRemote.instance().properties.getBooleanProperty(
 				PreferenceNames.SUPPRESS_WARNING_IM, false)) {
-			if (GalleryRemote._().getMainFrame() != null
-					&& GalleryRemote._().getMainFrame().isVisible()) {
+			if (GalleryRemote.instance().getMainFrame() != null
+					&& GalleryRemote.instance().getMainFrame().isVisible()) {
 				UrlMessageDialog md = new UrlMessageDialog(GRI18n.getString(
 						MODULE, "warningTextIM"), GRI18n.getString(MODULE,
 						"warningUrlIM"), GRI18n.getString(MODULE,
 						"warningUrlTextIM"));
 
 				if (md.dontShow()) {
-					GalleryRemote._().properties.setBooleanProperty(
+					GalleryRemote.instance().properties.setBooleanProperty(
 							PreferenceNames.SUPPRESS_WARNING_IM, true);
 				}
 			} else {
@@ -1575,9 +1575,9 @@ public class ImageUtils {
 		boolean useJavaResize = (md.getButtonChosen() == 1);
 
 		if (md.dontShow()) {
-			GalleryRemote._().properties.setBooleanProperty(
+			GalleryRemote.instance().properties.setBooleanProperty(
 					PreferenceNames.SUPPRESS_WARNING_JAVA, true);
-			GalleryRemote._().properties.setBooleanProperty(
+			GalleryRemote.instance().properties.setBooleanProperty(
 					PreferenceNames.USE_JAVA_RESIZE, useJavaResize);
 		}
 
@@ -1587,17 +1587,17 @@ public class ImageUtils {
 	static void stopUsingJpegtran() {
 		useJpegtran = false;
 
-		if (!GalleryRemote._().properties.getBooleanProperty(
+		if (!GalleryRemote.instance().properties.getBooleanProperty(
 				PreferenceNames.SUPPRESS_WARNING_JPEGTRAN, false)) {
-			if (GalleryRemote._().getMainFrame() != null
-					&& GalleryRemote._().getMainFrame().isVisible()) {
+			if (GalleryRemote.instance().getMainFrame() != null
+					&& GalleryRemote.instance().getMainFrame().isVisible()) {
 				UrlMessageDialog md = new UrlMessageDialog(GRI18n.getString(
 						MODULE, "warningTextJpegtran"), GRI18n.getString(
 						MODULE, "warningUrlJpegtran"), GRI18n.getString(MODULE,
 						"warningUrlTextJpegtran"));
 
 				if (md.dontShow()) {
-					GalleryRemote._().properties.setBooleanProperty(
+					GalleryRemote.instance().properties.setBooleanProperty(
 							PreferenceNames.SUPPRESS_WARNING_JPEGTRAN, true);
 				}
 			} else {
@@ -1609,17 +1609,17 @@ public class ImageUtils {
 	static void stopUsingJpegtranCrop() {
 		useJpegtranCrop = false;
 
-		if (!GalleryRemote._().properties.getBooleanProperty(
+		if (!GalleryRemote.instance().properties.getBooleanProperty(
 				PreferenceNames.SUPPRESS_WARNING_JPEGTRAN_CROP, false)) {
-			if (GalleryRemote._().getMainFrame() != null
-					&& GalleryRemote._().getMainFrame().isVisible()) {
+			if (GalleryRemote.instance().getMainFrame() != null
+					&& GalleryRemote.instance().getMainFrame().isVisible()) {
 				UrlMessageDialog md = new UrlMessageDialog(GRI18n.getString(
 						MODULE, "warningTextJpegtranCrop"), GRI18n.getString(
 						MODULE, "warningUrlJpegtranCrop"), GRI18n.getString(
 						MODULE, "warningUrlTextJpegtranCrop"));
 
 				if (md.dontShow()) {
-					GalleryRemote._().properties.setBooleanProperty(
+					GalleryRemote.instance().properties.setBooleanProperty(
 							PreferenceNames.SUPPRESS_WARNING_JPEGTRAN_CROP,
 							true);
 				}
@@ -1630,17 +1630,17 @@ public class ImageUtils {
 	}
 
 	static void outOfMemoryError() {
-		if (!GalleryRemote._().properties.getBooleanProperty(
+		if (!GalleryRemote.instance().properties.getBooleanProperty(
 				PreferenceNames.SUPPRESS_WARNING_OUT_OF_MEMORY, false)) {
-			if (GalleryRemote._().getMainFrame() != null
-					&& GalleryRemote._().getMainFrame().isVisible()) {
+			if (GalleryRemote.instance().getMainFrame() != null
+					&& GalleryRemote.instance().getMainFrame().isVisible()) {
 				UrlMessageDialog md = new UrlMessageDialog(GRI18n.getString(
 						MODULE, "warningTextOutOfMemory"), GRI18n.getString(
 						MODULE, "warningUrlOutOfMemory"), GRI18n.getString(
 						MODULE, "warningUrlTextOutOfMemory"));
 
 				if (md.dontShow()) {
-					GalleryRemote._().properties.setBooleanProperty(
+					GalleryRemote.instance().properties.setBooleanProperty(
 							PreferenceNames.SUPPRESS_WARNING_OUT_OF_MEMORY,
 							true);
 				}

@@ -55,9 +55,9 @@ public class GRAppletSlideshow extends GRAppletMini implements
 		album.setName(info.albumName);
 		album.addListDataListener(this);
 
-		album.fetchAlbumImages(jStatusBar, GalleryRemote._().properties
+		album.fetchAlbumImages(jStatusBar, GalleryRemote.instance().properties
 				.getBooleanProperty(SLIDESHOW_RECURSIVE, true), GalleryRemote
-				._().properties.getIntProperty(SLIDESHOW_MAX_PICTURES, 0));
+				.instance().properties.getIntProperty(SLIDESHOW_MAX_PICTURES, 0));
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class GRAppletSlideshow extends GRAppletMini implements
 
 		jSlidePanel.buildUI();
 		jSlidePanel.remove(jSlidePanel.spacerPanel);
-		jSlidePanel.readProperties(GalleryRemote._().properties);
+		jSlidePanel.readProperties(GalleryRemote.instance().properties);
 		jStart.addActionListener(this);
 		jStart.setEnabled(false);
 
@@ -126,7 +126,7 @@ public class GRAppletSlideshow extends GRAppletMini implements
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		jSlidePanel.writeProperties(GalleryRemote._().properties);
+		jSlidePanel.writeProperties(GalleryRemote.instance().properties);
 
 		if (slideshowFrame == null) {
 			slideshowFrame = new SlideshowFrame();
@@ -142,8 +142,8 @@ public class GRAppletSlideshow extends GRAppletMini implements
 
 	@Override
 	public void shutdown() {
-		if (hasStarted && GalleryRemote._() != null) {
-			jSlidePanel.writeProperties(GalleryRemote._().properties);
+		if (hasStarted && GalleryRemote.instance() != null) {
+			jSlidePanel.writeProperties(GalleryRemote.instance().properties);
 			// GalleryRemote._().properties.write();
 		}
 
@@ -180,7 +180,7 @@ public class GRAppletSlideshow extends GRAppletMini implements
 					if (album.getSize() > index) {
 						ImageUtils.download((Picture) picturesList.get(index),
 								getGraphicsConfiguration().getBounds()
-										.getSize(), GalleryRemote._().getCore()
+										.getSize(), GalleryRemote.instance().getCore()
 										.getMainStatusUpdate(), null);
 					} else {
 						JOptionPane.showMessageDialog(GRAppletSlideshow.this,

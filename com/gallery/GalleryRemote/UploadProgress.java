@@ -221,7 +221,7 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 
 	/* level-independant methods */
 	public void setInProgress(boolean inProgress) {
-		GalleryRemote._().getCore().setInProgress(inProgress);
+		GalleryRemote.instance().getCore().setInProgress(inProgress);
 	}
 
 	public void error(String message) {

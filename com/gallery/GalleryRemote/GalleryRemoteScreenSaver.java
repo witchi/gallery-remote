@@ -56,8 +56,8 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 
 		CoreUtils.initCore();
 
-		Log.startLog(_().properties.getIntProperty(PreferenceNames.LOG_LEVEL),
-				_().properties.getBooleanProperty("toSysOut"));
+		Log.startLog(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL),
+				instance().properties.getBooleanProperty("toSysOut"));
 
 		startup();
 	}
@@ -113,7 +113,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 
 		galleries = new DefaultComboBoxModel<Gallery>();
 
-		gallery = new Gallery(GalleryRemote._().getCore().getMainStatusUpdate());
+		gallery = new Gallery(GalleryRemote.instance().getCore().getMainStatusUpdate());
 		String curl = settings.getProperty("curl");
 
 		if (curl != null) {
@@ -158,7 +158,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 			album.setName(albumsA[new Random().nextInt(albumsA.length)]);
 			album.addListDataListener(this);
 
-			album.fetchAlbumImages(statusUpdate, GalleryRemote._().properties
+			album.fetchAlbumImages(statusUpdate, GalleryRemote.instance().properties
 					.getBooleanProperty(SLIDESHOW_RECURSIVE), 200, true);
 		} else {
 			hasSettings = false;
@@ -166,7 +166,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 	}
 
 	public void nextPicture() {
-		if (GalleryRemote._() == null) {
+		if (GalleryRemote.instance() == null) {
 			return;
 		}
 
@@ -183,7 +183,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements
 
 	@Override
 	public void shutdown() {
-		if (GalleryRemote._() != null) {
+		if (GalleryRemote.instance() != null) {
 			GalleryRemote.shutdownInstance();
 		}
 	}

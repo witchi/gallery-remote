@@ -59,7 +59,7 @@ public class ThumbnailCache implements Runnable {
 		Thread.yield();
 		int loaded = 0;
 		GalleryRemote
-				._()
+				.instance()
 				.getCore()
 				.getMainStatusUpdate()
 				.startProgress(StatusUpdate.LEVEL_CACHE, 0, toLoad.size(),
@@ -99,7 +99,7 @@ public class ThumbnailCache implements Runnable {
 								.getSizeKeepRatio(new Dimension(
 										((BufferedImage) i).getWidth(),
 										((BufferedImage) i).getHeight()),
-										GalleryRemote._().properties
+										GalleryRemote.instance().properties
 												.getThumbnailSize(), true);
 						if (newD != null) {
 							scaled = i.getScaledInstance(newD.width,
@@ -112,7 +112,7 @@ public class ThumbnailCache implements Runnable {
 					}
 				} else {
 					i = ImageUtils.load(p.getSource().getPath(),
-							GalleryRemote._().properties.getThumbnailSize(),
+							GalleryRemote.instance().properties.getThumbnailSize(),
 							ImageUtils.THUMB);
 				}
 
@@ -123,18 +123,18 @@ public class ThumbnailCache implements Runnable {
 				Log.log(Log.LEVEL_TRACE, MODULE, "update progress " + loaded
 						+ "/" + (loaded + toLoad.size()));
 				GalleryRemote
-						._()
+						.instance()
 						.getCore()
 						.getMainStatusUpdate()
 						.updateProgressValue(StatusUpdate.LEVEL_CACHE, loaded,
 								loaded + toLoad.size());
-				GalleryRemote._().getCore().thumbnailLoadedNotify();
+				GalleryRemote.instance().getCore().thumbnailLoadedNotify();
 			}
 		}
 		stillRunning = false;
 
 		GalleryRemote
-				._()
+				.instance()
 				.getCore()
 				.getMainStatusUpdate()
 				.stopProgress(StatusUpdate.LEVEL_CACHE,
@@ -196,7 +196,7 @@ public class ThumbnailCache implements Runnable {
 	}
 
 	void rerun() {
-		if (!stillRunning && GalleryRemote._().properties.getShowThumbnails()) {
+		if (!stillRunning && GalleryRemote.instance().properties.getShowThumbnails()) {
 			stillRunning = true;
 			Log.log(Log.LEVEL_TRACE, MODULE, "Calling Start");
 			new Thread(this).start();

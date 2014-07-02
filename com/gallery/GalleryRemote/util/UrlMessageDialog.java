@@ -40,7 +40,7 @@ public class UrlMessageDialog extends JDialog implements ActionListener {
 
 	public UrlMessageDialog(String message, String url, String urlText,
 			String button1Label, String button2Label) {
-		super(GalleryRemote._().getMainFrame(), GRI18n.getString(MODULE,
+		super(GalleryRemote.instance().getMainFrame(), GRI18n.getString(MODULE,
 				"warningTitle"), true);
 
 		jIcon.setIcon(UIManager.getIcon("OptionPane.warningIcon"));

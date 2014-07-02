@@ -19,7 +19,7 @@ public class GalleryRemoteMini extends GalleryRemote {
 
 		CoreUtils.initCore();
 
-		Log.startLog(_().properties.getIntProperty(PreferenceNames.LOG_LEVEL), _().properties.getBooleanProperty("toSysOut"));
+		Log.startLog(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
 	}
 
 	public void createProperties() {

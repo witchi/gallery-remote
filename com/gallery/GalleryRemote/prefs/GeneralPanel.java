@@ -113,7 +113,7 @@ public class GeneralPanel extends /* JPanel */PreferencePanel implements
 		}
 
 		int selectedLocale = locales.indexOf(GRI18n
-				.parseLocaleString(GalleryRemote._().properties
+				.parseLocaleString(GalleryRemote.instance().properties
 						.getProperty(UI_LOCALE)));
 
 		if (selectedLocale == -1) {

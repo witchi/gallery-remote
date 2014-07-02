@@ -83,7 +83,7 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 
 		synchronized (getClass()) {
 			if (inp == null) {
-				inp = new BasicAuthBox(GalleryRemote._().getMainFrame());
+				inp = new BasicAuthBox(GalleryRemote.instance().getMainFrame());
 			}
 		}
 

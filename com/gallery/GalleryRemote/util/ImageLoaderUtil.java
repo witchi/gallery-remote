@@ -132,7 +132,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 					imageLoaderUser.pictureStartDownloading(picture);
 
 					File f = ImageUtils.download(picture,
-							imageLoaderUser.getImageSize(), GalleryRemote._()
+							imageLoaderUser.getImageSize(), GalleryRemote.instance()
 									.getCore().getMainStatusUpdate(),
 							transferListener);
 
@@ -330,11 +330,11 @@ public class ImageLoaderUtil implements PreferenceNames {
 	}
 
 	public static void setSlideshowFont(Component c) {
-		String fontName = GalleryRemote._().properties
+		String fontName = GalleryRemote.instance().properties
 				.getProperty(SLIDESHOW_FONTNAME);
 		int defaultFontSize = (int) DialogUtil.findParentWindow(c)
 				.getGraphicsConfiguration().getBounds().getHeight() / 40;
-		int fontSize = GalleryRemote._().properties.getIntProperty(
+		int fontSize = GalleryRemote.instance().properties.getIntProperty(
 				SLIDESHOW_FONTSIZE, defaultFontSize);
 		Font f = null;
 		if (fontName != null) {

@@ -61,8 +61,7 @@ public class Log implements PreferenceNames, Runnable {
 	static Log singleton = new Log();
 	static boolean started = false;
 
-	List<String> logLines = Collections
-			.synchronizedList(new LinkedList<String>());
+	List<String> logLines = Collections.synchronizedList(new LinkedList<String>());
 	boolean running = false;
 	List<String> moduleList = null;
 
@@ -77,16 +76,14 @@ public class Log implements PreferenceNames, Runnable {
 				module = (module + emptyModule).substring(0, moduleLength);
 			}
 
-			if (singleton.moduleList != null
-					&& !singleton.moduleList.contains(module)) {
+			if (singleton.moduleList != null && !singleton.moduleList.contains(module)) {
 				return;
 			}
 
 			String time = emptyTime + (System.currentTimeMillis() - startTime);
 			time = time.substring(time.length() - emptyTime.length());
 
-			singleton.logLines.add(time + "|" + levelName[level] + "|" + module
-					+ "|" + message);
+			singleton.logLines.add(time + "|" + levelName[level] + "|" + module + "|" + message);
 		}
 	}
 
@@ -148,9 +145,8 @@ public class Log implements PreferenceNames, Runnable {
 
 		if (i == -1) {
 			return name;
-		} else {
-			return name.substring(i + 1);
 		}
+		return name.substring(i + 1);
 	}
 
 	public static void shutdown() {
@@ -176,15 +172,12 @@ public class Log implements PreferenceNames, Runnable {
 		BufferedWriter writer = null;
 		running = true;
 		try {
-			System.out.println("Creating log file in "
-					+ System.getProperty("java.io.tmpdir"));
-			writer = new BufferedWriter(new FileWriter(new File(
-					System.getProperty("java.io.tmpdir"),
-					"GalleryRemoteLog.txt")));
+			System.out.println("Creating log file in " + System.getProperty("java.io.tmpdir"));
+			writer = new BufferedWriter(new FileWriter(new File(System.getProperty("java.io.tmpdir"), "GalleryRemoteLog.txt")));
 			while (running) {
 				Thread.sleep(sleepInterval);
 				while (!logLines.isEmpty()) {
-					String s = (String) logLines.remove(0);
+					String s = logLines.remove(0);
 					writer.write(s);
 					writer.newLine();
 
@@ -217,8 +210,7 @@ public class Log implements PreferenceNames, Runnable {
 	public static void startLog(int maxLevel, boolean toSysOut) {
 		if (Log.maxLevel != maxLevel) {
 			Log.maxLevel = maxLevel;
-			singleton.logLines.add(emptyTime + "|" + levelName[LEVEL_TRACE]
-					+ "|" + emptyModule + "|" + "Setting Log level to "
+			singleton.logLines.add(emptyTime + "|" + levelName[LEVEL_TRACE] + "|" + emptyModule + "|" + "Setting Log level to "
 					+ levelName[Log.maxLevel]);
 		}
 

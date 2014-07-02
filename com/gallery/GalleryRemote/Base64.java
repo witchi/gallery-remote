@@ -39,15 +39,15 @@ public class Base64 {
 			boolean quad = false;
 			boolean trip = false;
 
-			int val = (0xFF & (int) data[i]);
+			int val = (0xFF & data[i]);
 			val <<= 8;
 			if ((i + 1) < data.length) {
-				val |= (0xFF & (int) data[i + 1]);
+				val |= (0xFF & data[i + 1]);
 				trip = true;
 			}
 			val <<= 8;
 			if ((i + 2) < data.length) {
-				val |= (0xFF & (int) data[i + 2]);
+				val |= (0xFF & data[i + 2]);
 				quad = true;
 			}
 			out[index + 3] = alphabet[(quad ? (val & 0x3F) : 64)];

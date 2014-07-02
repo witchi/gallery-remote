@@ -349,9 +349,8 @@ public class Gallery extends DefaultTreeModel implements Serializable,
 	public String getStUrlString() {
 		if (stUrlString != null) {
 			return stUrlString;
-		} else {
-			return "http://example.com/gallery";
 		}
+		return "http://example.com/gallery";
 	}
 
 	/* PostNuke Gallery URL */
@@ -373,9 +372,8 @@ public class Gallery extends DefaultTreeModel implements Serializable,
 	public String getPnGalleryUrlString() {
 		if (pnGalleryUrlString != null) {
 			return pnGalleryUrlString.toString();
-		} else {
-			return "http://example.com/modules.php?op=modload&name=gallery&file=index&include=$GALLERYFILE$";
 		}
+		return "http://example.com/modules.php?op=modload&name=gallery&file=index&include=$GALLERYFILE$";
 	}
 
 	/* PostNuke Login URL */
@@ -397,9 +395,8 @@ public class Gallery extends DefaultTreeModel implements Serializable,
 	public String getPnLoginUrlString() {
 		if (pnLoginUrlString != null) {
 			return pnLoginUrlString.toString();
-		} else {
-			return "http://example.com/user.php?uname=$USERNAME$&pass=$PASSWORD$&module=NS-User&op=login";
 		}
+		return "http://example.com/user.php?uname=$USERNAME$&pass=$PASSWORD$&module=NS-User&op=login";
 	}
 
 	/* PHPNuke Gallery URL */
@@ -421,9 +418,8 @@ public class Gallery extends DefaultTreeModel implements Serializable,
 	public String getPhpnGalleryUrlString() {
 		if (phpnGalleryUrlString != null) {
 			return phpnGalleryUrlString.toString();
-		} else {
-			return "http://example.com/modules.php?name=gallery&include=$GALLERYFILE$";
 		}
+		return "http://example.com/modules.php?name=gallery&include=$GALLERYFILE$";
 	}
 
 	/* PHPNuke Login URL */
@@ -445,9 +441,8 @@ public class Gallery extends DefaultTreeModel implements Serializable,
 	public String getPhpnLoginUrlString() {
 		if (phpnLoginUrlString != null) {
 			return phpnLoginUrlString.toString();
-		} else {
-			return "http://example.com/modules.php?name=Your_Account&op=login&username=$USERNAME$&user_password=$PASSWORD$";
 		}
+		return "http://example.com/modules.php?name=Your_Account&op=login&username=$USERNAME$&user_password=$PASSWORD$";
 	}
 
 	/* GeekLog Gallery URL */
@@ -469,9 +464,8 @@ public class Gallery extends DefaultTreeModel implements Serializable,
 	public String getGlGalleryUrlString() {
 		if (glGalleryUrlString != null) {
 			return glGalleryUrlString.toString();
-		} else {
-			return "http://example.com/path/to/gallery/$GALLERYFILE$";
 		}
+		return "http://example.com/path/to/gallery/$GALLERYFILE$";
 	}
 
 	/* PostNuke Login URL */
@@ -493,9 +487,8 @@ public class Gallery extends DefaultTreeModel implements Serializable,
 	public String getGlLoginUrlString() {
 		if (glLoginUrlString != null) {
 			return glLoginUrlString.toString();
-		} else {
-			return "http://example.com/path/to/geeklog/public_html/users.php?loginname=$USERNAME$&passwd=$PASSWORD$";
 		}
+		return "http://example.com/path/to/geeklog/public_html/users.php?loginname=$USERNAME$&passwd=$PASSWORD$";
 	}
 
 	/* Applet URL */
@@ -873,7 +866,7 @@ public class Gallery extends DefaultTreeModel implements Serializable,
 			String myUrl = toString(false);
 
 			for (int i = 0; i < galleries.getSize(); i++) {
-				Gallery g = (Gallery) galleries.getElementAt(i);
+				Gallery g = galleries.getElementAt(i);
 
 				if (g != this && myUrl.equals(g.toString(false))) {
 					ambiguousUrl = new Boolean(true);
@@ -1048,7 +1041,7 @@ public class Gallery extends DefaultTreeModel implements Serializable,
 		public TreeEnumeration(T rootNode) {
 			super();
 			root = rootNode;
-			children = (Enumeration<T>) root.children();
+			children = root.children();
 			subtree = (Enumeration<T>) DefaultMutableTreeNode.EMPTY_ENUMERATION;
 		}
 

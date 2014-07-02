@@ -28,11 +28,10 @@ import com.gallery.GalleryRemote.prefs.PreferenceNames;
 
 /**
  * Screensaver that shows a Gallery slideshow
- *
+ * 
  * @author Pierre-Luc Paour
  */
-public class GRScreenSaver
-		extends SimpleScreensaver implements PreferenceNames {
+public class GRScreenSaver extends SimpleScreensaver implements PreferenceNames {
 	public static final String MODULE = "ScreenSaver";
 	String coreClass = "com.gallery.GalleryRemote.GalleryRemoteScreenSaver";
 	boolean hasStarted = false;
@@ -43,6 +42,7 @@ public class GRScreenSaver
 	/**
 	 * Initialize this screen saver
 	 */
+	@Override
 	public void init() {
 		if (!hasStarted) {
 			GalleryRemote.createInstance(coreClass, null);
@@ -58,37 +58,30 @@ public class GRScreenSaver
 	/**
 	 * Paint the next frame
 	 */
+	@Override
 	public void paint(Graphics g) {
-		//Log.log(Log.LEVEL_TRACE, MODULE, "Paint");
+		// Log.log(Log.LEVEL_TRACE, MODULE, "Paint");
 		if (paintPass < 10) {
 			paintPass++;
 
 			Component c = getContext().getComponent();
 			ImageLoaderUtil.setSlideshowFont(c);
 			g.setFont(c.getFont());
-			String message = grss.hasSettings?"Preparing slideshow...":"Please pick the Settings for your Gallery";
+			String message = grss.hasSettings ? "Preparing slideshow..." : "Please pick the Settings for your Gallery";
 
 			int width = (int) c.getBounds().getWidth();
 			int height = (int) c.getBounds().getHeight();
-			ImageLoaderUtil.paintAlignedOutline(
-					g,
-					message,
-					width / 2,
-					height / 2,
-					thickness,
-					20,
-					width);
+			ImageLoaderUtil.paintAlignedOutline(g, message, width / 2, height / 2, thickness, 20, width);
 
 			return;
 		}
 
 		if (grss.newImage) {
-			/*if (firstPaint) {
-				firstPaint = false;
-				Component c = getContext().getComponent();
-				ImageLoaderUtil.setSlideshowFont(c);
-				g.setFont(c.getFont());
-			}*/
+			/*
+			 * if (firstPaint) { firstPaint = false; Component c =
+			 * getContext().getComponent(); ImageLoaderUtil.setSlideshowFont(c);
+			 * g.setFont(c.getFont()); }
+			 */
 
 			grss.newImage = false;
 
@@ -108,27 +101,21 @@ public class GRScreenSaver
 			g.fillRect(dx, 0, width - dx, dy);
 			g.fillRect(dx, height - dy, width - dx, height);
 
-			String caption =
-					ImageLoaderUtil.stripTags(HTMLEscaper.unescape(grss.loader.pictureShowNow.getCaption()));
+			String caption = ImageLoaderUtil.stripTags(HTMLEscaper.unescape(grss.loader.pictureShowNow.getCaption()));
 
 			if (caption != null && caption.length() != 0) {
-				ImageLoaderUtil.paintAlignedOutline(
-						g,
-						caption,
-						width / 2,
-						height - 10,
-						thickness,
-						30,
-						width);
+				ImageLoaderUtil.paintAlignedOutline(g, caption, width / 2, height - 10, thickness, 30, width);
 			}
 		}
 	}
 
+	@Override
 	public void destroy() {
 		GalleryRemote.instance().getCore().shutdown();
 
-		// for the screensaver, it makes sense to keep the temp files around, they'll come useful again...
-		//ImageUtils.purgeTemp();
+		// for the screensaver, it makes sense to keep the temp files around,
+		// they'll come useful again...
+		// ImageUtils.purgeTemp();
 
 		Log.log(Log.LEVEL_INFO, MODULE, "Shutting down log");
 		Log.shutdown();

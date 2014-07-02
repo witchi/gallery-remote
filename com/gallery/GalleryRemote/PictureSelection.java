@@ -40,14 +40,11 @@ import com.gallery.GalleryRemote.model.Picture;
  * @author paour
  * @created 11 août 2002
  */
-public class PictureSelection extends ArrayList<Picture> implements
-		Transferable, ClipboardOwner {
+public class PictureSelection extends ArrayList<Picture> implements Transferable, ClipboardOwner {
 
 	private static final long serialVersionUID = -2189909427632491648L;
-	public static final DataFlavor[] flavors = { new DataFlavor(Picture.class,
-			"Gallery Picture object (local)") };
-	private static final java.util.List<DataFlavor> flavorList = Arrays
-			.asList(flavors);
+	public static final DataFlavor[] flavors = { new DataFlavor(Picture.class, "Gallery Picture object (local)") };
+	private static final java.util.List<DataFlavor> flavorList = Arrays.asList(flavors);
 
 	public PictureSelection() {
 	}
@@ -57,7 +54,7 @@ public class PictureSelection extends ArrayList<Picture> implements
 		for (int i = 0; i < selIndices.length; i++) {
 			int selIndex = selIndices[i];
 			if (selIndex != -1) {
-				Picture p = (Picture) list.getModel().getElementAt(selIndex);
+				Picture p = list.getModel().getElementAt(selIndex);
 				if (clone) {
 					p = (Picture) p.clone();
 				}
@@ -78,8 +75,7 @@ public class PictureSelection extends ArrayList<Picture> implements
 	}
 
 	@Override
-	public synchronized Object getTransferData(DataFlavor flavor)
-			throws UnsupportedFlavorException, IOException {
+	public synchronized Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
 
 		if (isDataFlavorSupported(flavor)) {
 			ArrayList<Picture> deepClone = new ArrayList<Picture>(size());
@@ -87,9 +83,8 @@ public class PictureSelection extends ArrayList<Picture> implements
 				deepClone.add((Picture) it.next().clone());
 			}
 			return deepClone;
-		} else {
-			throw new UnsupportedFlavorException(flavor);
 		}
+		throw new UnsupportedFlavorException(flavor);
 	}
 
 	/* ClipboardOwner interface */

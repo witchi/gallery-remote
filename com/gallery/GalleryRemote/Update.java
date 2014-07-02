@@ -40,14 +40,13 @@ import java.util.Date;
 
 /**
  * Update check and dialog
- *
+ * 
  * @author paour
  */
 
 public class Update extends JFrame implements ActionListener, PreferenceNames {
 	private static final long serialVersionUID = -2982673464534431463L;
 	public static final String MODULE = "Update";
-
 
 	public static final int NO_UPDATE = 0;
 	public static final int RELEASE = 1;
@@ -100,7 +99,8 @@ public class Update extends JFrame implements ActionListener, PreferenceNames {
 	}
 
 	public void showNotice() {
-		if (which == null) return;
+		if (which == null)
+			return;
 
 		try {
 			jbInit();
@@ -174,7 +174,8 @@ public class Update extends JFrame implements ActionListener, PreferenceNames {
 		jDate.setBackground(UIManager.getColor("TextField.inactiveBackground"));
 		jDate.setEditable(false);
 		jDate.setFont(UIManager.getFont("Label.font"));
-		if (which.releaseDate != null) jDate.setText(DateFormat.getDateInstance().format(which.releaseDate));
+		if (which.releaseDate != null)
+			jDate.setText(DateFormat.getDateInstance().format(which.releaseDate));
 
 		jBrowse.setText(GRI18n.getString(MODULE, "openInBrwsr"));
 		jBrowse.addActionListener(this);
@@ -183,7 +184,8 @@ public class Update extends JFrame implements ActionListener, PreferenceNames {
 		jReleaseNotes.setFont(UIManager.getFont("Label.font"));
 		jReleaseNotes.setPreferredSize(new Dimension(520, 250));
 		jReleaseNotes.setMargin(new Insets(0, 3, 3, 3));
-		if (which.releaseNotes != null) jReleaseNotes.setText(which.releaseNotes);
+		if (which.releaseNotes != null)
+			jReleaseNotes.setText(which.releaseNotes);
 
 		if (which.releaseUrl != null) {
 			if (GalleryRemote.IS_MAC_OS_X) {
@@ -196,34 +198,46 @@ public class Update extends JFrame implements ActionListener, PreferenceNames {
 		jVersion.setBackground(UIManager.getColor("TextField.inactiveBackground"));
 		jVersion.setEditable(false);
 		jVersion.setFont(UIManager.getFont("Label.font"));
-		if (which.version != null) jVersion.setText(which.version);
+		if (which.version != null)
+			jVersion.setText(which.version);
 
-		this.getContentPane().add(jLabel1, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 15, 0), 0, 0));
-		this.getContentPane().add(jLabel2, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(1, 0, 0, 0), 5, 0));
-		this.getContentPane().add(jLabel3, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(1, 0, 0, 0), 5, 0));
-		this.getContentPane().add(jLabel4, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
-				, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(3, 0, 0, 0), 5, 0));
-		this.getContentPane().add(jLabel5, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
-				, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(1, 0, 0, 0), 5, 0));
+		this.getContentPane()
+				.add(jLabel1,
+						new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 15, 0),
+								0, 0));
+		this.getContentPane().add(jLabel2,
+				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(1, 0, 0, 0), 5, 0));
+		this.getContentPane().add(jLabel3,
+				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(1, 0, 0, 0), 5, 0));
+		this.getContentPane().add(
+				jLabel4,
+				new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(3, 0, 0, 0), 5,
+						0));
+		this.getContentPane().add(jLabel5,
+				new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(1, 0, 0, 0), 5, 0));
 
-		this.getContentPane().add(jScrollPane1, new GridBagConstraints(1, 3, 2, 1, 1.0, 1.0
-				, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 2));
+		this.getContentPane().add(jScrollPane1,
+				new GridBagConstraints(1, 3, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 2));
 
-		this.getContentPane().add(jVersion, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 2));
-		this.getContentPane().add(jDate, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 2));
-		this.getContentPane().add(jUrl, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		this.getContentPane().add(jBrowse, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0
-				, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(3, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				jVersion,
+				new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
+						0, 2));
+		this.getContentPane().add(
+				jDate,
+				new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
+						0, 2));
+		this.getContentPane().add(
+				jUrl,
+				new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
+						0, 0));
+		this.getContentPane().add(jBrowse,
+				new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(3, 5, 5, 5), 0, 0));
 
 		jScrollPane1.getViewport().add(jReleaseNotes, null);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent ae) {
 		try {
 			BrowserLauncher.openURL(jUrl.getUrl());
@@ -276,7 +290,8 @@ public class Update extends JFrame implements ActionListener, PreferenceNames {
 				laxFile.renameTo(origFile);
 				patchFile.renameTo(laxFile);
 
-				JOptionPane.showMessageDialog(null, GRI18n.getString(MODULE, "restart.text"), GRI18n.getString(MODULE, "restart.title"), JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, GRI18n.getString(MODULE, "restart.text"), GRI18n.getString(MODULE, "restart.title"),
+						JOptionPane.WARNING_MESSAGE);
 
 				return true;
 			} catch (FileNotFoundException e) {
@@ -286,9 +301,8 @@ public class Update extends JFrame implements ActionListener, PreferenceNames {
 			}
 
 			return false;
-		} else {
-			Log.log(Log.LEVEL_INFO, MODULE, "LAX classpath up to date");
-			return false;
 		}
+		Log.log(Log.LEVEL_INFO, MODULE, "LAX classpath up to date");
+		return false;
 	}
 }

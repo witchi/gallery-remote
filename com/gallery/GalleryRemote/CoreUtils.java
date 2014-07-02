@@ -9,7 +9,8 @@ import java.awt.*;
 import java.io.File;
 
 /**
- * Created by IntelliJ IDEA. User: paour Date: Jan 15, 2004
+ * @author paour
+ * @version Jan 15, 2004
  */
 public class CoreUtils {
 	public static final String MODULE = "CoreUtils";
@@ -53,7 +54,7 @@ public class CoreUtils {
 		}
 
 		if (found) {
-			reselect = (Picture) jPicturesList.getModel().getElementAt(i);
+			reselect = jPicturesList.getModel().getElementAt(i);
 		}
 
 		core.getCurrentAlbum().removePictures(indices);
@@ -78,10 +79,8 @@ public class CoreUtils {
 				Album currentAlbum = core.getCurrentAlbum();
 
 				Picture buf = currentAlbum.getPicture(indices[i]);
-				currentAlbum.setPicture(indices[i],
-						currentAlbum.getPicture(indices[i] - 1));
+				currentAlbum.setPicture(indices[i], currentAlbum.getPicture(indices[i] - 1));
 				currentAlbum.setPicture(indices[i] - 1, buf);
-				// jPicturesList.setSelectedIndex( indices[i] - 1 );
 				reselect[i] = indices[i] - 1;
 			} else {
 				reselect[i] = indices[i];
@@ -107,10 +106,8 @@ public class CoreUtils {
 
 			if (indices[i] < currentAlbum.sizePictures() - 1) {
 				Picture buf = currentAlbum.getPicture(indices[i]);
-				currentAlbum.setPicture(indices[i],
-						currentAlbum.getPicture(indices[i] + 1));
+				currentAlbum.setPicture(indices[i], currentAlbum.getPicture(indices[i] + 1));
 				currentAlbum.setPicture(indices[i] + 1, buf);
-				// jPicturesList.setSelectedIndex( sel + 1 );
 				reselect[i] = indices[i] + 1;
 			} else {
 				reselect[i] = indices[i];
@@ -146,10 +143,8 @@ public class CoreUtils {
 		private static final long serialVersionUID = -7506167308544454638L;
 
 		@Override
-		public Component getListCellRendererComponent(JList<?> list,
-				Object value, int index, boolean selected, boolean hasFocus) {
-			super.getListCellRendererComponent(list, value, index, selected,
-					hasFocus);
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean selected, boolean hasFocus) {
+			super.getListCellRendererComponent(list, value, index, selected, hasFocus);
 
 			Album currentAlbum = core.getCurrentAlbum();
 			if (null != currentAlbum && null != value && -1 != index) {
@@ -158,14 +153,11 @@ public class CoreUtils {
 					Picture p = currentAlbum.getPicture(index);
 
 					if (p.isOnline()) {
-						if (p.getParentAlbum() != p.getAlbumOnServer()
-								|| p.getIndex() != p.getIndexOnServer()) {
+						if (p.getParentAlbum() != p.getAlbumOnServer() || p.getIndex() != p.getIndexOnServer()) {
 							setForeground(Color.red);
 						} else {
 							setForeground(Color.green);
 						}
-					} else {
-						// setForeground(Color.black);
 					}
 
 					if (GalleryRemote.instance().properties.getShowThumbnails()) {
@@ -177,10 +169,7 @@ public class CoreUtils {
 							}
 							((ImageIcon) iicon).setImage(icon);
 
-							setIconTextGap(4
-									+ GalleryRemote.instance().properties
-											.getThumbnailSize().width
-									- icon.getWidth(this));
+							setIconTextGap(4 + GalleryRemote.instance().properties.getThumbnailSize().width - icon.getWidth(this));
 						}
 					}
 
@@ -193,15 +182,12 @@ public class CoreUtils {
 						File f = p.getSource();
 						text.append(f.getName());
 						if (GalleryRemote.instance().properties.getShowPath()) {
-							text.append(" [").append(f.getParent())
-									.append("]</p>");
+							text.append(" [").append(f.getParent()).append("]</p>");
 						}
 					}
 
 					if (p.getCaption() != null && getIcon() != null) {
-						text.append("<p><font color=\"gray\">")
-								.append(p.getEscapedCaption())
-								.append("</font></p>");
+						text.append("<p><font color=\"gray\">").append(p.getEscapedCaption()).append("</font></p>");
 					}
 
 					text.append("</html>");

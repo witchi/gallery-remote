@@ -39,25 +39,24 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 	public static String hackUsername = null;
 	public static String hackPassword = null;
 
-
 	/**
 	 * Engage this class to be the authorization popup
 	 */
 	public static void enable() {
-		HTTPClient.DefaultAuthHandler.setAuthorizationPrompter
-				(new AuthorizePopup());
+		HTTPClient.DefaultAuthHandler.setAuthorizationPrompter(new AuthorizePopup());
 	}
-
 
 	/**
 	 * the method called by DefaultAuthHandler.
 	 * 
-	 * @param challenge Description of Parameter
-	 * @param forProxy  Description of Parameter
+	 * @param challenge
+	 *           Description of Parameter
+	 * @param forProxy
+	 *           Description of Parameter
 	 * @return the username/password pair
 	 */
-	public NVPair getUsernamePassword(HTTPClient.AuthorizationInfo challenge,
-									  boolean forProxy) {
+	@Override
+	public NVPair getUsernamePassword(HTTPClient.AuthorizationInfo challenge, boolean forProxy) {
 
 		// The HTTPClient library doesn't correctly accept setting auth params
 		// ahead of time (because it can't accept a realm of *
@@ -76,8 +75,7 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 			line3 = GRI18n.getString(MODULE, "authMthd");
 		} else {
 			line1 = GRI18n.getString(MODULE, "enterUsrPwdRealm", new Object[] { challenge.getRealm() });
-			line2 = GRI18n.getString(MODULE, "onHost", new Object[] { challenge.getHost() + ":" +
-					challenge.getPort()});
+			line2 = GRI18n.getString(MODULE, "onHost", new Object[] { challenge.getHost() + ":" + challenge.getPort() });
 			line3 = GRI18n.getString(MODULE, "authScheme", new Object[] { challenge.getScheme() });
 		}
 
@@ -89,7 +87,6 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 
 		return inp.getInput(line1, line2, line3, challenge.getScheme());
 	}
-
 
 	/**
 	 * This class implements a simple popup that request username and password
@@ -107,11 +104,11 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 		private int done;
 		private final static int OK = 1, CANCEL = 0;
 
-
 		/**
 		 * Constructs the popup with two lines of text above the input fields
 		 * 
-		 * @param container Description of Parameter
+		 * @param container
+		 *           Description of Parameter
 		 */
 		BasicAuthBox(Frame container) {
 			super(container, title, true);
@@ -172,18 +169,20 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 			pack();
 		}
 
-
 		/**
 		 * the method called by SimpleAuthPopup.
 		 * 
-		 * @param l1     Description of Parameter
-		 * @param l2     Description of Parameter
-		 * @param l3     Description of Parameter
-		 * @param scheme Description of Parameter
+		 * @param l1
+		 *           Description of Parameter
+		 * @param l2
+		 *           Description of Parameter
+		 * @param l3
+		 *           Description of Parameter
+		 * @param scheme
+		 *           Description of Parameter
 		 * @return the username/password pair
 		 */
-		NVPair getInput(String l1, String l2, String l3,
-						String scheme) {
+		NVPair getInput(String l1, String l2, String l3, String scheme) {
 			line1.setText(l1);
 			line2.setText(l2);
 			line3.setText(l3);
@@ -209,7 +208,8 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 				}
 			}
 
-			// This call to request focus probably does not do anything, but leave it in.
+			// This call to request focus probably does not do anything, but leave
+			// it in.
 			if (user_focus) {
 				user.requestFocus();
 			} else {
@@ -226,14 +226,14 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 
 			if (done == CANCEL) {
 				return null;
-			} else {
-				return result;
 			}
+			return result;
 		}
 
 		/**
 		 * Invoked when an action occurs.
 		 */
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == pass || "ok".equals(e.getActionCommand())) {
 				done = OK;
@@ -248,11 +248,5 @@ public class AuthorizePopup implements HTTPClient.AuthorizationPrompter {
 			} else if ("close".equals(e.getActionCommand())) {
 			}
 		}
-
-		/*private class Close extends WindowAdapter {
-			public void windowClosing(WindowEvent we) {
-				new Cancel().actionPerformed(null);
-			}
-		}*/
 	}
 }

@@ -21,23 +21,13 @@
 package com.gallery.GalleryRemote;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.UIManager;
-import javax.swing.border.MatteBorder;
 
+import com.gallery.GalleryRemote.about.AboutPanel;
 import com.gallery.GalleryRemote.util.DialogUtil;
 import com.gallery.GalleryRemote.util.GRI18n;
 
@@ -47,17 +37,20 @@ import com.gallery.GalleryRemote.util.GRI18n;
  * @author paour
  */
 public class AboutBox extends JDialog {
+	
 	private static final long serialVersionUID = 117092856826918304L;
-	public static final String MODULE = "About";
-	public static int TOP = 5;
-	public static int BOTTOM = 105;
+	private static final String MODULE = "About";
+	private static final int TOP = 5;
+	private static final int BOTTOM = 105;
+	private final AnimationThread thread;
 
 	/**
 	 * Constructor for the AboutBox object
 	 */
 	public AboutBox() {
 		super();
-		init();
+		this.thread = new AnimationThread();
+		initUI();
 	}
 
 	/**
@@ -68,12 +61,13 @@ public class AboutBox extends JDialog {
 	 */
 	public AboutBox(Frame owner) {
 		super(owner);
-		init();
+		this.thread = new AnimationThread();
+		initUI();
 	}
 
-	private void init() {
+	private void initUI() {
 		setModal(true);
-		getContentPane().add(new AboutPanel(), BorderLayout.CENTER);
+		getContentPane().add(new AboutPanel(TOP, BOTTOM), BorderLayout.CENTER);
 		setTitle(GRI18n.getString(MODULE, "title"));
 
 		pack();
@@ -95,168 +89,26 @@ public class AboutBox extends JDialog {
 	}
 
 	// Close the window when the box is clicked
-	void thisWindowClosing() {
+	private void thisWindowClosing() {
 		setVisible(false);
 		dispose();
 	}
+	
+	/**
+	 * Adds a feature to the Notify attribute of the AboutPanel object
+	 */
+	@Override
+	public void addNotify() {
+		super.addNotify();
+		thread.start();
+	}
 
 	/**
-	 * AboutPanel: scrolling panel of credits for About boxes
-	 * 
-	 * @author paour
+	 * Description of the Method
 	 */
-	public class AboutPanel extends JComponent {
-		private static final long serialVersionUID = 539994781856850049L;
-		ImageIcon image;
-		ArrayList<String> text;
-		int scrollPosition;
-		AnimationThread thread;
-		int maxWidth;
-		FontMetrics fm;
-		int initialPosition;
-
-		/**
-		 * Constructor for the AboutPanel object
-		 */
-		public AboutPanel() {
-			setFont(UIManager.getFont("Label.font"));
-			fm = getFontMetrics(getFont());
-
-			URL imu = getClass().getResource("/rar_about_gr1.png");
-			Log.log(Log.LEVEL_TRACE, MODULE, "Looking for splash screen in "
-					+ imu.toString());
-			image = new ImageIcon(imu);
-
-			setBorder(new MatteBorder(1, 1, 1, 1, Color.gray));
-
-			text = new ArrayList<String>();
-			StringTokenizer st = new StringTokenizer(
-					GalleryRemote.instance().properties.getProperty("aboutText"), "\n");
-			while (st.hasMoreTokens()) {
-				String line = st.nextToken();
-				text.add(line);
-				maxWidth = Math.max(maxWidth, fm.stringWidth(line) + 10);
-			}
-			initialPosition = getHeight() - BOTTOM /*- BOTTOM*/- TOP - TOP;
-			scrollPosition = initialPosition;
-
-			thread = new AnimationThread();
-		}
-
-		/**
-		 * Gets the preferredSize attribute of the AboutPanel object
-		 * 
-		 * @return The preferredSize value
-		 */
-		@Override
-		public Dimension getPreferredSize() {
-			return new Dimension(1 + image.getIconWidth(),
-					1 + image.getIconHeight());
-		}
-
-		/**
-		 * Description of the Method
-		 * 
-		 * @param g
-		 *            Description of Parameter
-		 */
-		@Override
-		public void paintComponent(Graphics g) {
-			// g.setColor(new Color(96, 96, 96));
-			image.paintIcon(this, g, 1, 1);
-
-			FontMetrics fm = g.getFontMetrics();
-
-			String version = GalleryRemote.instance().properties
-					.getProperty("version");
-			g.drawString(version, (getWidth() - fm.stringWidth(version)) / 2,
-					getHeight() - 5);
-
-			g = g.create((getWidth() - maxWidth) / 2, TOP, maxWidth,
-					getHeight() - TOP - BOTTOM);
-
-			int height = fm.getHeight();
-			int firstLine = scrollPosition / height;
-
-			int firstLineOffset = height - scrollPosition % height;
-			int lines = (getHeight() - TOP - BOTTOM) / height;
-
-			int y = firstLineOffset;
-			g.setColor(new Color(255, 255, 255));
-			for (int i = 0; i <= lines; i++) {
-				if (i + firstLine >= 0 && i + firstLine < text.size()) {
-					String line = (String) text.get(i + firstLine);
-					g.drawString(line, (maxWidth - fm.stringWidth(line)) / 2, y);
-				}
-				y += fm.getHeight();
-			}
-		}
-
-		/**
-		 * Adds a feature to the Notify attribute of the AboutPanel object
-		 */
-		@Override
-		public void addNotify() {
-			super.addNotify();
-			thread.start();
-		}
-
-		/**
-		 * Description of the Method
-		 */
-		@Override
-		public void removeNotify() {
-			super.removeNotify();
-			thread.kill();
-		}
-
-		/**
-		 * Animation thread
-		 * 
-		 * @author paour
-		 */
-		class AnimationThread extends Thread {
-			private boolean running = true;
-
-			AnimationThread() {
-				super(GRI18n.getString(MODULE, "aboutAnim"));
-				setPriority(Thread.MIN_PRIORITY);
-			}
-
-			/**
-			 * Description of the Method
-			 */
-			public void kill() {
-				running = false;
-			}
-
-			/**
-			 * Main processing method for the AnimationThread object
-			 */
-			@Override
-			public void run() {
-				FontMetrics fm = getFontMetrics(getFont());
-				int max = (text.size() * fm.getHeight());
-				long start = System.currentTimeMillis();
-
-				while (running) {
-					scrollPosition = initialPosition
-							+ (int) ((System.currentTimeMillis() - start) / 40);
-
-					if (scrollPosition > max) {
-						scrollPosition = initialPosition;
-						start = System.currentTimeMillis();
-					}
-
-					try {
-						Thread.sleep(100 / 60);
-					} catch (Exception e) {
-					}
-
-					repaint(getWidth() / 2 - maxWidth, TOP, maxWidth * 2,
-							getHeight() - TOP - BOTTOM);
-				}
-			}
-		}
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		thread.kill();
 	}
 }

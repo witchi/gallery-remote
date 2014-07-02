@@ -32,10 +32,12 @@ import com.gallery.GalleryRemote.util.DialogUtil;
 import com.gallery.GalleryRemote.util.GRI18n;
 
 /**
- * The Preferences dialog User: paour Date: May 8, 2003
+ * The Preferences dialog
+ * 
+ * @author paour
+ * @version May 8, 2003
  */
-public class PreferencesDialog extends JDialog implements
-		ListSelectionListener, ActionListener {
+public class PreferencesDialog extends JDialog implements ListSelectionListener, ActionListener {
 
 	private static final long serialVersionUID = 8999939339280032022L;
 	public static final String MODULE = "PrefsDlog";
@@ -82,8 +84,7 @@ public class PreferencesDialog extends JDialog implements
 			String className;
 			while ((className = panes.getProperty("pane." + i++)) != null) {
 				try {
-					PreferencePanel pp = (PreferencePanel) GalleryRemote
-							.secureClassForName(className).newInstance();
+					PreferencePanel pp = (PreferencePanel) GalleryRemote.secureClassForName(className).newInstance();
 
 					pp.setDialog(this);
 					pp.buildUI();
@@ -106,7 +107,7 @@ public class PreferencesDialog extends JDialog implements
 	}
 
 	public void setPanel(String className) {
-		PreferencePanel pp = (PreferencePanel) panelNames.get(className);
+		PreferencePanel pp = panelNames.get(className);
 
 		jIcons.setSelectedValue(pp, true);
 	}
@@ -127,15 +128,12 @@ public class PreferencesDialog extends JDialog implements
 		jCancel.setActionCommand("cancel");
 		gridLayout1.setHgap(5);
 		this.getContentPane().add(jPanel1, BorderLayout.CENTER);
-		jPanel1.add(jScrollPane1, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0,
-				GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
+		jPanel1.add(jScrollPane1, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
 				new Insets(10, 10, 0, 0), 0, 0));
-		jPanel1.add(jPanels, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
-						10, 10, 0, 10), 0, 0));
-		jPanel1.add(jPanel2, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0,
-				GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(
-						10, 10, 10, 10), 0, 0));
+		jPanel1.add(jPanels, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,
+				10, 0, 10), 0, 0));
+		jPanel1.add(jPanel2, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(10,
+				10, 10, 10), 0, 0));
 		jPanel2.add(jOK, null);
 		jScrollPane1.getViewport().add(jIcons, null);
 		jPanel2.add(jCancel, null);
@@ -154,7 +152,7 @@ public class PreferencesDialog extends JDialog implements
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		PreferencePanel pp = (PreferencePanel) jIcons.getSelectedValue();
+		PreferencePanel pp = jIcons.getSelectedValue();
 
 		String className = pp.getClass().getName();
 		Log.log(Log.LEVEL_TRACE, MODULE, "Showing panel: " + className);
@@ -177,13 +175,10 @@ public class PreferencesDialog extends JDialog implements
 
 			Enumeration<PreferencePanel> enumeration = panels.elements();
 			while (enumeration.hasMoreElements()) {
-				PreferencePanel pp = (PreferencePanel) enumeration
-						.nextElement();
+				PreferencePanel pp = enumeration.nextElement();
 
 				if (pp.hasBeenRead()) {
-					Log.log(Log.LEVEL_TRACE, MODULE,
-							"Writing properties for panel " + pp.getClass());
-
+					Log.log(Log.LEVEL_TRACE, MODULE, "Writing properties for panel " + pp.getClass());
 					pp.writeProperties(GalleryRemote.instance().properties);
 				}
 			}
@@ -193,11 +188,10 @@ public class PreferencesDialog extends JDialog implements
 			setVisible(false);
 
 			// Log.log(Log.TRACE, MODULE, "Updating preferences");
-			// ((MainFrame) getOwner()).readPreferences(oldProperties);
 		} else if (cmd.equals("cancel")) {
 			setVisible(false);
 		} else if (cmd.equals("revert")) {
-			PreferencePanel pp = (PreferencePanel) jIcons.getSelectedValue();
+			PreferencePanel pp = jIcons.getSelectedValue();
 			Log.log(Log.LEVEL_TRACE, MODULE, "Reverting panel " + pp.getClass());
 			pp.readProperties(GalleryRemote.instance().properties);
 		}
@@ -228,22 +222,20 @@ public class PreferencesDialog extends JDialog implements
 		 * object
 		 * 
 		 * @param list
-		 *            Description of Parameter
+		 *           Description of Parameter
 		 * @param value
-		 *            Description of Parameter
+		 *           Description of Parameter
 		 * @param index
-		 *            Description of Parameter
+		 *           Description of Parameter
 		 * @param selected
-		 *            Description of Parameter
+		 *           Description of Parameter
 		 * @param hasFocus
-		 *            Description of Parameter
+		 *           Description of Parameter
 		 * @return The listCellRendererComponent value
 		 */
 		@Override
-		public Component getListCellRendererComponent(JList<?> list,
-				Object value, int index, boolean selected, boolean hasFocus) {
-			super.getListCellRendererComponent(list, value, index, selected,
-					hasFocus);
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean selected, boolean hasFocus) {
+			super.getListCellRendererComponent(list, value, index, selected, hasFocus);
 
 			if (value != null && index != -1) {
 				PreferencePanel pp = (PreferencePanel) value;

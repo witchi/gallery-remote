@@ -39,8 +39,7 @@ import com.gallery.GalleryRemote.util.ImageUtils;
  * 
  * @author paour
  */
-public class Picture extends GalleryItem implements Serializable,
-		PreferenceNames, Cloneable {
+public class Picture extends GalleryItem implements Serializable, PreferenceNames, Cloneable {
 	private static final long serialVersionUID = 6261659613183212485L;
 
 	public static final String MODULE = "Picture";
@@ -90,7 +89,7 @@ public class Picture extends GalleryItem implements Serializable,
 	 * Constructor for the Picture object
 	 * 
 	 * @param source
-	 *            File the Picture is based on
+	 *           File the Picture is based on
 	 */
 	public Picture(Gallery gallery, File source) {
 		this(gallery);
@@ -98,6 +97,7 @@ public class Picture extends GalleryItem implements Serializable,
 		setSource(source);
 	}
 
+	@Override
 	public Object clone() {
 		Picture newPicture = (Picture) super.clone();
 
@@ -135,7 +135,7 @@ public class Picture extends GalleryItem implements Serializable,
 	 * Sets the source file the Picture is based on
 	 * 
 	 * @param source
-	 *            The new file
+	 *           The new file
 	 */
 	public void setSource(File source) {
 		this.source = source;
@@ -143,8 +143,7 @@ public class Picture extends GalleryItem implements Serializable,
 		if (GalleryRemote.instance().properties.getAutoCaptions() == AUTO_CAPTIONS_FILENAME) {
 			String filename = source.getName();
 
-			if (GalleryRemote.instance().properties
-					.getBooleanProperty(CAPTION_STRIP_EXTENSION)) {
+			if (GalleryRemote.instance().properties.getBooleanProperty(CAPTION_STRIP_EXTENSION)) {
 				int i = filename.lastIndexOf(".");
 
 				if (i != -1) {
@@ -153,11 +152,10 @@ public class Picture extends GalleryItem implements Serializable,
 			}
 
 			setCaption(filename);
-		} else if (GalleryRemote.instance().properties.getAutoCaptions() == AUTO_CAPTIONS_COMMENT
-				&& getExifData() != null && getExifData().getCaption() != null) {
+		} else if (GalleryRemote.instance().properties.getAutoCaptions() == AUTO_CAPTIONS_COMMENT && getExifData() != null
+				&& getExifData().getCaption() != null) {
 			setCaption(getExifData().getCaption());
-		} else if (GalleryRemote.instance().properties.getAutoCaptions() == AUTO_CAPTIONS_DATE
-				&& getExifData() != null
+		} else if (GalleryRemote.instance().properties.getAutoCaptions() == AUTO_CAPTIONS_DATE && getExifData() != null
 				&& getExifData().getCreationDate() != null) {
 			setCaption(getExifData().getCreationDate().toString());
 		}
@@ -194,8 +192,7 @@ public class Picture extends GalleryItem implements Serializable,
 			try {
 				picture = ImageUtils.losslessCrop(picture.getPath(), cropTo);
 			} catch (UnsupportedOperationException e) {
-				Log.log(Log.LEVEL_ERROR, MODULE,
-						"Couldn't use ImageUtils to losslessly crop the image, will try lossy");
+				Log.log(Log.LEVEL_ERROR, MODULE, "Couldn't use ImageUtils to losslessly crop the image, will try lossy");
 				Log.logException(Log.LEVEL_ERROR, MODULE, e);
 				useLossyCrop = true;
 			}
@@ -214,36 +211,28 @@ public class Picture extends GalleryItem implements Serializable,
 					i = l;
 				} else {
 					// server can't tell us how to resize, try default
-					i = GalleryRemote.instance().properties
-							.getIntDimensionProperty(RESIZE_TO_DEFAULT);
+					i = GalleryRemote.instance().properties.getIntDimensionProperty(RESIZE_TO_DEFAULT);
 				}
 			}
 
 			if (i != -1 || useLossyCrop) {
 				try {
-					picture = ImageUtils.resize(picture.getPath(),
-							new Dimension(i, i), useLossyCrop ? cropTo : null,
-							resizeJpegQuality);
+					picture = ImageUtils.resize(picture.getPath(), new Dimension(i, i), useLossyCrop ? cropTo : null, resizeJpegQuality);
 				} catch (UnsupportedOperationException e) {
-					Log.log(Log.LEVEL_ERROR,
-							MODULE,
-							"Couldn't use ImageUtils to resize the image, it will be uploaded at the original size");
+					Log.log(Log.LEVEL_ERROR, MODULE, "Couldn't use ImageUtils to resize the image, it will be uploaded at the original size");
 					Log.logException(Log.LEVEL_ERROR, MODULE, e);
 				}
 			}
 		} else if (useLossyCrop) {
-			picture = ImageUtils.resize(picture.getPath(), null,
-					useLossyCrop ? cropTo : null, resizeJpegQuality);
+			picture = ImageUtils.resize(picture.getPath(), null, useLossyCrop ? cropTo : null, resizeJpegQuality);
 		}
 
 		// rotate
 		if (angle != 0 || flipped) {
 			try {
-				picture = ImageUtils.rotate(picture.getPath(), angle, flipped,
-						true);
+				picture = ImageUtils.rotate(picture.getPath(), angle, flipped, true);
 			} catch (UnsupportedOperationException e) {
-				Log.log(Log.LEVEL_ERROR, MODULE,
-						"Couldn't use jpegtran to rotate the image, it will be uploaded unrotated");
+				Log.log(Log.LEVEL_ERROR, MODULE, "Couldn't use jpegtran to rotate the image, it will be uploaded unrotated");
 				Log.logException(Log.LEVEL_ERROR, MODULE, e);
 			}
 		}
@@ -281,14 +270,15 @@ public class Picture extends GalleryItem implements Serializable,
 	 * public Album getAlbum() { return album; }
 	 */
 
+	@Override
 	public String toString() {
 		if (online) {
 			return getName();
-		} else {
-			return source.getName();
 		}
+		return source.getName();
 	}
 
+	@Override
 	public int hashCode() {
 		String path;
 
@@ -343,7 +333,7 @@ public class Picture extends GalleryItem implements Serializable,
 			return null;
 		}
 
-		return (String) extraFields.get(name);
+		return extraFields.get(name);
 	}
 
 	public String getExtraFieldsString(boolean includeKey) {
@@ -354,8 +344,7 @@ public class Picture extends GalleryItem implements Serializable,
 		StringBuffer sb = new StringBuffer();
 		String sep = System.getProperty("line.separator");
 
-		for (Iterator<String> it = getParentAlbum().getExtraFields().iterator(); it
-				.hasNext();) {
+		for (Iterator<String> it = getParentAlbum().getExtraFields().iterator(); it.hasNext();) {
 			String name = it.next();
 			String value = extraFields.get(name);
 
@@ -536,8 +525,7 @@ public class Picture extends GalleryItem implements Serializable,
 
 	public Album getAlbumOnServer() {
 		if (!online) {
-			throw new RuntimeException(
-					"Can't get Album on server for a local file!");
+			throw new RuntimeException("Can't get Album on server for a local file!");
 		}
 
 		return albumOnServer;
@@ -549,8 +537,7 @@ public class Picture extends GalleryItem implements Serializable,
 
 	public int getIndexOnServer() {
 		if (!online) {
-			throw new RuntimeException(
-					"Can't get Index on server for a local file!");
+			throw new RuntimeException("Can't get Index on server for a local file!");
 		}
 
 		return indexOnServer;
@@ -558,12 +545,10 @@ public class Picture extends GalleryItem implements Serializable,
 
 	public int getIndex() {
 		Album album = getParentAlbum();
-		if (indexCache == -1 || indexCache >= album.pictures.size()
-				|| album.pictures.get(indexCache) != this) {
+		if (indexCache == -1 || indexCache >= album.pictures.size() || album.pictures.get(indexCache) != this) {
 			return album.pictures.indexOf(this);
-		} else {
-			return indexCache;
 		}
+		return indexCache;
 	}
 
 	public void setIndexOnServer(int indexOnServer) {

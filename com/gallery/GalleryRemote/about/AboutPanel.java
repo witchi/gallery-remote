@@ -106,7 +106,7 @@ public class AboutPanel extends JComponent implements AnimationModel {
 		g.setColor(new Color(255, 255, 255));
 		for (int i = 0; i <= lines; i++) {
 			if (i + firstLine >= 0 && i + firstLine < text.size()) {
-				String line = (String) text.get(i + firstLine);
+				String line = text.get(i + firstLine);
 				g.drawString(line, (maxWidth - fm.stringWidth(line)) / 2, y);
 			}
 			y += fm.getHeight();

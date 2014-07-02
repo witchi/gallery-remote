@@ -10,9 +10,9 @@ import com.gallery.GalleryRemote.util.GRI18n;
 class AnimationThread extends Thread {
 	private static final String MODULE = "About";
 	private volatile boolean running = true;
-	private final AboutModel model;
+	private final AnimationModel model;
 
-	AnimationThread(AboutModel model) {
+	AnimationThread(AnimationModel model) {
 		super(GRI18n.getString(MODULE, "aboutAnim"));
 		setPriority(Thread.MIN_PRIORITY);
 		this.model = model;

@@ -21,7 +21,7 @@ import com.gallery.GalleryRemote.Log;
  * 
  * @author paour
  */
-public class AboutPanel extends JComponent implements AboutModel {
+public class AboutPanel extends JComponent implements AnimationModel {
 	private static final long serialVersionUID = 539994781856850049L;
 	private static final String MODULE = "About";
 

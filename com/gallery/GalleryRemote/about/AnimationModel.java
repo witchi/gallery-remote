@@ -1,6 +1,6 @@
 package com.gallery.GalleryRemote.about;
 
-public interface AboutModel {
+public interface AnimationModel {
 
 	int getInitialPosition();
 	int getMaxTextHeight();

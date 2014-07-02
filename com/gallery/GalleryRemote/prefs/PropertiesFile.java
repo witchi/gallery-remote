@@ -188,21 +188,17 @@ public class PropertiesFile extends GalleryProperties {
 		}
 
 		InputStream fileIn = null;
+
 		try {
 			// try to get from JAR
 			if (mFilename.indexOf("/") == -1) {
 				// only if the resource is local
-				try {
-					if (!alreadyWarned) {
-						Log.log(Log.LEVEL_TRACE, MODULE, "Trying to find "
-								+ mFilename + " in Classpath");
-					}
-					fileIn = PropertiesFile.class.getResourceAsStream("/"
-							+ mFilename);
-				} catch (IllegalArgumentException iae) {
-					// Opera throws an exception for invalid filenames...
-					fileIn = null;
+				if (!alreadyWarned) {
+					Log.log(Log.LEVEL_TRACE, MODULE, "Trying to find "
+							+ mFilename + " in Classpath");
 				}
+				fileIn = PropertiesFile.class.getResourceAsStream("/"
+						+ mFilename);
 			}
 
 			if (fileIn == null) {
@@ -218,7 +214,7 @@ public class PropertiesFile extends GalleryProperties {
 			load(fileIn);
 		} catch (FileNotFoundException fnf) {
 			throw fnf;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// Todo: what should happen here?
 		} finally {
 			try {
@@ -344,7 +340,7 @@ public class PropertiesFile extends GalleryProperties {
 		String arr[] = keySet().toArray(new String[0]);
 		ArrayList<String> v = new ArrayList<String>(Arrays.asList(arr));
 		Collections.sort(v);
-		
+
 		for (Iterator<String> e = v.iterator(); e.hasNext();) {
 			String key = e.next();
 			String val = (String) get(key);

@@ -44,21 +44,12 @@ public class AboutBox extends JDialog {
 	private final AnimationThread thread;
 	private AboutPanel panel;
 
-	/**
-	 * Constructor for the AboutBox object
-	 */
 	public AboutBox() {
 		super();
 		this.thread = new AnimationThread(getAboutPanel());
 		initUI();
 	}
 
-	/**
-	 * Constructor for the AboutBox object
-	 * 
-	 * @param owner
-	 *            Description of Parameter
-	 */
 	public AboutBox(Frame owner) {
 		super(owner);
 		this.thread = new AnimationThread(getAboutPanel());
@@ -103,7 +94,7 @@ public class AboutBox extends JDialog {
 	}
 
 	/**
-	 * Adds a feature to the Notify attribute of the AboutPanel object
+	 * Adds a feature to the Notify attribute
 	 */
 	@Override
 	public void addNotify() {
@@ -111,9 +102,6 @@ public class AboutBox extends JDialog {
 		thread.start();
 	}
 
-	/**
-	 * Description of the Method
-	 */
 	@Override
 	public void removeNotify() {
 		super.removeNotify();

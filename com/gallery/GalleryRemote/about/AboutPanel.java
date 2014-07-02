@@ -35,9 +35,6 @@ public class AboutPanel extends JComponent implements AnimationModel {
 	private FontMetrics fm;
 	private int initialPosition;
 
-	/**
-	 * Constructor for the AboutPanel object
-	 */
 	public AboutPanel(int top, int bottom) {
 		this.top = top;
 		this.bottom = bottom;
@@ -78,23 +75,12 @@ public class AboutPanel extends JComponent implements AnimationModel {
 		return tokens;
 	}
 
-	/**
-	 * Gets the preferredSize attribute of the AboutPanel object
-	 * 
-	 * @return The preferredSize value
-	 */
 	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(1 + image.getIconWidth(),
 				1 + image.getIconHeight());
 	}
 
-	/**
-	 * Description of the Method
-	 * 
-	 * @param g
-	 *            Description of Parameter
-	 */
 	@Override
 	public void paintComponent(Graphics g) {
 

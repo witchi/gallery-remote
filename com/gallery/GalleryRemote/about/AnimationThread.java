@@ -18,17 +18,11 @@ class AnimationThread extends Thread {
 		this.model = model;
 	}
 
-	/**
-	 * Description of the Method
-	 */
 	public void kill() {
 		running = false;
 		this.interrupt();
 	}
 
-	/**
-	 * Main processing method for the AnimationThread object
-	 */
 	@Override
 	public void run() {
 
@@ -44,7 +38,7 @@ class AnimationThread extends Thread {
 			}
 
 			try {
-				Thread.sleep(100 / 60);
+				Thread.sleep(1);
 			} catch (Exception e) {
 				// do nothing
 			}

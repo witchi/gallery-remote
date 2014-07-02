@@ -12,34 +12,30 @@ import com.gallery.GalleryRemote.Log;
 import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
- * Created by IntelliJ IDEA. User: paour Date: Dec 16, 2003
+ * @author paour
+ * @version Dec 16, 2003
  */
 public class BrowserLink extends JLabel implements MouseListener {
 
 	private static final long serialVersionUID = 6359091486724234508L;
 	public static final String MODULE = "BrowserLink";
-	String url = null;
+	private String url = null;
 
 	public BrowserLink() {
 		super();
-
 		setForeground(Color.blue);
-
 		addMouseListener(this);
 	}
 
 	public BrowserLink(String url) {
 		super(url);
-
 		setForeground(Color.blue);
-
 		addMouseListener(this);
 	}
 
 	@Override
 	public void setText(String text) {
 		url = text;
-
 		super.setText("<html><u>" + text + "</u></html>");
 	}
 

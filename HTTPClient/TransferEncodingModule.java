@@ -42,7 +42,7 @@ import java.util.zip.InflaterInputStream;
  * handles the "gzip", "deflate", "compress", "chunked" and "identity" tokens.
  * 
  * @version 0.3-3 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  */
 class TransferEncodingModule implements HTTPClientModule {
 	// Methods
@@ -50,6 +50,7 @@ class TransferEncodingModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
+	@Override
 	public int requestHandler(Request req, Response[] resp) throws ModuleException {
 		// Parse TE header
 
@@ -112,12 +113,14 @@ class TransferEncodingModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
+	@Override
 	public void responsePhase1Handler(Response resp, RoRequest req) {
 	}
 
 	/**
 	 * Invoked by the HTTPClient.
 	 */
+	@Override
 	public int responsePhase2Handler(Response resp, Request req) {
 		return RSP_CONTINUE;
 	}
@@ -125,6 +128,7 @@ class TransferEncodingModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
+	@Override
 	public void responsePhase3Handler(Response resp, RoRequest req) throws IOException, ModuleException {
 		String te = resp.getHeader("Transfer-Encoding");
 		if (te == null || req.getMethod().equals("HEAD"))
@@ -138,7 +142,7 @@ class TransferEncodingModule implements HTTPClientModule {
 		}
 
 		while (pte.size() > 0) {
-			String encoding = ((HttpHeaderElement) pte.lastElement()).getName();
+			String encoding = pte.lastElement().getName();
 			if (encoding.equalsIgnoreCase("gzip")) {
 				Log.write(Log.MODS, "TEM:   pushing gzip-input-stream");
 
@@ -175,6 +179,7 @@ class TransferEncodingModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
+	@Override
 	public void trailerHandler(Response resp, RoRequest req) {
 	}
 }

@@ -48,7 +48,7 @@ import java.util.Vector;
  * This class holds various utility methods.
  * 
  * @version 0.3-3 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  */
 public class Util {
 	private static final BitSet Separators = new BitSet(128);
@@ -130,65 +130,55 @@ public class Util {
 	final static Object[] resizeArray(Object[] src, int new_size) {
 		Class<?> compClass = src.getClass().getComponentType();
 		Object tmp[] = (Object[]) Array.newInstance(compClass, new_size);
-		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length
-				: new_size));
+		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length : new_size));
 		return tmp;
 	}
 
 	final static NVPair[] resizeArray(NVPair[] src, int new_size) {
 		NVPair tmp[] = new NVPair[new_size];
-		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length
-				: new_size));
+		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length : new_size));
 		return tmp;
 	}
 
-	final static AuthorizationInfo[] resizeArray(AuthorizationInfo[] src,
-			int new_size) {
+	final static AuthorizationInfo[] resizeArray(AuthorizationInfo[] src, int new_size) {
 		AuthorizationInfo tmp[] = new AuthorizationInfo[new_size];
-		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length
-				: new_size));
+		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length : new_size));
 		return tmp;
 	}
 
 	final static Cookie[] resizeArray(Cookie[] src, int new_size) {
 		Cookie tmp[] = new Cookie[new_size];
-		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length
-				: new_size));
+		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length : new_size));
 		return tmp;
 	}
 
 	final static String[] resizeArray(String[] src, int new_size) {
 		String tmp[] = new String[new_size];
-		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length
-				: new_size));
+		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length : new_size));
 		return tmp;
 	}
 
 	final static boolean[] resizeArray(boolean[] src, int new_size) {
 		boolean tmp[] = new boolean[new_size];
-		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length
-				: new_size));
+		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length : new_size));
 		return tmp;
 	}
 
 	final static byte[] resizeArray(byte[] src, int new_size) {
 		byte tmp[] = new byte[new_size];
-		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length
-				: new_size));
+		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length : new_size));
 		return tmp;
 	}
 
 	final static char[] resizeArray(char[] src, int new_size) {
 		char tmp[] = new char[new_size];
-		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length
-				: new_size));
+		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length : new_size));
 		return tmp;
 	}
 
 	final static int[] resizeArray(int[] src, int new_size) {
 		int tmp[] = new int[new_size];
-		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length
-				: new_size));
+		System.arraycopy(src, 0, tmp, 0, (src.length < new_size ? src.length : new_size));
 		return tmp;
 	}
 
@@ -213,13 +203,12 @@ public class Util {
 	 * and adds it to the context list.
 	 * 
 	 * @param cntxt_list
-	 *            the list of lists indexed by context
+	 *           the list of lists indexed by context
 	 * @param cntxt
-	 *            the context
+	 *           the context
 	 */
 
-	final static <K, V> Hashtable<K, V> getList(
-			Hashtable<Object, Hashtable<K, V>> cntxt_list, Object cntxt) {
+	final static <K, V> Hashtable<K, V> getList(Hashtable<Object, Hashtable<K, V>> cntxt_list, Object cntxt) {
 		synchronized (cntxt_list) {
 			Hashtable<K, V> list = cntxt_list.get(cntxt);
 			if (list == null) {
@@ -236,7 +225,7 @@ public class Util {
 	 * returned array should be passed as the second argument to findStr().
 	 * 
 	 * @param search
-	 *            the search string (same as the first argument to findStr()).
+	 *           the search string (same as the first argument to findStr()).
 	 * @return an array of distances (to be passed as the second argument to
 	 *         findStr()).
 	 */
@@ -280,31 +269,30 @@ public class Util {
 	 * argument. This uses a Knuth-Morris-Pratt like algorithm.
 	 * 
 	 * @param search
-	 *            the string to search for.
+	 *           the string to search for.
 	 * @param cmp
-	 *            the the array returned by compile_search.
+	 *           the the array returned by compile_search.
 	 * @param str
-	 *            the string in which to look for <var>search</var>.
+	 *           the string in which to look for <var>search</var>.
 	 * @param beg
-	 *            the position at which to start the search in <var>str</var>.
+	 *           the position at which to start the search in <var>str</var>.
 	 * @param end
-	 *            the position at which to end the search in <var>str</var>,
-	 *            noninclusive.
+	 *           the position at which to end the search in <var>str</var>,
+	 *           noninclusive.
 	 * @return the position in <var>str</var> where <var>search</var> was found,
 	 *         or -1 if not found.
 	 */
-	final static int findStr(byte[] search, int[] cmp, byte[] str, int beg,
-			int end) {
-		int c1f = cmp[0], c1l = cmp[1], d1 = c1l - c1f, c2f = cmp[2], c2l = cmp[3], d2 = c2l
-				- c2f, c3f = cmp[4], c3l = cmp[5], d3 = c3l - c3f;
+	final static int findStr(byte[] search, int[] cmp, byte[] str, int beg, int end) {
+		int c1f = cmp[0], c1l = cmp[1], d1 = c1l - c1f, c2f = cmp[2], c2l = cmp[3], d2 = c2l - c2f, c3f = cmp[4], c3l = cmp[5], d3 = c3l
+				- c3f;
 
 		Find: while (beg + search.length <= end) {
 			if (search[c1l] == str[beg + c1l]) {
 				/*
-				 * This is correct, but Visual J++ can't cope with it... Comp:
-				 * if (search[c1f] == str[beg+c1f]) { for (int idx=0;
-				 * idx<search.length; idx++) if (search[idx] != str[beg+idx])
-				 * break Comp;
+				 * This is correct, but Visual J++ can't cope with it... Comp: if
+				 * (search[c1f] == str[beg+c1f]) { for (int idx=0;
+				 * idx<search.length; idx++) if (search[idx] != str[beg+idx]) break
+				 * Comp;
 				 * 
 				 * break Find; // we found it } so here is the replacement:
 				 */
@@ -330,20 +318,20 @@ public class Util {
 				beg++;
 		}
 
-		if (beg + search.length > end)
+		if (beg + search.length > end) {
 			return -1;
-		else
-			return beg;
+		}
+		return beg;
 	}
 
 	/**
-	 * Replace quoted characters by their unquoted version. Quoted characters
-	 * are characters preceded by a slash. E.g. "\c" would be replaced by "c".
-	 * This is used in parsing http headers where quoted-characters are allowed
-	 * in quoted-strings and often used to quote the quote character &lt;"&gt;.
+	 * Replace quoted characters by their unquoted version. Quoted characters are
+	 * characters preceded by a slash. E.g. "\c" would be replaced by "c". This
+	 * is used in parsing http headers where quoted-characters are allowed in
+	 * quoted-strings and often used to quote the quote character &lt;"&gt;.
 	 * 
 	 * @param str
-	 *            the string do dequote
+	 *           the string do dequote
 	 * @return the string do with all quoted characters replaced by their true
 	 *         value.
 	 */
@@ -371,9 +359,9 @@ public class Util {
 	 * quoted, such as the quote character &lt;"&gt;.
 	 * 
 	 * @param str
-	 *            the string do quote
+	 *           the string do quote
 	 * @param qlist
-	 *            the list of characters to quote
+	 *           the list of characters to quote
 	 * @return the string do with all characters replaced by their quoted
 	 *         version.
 	 */
@@ -410,14 +398,13 @@ public class Util {
 	 * 
 	 * @see #parseHeader(java.lang.String, boolean)
 	 * @param header
-	 *            the value part of the header.
-	 * @return a Vector containing all the elements; each entry is an instance
-	 *         of <var>HttpHeaderElement</var>.
+	 *           the value part of the header.
+	 * @return a Vector containing all the elements; each entry is an instance of
+	 *         <var>HttpHeaderElement</var>.
 	 * @exception ParseException
-	 *                if the syntax rules are violated.
+	 *               if the syntax rules are violated.
 	 */
-	public final static Vector<HttpHeaderElement> parseHeader(String header)
-			throws ParseException {
+	public final static Vector<HttpHeaderElement> parseHeader(String header) throws ParseException {
 		return parseHeader(header, true);
 	}
 
@@ -446,17 +433,16 @@ public class Util {
 	 * <var>null</var> will be stored instead.
 	 * 
 	 * @param header
-	 *            the value part of the header.
+	 *           the value part of the header.
 	 * @param dequote
-	 *            if true all quoted strings are dequoted.
-	 * @return a Vector containing all the elements; each entry is an instance
-	 *         of <var>HttpHeaderElement</var>.
+	 *           if true all quoted strings are dequoted.
+	 * @return a Vector containing all the elements; each entry is an instance of
+	 *         <var>HttpHeaderElement</var>.
 	 * @exception ParseException
-	 *                if the above syntax rules are violated.
+	 *               if the above syntax rules are violated.
 	 * @see HTTPClient.HttpHeaderElement
 	 */
-	public final static Vector<HttpHeaderElement> parseHeader(String header,
-			boolean dequote) throws ParseException {
+	public final static Vector<HttpHeaderElement> parseHeader(String header, boolean dequote) throws ParseException {
 		if (header == null)
 			return null;
 		char[] buf = header.toCharArray();
@@ -472,8 +458,7 @@ public class Util {
 				if (beg == len)
 					break;
 				if (buf[beg] != ',')
-					throw new ParseException("Bad header format: '" + header
-							+ "'\nExpected \",\" at position " + beg);
+					throw new ParseException("Bad header format: '" + header + "'\nExpected \",\" at position " + beg);
 			}
 			first = false;
 
@@ -487,12 +472,10 @@ public class Util {
 			}
 
 			if (buf[beg] == '=' || buf[beg] == ';' || buf[beg] == '"')
-				throw new ParseException("Bad header format: '" + header
-						+ "'\nEmpty element name at position " + beg);
+				throw new ParseException("Bad header format: '" + header + "'\nEmpty element name at position " + beg);
 
 			end = beg + 1; // extract element name
-			while (end < len && !Character.isWhitespace(buf[end])
-					&& buf[end] != '=' && buf[end] != ',' && buf[end] != ';')
+			while (end < len && !Character.isWhitespace(buf[end]) && buf[end] != '=' && buf[end] != ',' && buf[end] != ';')
 				end++;
 			elem_name = new String(buf, beg, end - beg);
 
@@ -527,13 +510,10 @@ public class Util {
 				}
 
 				if (buf[beg] == '=' || buf[beg] == '"')
-					throw new ParseException("Bad header format: '" + header
-							+ "'\nEmpty parameter name at position " + beg);
+					throw new ParseException("Bad header format: '" + header + "'\nEmpty parameter name at position " + beg);
 
 				end = beg + 1; // extract param name
-				while (end < len && !Character.isWhitespace(buf[end])
-						&& buf[end] != '=' && buf[end] != ','
-						&& buf[end] != ';')
+				while (end < len && !Character.isWhitespace(buf[end]) && buf[end] != '=' && buf[end] != ',' && buf[end] != ';')
 					end++;
 				param_name = new String(buf, beg, end - beg);
 
@@ -552,8 +532,7 @@ public class Util {
 				params[params.length - 1] = new NVPair(param_name, param_value);
 			}
 
-			elems.addElement(new HttpHeaderElement(elem_name, elem_value,
-					params));
+			elems.addElement(new HttpHeaderElement(elem_name, elem_value, params));
 		}
 
 		return elems;
@@ -562,8 +541,7 @@ public class Util {
 	/**
 	 * Parse the value part. Accepts either token or quoted string.
 	 */
-	private static String parseValue(char[] buf, int[] abeg, String header,
-			boolean dequote) throws ParseException {
+	private static String parseValue(char[] buf, int[] abeg, String header, boolean dequote) throws ParseException {
 		int beg = abeg[0], end = beg, len = buf.length;
 		String value;
 
@@ -582,8 +560,7 @@ public class Util {
 					{
 						if (deq_buf == null)
 							deq_buf = new char[buf.length];
-						System.arraycopy(buf, lst_pos, deq_buf, deq_pos, end
-								- lst_pos);
+						System.arraycopy(buf, lst_pos, deq_buf, deq_pos, end - lst_pos);
 						deq_pos += end - lst_pos;
 						lst_pos = ++end;
 					} else
@@ -593,9 +570,8 @@ public class Util {
 				end++;
 			}
 			if (end == len)
-				throw new ParseException("Bad header format: '" + header
-						+ "'\nClosing <\"> for quoted-string"
-						+ " starting at position " + (beg - 1) + " not found");
+				throw new ParseException("Bad header format: '" + header + "'\nClosing <\"> for quoted-string" + " starting at position "
+						+ (beg - 1) + " not found");
 			if (deq_buf != null) {
 				System.arraycopy(buf, lst_pos, deq_buf, deq_pos, end - lst_pos);
 				deq_pos += end - lst_pos;
@@ -606,8 +582,7 @@ public class Util {
 		} else // it's a simple token value
 		{
 			end = beg;
-			while (end < len && !Character.isWhitespace(buf[end])
-					&& buf[end] != ',' && buf[end] != ';')
+			while (end < len && !Character.isWhitespace(buf[end]) && buf[end] != ',' && buf[end] != ';')
 				end++;
 
 			value = new String(buf, beg, end - beg);
@@ -623,64 +598,59 @@ public class Util {
 	 * 
 	 * @see #parseHeader(java.lang.String)
 	 * @param header
-	 *            the header value.
+	 *           the header value.
 	 * @param token
-	 *            the token to find; the match is case-insensitive.
+	 *           the token to find; the match is case-insensitive.
 	 * @return true if the token is present, false otherwise.
 	 * @exception ParseException
-	 *                if this is thrown parseHeader().
+	 *               if this is thrown parseHeader().
 	 */
-	public final static boolean hasToken(String header, String token)
-			throws ParseException {
-		if (header == null)
+	public final static boolean hasToken(String header, String token) throws ParseException {
+		if (header == null) {
 			return false;
-		else
-			return parseHeader(header).contains(new HttpHeaderElement(token));
+		}
+		return parseHeader(header).contains(new HttpHeaderElement(token));
 	}
 
 	/**
 	 * Get the HttpHeaderElement with the name <var>name</var>.
 	 * 
 	 * @param header
-	 *            a vector of HttpHeaderElement's, such as is returned from
-	 *            <code>parseHeader()</code>
+	 *           a vector of HttpHeaderElement's, such as is returned from
+	 *           <code>parseHeader()</code>
 	 * @param name
-	 *            the name of element to retrieve; matching is case-insensitive
+	 *           the name of element to retrieve; matching is case-insensitive
 	 * @return the request element, or null if none found.
 	 * @see #parseHeader(java.lang.String)
 	 */
-	public final static HttpHeaderElement getElement(
-			Vector<HttpHeaderElement> header, String name) {
+	public final static HttpHeaderElement getElement(Vector<HttpHeaderElement> header, String name) {
 		int idx = header.indexOf(new HttpHeaderElement(name));
-		if (idx == -1)
+		if (idx == -1) {
 			return null;
-		else
-			return (HttpHeaderElement) header.elementAt(idx);
+		}
+		return header.elementAt(idx);
 	}
 
 	/**
 	 * retrieves the value associated with the parameter <var>param</var> in a
-	 * given header string. It parses the header using
-	 * <code>parseHeader()</code> and then searches the first element for the
-	 * given parameter. This is used especially in headers like 'Content-type'
-	 * and 'Content-Disposition'.
+	 * given header string. It parses the header using <code>parseHeader()</code>
+	 * and then searches the first element for the given parameter. This is used
+	 * especially in headers like 'Content-type' and 'Content-Disposition'.
 	 * 
 	 * <P>
 	 * quoted characters ("\x") in a quoted string are dequoted.
 	 * 
 	 * @see #parseHeader(java.lang.String)
 	 * @param param
-	 *            the parameter name
+	 *           the parameter name
 	 * @param hdr
-	 *            the header value
+	 *           the header value
 	 * @return the value for this parameter, or null if not found.
 	 * @exception ParseException
-	 *                if the above syntax rules are violated.
+	 *               if the above syntax rules are violated.
 	 */
-	public final static String getParameter(String param, String hdr)
-			throws ParseException {
-		NVPair[] params = ((HttpHeaderElement) parseHeader(hdr).firstElement())
-				.getParams();
+	public final static String getParameter(String param, String hdr) throws ParseException {
+		NVPair[] params = parseHeader(hdr).firstElement().getParams();
 
 		for (int idx = 0; idx < params.length; idx++) {
 			if (params[idx].getName().equalsIgnoreCase(param))
@@ -695,7 +665,7 @@ public class Util {
 	 * individual header elements are seperated by a ", ".
 	 * 
 	 * @param the
-	 *            parsed header
+	 *           parsed header
 	 * @return a string containing the assembled header
 	 */
 	public final static String assembleHeader(Vector<HttpHeaderElement> pheader) {
@@ -703,7 +673,7 @@ public class Util {
 		int len = pheader.size();
 
 		for (int idx = 0; idx < len; idx++) {
-			((HttpHeaderElement) pheader.elementAt(idx)).appendTo(hdr);
+			pheader.elementAt(idx).appendTo(hdr);
 			hdr.append(", ");
 		}
 		hdr.setLength(hdr.length() - 2);
@@ -716,9 +686,9 @@ public class Util {
 	 * starting a position pos.
 	 * 
 	 * @param str
-	 *            the char array
+	 *           the char array
 	 * @param pos
-	 *            the position to start looking
+	 *           the position to start looking
 	 * @return the position of the first non-space character
 	 */
 	final static int skipSpace(char[] str, int pos) {
@@ -729,13 +699,13 @@ public class Util {
 	}
 
 	/**
-	 * returns the position of the first space character in a char array
-	 * starting a position pos.
+	 * returns the position of the first space character in a char array starting
+	 * a position pos.
 	 * 
 	 * @param str
-	 *            the char array
+	 *           the char array
 	 * @param pos
-	 *            the position to start looking
+	 *           the position to start looking
 	 * @return the position of the first space character, or the length of the
 	 *         string if not found
 	 */
@@ -751,9 +721,9 @@ public class Util {
 	 * starting a position pos.
 	 * 
 	 * @param str
-	 *            the char array
+	 *           the char array
 	 * @param pos
-	 *            the position to start looking
+	 *           the position to start looking
 	 * @return the position of the first non-token character, or the length of
 	 *         the string if not found
 	 */
@@ -769,7 +739,7 @@ public class Util {
 	 * contain non-token characters?
 	 * 
 	 * @param str
-	 *            the string
+	 *           the string
 	 * @return true if it needs quoting (i.e. it contains non-token chars)
 	 */
 	final static boolean needsQuoting(String str) {
@@ -792,9 +762,9 @@ public class Util {
 	 * and the same file (after decoding escaped characters).
 	 * 
 	 * @param url1
-	 *            the first url
+	 *           the first url
 	 * @param url1
-	 *            the second url
+	 *           the second url
 	 * @return true if <var>url1</var> and <var>url2</var> compare equal
 	 */
 	public final static boolean sameHttpURL(URL url1, URL url2) {
@@ -813,8 +783,7 @@ public class Util {
 			return false;
 
 		try {
-			return URI.unescape(url1.getFile(), null).equals(
-					URI.unescape(url2.getFile(), null));
+			return URI.unescape(url1.getFile(), null).equals(URI.unescape(url2.getFile(), null));
 		} catch (ParseException pe) {
 			return url1.getFile().equals(url2.getFile());
 		}
@@ -824,11 +793,12 @@ public class Util {
 	 * Return the default port used by a given protocol.
 	 * 
 	 * @param protocol
-	 *            the protocol
+	 *           the protocol
 	 * @return the port number, or 0 if unknown
 	 * @deprecated use URI.defaultPort() instead
 	 * @see HTTPClient.URI#defaultPort(java.lang.String)
 	 */
+	@Deprecated
 	public final static int defaultPort(String protocol) {
 		return URI.defaultPort(protocol);
 	}
@@ -838,7 +808,7 @@ public class Util {
 	 * deprecated, so we use SimpleDateFormat instead.
 	 * 
 	 * @param dstr
-	 *            the date string to parse
+	 *           the date string to parse
 	 * @return the Date object
 	 */
 	final static Date parseHttpDate(String dstr) {
@@ -863,12 +833,9 @@ public class Util {
 	}
 
 	private static final void setupParsers() {
-		parse_1123 = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'",
-				Locale.US);
-		parse_850 = new SimpleDateFormat("EEEE, dd-MMM-yy HH:mm:ss 'GMT'",
-				Locale.US);
-		parse_asctime = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy",
-				Locale.US);
+		parse_1123 = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
+		parse_850 = new SimpleDateFormat("EEEE, dd-MMM-yy HH:mm:ss 'GMT'", Locale.US);
+		parse_asctime = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy", Locale.US);
 
 		parse_1123.setTimeZone(new SimpleTimeZone(0, "GMT"));
 		parse_850.setTimeZone(new SimpleTimeZone(0, "GMT"));
@@ -892,7 +859,7 @@ public class Util {
 	 * savings time... Therefore we use our own timezone definitions.
 	 * 
 	 * @param date
-	 *            the date and time to be converted
+	 *           the date and time to be converted
 	 * @return a string containg the date and time as used in http
 	 */
 	public static final String httpDate(Date date) {
@@ -905,8 +872,7 @@ public class Util {
 	}
 
 	private static final void setupFormatter() {
-		http_format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'",
-				Locale.US);
+		http_format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
 		http_format.setTimeZone(new SimpleTimeZone(0, "GMT"));
 	}
 
@@ -914,7 +880,7 @@ public class Util {
 	 * Escape unsafe characters in a path.
 	 * 
 	 * @param path
-	 *            the original path
+	 *           the original path
 	 * @return the path with all unsafe characters escaped
 	 */
 	final static String escapeUnsafeChars(String path) {
@@ -932,14 +898,13 @@ public class Util {
 				buf[dst++] = ch;
 		}
 
-		if (dst > len)
+		if (dst > len) {
 			return new String(buf, 0, dst);
-		else
-			return path;
+		}
+		return path;
 	}
 
-	static final char[] hex_map = { '0', '1', '2', '3', '4', '5', '6', '7',
-			'8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	static final char[] hex_map = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 	/**
 	 * Extract the path from an http resource.
@@ -954,7 +919,7 @@ public class Util {
 	 * </PRE>
 	 * 
 	 * @param the
-	 *            resource to split
+	 *           resource to split
 	 * @return the path, including any leading "/"
 	 * @see #getParams
 	 * @see #getQuery
@@ -975,85 +940,88 @@ public class Util {
 	 * Extract the params part from an http resource.
 	 * 
 	 * @param the
-	 *            resource to split
+	 *           resource to split
 	 * @return the params, or null if there are none
 	 * @see #getPath
 	 */
 	public final static String getParams(String resource) {
 		int beg, f, q;
-		if ((beg = resource.indexOf(';')) == -1) // find params
+		if ((beg = resource.indexOf(';')) == -1) { // find params
 			return null;
-		if ((f = resource.indexOf('#')) != -1 && f < beg) // find fragment
+		}
+		if ((f = resource.indexOf('#')) != -1 && f < beg) { // find fragment
 			return null;
-		if ((q = resource.indexOf('?')) != -1 && q < beg) // find query
+		}
+		if ((q = resource.indexOf('?')) != -1 && q < beg) {// find query
 			return null;
-		if (q == -1 && f == -1)
+		}
+		if (q == -1 && f == -1) {
 			return resource.substring(beg + 1);
-		if (f == -1 || (q != -1 && q < f))
+		}
+		if (f == -1 || (q != -1 && q < f)) {
 			return resource.substring(beg + 1, q);
-		else
-			return resource.substring(beg + 1, f);
+		}
+		return resource.substring(beg + 1, f);
 	}
 
 	/**
 	 * Extract the query string from an http resource.
 	 * 
 	 * @param the
-	 *            resource to split
+	 *           resource to split
 	 * @return the query, or null if there was none
 	 * @see #getPath
 	 */
 	public final static String getQuery(String resource) {
 		int beg, f;
-		if ((beg = resource.indexOf('?')) == -1) // find query
+		if ((beg = resource.indexOf('?')) == -1) { // find query
 			return null;
-		if ((f = resource.indexOf('#')) != -1 && f < beg) // find fragment
+		}
+		if ((f = resource.indexOf('#')) != -1 && f < beg) { // find fragment
 			return null; // '?' is in fragment
-		if (f == -1)
+		}
+		if (f == -1) {
 			return resource.substring(beg + 1); // no fragment
-		else
-			return resource.substring(beg + 1, f); // strip fragment
+		}
+		return resource.substring(beg + 1, f); // strip fragment
 	}
 
 	/**
 	 * Extract the fragment part from an http resource.
 	 * 
 	 * @param the
-	 *            resource to split
+	 *           resource to split
 	 * @return the fragment, or null if there was none
 	 * @see #getPath
 	 */
 	public final static String getFragment(String resource) {
 		int beg;
-		if ((beg = resource.indexOf('#')) == -1) // find fragment
+		if ((beg = resource.indexOf('#')) == -1) {// find fragment
 			return null;
-		else
-			return resource.substring(beg + 1);
+		}
+		return resource.substring(beg + 1);
 	}
 
 	/**
-	 * Match <var>pattern</var> against <var>name</var>, where
-	 * <var>pattern</var> may contain wildcards ('*').
+	 * Match <var>pattern</var> against <var>name</var>, where <var>pattern</var>
+	 * may contain wildcards ('*').
 	 * 
 	 * @param pattern
-	 *            the pattern to match; may contain '*' which match any number
-	 *            (0 or more) of any character (think file globbing)
+	 *           the pattern to match; may contain '*' which match any number (0
+	 *           or more) of any character (think file globbing)
 	 * @param name
-	 *            the name to match against the pattern
+	 *           the name to match against the pattern
 	 * @return true if the name matches the pattern; false otherwise
 	 */
 	public static final boolean wildcardMatch(String pattern, String name) {
-		return wildcardMatch(pattern, name, 0, 0, pattern.length(),
-				name.length());
+		return wildcardMatch(pattern, name, 0, 0, pattern.length(), name.length());
 	}
 
-	private static final boolean wildcardMatch(String pattern, String name,
-			int ppos, int npos, int plen, int nlen) {
+	private static final boolean wildcardMatch(String pattern, String name, int ppos, int npos, int plen, int nlen) {
 		// find wildcard
 		int star = pattern.indexOf('*', ppos);
 		if (star < 0) {
-			return ((plen - ppos) == (nlen - npos) && pattern.regionMatches(
-					ppos, name, npos, plen - ppos));
+			return ((plen - ppos) == (nlen - npos) && pattern.regionMatches(ppos, name, npos, plen - ppos));
 		}
 
 		// match prefix
@@ -1063,8 +1031,7 @@ public class Util {
 		// match suffix
 		if (star == plen - 1)
 			return true;
-		while (!wildcardMatch(pattern, name, star + 1, npos, plen, nlen)
-				&& npos < nlen)
+		while (!wildcardMatch(pattern, name, star + 1, npos, plen, nlen) && npos < nlen)
 			npos++;
 		return (npos < nlen);
 	}

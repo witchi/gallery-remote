@@ -58,10 +58,9 @@ import com.gallery.GalleryRemote.util.ImageUtils;
  * Drag and drop handler
  * 
  * @author paour
- * @created August 16, 2002
+ * @version August 16, 2002
  */
-public class DroppableList extends JList<Picture> implements
-		DropTargetListener, DragSourceListener, DragGestureListener {
+public class DroppableList extends JList<Picture> implements DropTargetListener, DragSourceListener, DragGestureListener {
 
 	private static final long serialVersionUID = -7789871808413080164L;
 	protected final static String MODULE = "Droplist";
@@ -74,8 +73,7 @@ public class DroppableList extends JList<Picture> implements
 
 	public DroppableList() {
 		dragSource = new DragSource();
-		dragSource.createDefaultDragGestureRecognizer(this,
-				DnDConstants.ACTION_COPY_OR_MOVE, this);
+		dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
 		dropTarget = new DropTarget(this, this);
 	}
 
@@ -91,37 +89,25 @@ public class DroppableList extends JList<Picture> implements
 		}
 
 		if (dropTargetEvent instanceof DropTargetDragEvent) {
-			return ((DropTargetDragEvent) dropTargetEvent)
-					.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
-					|| ((DropTargetDragEvent) dropTargetEvent)
-							.isDataFlavorSupported(PictureSelection.flavors[0])
-					|| ((DropTargetDragEvent) dropTargetEvent)
-							.isDataFlavorSupported(DataFlavor.stringFlavor);
-		} else {
-			return ((DropTargetDropEvent) dropTargetEvent)
-					.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
-					|| ((DropTargetDropEvent) dropTargetEvent)
-							.isDataFlavorSupported(PictureSelection.flavors[0])
-					|| ((DropTargetDropEvent) dropTargetEvent)
-							.isDataFlavorSupported(DataFlavor.stringFlavor);
+			return ((DropTargetDragEvent) dropTargetEvent).isDataFlavorSupported(DataFlavor.javaFileListFlavor)
+					|| ((DropTargetDragEvent) dropTargetEvent).isDataFlavorSupported(PictureSelection.flavors[0])
+					|| ((DropTargetDragEvent) dropTargetEvent).isDataFlavorSupported(DataFlavor.stringFlavor);
 		}
+		return ((DropTargetDropEvent) dropTargetEvent).isDataFlavorSupported(DataFlavor.javaFileListFlavor)
+				|| ((DropTargetDropEvent) dropTargetEvent).isDataFlavorSupported(PictureSelection.flavors[0])
+				|| ((DropTargetDropEvent) dropTargetEvent).isDataFlavorSupported(DataFlavor.stringFlavor);
 	}
 
 	/* ********* TargetListener ********** */
 	@Override
 	public void dragEnter(DropTargetDragEvent dropTargetDragEvent) {
 		Log.log(Log.LEVEL_TRACE, MODULE, "dragEnter - dtde");
-		for (Iterator<DataFlavor> it = dropTargetDragEvent
-				.getCurrentDataFlavorsAsList().iterator(); it.hasNext();) {
+		for (Iterator<DataFlavor> it = dropTargetDragEvent.getCurrentDataFlavorsAsList().iterator(); it.hasNext();) {
 
-			DataFlavor flavor = (DataFlavor) it.next();
-			Log.log(Log.LEVEL_TRACE, MODULE,
-					"Flavor: " + flavor.getHumanPresentableName() + " -- "
-							+ flavor.getMimeType());
+			DataFlavor flavor = it.next();
+			Log.log(Log.LEVEL_TRACE, MODULE, "Flavor: " + flavor.getHumanPresentableName() + " -- " + flavor.getMimeType());
 		}
-		Log.log(Log.LEVEL_TRACE, MODULE,
-				"Action: " + dropTargetDragEvent.getSourceActions() + " -- "
-						+ dropTargetDragEvent.getDropAction());
+		Log.log(Log.LEVEL_TRACE, MODULE, "Action: " + dropTargetDragEvent.getSourceActions() + " -- " + dropTargetDragEvent.getDropAction());
 
 		if (!isDragOK(dropTargetDragEvent)) {
 			Log.log(Log.LEVEL_TRACE, MODULE, "Refusing drag");
@@ -130,8 +116,6 @@ public class DroppableList extends JList<Picture> implements
 		}
 
 		Log.log(Log.LEVEL_TRACE, MODULE, "Accepting drag");
-		// dropTargetDragEvent.acceptDrag( DnDConstants.ACTION_COPY_OR_MOVE |
-		// DnDConstants.ACTION_REFERENCE );
 	}
 
 	@Override
@@ -148,9 +132,6 @@ public class DroppableList extends JList<Picture> implements
 			dropTargetDragEvent.rejectDrag();
 			return;
 		}
-
-		// dropTargetDragEvent.acceptDrag( DnDConstants.ACTION_COPY_OR_MOVE |
-		// DnDConstants.ACTION_REFERENCE );
 		dragOver((int) dropTargetDragEvent.getLocation().getY());
 	}
 
@@ -165,8 +146,7 @@ public class DroppableList extends JList<Picture> implements
 			lastY = tmpLastY;
 			scrolled = true;
 		}
-		if (y > r.getY() + r.getHeight() - safeGetFixedCellHeight()
-				&& i < getModel().getSize() - 1) {
+		if (y > r.getY() + r.getHeight() - safeGetFixedCellHeight() && i < getModel().getSize() - 1) {
 			int tmpLastY = lastY;
 			ensureIndexIsVisible(i + 1);
 			lastY = tmpLastY;
@@ -216,8 +196,7 @@ public class DroppableList extends JList<Picture> implements
 		try {
 			Transferable tr = dropTargetDropEvent.getTransferable();
 
-			dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE
-					| DnDConstants.ACTION_REFERENCE);
+			dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE | DnDConstants.ACTION_REFERENCE);
 
 			// thanks John Zukowski
 			Point dropLocation = dropTargetDropEvent.getLocation();
@@ -230,57 +209,42 @@ public class DroppableList extends JList<Picture> implements
 			if (tr.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 
 				@SuppressWarnings("unchecked")
-				List<File> fileList = (List<File>) tr
-						.getTransferData(DataFlavor.javaFileListFlavor);
+				List<File> fileList = (List<File>) tr.getTransferData(DataFlavor.javaFileListFlavor);
 
 				/* recursively add contents of directories */
 				fileList = expandDirectories(fileList);
 
-				Log.log(Log.LEVEL_TRACE, MODULE, "Adding " + fileList.size()
-						+ " new files(s) to list at index " + listIndex);
+				Log.log(Log.LEVEL_TRACE, MODULE, "Adding " + fileList.size() + " new files(s) to list at index " + listIndex);
 
-				GalleryRemote
-						.instance()
-						.getCore()
-						.addPictures((File[]) fileList.toArray(new File[0]),
-								listIndex, false);
+				GalleryRemote.instance().getCore().addPictures(fileList.toArray(new File[0]), listIndex, false);
 			} else if (tr.isDataFlavorSupported(PictureSelection.flavors[0])) {
 
 				@SuppressWarnings("unchecked")
-				List<Picture> pictureList = (List<Picture>) tr
-						.getTransferData(PictureSelection.flavors[0]);
+				List<Picture> pictureList = (List<Picture>) tr.getTransferData(PictureSelection.flavors[0]);
 
-				Log.log(Log.LEVEL_TRACE, MODULE, "Adding " + pictureList.size()
-						+ " new pictures(s) to list at index " + listIndex);
+				Log.log(Log.LEVEL_TRACE, MODULE, "Adding " + pictureList.size() + " new pictures(s) to list at index " + listIndex);
 
-				GalleryRemote
-						.instance()
-						.getCore()
-						.addPictures(
-								(Picture[]) pictureList.toArray(new Picture[0]),
-								listIndex, true);
+				GalleryRemote.instance().getCore().addPictures(pictureList.toArray(new Picture[0]), listIndex, true);
 			} else if (tr.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				/*
-				 * stringFlavour Data is expected in the form of file URIs
-				 * delimited by \r\n (even on Linux systems) See the Java API
-				 * for a formal definition of a URI. Informally, it is generally
-				 * expected to be something like "file:///home/user/image.jpg".
+				 * stringFlavour Data is expected in the form of file URIs delimited
+				 * by \r\n (even on Linux systems) See the Java API for a formal
+				 * definition of a URI. Informally, it is generally expected to be
+				 * something like "file:///home/user/image.jpg".
 				 */
 
 				// Tokenize the string data using "\r\n" (i.e. Carriage Return,
 				// NewLine) as the delimeter
-				String fileStrings[] = ((String) tr
-						.getTransferData(DataFlavor.stringFlavor))
-						.split("\r\n");
+				String fileStrings[] = ((String) tr.getTransferData(DataFlavor.stringFlavor)).split("\r\n");
 
 				// Create a file list using the tokenized URI strings
 				List<File> fileList = new ArrayList<File>();
 				for (int i = 0; i < fileStrings.length; i++) {
 					try {
 						/*
-						 * This is probably extremely inefficient, however it
-						 * seems somewhat more likely to be compatible with more
-						 * file browsers because of it's use of URI's
+						 * This is probably extremely inefficient, however it seems
+						 * somewhat more likely to be compatible with more file
+						 * browsers because of it's use of URI's
 						 */
 						fileList.add(new File(new URI(fileStrings[i])));
 					} catch (java.net.URISyntaxException ue) {
@@ -291,14 +255,9 @@ public class DroppableList extends JList<Picture> implements
 				/* recursively add contents of directories */
 				fileList = expandDirectories(fileList);
 
-				Log.log(Log.LEVEL_TRACE, MODULE, "Adding " + fileList.size()
-						+ " new files(s) to list at index " + listIndex);
+				Log.log(Log.LEVEL_TRACE, MODULE, "Adding " + fileList.size() + " new files(s) to list at index " + listIndex);
 
-				GalleryRemote
-						.instance()
-						.getCore()
-						.addPictures((File[]) fileList.toArray(new File[0]),
-								listIndex, false);
+				GalleryRemote.instance().getCore().addPictures(fileList.toArray(new File[0]), listIndex, false);
 			}
 
 			dropTargetDropEvent.getDropTargetContext().dropComplete(true);
@@ -322,9 +281,6 @@ public class DroppableList extends JList<Picture> implements
 			dropTargetDragEvent.rejectDrag();
 			return;
 		}
-
-		// dropTargetDragEvent.acceptDrag( DnDConstants.ACTION_COPY_OR_MOVE |
-		// DnDConstants.ACTION_REFERENCE );
 	}
 
 	/* ********* DragSourceListener ********** */
@@ -332,14 +288,11 @@ public class DroppableList extends JList<Picture> implements
 	public void dragDropEnd(DragSourceDropEvent dragSourceDropEvent) {
 		Log.log(Log.LEVEL_TRACE, MODULE, "dragDropEnd - dsde");
 
-		if (dragSourceDropEvent.getDropSuccess()
-				&& dragSourceDropEvent.getDropAction() == DnDConstants.ACTION_MOVE) {
-			PictureSelection ps = (PictureSelection) dragSourceDropEvent
-					.getDragSourceContext().getTransferable();
+		if (dragSourceDropEvent.getDropSuccess() && dragSourceDropEvent.getDropAction() == DnDConstants.ACTION_MOVE) {
+			PictureSelection ps = (PictureSelection) dragSourceDropEvent.getDragSourceContext().getTransferable();
 
 			for (Iterator<Picture> it = ps.iterator(); it.hasNext();) {
-				GalleryRemote.instance().getCore().getCurrentAlbum()
-						.removePicture((Picture) it.next());
+				GalleryRemote.instance().getCore().getCurrentAlbum().removePicture(it.next());
 			}
 		}
 	}
@@ -377,9 +330,7 @@ public class DroppableList extends JList<Picture> implements
 	int safeGetFixedCellHeight() {
 		int height = getFixedCellHeight();
 		if (height == -1) {
-			height = (int) getCellRenderer()
-					.getListCellRendererComponent(this, null, -1, false, false)
-					.getPreferredSize().getHeight();
+			height = (int) getCellRenderer().getListCellRendererComponent(this, null, -1, false, false).getPreferredSize().getHeight();
 		}
 
 		return height;
@@ -387,7 +338,6 @@ public class DroppableList extends JList<Picture> implements
 
 	public int snap(int y) {
 		int snap = snapIndex(y) * safeGetFixedCellHeight();
-		// System.out.println(snap + " - " + getVisibleRect());
 		if (snap >= getHeight()) {
 			snap = getHeight() - 2;
 		}
@@ -410,12 +360,9 @@ public class DroppableList extends JList<Picture> implements
 		try {
 			return ImageUtils.expandDirectories(fileList);
 		} catch (IOException ioe) {
-			Log.log(Log.LEVEL_ERROR, MODULE,
-					"i/o exception listing dirs in a drop");
+			Log.log(Log.LEVEL_ERROR, MODULE, "i/o exception listing dirs in a drop");
 			Log.logStack(Log.LEVEL_ERROR, MODULE);
-			JOptionPane.showMessageDialog(null,
-					GRI18n.getString(MODULE, "imgError"),
-					GRI18n.getString(MODULE, "dragError"),
+			JOptionPane.showMessageDialog(null, GRI18n.getString(MODULE, "imgError"), GRI18n.getString(MODULE, "dragError"),
 					JOptionPane.ERROR_MESSAGE);
 
 			return fileList;

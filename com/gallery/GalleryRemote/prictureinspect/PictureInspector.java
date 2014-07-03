@@ -18,7 +18,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.gallery.GalleryRemote;
+package com.gallery.GalleryRemote.prictureinspect;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -51,11 +51,13 @@ import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.gallery.GalleryRemote.CoreUtils;
+import com.gallery.GalleryRemote.GalleryCommCapabilities;
+import com.gallery.GalleryRemote.GalleryRemote;
+import com.gallery.GalleryRemote.Log;
+import com.gallery.GalleryRemote.MainFrame;
 import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.model.Picture;
-import com.gallery.GalleryRemote.prictureinspect.CaptionPanel;
-import com.gallery.GalleryRemote.prictureinspect.IconAreaPanel;
-import com.gallery.GalleryRemote.prictureinspect.PathPanel;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 

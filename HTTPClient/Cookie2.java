@@ -44,7 +44,7 @@ import java.util.Vector;
  * spec</A> (also known as a version 1 cookie).
  * 
  * @version 0.3-3 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  * @since V0.3
  */
 public class Cookie2 extends Cookie {
@@ -66,33 +66,32 @@ public class Cookie2 extends Cookie {
 	 * Create a cookie.
 	 * 
 	 * @param name
-	 *            the cookie name
+	 *           the cookie name
 	 * @param value
-	 *            the cookie value
+	 *           the cookie value
 	 * @param domain
-	 *            the host this cookie will be sent to
+	 *           the host this cookie will be sent to
 	 * @param port_list
-	 *            an array of allowed server ports for this cookie, or null if
-	 *            the the cookie may be sent to any port
+	 *           an array of allowed server ports for this cookie, or null if the
+	 *           the cookie may be sent to any port
 	 * @param path
-	 *            the path prefix for which this cookie will be sent
+	 *           the path prefix for which this cookie will be sent
 	 * @param epxires
-	 *            the Date this cookie expires, or null if never
+	 *           the Date this cookie expires, or null if never
 	 * @param discard
-	 *            if true then the cookie will be discarded at the end of the
-	 *            session regardless of expiry
+	 *           if true then the cookie will be discarded at the end of the
+	 *           session regardless of expiry
 	 * @param secure
-	 *            if true this cookie will only be over secure connections
+	 *           if true this cookie will only be over secure connections
 	 * @param comment
-	 *            the comment associated with this cookie, or null if none
+	 *           the comment associated with this cookie, or null if none
 	 * @param comment_url
-	 *            the comment URL associated with this cookie, or null if none
+	 *           the comment URL associated with this cookie, or null if none
 	 * @exception NullPointerException
-	 *                if <var>name</var>, <var>value</var>, <var>domain</var>,
-	 *                or <var>path</var> is null
+	 *               if <var>name</var>, <var>value</var>, <var>domain</var>, or
+	 *               <var>path</var> is null
 	 */
-	public Cookie2(String name, String value, String domain, int[] port_list,
-			String path, Date expires, boolean discard, boolean secure,
+	public Cookie2(String name, String value, String domain, int[] port_list, String path, Date expires, boolean discard, boolean secure,
 			String comment, URI comment_url) {
 		super(name, value, domain, path, expires, secure);
 
@@ -150,15 +149,14 @@ public class Cookie2 extends Cookie {
 	 * Parses the Set-Cookie2 header into an array of Cookies.
 	 * 
 	 * @param set_cookie
-	 *            the Set-Cookie2 header received from the server
+	 *           the Set-Cookie2 header received from the server
 	 * @param req
-	 *            the request used
+	 *           the request used
 	 * @return an array of Cookies as parsed from the Set-Cookie2 header
 	 * @exception ProtocolException
-	 *                if an error occurs during parsing
+	 *               if an error occurs during parsing
 	 */
-	protected static Cookie[] parse(String set_cookie, RoRequest req)
-			throws ProtocolException {
+	protected static Cookie[] parse(String set_cookie, RoRequest req) throws ProtocolException {
 		Vector<HttpHeaderElement> cookies;
 		try {
 			cookies = Util.parseHeader(set_cookie);
@@ -169,15 +167,13 @@ public class Cookie2 extends Cookie {
 		Cookie cookie_arr[] = new Cookie[cookies.size()];
 		int cidx = 0;
 		for (int idx = 0; idx < cookie_arr.length; idx++) {
-			HttpHeaderElement c_elem = (HttpHeaderElement) cookies
-					.elementAt(idx);
+			HttpHeaderElement c_elem = cookies.elementAt(idx);
 
 			// set NAME and VALUE
 
 			if (c_elem.getValue() == null)
-				throw new ProtocolException("Bad Set-Cookie2 header: "
-						+ set_cookie + "\nMissing value " + "for cookie '"
-						+ c_elem.getName() + "'");
+				throw new ProtocolException("Bad Set-Cookie2 header: " + set_cookie + "\nMissing value " + "for cookie '" + c_elem.getName()
+						+ "'");
 			Cookie2 curr = new Cookie2(req);
 			curr.name = c_elem.getName();
 			curr.value = c_elem.getValue();
@@ -190,14 +186,10 @@ public class Cookie2 extends Cookie {
 				String name = params[idx2].getName().toLowerCase();
 
 				// check for required value parts
-				if ((name.equals("version") || name.equals("max-age")
-						|| name.equals("domain") || name.equals("path")
-						|| name.equals("comment") || name.equals("commenturl"))
-						&& params[idx2].getValue() == null) {
-					throw new ProtocolException("Bad Set-Cookie2 header: "
-							+ set_cookie + "\nMissing value " + "for "
-							+ params[idx2].getName() + " attribute in cookie '"
-							+ c_elem.getName() + "'");
+				if ((name.equals("version") || name.equals("max-age") || name.equals("domain") || name.equals("path") || name.equals("comment") || name
+						.equals("commenturl")) && params[idx2].getValue() == null) {
+					throw new ProtocolException("Bad Set-Cookie2 header: " + set_cookie + "\nMissing value " + "for " + params[idx2].getName()
+							+ " attribute in cookie '" + c_elem.getName() + "'");
 				}
 
 				if (name.equals("version")) // Version
@@ -205,12 +197,10 @@ public class Cookie2 extends Cookie {
 					if (curr.version != -1)
 						continue;
 					try {
-						curr.version = Integer
-								.parseInt(params[idx2].getValue());
+						curr.version = Integer.parseInt(params[idx2].getValue());
 					} catch (NumberFormatException nfe) {
-						throw new ProtocolException("Bad Set-Cookie2 header: "
-								+ set_cookie + "\nVersion '"
-								+ params[idx2].getValue() + "' not a number");
+						throw new ProtocolException("Bad Set-Cookie2 header: " + set_cookie + "\nVersion '" + params[idx2].getValue()
+								+ "' not a number");
 					}
 				} else if (name.equals("path")) // Path
 				{
@@ -239,12 +229,10 @@ public class Cookie2 extends Cookie {
 					try {
 						age = Integer.parseInt(params[idx2].getValue());
 					} catch (NumberFormatException nfe) {
-						throw new ProtocolException("Bad Set-Cookie2 header: "
-								+ set_cookie + "\nMax-Age '"
-								+ params[idx2].getValue() + "' not a number");
+						throw new ProtocolException("Bad Set-Cookie2 header: " + set_cookie + "\nMax-Age '" + params[idx2].getValue()
+								+ "' not a number");
 					}
-					curr.expires = new Date(System.currentTimeMillis() + age
-							* 1000L);
+					curr.expires = new Date(System.currentTimeMillis() + age * 1000L);
 				} else if (name.equals("port")) // Port
 				{
 					if (curr.port_set)
@@ -258,18 +246,14 @@ public class Cookie2 extends Cookie {
 					}
 
 					curr.port_list_str = params[idx2].getValue();
-					StringTokenizer tok = new StringTokenizer(
-							params[idx2].getValue(), ",");
+					StringTokenizer tok = new StringTokenizer(params[idx2].getValue(), ",");
 					curr.port_list = new int[tok.countTokens()];
 					for (int idx3 = 0; idx3 < curr.port_list.length; idx3++) {
 						String port = tok.nextToken().trim();
 						try {
 							curr.port_list[idx3] = Integer.parseInt(port);
 						} catch (NumberFormatException nfe) {
-							throw new ProtocolException(
-									"Bad Set-Cookie2 header: " + set_cookie
-											+ "\nPort '" + port
-											+ "' not a number");
+							throw new ProtocolException("Bad Set-Cookie2 header: " + set_cookie + "\nPort '" + port + "' not a number");
 						}
 					}
 					curr.port_set = true;
@@ -290,8 +274,7 @@ public class Cookie2 extends Cookie {
 					if (curr.comment != null)
 						continue;
 					try {
-						curr.comment = new String(params[idx2].getValue()
-								.getBytes("8859_1"), "UTF8");
+						curr.comment = new String(params[idx2].getValue().getBytes("8859_1"), "UTF8");
 					} catch (UnsupportedEncodingException usee) {
 						throw new Error(usee.toString()); /* shouldn't happen */
 					}
@@ -302,9 +285,8 @@ public class Cookie2 extends Cookie {
 					try {
 						curr.comment_url = new URI(params[idx2].getValue());
 					} catch (ParseException pe) {
-						throw new ProtocolException("Bad Set-Cookie2 header: "
-								+ set_cookie + "\nCommentURL '"
-								+ params[idx2].getValue() + "' not a valid URL");
+						throw new ProtocolException("Bad Set-Cookie2 header: " + set_cookie + "\nCommentURL '" + params[idx2].getValue()
+								+ "' not a valid URL");
 					}
 				}
 				// ignore unknown element
@@ -324,11 +306,8 @@ public class Cookie2 extends Cookie {
 
 			// path attribute must be a prefix of the request-URI
 			if (!Util.getPath(req.getRequestURI()).startsWith(curr.path)) {
-				Log.write(Log.COOKI,
-						"Cook2: Bad Set-Cookie2 header: " + set_cookie
-								+ "\n       path `" + curr.path
-								+ "' is not a prefix of the " + "request uri `"
-								+ req.getRequestURI() + "'");
+				Log.write(Log.COOKI, "Cook2: Bad Set-Cookie2 header: " + set_cookie + "\n       path `" + curr.path
+						+ "' is not a prefix of the " + "request uri `" + req.getRequestURI() + "'");
 				continue;
 			}
 
@@ -338,30 +317,23 @@ public class Cookie2 extends Cookie {
 				eff_host += ".local";
 
 			// domain must be either .local or must contain at least two dots
-			if (!curr.domain.equals(".local")
-					&& curr.domain.indexOf('.', 1) == -1) {
-				Log.write(Log.COOKI, "Cook2: Bad Set-Cookie2 header: "
-						+ set_cookie + "\n       domain `" + curr.domain
+			if (!curr.domain.equals(".local") && curr.domain.indexOf('.', 1) == -1) {
+				Log.write(Log.COOKI, "Cook2: Bad Set-Cookie2 header: " + set_cookie + "\n       domain `" + curr.domain
 						+ "' is not `.local' and " + "doesn't contain two `.'s");
 				continue;
 			}
 
 			// domain must domain match host
 			if (!eff_host.endsWith(curr.domain)) {
-				Log.write(Log.COOKI, "Cook2: Bad Set-Cookie2 header: "
-						+ set_cookie + "\n       domain `" + curr.domain
-						+ "' does not match current" + "host `" + eff_host
-						+ "'");
+				Log.write(Log.COOKI, "Cook2: Bad Set-Cookie2 header: " + set_cookie + "\n       domain `" + curr.domain
+						+ "' does not match current" + "host `" + eff_host + "'");
 				continue;
 			}
 
 			// host minus domain may not contain any dots
-			if (eff_host.substring(0, eff_host.length() - curr.domain.length())
-					.indexOf('.') != -1) {
-				Log.write(Log.COOKI, "Cook2: Bad Set-Cookie2 header: "
-						+ set_cookie + "\n       domain `" + curr.domain
-						+ "' is more than one `.'" + "away from host `"
-						+ eff_host + "'");
+			if (eff_host.substring(0, eff_host.length() - curr.domain.length()).indexOf('.') != -1) {
+				Log.write(Log.COOKI, "Cook2: Bad Set-Cookie2 header: " + set_cookie + "\n       domain `" + curr.domain
+						+ "' is more than one `.'" + "away from host `" + eff_host + "'");
 				continue;
 			}
 
@@ -372,9 +344,7 @@ public class Cookie2 extends Cookie {
 					if (curr.port_list[idx2] == req.getConnection().getPort())
 						break;
 				if (idx2 == curr.port_list.length) {
-					Log.write(Log.COOKI, "Cook2: Bad Set-Cookie2 header: "
-							+ set_cookie + "\n       port list "
-							+ "does include current port "
+					Log.write(Log.COOKI, "Cook2: Bad Set-Cookie2 header: " + set_cookie + "\n       port list " + "does include current port "
 							+ req.getConnection().getPort());
 					continue;
 				}
@@ -423,15 +393,17 @@ public class Cookie2 extends Cookie {
 	 * @return true if the cookie should be discarded at the end of the session;
 	 *         false otherwise
 	 */
+	@Override
 	public boolean discard() {
 		return discard;
 	}
 
 	/**
 	 * @param req
-	 *            the request to be sent
+	 *           the request to be sent
 	 * @return true if this cookie should be sent with the request
 	 */
+	@Override
 	protected boolean sendWith(RoRequest req) {
 		HTTPConnection con = req.getConnection();
 
@@ -447,14 +419,12 @@ public class Cookie2 extends Cookie {
 		if (eff_host.indexOf('.') == -1)
 			eff_host += ".local";
 
-		return ((domain.charAt(0) == '.' && eff_host.endsWith(domain) || domain
-				.charAt(0) != '.' && eff_host.equals(domain))
-				&& port_match
-				&& Util.getPath(req.getRequestURI()).startsWith(path) && (!secure
-				|| con.getProtocol().equals("https") || con.getProtocol()
+		return ((domain.charAt(0) == '.' && eff_host.endsWith(domain) || domain.charAt(0) != '.' && eff_host.equals(domain)) && port_match
+				&& Util.getPath(req.getRequestURI()).startsWith(path) && (!secure || con.getProtocol().equals("https") || con.getProtocol()
 				.equals("shttp")));
 	}
 
+	@Override
 	protected String toExternalForm() {
 		StringBuffer cookie = new StringBuffer();
 
@@ -499,6 +469,7 @@ public class Cookie2 extends Cookie {
 	 * Create a string containing all the cookie fields. The format is that used
 	 * in the Set-Cookie header.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer res = new StringBuffer(name.length() + value.length() + 50);
 		res.append(name).append('=').append(value);
@@ -514,9 +485,7 @@ public class Cookie2 extends Cookie {
 				res.append('\"');
 			}
 			if (expires != null)
-				res.append("; Max-Age=")
-						.append(((expires.getTime() - System
-								.currentTimeMillis()) / 1000L));
+				res.append("; Max-Age=").append(((expires.getTime() - System.currentTimeMillis()) / 1000L));
 			if (discard)
 				res.append("; Discard");
 			if (secure)

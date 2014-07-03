@@ -106,51 +106,39 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 		jShutdown.setToolTipText(GRI18n.getString(MODULE, "shutDownTip"));
 		jShutdown.setText(GRI18n.getString(MODULE, "shutDown"));
 
-		jContentPanel.add(jComputer1, new GridBagConstraints(0, 0, 1, 1, 0.0,
-				0.0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL,
+		jContentPanel.add(jComputer1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL,
 				new Insets(10, 10, 0, 0), 0, 0));
-		jContentPanel.add(jUploading, new GridBagConstraints(1, 0, 1, 1, 0.0,
-				0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+		jContentPanel.add(jUploading, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
 				new Insets(10, 0, 0, 0), 0, 0));
-		jContentPanel.add(jComputer2, new GridBagConstraints(2, 0, 1, 1, 0.0,
-				0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+		jContentPanel.add(jComputer2, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 				new Insets(10, 0, 0, 10), 0, 0));
-		jContentPanel.add(jLabelGlobal, new GridBagConstraints(0, 1, 3, 1, 1.0,
-				0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-				new Insets(10, 10, 0, 0), 0, 0));
-		jContentPanel.add(jProgressGlobal, new GridBagConstraints(0, 2, 3, 1,
-				1.0, 0.0, GridBagConstraints.CENTER,
+		jContentPanel.add(jLabelGlobal, new GridBagConstraints(0, 1, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
+		jContentPanel.add(jProgressGlobal, new GridBagConstraints(0, 2, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.HORIZONTAL, new Insets(5, 15, 0, 15), 0, 0));
-		jContentPanel.add(jLabelDetail, new GridBagConstraints(0, 3, 3, 1, 1.0,
-				0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-				new Insets(5, 10, 0, 0), 0, 0));
-		jContentPanel.add(jProgressDetail, new GridBagConstraints(0, 4, 3, 1,
-				1.0, 0.0, GridBagConstraints.CENTER,
+		jContentPanel.add(jLabelDetail, new GridBagConstraints(0, 3, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0));
+		jContentPanel.add(jProgressDetail, new GridBagConstraints(0, 4, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.HORIZONTAL, new Insets(5, 15, 0, 15), 0, 0));
-		jContentPanel.add(jPanel2, new GridBagConstraints(0, 5, 3, 1, 0.0, 0.0,
-				GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
-						0, 0, 0), 0, 0));
+		jContentPanel.add(jPanel2, new GridBagConstraints(0, 5, 3, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(
+				0, 0, 0, 0), 0, 0));
 
 		try {
-			Class<?> osShutdown = GalleryRemote
-					.secureClassForName("com.gallery.GalleryRemote.util.OsShutdown");
-			Method canShutdown = osShutdown.getMethod("canShutdown",
-					(Class<?>[]) null);
-			if (((Boolean) canShutdown.invoke((Object) null, (Object[]) null))
-					.booleanValue()) {
+			Class<?> osShutdown = GalleryRemote.secureClassForName("com.gallery.GalleryRemote.util.OsShutdown");
+			Method canShutdown = osShutdown.getMethod("canShutdown", (Class<?>[]) null);
+			if (((Boolean) canShutdown.invoke((Object) null, (Object[]) null)).booleanValue()) {
 				jPanel2.add(jShutdown, null);
 			}
 		} catch (Exception e) {
-			Log.log(Log.LEVEL_TRACE, MODULE,
-					"OsShutdown not supported, hiding checkbox");
+			Log.log(Log.LEVEL_TRACE, MODULE, "OsShutdown not supported, hiding checkbox");
 		}
 
 		jPanel2.add(jCancel, null);
 	}
 
 	/* level-bound methods */
-	public void startProgress(int level, int minValue, int maxValue,
-			String message, boolean undetermined) {
+	@Override
+	public void startProgress(int level, int minValue, int maxValue, String message, boolean undetermined) {
 		if (checkLevel(level)) {
 			jProgress[level].setMinimum(minValue);
 			jProgress[level].setMaximum(maxValue);
@@ -163,12 +151,14 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 		}
 	}
 
+	@Override
 	public void updateProgressValue(int level, int value) {
 		if (checkLevel(level)) {
 			jProgress[level].setValue(value);
 		}
 	}
 
+	@Override
 	public void updateProgressValue(int level, int value, int maxValue) {
 		if (checkLevel(level)) {
 			jProgress[level].setValue(value);
@@ -176,12 +166,14 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 		}
 	}
 
+	@Override
 	public void updateProgressStatus(int level, String message) {
 		if (checkLevel(level)) {
 			jLabel[level].setText(message);
 		}
 	}
 
+	@Override
 	public void setUndetermined(int level, boolean undetermined) {
 		try {
 			jProgress[level].setIndeterminate(undetermined);
@@ -189,6 +181,7 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 		}
 	}
 
+	@Override
 	public void stopProgress(int level, String message) {
 		if (checkLevel(level)) {
 			jProgress[level].setMaximum(jProgress[level].getMinimum());
@@ -220,10 +213,12 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 	}
 
 	/* level-independant methods */
+	@Override
 	public void setInProgress(boolean inProgress) {
 		GalleryRemote.instance().getCore().setInProgress(inProgress);
 	}
 
+	@Override
 	public void error(String message) {
 		// JOptionPane.showMessageDialog(this, message, GRI18n.getString(MODULE,
 		// "Error"), JOptionPane.ERROR_MESSAGE);
@@ -231,13 +226,9 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 			jErrors = new JTextArea(5, 80);
 			jErrors.setEditable(false);
 			jErrors.setFont(UIManager.getFont("Label.font"));
-			JScrollPane scroll = new JScrollPane(jErrors,
-					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			scroll.setBorder(new TitledBorder(GRI18n
-					.getString(MODULE, "Errors")));
-			jContentPanel.add(scroll, new GridBagConstraints(0, 6, 3, 1, 1.0,
-					1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			JScrollPane scroll = new JScrollPane(jErrors, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scroll.setBorder(new TitledBorder(GRI18n.getString(MODULE, "Errors")));
+			jContentPanel.add(scroll, new GridBagConstraints(0, 6, 3, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 0, 0), 0, 0));
 
 			if (dialog != null) {
@@ -262,10 +253,12 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 		return sb.toString();
 	}
 
+	@Override
 	public void setStatus(String message) {
 		updateProgressStatus(LEVEL_GENERIC, message);
 	}
 
+	@Override
 	public int getProgressValue(int level) {
 		if (checkLevel(level)) {
 			return jProgress[level].getValue();
@@ -274,6 +267,7 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 		return 0;
 	}
 
+	@Override
 	public int getProgressMinValue(int level) {
 		if (checkLevel(level)) {
 			return jProgress[level].getMinimum();
@@ -282,6 +276,7 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 		return 0;
 	}
 
+	@Override
 	public int getProgressMaxValue(int level) {
 		if (checkLevel(level)) {
 			return jProgress[level].getMaximum();
@@ -294,9 +289,11 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 		return level == LEVEL_UPLOAD_ONE || level == LEVEL_UPLOAD_ALL;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		final ActionEvent fe = e;
 		new Thread() {
+			@Override
 			public void run() {
 				if (cancelListener != null) {
 					cancelListener.actionPerformed(fe);
@@ -313,6 +310,7 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 		return jShutdown.isSelected();
 	}
 
+	@Override
 	public void doneUploading(String newItemName, Picture picture) {
 	}
 }

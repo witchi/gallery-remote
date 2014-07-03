@@ -36,7 +36,6 @@ public class ImageLoaderUtil implements PreferenceNames {
 	public static Color[] darkGray = new Color[11];
 	public static Pattern breaker = Pattern.compile("<(br|BR)\\s?\\/?>");
 	public static Pattern stripper = Pattern.compile("<[^<>]*>");
-	// public static Pattern mopper = Pattern.compile("\r");
 
 	int cacheSize = 10;
 	boolean ignoreIMFailure = false;
@@ -63,11 +62,8 @@ public class ImageLoaderUtil implements PreferenceNames {
 	}
 
 	public void reduceMemory() {
-		Log.log(Log.LEVEL_TRACE, MODULE, "Free memory before reduction: "
-				+ Runtime.getRuntime().freeMemory());
-		Log.log(Log.LEVEL_TRACE, MODULE,
-				"Current image cache: " + images.size() + " - cache size "
-						+ cacheSize);
+		Log.log(Log.LEVEL_TRACE, MODULE, "Free memory before reduction: " + Runtime.getRuntime().freeMemory());
+		Log.log(Log.LEVEL_TRACE, MODULE, "Current image cache: " + images.size() + " - cache size " + cacheSize);
 
 		if (images.size() > 1 && cacheSize > 1) {
 			cacheSize = images.size() - 1;
@@ -75,8 +71,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 
 		images.shrink();
 
-		Log.log(Log.LEVEL_TRACE, MODULE, "Free memory after reduction: "
-				+ Runtime.getRuntime().freeMemory());
+		Log.log(Log.LEVEL_TRACE, MODULE, "Free memory after reduction: " + Runtime.getRuntime().freeMemory());
 	}
 
 	public void pictureReady(Image image, Picture picture) {
@@ -131,26 +126,20 @@ public class ImageLoaderUtil implements PreferenceNames {
 				if (picture.isOnline()) {
 					imageLoaderUser.pictureStartDownloading(picture);
 
-					File f = ImageUtils.download(picture,
-							imageLoaderUser.getImageSize(), GalleryRemote.instance()
-									.getCore().getMainStatusUpdate(),
-							transferListener);
+					File f = ImageUtils.download(picture, imageLoaderUser.getImageSize(), GalleryRemote.instance().getCore()
+							.getMainStatusUpdate(), transferListener);
 
 					imageLoaderUser.pictureStartProcessing(picture);
 
 					if (f != null) {
-						r = ImageUtils.load(f.getPath(),
-								imageLoaderUser.getImageSize(),
-								ImageUtils.PREVIEW, ignoreIMFailure);
+						r = ImageUtils.load(f.getPath(), imageLoaderUser.getImageSize(), ImageUtils.PREVIEW, ignoreIMFailure);
 					} else {
 						return null;
 					}
 				} else {
 					imageLoaderUser.pictureStartProcessing(picture);
 
-					r = ImageUtils.load(picture.getSource().getPath(),
-							imageLoaderUser.getImageSize(), ImageUtils.PREVIEW,
-							ignoreIMFailure);
+					r = ImageUtils.load(picture.getSource().getPath(), imageLoaderUser.getImageSize(), ImageUtils.PREVIEW, ignoreIMFailure);
 				}
 
 				if (r == null) {
@@ -165,14 +154,11 @@ public class ImageLoaderUtil implements PreferenceNames {
 		return r;
 	}
 
-	public static void paintAlignedOutline(Graphics g, String s, int textX,
-			int textY, int thickness, int position, int wrapWidth) {
-		paintAlignedOutline(g, textX, textY, thickness, position,
-				wrap((Graphics2D) g, s, wrapWidth), false);
+	public static void paintAlignedOutline(Graphics g, String s, int textX, int textY, int thickness, int position, int wrapWidth) {
+		paintAlignedOutline(g, textX, textY, thickness, position, wrap((Graphics2D) g, s, wrapWidth), false);
 	}
 
-	public static Point paintAlignedOutline(Graphics g, int textX, int textY,
-			int thickness, int position, WrapInfo wrapInfo,
+	public static Point paintAlignedOutline(Graphics g, int textX, int textY, int thickness, int position, WrapInfo wrapInfo,
 			boolean paintAtOrigin) {
 		FontMetrics fm = g.getFontMetrics();
 
@@ -232,12 +218,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 				break;
 			}
 
-			paintOutline(
-					g,
-					wrapInfo.lines[i],
-					linePos.x,
-					(int) (linePos.y + fm.getAscent() + bounds.getHeight() * i),
-					thickness);
+			paintOutline(g, wrapInfo.lines[i], linePos.x, (int) (linePos.y + fm.getAscent() + bounds.getHeight() * i), thickness);
 		}
 
 		return boxPos;
@@ -255,9 +236,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 
 		for (int i = 0; i < ss.length; i++) {
 			int linebreak = ss[i].length() - 1;
-			while (linebreak != -1
-					&& fm.getStringBounds(ss[i].substring(0, linebreak), g)
-							.getWidth() > wrapWidth) {
+			while (linebreak != -1 && fm.getStringBounds(ss[i].substring(0, linebreak), g).getWidth() > wrapWidth) {
 				linebreak = ss[i].lastIndexOf(' ', linebreak - 1);
 			}
 			if (linebreak != -1 && linebreak != ss[i].length() - 1) {
@@ -268,14 +247,13 @@ public class ImageLoaderUtil implements PreferenceNames {
 				lines.add(ss[i]);
 			}
 
-			int width = (int) fm.getStringBounds(
-					(String) lines.get(lines.size() - 1), g).getWidth();
+			int width = (int) fm.getStringBounds(lines.get(lines.size() - 1), g).getWidth();
 			if (width > wrapInfo.width) {
 				wrapInfo.width = width;
 			}
 		}
 
-		wrapInfo.lines = (String[]) lines.toArray(new String[lines.size()]);
+		wrapInfo.lines = lines.toArray(new String[lines.size()]);
 		wrapInfo.height = (int) bounds.getHeight() * ss.length;
 
 		return wrapInfo;
@@ -286,11 +264,11 @@ public class ImageLoaderUtil implements PreferenceNames {
 		public int width;
 		public int height;
 
+		@Override
 		public String toString() {
 			final StringBuffer sb = new StringBuffer();
 			sb.append("WrapInfo");
-			sb.append("{lines=").append(
-					lines == null ? "null" : Arrays.asList(lines).toString());
+			sb.append("{lines=").append(lines == null ? "null" : Arrays.asList(lines).toString());
 			sb.append(", width=").append(width);
 			sb.append(", height=").append(height);
 			sb.append('}');
@@ -298,8 +276,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 		}
 	}
 
-	public static void paintOutline(Graphics g, String s, int textX, int textY,
-			int thickness) {
+	public static void paintOutline(Graphics g, String s, int textX, int textY, int thickness) {
 		if (thickness > 10) {
 			thickness = 10;
 		}
@@ -322,20 +299,16 @@ public class ImageLoaderUtil implements PreferenceNames {
 
 	private static Color getDarkGray(int thickness) {
 		if (darkGray[thickness] == null) {
-			darkGray[thickness] = new Color(64, 64, 64, 255 / thickness
-					/ thickness);
+			darkGray[thickness] = new Color(64, 64, 64, 255 / thickness / thickness);
 		}
 
 		return darkGray[thickness];
 	}
 
 	public static void setSlideshowFont(Component c) {
-		String fontName = GalleryRemote.instance().properties
-				.getProperty(SLIDESHOW_FONTNAME);
-		int defaultFontSize = (int) DialogUtil.findParentWindow(c)
-				.getGraphicsConfiguration().getBounds().getHeight() / 40;
-		int fontSize = GalleryRemote.instance().properties.getIntProperty(
-				SLIDESHOW_FONTSIZE, defaultFontSize);
+		String fontName = GalleryRemote.instance().properties.getProperty(SLIDESHOW_FONTNAME);
+		int defaultFontSize = (int) DialogUtil.findParentWindow(c).getGraphicsConfiguration().getBounds().getHeight() / 40;
+		int fontSize = GalleryRemote.instance().properties.getIntProperty(SLIDESHOW_FONTSIZE, defaultFontSize);
 		Font f = null;
 		if (fontName != null) {
 			f = new Font(fontName, 0, fontSize);
@@ -359,9 +332,6 @@ public class ImageLoaderUtil implements PreferenceNames {
 		m = stripper.matcher(text);
 		text = m.replaceAll("");
 
-		// m = mopper.matcher(text);
-		// text = m.replaceAll("");
-
 		return text;
 	}
 
@@ -370,6 +340,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 		boolean stillRunning = false;
 		boolean notify = false;
 
+		@Override
 		public void run() {
 			Log.log(Log.LEVEL_TRACE, MODULE, "Starting " + picture);
 			Picture tmpPicture = null;
@@ -426,11 +397,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 			// Log.log(Log.LEVEL_TRACE, MODULE,
 			// Runtime.getRuntime().freeMemory() + " - " +
 			// Runtime.getRuntime().totalMemory());
-			/*
-			 * if (Runtime.getRuntime().freeMemory() < 2000000) {
-			 * Log.log(Log.TRACE, MODULE, "Not enough free ram, shrinking...");
-			 * shrink(); Runtime.getRuntime().gc(); } else
-			 */if (cacheSize > 0 && touchOrder.size() > cacheSize) {
+			if (cacheSize > 0 && touchOrder.size() > cacheSize) {
 				shrink();
 			}
 			// Log.log(Log.LEVEL_TRACE, MODULE,
@@ -466,7 +433,6 @@ public class ImageLoaderUtil implements PreferenceNames {
 			while (it.hasNext()) {
 				Image i = (Image) it.next();
 				if (i != null) {
-					// i.getGraphics().dispose();
 					i.flush();
 				}
 			}
@@ -496,7 +462,6 @@ public class ImageLoaderUtil implements PreferenceNames {
 		public void shrink() {
 			if (touchOrder.size() == 0) {
 				Log.log(Log.LEVEL_ERROR, MODULE, "Empty SmartHashtable");
-				// throw new OutOfMemoryError();
 				return;
 			}
 
@@ -505,7 +470,6 @@ public class ImageLoaderUtil implements PreferenceNames {
 
 			Image i = (Image) get(key, false);
 			if (i != null) {
-				// i.getGraphics().dispose();
 				i.flush();
 			}
 

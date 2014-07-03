@@ -60,16 +60,14 @@ import java.util.Hashtable;
  * </PRE>
  * 
  * @version 0.3-3 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  */
 class IdempotentSequence {
 	/** method number definitions */
-	private static final int UNKNOWN = 0, HEAD = 1, GET = 2, POST = 3, PUT = 4,
-			DELETE = 5, OPTIONS = 6, TRACE = 7,
+	private static final int UNKNOWN = 0, HEAD = 1, GET = 2, POST = 3, PUT = 4, DELETE = 5, OPTIONS = 6, TRACE = 7,
 
-			// DAV methods
-			PROPFIND = 8, PROPPATCH = 9, MKCOL = 10, COPY = 11, MOVE = 12,
-			LOCK = 13, UNLOCK = 14;
+	// DAV methods
+			PROPFIND = 8, PROPPATCH = 9, MKCOL = 10, COPY = 11, MOVE = 12, LOCK = 13, UNLOCK = 14;
 
 	/** these are the history of previous requests */
 	private int[] m_history;
@@ -100,7 +98,7 @@ class IdempotentSequence {
 	 * is idempotent.
 	 * 
 	 * @param req
-	 *            the next request
+	 *           the next request
 	 */
 	public void add(Request req) {
 		if (m_len >= m_history.length)
@@ -136,13 +134,13 @@ class IdempotentSequence {
 	 * 
 	 * <P>
 	 * The major assumption here is that the side effects of any method only
-	 * apply to resource specified. E.g. a <tt>"PUT /barbara.html"</tt> will
-	 * only affect the resource "/barbara.html" and nothing else. This
-	 * assumption is violated by POST of course; however, POSTs are not
-	 * pipelined and will therefore never show up here.
+	 * apply to resource specified. E.g. a <tt>"PUT /barbara.html"</tt> will only
+	 * affect the resource "/barbara.html" and nothing else. This assumption is
+	 * violated by POST of course; however, POSTs are not pipelined and will
+	 * therefore never show up here.
 	 * 
 	 * @param req
-	 *            the request
+	 *           the request
 	 */
 	public boolean isIdempotent(Request req) {
 		if (!analysis_done)
@@ -179,7 +177,7 @@ class IdempotentSequence {
 		// any thread still indeterminate must be idempotent
 		Enumeration<String> te = threads.keys();
 		while (te.hasMoreElements()) {
-			String res = (String) te.nextElement();
+			String res = te.nextElement();
 			if (threads.get(res) == INDET)
 				threads.put(res, Boolean.TRUE);
 		}
@@ -344,32 +342,23 @@ class IdempotentSequence {
 		seq.add(new Request(null, "GET", "/b7", null, null, null, false));
 		seq.add(new Request(null, "PUT", "/b7", null, null, null, false));
 
-		if (!seq.isIdempotent(new Request(null, null, "/b1", null, null, null,
-				false)))
+		if (!seq.isIdempotent(new Request(null, null, "/b1", null, null, null, false)))
 			System.err.println("Sequence b1 failed");
-		if (!seq.isIdempotent(new Request(null, null, "/b2", null, null, null,
-				false)))
+		if (!seq.isIdempotent(new Request(null, null, "/b2", null, null, null, false)))
 			System.err.println("Sequence b2 failed");
-		if (!seq.isIdempotent(new Request(null, null, "/b3", null, null, null,
-				false)))
+		if (!seq.isIdempotent(new Request(null, null, "/b3", null, null, null, false)))
 			System.err.println("Sequence b3 failed");
-		if (seq.isIdempotent(new Request(null, null, "/b4", null, null, null,
-				false)))
+		if (seq.isIdempotent(new Request(null, null, "/b4", null, null, null, false)))
 			System.err.println("Sequence b4 failed");
-		if (!seq.isIdempotent(new Request(null, null, "/b5", null, null, null,
-				false)))
+		if (!seq.isIdempotent(new Request(null, null, "/b5", null, null, null, false)))
 			System.err.println("Sequence b5 failed");
-		if (seq.isIdempotent(new Request(null, null, "/b6", null, null, null,
-				false)))
+		if (seq.isIdempotent(new Request(null, null, "/b6", null, null, null, false)))
 			System.err.println("Sequence b6 failed");
-		if (seq.isIdempotent(new Request(null, null, "/b7", null, null, null,
-				false)))
+		if (seq.isIdempotent(new Request(null, null, "/b7", null, null, null, false)))
 			System.err.println("Sequence b7 failed");
-		if (seq.isIdempotent(new Request(null, null, "/b8", null, null, null,
-				false)))
+		if (seq.isIdempotent(new Request(null, null, "/b8", null, null, null, false)))
 			System.err.println("Sequence b8 failed");
-		if (seq.isIdempotent(new Request(null, null, "/b9", null, null, null,
-				false)))
+		if (seq.isIdempotent(new Request(null, null, "/b9", null, null, null, false)))
 			System.err.println("Sequence b9 failed");
 
 		System.out.println("Tests finished");

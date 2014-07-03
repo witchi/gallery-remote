@@ -74,11 +74,10 @@ import java.awt.event.WindowAdapter;
  * <var>AuthorizationHandler</var> interface requires them to be).
  * 
  * @version 0.3-3 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  * @since V0.2
  */
-public class DefaultAuthHandler implements AuthorizationHandler,
-		GlobalConstants {
+public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants {
 	private static final byte[] NUL = new byte[0];
 
 	private static final int DI_A1 = 0;
@@ -94,21 +93,20 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	 * For Digest authentication we need to set the uri, response and opaque
 	 * parameters. For "Basic" and "SOCKS5" nothing is done.
 	 */
-	public AuthorizationInfo fixupAuthInfo(AuthorizationInfo info,
-			RoRequest req, AuthorizationInfo challenge, RoResponse resp)
+	@Override
+	public AuthorizationInfo fixupAuthInfo(AuthorizationInfo info, RoRequest req, AuthorizationInfo challenge, RoResponse resp)
 			throws AuthSchemeNotImplException {
 		// nothing to do for Basic and SOCKS5 schemes
 
-		if (info.getScheme().equalsIgnoreCase("Basic")
-				|| info.getScheme().equalsIgnoreCase("SOCKS5"))
+		if (info.getScheme().equalsIgnoreCase("Basic") || info.getScheme().equalsIgnoreCase("SOCKS5"))
 			return info;
 		else if (!info.getScheme().equalsIgnoreCase("Digest"))
 			throw new AuthSchemeNotImplException(info.getScheme());
 
 		if (Log.isEnabled(Log.AUTH))
-			Log.write(Log.AUTH, "Auth:  fixing up Authorization for host "
-					+ info.getHost() + ":" + info.getPort() + "; scheme: "
-					+ info.getScheme() + "; realm: " + info.getRealm());
+			Log.write(Log.AUTH,
+					"Auth:  fixing up Authorization for host " + info.getHost() + ":" + info.getPort() + "; scheme: " + info.getScheme()
+							+ "; realm: " + info.getRealm());
 
 		return digest_fixup(info, req, challenge, resp);
 	}
@@ -117,31 +115,28 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	 * returns the requested authorization, or null if none was given.
 	 * 
 	 * @param challenge
-	 *            the parsed challenge from the server.
+	 *           the parsed challenge from the server.
 	 * @param req
-	 *            the request which solicited this response
+	 *           the request which solicited this response
 	 * @param resp
-	 *            the full response received
+	 *           the full response received
 	 * @return a structure containing the necessary authorization info, or null
 	 * @exception AuthSchemeNotImplException
-	 *                if the authentication scheme in the challenge cannot be
-	 *                handled.
+	 *               if the authentication scheme in the challenge cannot be
+	 *               handled.
 	 */
-	public AuthorizationInfo getAuthorization(AuthorizationInfo challenge,
-			RoRequest req, RoResponse resp) throws AuthSchemeNotImplException,
-			IOException {
+	@Override
+	public AuthorizationInfo getAuthorization(AuthorizationInfo challenge, RoRequest req, RoResponse resp)
+			throws AuthSchemeNotImplException, IOException {
 		AuthorizationInfo cred;
 
 		if (Log.isEnabled(Log.AUTH))
-			Log.write(Log.AUTH, "Auth:  Requesting Authorization for host "
-					+ challenge.getHost() + ":" + challenge.getPort()
-					+ "; scheme: " + challenge.getScheme() + "; realm: "
-					+ challenge.getRealm());
+			Log.write(Log.AUTH, "Auth:  Requesting Authorization for host " + challenge.getHost() + ":" + challenge.getPort() + "; scheme: "
+					+ challenge.getScheme() + "; realm: " + challenge.getRealm());
 
 		// we only handle Basic, Digest and SOCKS5 authentication
 
-		if (!challenge.getScheme().equalsIgnoreCase("Basic")
-				&& !challenge.getScheme().equalsIgnoreCase("Digest")
+		if (!challenge.getScheme().equalsIgnoreCase("Basic") && !challenge.getScheme().equalsIgnoreCase("Digest")
 				&& !challenge.getScheme().equalsIgnoreCase("SOCKS5"))
 			throw new AuthSchemeNotImplException(challenge.getScheme());
 
@@ -163,8 +158,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 			if (prompter == null)
 				setDefaultPrompter();
 
-			answer = prompter.getUsernamePassword(challenge,
-					resp.getStatusCode() == 407);
+			answer = prompter.getUsernamePassword(challenge, resp.getStatusCode() == 407);
 		}
 
 		if (answer == null)
@@ -173,22 +167,16 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 		// Now process the username/password
 
 		if (challenge.getScheme().equalsIgnoreCase("basic")) {
-			cred = new AuthorizationInfo(challenge.getHost(),
-					challenge.getPort(), challenge.getScheme(),
-					challenge.getRealm(), Codecs.base64Encode(answer.getName()
-							+ ":" + answer.getValue()));
+			cred = new AuthorizationInfo(challenge.getHost(), challenge.getPort(), challenge.getScheme(), challenge.getRealm(),
+					Codecs.base64Encode(answer.getName() + ":" + answer.getValue()));
 		} else if (challenge.getScheme().equalsIgnoreCase("Digest")) {
-			cred = digest_gen_auth_info(challenge.getHost(),
-					challenge.getPort(), challenge.getRealm(),
-					answer.getName(), answer.getValue(), req.getConnection()
-							.getContext());
+			cred = digest_gen_auth_info(challenge.getHost(), challenge.getPort(), challenge.getRealm(), answer.getName(), answer.getValue(),
+					req.getConnection().getContext());
 			cred = digest_fixup(cred, req, challenge, null);
 		} else // SOCKS5
 		{
 			NVPair[] upwd = { answer };
-			cred = new AuthorizationInfo(challenge.getHost(),
-					challenge.getPort(), challenge.getScheme(),
-					challenge.getRealm(), upwd, null);
+			cred = new AuthorizationInfo(challenge.getHost(), challenge.getPort(), challenge.getScheme(), challenge.getRealm(), upwd, null);
 		}
 
 		// try to get rid of any unencoded passwords in memory
@@ -207,24 +195,20 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	 * We handle the "Authentication-Info" and "Proxy-Authentication-Info"
 	 * headers here.
 	 */
-	public void handleAuthHeaders(Response resp, RoRequest req,
-			AuthorizationInfo prev, AuthorizationInfo prxy) throws IOException {
+	@Override
+	public void handleAuthHeaders(Response resp, RoRequest req, AuthorizationInfo prev, AuthorizationInfo prxy) throws IOException {
 		String auth_info = resp.getHeader("Authentication-Info");
 		String prxy_info = resp.getHeader("Proxy-Authentication-Info");
 
-		if (auth_info == null && prev != null
-				&& hasParam(prev.getParams(), "qop", "auth-int"))
+		if (auth_info == null && prev != null && hasParam(prev.getParams(), "qop", "auth-int"))
 			auth_info = "";
 
-		if (prxy_info == null && prxy != null
-				&& hasParam(prxy.getParams(), "qop", "auth-int"))
+		if (prxy_info == null && prxy != null && hasParam(prxy.getParams(), "qop", "auth-int"))
 			prxy_info = "";
 
 		try {
-			handleAuthInfo(auth_info, "Authentication-Info", prev, resp, req,
-					true);
-			handleAuthInfo(prxy_info, "Proxy-Authentication-Info", prxy, resp,
-					req, true);
+			handleAuthInfo(auth_info, "Authentication-Info", prev, resp, req, true);
+			handleAuthInfo(prxy_info, "Proxy-Authentication-Info", prxy, resp, req, true);
 		} catch (ParseException pe) {
 			throw new IOException(pe.toString());
 		}
@@ -234,23 +218,20 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	 * We handle the "Authentication-Info" and "Proxy-Authentication-Info"
 	 * trailers here.
 	 */
-	public void handleAuthTrailers(Response resp, RoRequest req,
-			AuthorizationInfo prev, AuthorizationInfo prxy) throws IOException {
+	@Override
+	public void handleAuthTrailers(Response resp, RoRequest req, AuthorizationInfo prev, AuthorizationInfo prxy) throws IOException {
 		String auth_info = resp.getTrailer("Authentication-Info");
 		String prxy_info = resp.getTrailer("Proxy-Authentication-Info");
 
 		try {
-			handleAuthInfo(auth_info, "Authentication-Info", prev, resp, req,
-					false);
-			handleAuthInfo(prxy_info, "Proxy-Authentication-Info", prxy, resp,
-					req, false);
+			handleAuthInfo(auth_info, "Authentication-Info", prev, resp, req, false);
+			handleAuthInfo(prxy_info, "Proxy-Authentication-Info", prxy, resp, req, false);
 		} catch (ParseException pe) {
 			throw new IOException(pe.toString());
 		}
 	}
 
-	private static void handleAuthInfo(String auth_info, String hdr_name,
-			AuthorizationInfo prev, Response resp, RoRequest req,
+	private static void handleAuthInfo(String auth_info, String hdr_name, AuthorizationInfo prev, Response resp, RoRequest req,
 			boolean in_headers) throws ParseException, IOException {
 		if (auth_info == null)
 			return;
@@ -258,8 +239,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 		Vector<HttpHeaderElement> pai = Util.parseHeader(auth_info);
 		HttpHeaderElement elem;
 
-		if (handle_nextnonce(prev, req,
-				elem = Util.getElement(pai, "nextnonce")))
+		if (handle_nextnonce(prev, req, elem = Util.getElement(pai, "nextnonce")))
 			pai.removeElement(elem);
 		if (handle_discard(prev, req, elem = Util.getElement(pai, "discard")))
 			pai.removeElement(elem);
@@ -267,21 +247,16 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 		if (in_headers) {
 			HttpHeaderElement qop = null;
 
-			if (pai != null && (qop = Util.getElement(pai, "qop")) != null
-					&& qop.getValue() != null) {
+			if (pai != null && (qop = Util.getElement(pai, "qop")) != null && qop.getValue() != null) {
 				handle_rspauth(prev, resp, req, pai, hdr_name);
 			} else if (prev != null
-					&& (Util.hasToken(resp.getHeader("Trailer"), hdr_name)
-							&& hasParam(prev.getParams(), "qop", null) || hasParam(
-								prev.getParams(), "qop", "auth-int"))) {
+					&& (Util.hasToken(resp.getHeader("Trailer"), hdr_name) && hasParam(prev.getParams(), "qop", null) || hasParam(
+							prev.getParams(), "qop", "auth-int"))) {
 				handle_rspauth(prev, resp, req, null, hdr_name);
 			}
 
-			else if ((pai != null && qop == null && pai
-					.contains(new HttpHeaderElement("digest")))
-					|| (Util.hasToken(resp.getHeader("Trailer"), hdr_name)
-							&& prev != null && !hasParam(prev.getParams(),
-								"qop", null))) {
+			else if ((pai != null && qop == null && pai.contains(new HttpHeaderElement("digest")))
+					|| (Util.hasToken(resp.getHeader("Trailer"), hdr_name) && prev != null && !hasParam(prev.getParams(), "qop", null))) {
 				handle_digest(prev, resp, req, hdr_name);
 			}
 		}
@@ -292,12 +267,9 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 			resp.deleteHeader(hdr_name);
 	}
 
-	private static final boolean hasParam(NVPair[] params, String name,
-			String val) {
+	private static final boolean hasParam(NVPair[] params, String name, String val) {
 		for (int idx = 0; idx < params.length; idx++)
-			if (params[idx].getName().equalsIgnoreCase(name)
-					&& (val == null || params[idx].getValue().equalsIgnoreCase(
-							val)))
+			if (params[idx].getName().equalsIgnoreCase(name) && (val == null || params[idx].getValue().equalsIgnoreCase(val)))
 				return true;
 
 		return false;
@@ -307,13 +279,11 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	 * Here are all the Digest specific methods
 	 */
 
-	private static AuthorizationInfo digest_gen_auth_info(String host,
-			int port, String realm, String user, String pass, Object context) {
+	private static AuthorizationInfo digest_gen_auth_info(String host, int port, String realm, String user, String pass, Object context) {
 		String A1 = user + ":" + realm + ":" + pass;
 		String[] info = { MD5.hexDigest(A1), null, null };
 
-		AuthorizationInfo prev = AuthorizationInfo.getAuthorization(host, port,
-				"Digest", realm, context);
+		AuthorizationInfo prev = AuthorizationInfo.getAuthorization(host, port, "Digest", realm, context);
 		NVPair[] params;
 		if (prev == null) {
 			params = new NVPair[4];
@@ -337,8 +307,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	/**
 	 * The fixup handler
 	 */
-	private static AuthorizationInfo digest_fixup(AuthorizationInfo info,
-			RoRequest req, AuthorizationInfo challenge, RoResponse resp)
+	private static AuthorizationInfo digest_fixup(AuthorizationInfo info, RoRequest req, AuthorizationInfo challenge, RoResponse resp)
 			throws AuthSchemeNotImplException {
 		// get various parameters from challenge
 
@@ -404,27 +373,18 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 
 			// currently only MD5 hash (and "MD5-sess") is supported
 
-			if (alg != -1 && !params[alg].getValue().equalsIgnoreCase("MD5")
-					&& !params[alg].getValue().equalsIgnoreCase("MD5-sess"))
-				throw new AuthSchemeNotImplException("Digest auth scheme: "
-						+ "Algorithm " + params[alg].getValue()
-						+ " not implemented");
+			if (alg != -1 && !params[alg].getValue().equalsIgnoreCase("MD5") && !params[alg].getValue().equalsIgnoreCase("MD5-sess"))
+				throw new AuthSchemeNotImplException("Digest auth scheme: " + "Algorithm " + params[alg].getValue() + " not implemented");
 
-			if (ch_alg != -1
-					&& !ch_params[ch_alg].getValue().equalsIgnoreCase("MD5")
-					&& !ch_params[ch_alg].getValue().equalsIgnoreCase(
-							"MD5-sess"))
-				throw new AuthSchemeNotImplException("Digest auth scheme: "
-						+ "Algorithm " + ch_params[ch_alg].getValue()
-						+ " not implemented");
+			if (ch_alg != -1 && !ch_params[ch_alg].getValue().equalsIgnoreCase("MD5")
+					&& !ch_params[ch_alg].getValue().equalsIgnoreCase("MD5-sess"))
+				throw new AuthSchemeNotImplException("Digest auth scheme: " + "Algorithm " + ch_params[ch_alg].getValue() + " not implemented");
 
 			// fix up uri and nonce
 
-			params[uri] = new NVPair("uri", URI.escape(req.getRequestURI(),
-					URI.escpdPathChar, false));
+			params[uri] = new NVPair("uri", URI.escape(req.getRequestURI(), URI.escpdPathChar, false));
 			String old_nonce = params[nonce].getValue();
-			if (ch_nonce != -1
-					&& !old_nonce.equals(ch_params[ch_nonce].getValue()))
+			if (ch_nonce != -1 && !old_nonce.equals(ch_params[ch_nonce].getValue()))
 				params[nonce] = ch_params[ch_nonce];
 
 			// update or add optional attributes (opaque, algorithm, cnonce,
@@ -446,9 +406,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 				params[alg] = ch_params[ch_alg];
 			}
 
-			if (ch_qop != -1
-					|| (ch_alg != -1 && ch_params[ch_alg].getValue()
-							.equalsIgnoreCase("MD5-sess"))) {
+			if (ch_qop != -1 || (ch_alg != -1 && ch_params[ch_alg].getValue().equalsIgnoreCase("MD5-sess"))) {
 				if (cnonce == -1) {
 					params = Util.resizeArray(params, params.length + 1);
 					cnonce = params.length - 1;
@@ -468,8 +426,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 				time[6] = (byte) ((l_time >> 48) & 0xFF);
 				time[7] = (byte) ((l_time >> 56) & 0xFF);
 
-				params[cnonce] = new NVPair("cnonce", MD5.hexDigest(
-						digest_secret, time));
+				params[cnonce] = new NVPair("cnonce", MD5.hexDigest(digest_secret, time));
 			}
 
 			// select qop option
@@ -498,14 +455,10 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 				if (p == null) {
 					for (int idx = 0; idx < qops.length; idx++)
 						if (qops[idx].equalsIgnoreCase("auth-int"))
-							throw new AuthSchemeNotImplException(
-									"Digest auth scheme: Can't comply with qop "
-											+ "option 'auth-int' because an HttpOutputStream "
-											+ "is being used and the server doesn't speak "
-											+ "HTTP/1.1");
+							throw new AuthSchemeNotImplException("Digest auth scheme: Can't comply with qop "
+									+ "option 'auth-int' because an HttpOutputStream " + "is being used and the server doesn't speak " + "HTTP/1.1");
 
-					throw new AuthSchemeNotImplException("Digest auth scheme: "
-							+ "None of the available qop options '"
+					throw new AuthSchemeNotImplException("Digest auth scheme: " + "None of the available qop options '"
 							+ ch_params[ch_qop].getValue() + "' implemented");
 				}
 				params[qop] = new NVPair("qop", p);
@@ -515,37 +468,30 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 
 			if (qop != -1) {
 				/*
-				 * Note: we should actually be serializing all requests through
-				 * here so that the server sees the nonce-count in a strictly
-				 * increasing order. However, this would be a *major* hassle to
-				 * do, so we're just winging it. Most of the time the requests
-				 * will go over the wire in the same order as they pass through
-				 * here, but in MT apps it's possible for one request to
-				 * "overtake" another between here and the synchronized block in
-				 * sendRequest().
+				 * Note: we should actually be serializing all requests through here
+				 * so that the server sees the nonce-count in a strictly increasing
+				 * order. However, this would be a *major* hassle to do, so we're
+				 * just winging it. Most of the time the requests will go over the
+				 * wire in the same order as they pass through here, but in MT apps
+				 * it's possible for one request to "overtake" another between here
+				 * and the synchronized block in sendRequest().
 				 */
 				if (nc == -1) {
 					params = Util.resizeArray(params, params.length + 1);
 					nc = params.length - 1;
 					params[nc] = new NVPair("nc", "00000001");
 				} else if (old_nonce.equals(params[nonce].getValue())) {
-					String c = Long.toHexString(Long.parseLong(
-							params[nc].getValue(), 16) + 1);
-					params[nc] = new NVPair("nc", "00000000".substring(c
-							.length()) + c);
+					String c = Long.toHexString(Long.parseLong(params[nc].getValue(), 16) + 1);
+					params[nc] = new NVPair("nc", "00000000".substring(c.length()) + c);
 				} else
 					params[nc] = new NVPair("nc", "00000001");
 			}
 
 			// calc new session key if necessary
 
-			if (challenge != null
-					&& (ch_stale == -1 || !ch_params[ch_stale].getValue()
-							.equalsIgnoreCase("true")) && alg != -1
+			if (challenge != null && (ch_stale == -1 || !ch_params[ch_stale].getValue().equalsIgnoreCase("true")) && alg != -1
 					&& params[alg].getValue().equalsIgnoreCase("MD5-sess")) {
-				extra[DI_A1S] = MD5.hexDigest(extra[DI_A1] + ":"
-						+ params[nonce].getValue() + ":"
-						+ params[cnonce].getValue());
+				extra[DI_A1S] = MD5.hexDigest(extra[DI_A1] + ":" + params[nonce].getValue() + ":" + params[cnonce].getValue());
 			}
 
 			// update parameters for next auth cycle
@@ -557,24 +503,19 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 		// calc "response" attribute
 
 		String hash = null;
-		if (qop != -1 && params[qop].getValue().equalsIgnoreCase("auth-int")
-				&& req.getStream() == null) {
+		if (qop != -1 && params[qop].getValue().equalsIgnoreCase("auth-int") && req.getStream() == null) {
 			hash = MD5.hexDigest(req.getData() == null ? NUL : req.getData());
 		}
 
 		if (req.getStream() == null)
-			params[response] = new NVPair("response", calcResponseAttr(hash,
-					extra, params, alg, uri, qop, nonce, nc, cnonce,
-					req.getMethod()));
+			params[response] = new NVPair("response", calcResponseAttr(hash, extra, params, alg, uri, qop, nonce, nc, cnonce, req.getMethod()));
 
 		// calc digest if necessary
 
 		AuthorizationInfo new_info;
 
 		boolean ch_dreq_val = false;
-		if (ch_dreq != -1
-				&& (ch_params[ch_dreq].getValue() == null || ch_params[ch_dreq]
-						.getValue().equalsIgnoreCase("true")))
+		if (ch_dreq != -1 && (ch_params[ch_dreq].getValue() == null || ch_params[ch_dreq].getValue().equalsIgnoreCase("true")))
 			ch_dreq_val = true;
 
 		if ((ch_dreq_val || digest != -1) && req.getStream() == null) {
@@ -584,8 +525,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 				digest = params.length;
 			} else
 				d_params = params;
-			d_params[digest] = new NVPair("digest", calc_digest(req,
-					extra[DI_A1], params[nonce].getValue()));
+			d_params[digest] = new NVPair("digest", calc_digest(req, extra[DI_A1], params[nonce].getValue()));
 
 			if (dreq == -1) // if server requires digest, then so do we...
 			{
@@ -594,30 +534,24 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 				d_params[dreq] = new NVPair("digest-required", "true");
 			}
 
-			new_info = new AuthorizationInfo(info.getHost(), info.getPort(),
-					info.getScheme(), info.getRealm(), d_params, extra);
+			new_info = new AuthorizationInfo(info.getHost(), info.getPort(), info.getScheme(), info.getRealm(), d_params, extra);
 		} else if (ch_dreq_val)
 			new_info = null;
 		else
-			new_info = new AuthorizationInfo(info.getHost(), info.getPort(),
-					info.getScheme(), info.getRealm(), params, extra);
+			new_info = new AuthorizationInfo(info.getHost(), info.getPort(), info.getScheme(), info.getRealm(), params, extra);
 
 		// add info for other domains, if listed
 
-		boolean from_server = (challenge != null)
-				&& challenge.getHost().equalsIgnoreCase(
-						req.getConnection().getHost());
+		boolean from_server = (challenge != null) && challenge.getHost().equalsIgnoreCase(req.getConnection().getHost());
 		if (ch_domain != -1) {
 			URI base = null;
 			try {
-				base = new URI(req.getConnection().getProtocol(), req
-						.getConnection().getHost(), req.getConnection()
-						.getPort(), req.getRequestURI());
+				base = new URI(req.getConnection().getProtocol(), req.getConnection().getHost(), req.getConnection().getPort(),
+						req.getRequestURI());
 			} catch (ParseException pe) {
 			}
 
-			StringTokenizer tok = new StringTokenizer(
-					ch_params[ch_domain].getValue());
+			StringTokenizer tok = new StringTokenizer(ch_params[ch_domain].getValue());
 			while (tok.hasMoreTokens()) {
 				URI Uri;
 				try {
@@ -628,13 +562,11 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 				if (Uri.getHost() == null)
 					continue;
 
-				AuthorizationInfo tmp = AuthorizationInfo.getAuthorization(
-						Uri.getHost(), Uri.getPort(), info.getScheme(),
-						info.getRealm(), req.getConnection().getContext());
+				AuthorizationInfo tmp = AuthorizationInfo.getAuthorization(Uri.getHost(), Uri.getPort(), info.getScheme(), info.getRealm(), req
+						.getConnection().getContext());
 				if (tmp == null) {
 					params[uri] = new NVPair("uri", Uri.getPathAndQuery());
-					tmp = new AuthorizationInfo(Uri.getHost(), Uri.getPort(),
-							info.getScheme(), info.getRealm(), params, extra);
+					tmp = new AuthorizationInfo(Uri.getHost(), Uri.getPort(), info.getScheme(), info.getRealm(), params, extra);
 					AuthorizationInfo.addAuthorization(tmp);
 				}
 				if (from_server)
@@ -643,8 +575,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 		} else if (from_server && challenge != null) {
 			// Spec says that if no domain attribute is present then the
 			// whole server should be considered being in the same space
-			AuthorizationInfo tmp = AuthorizationInfo.getAuthorization(
-					challenge.getHost(), challenge.getPort(), info.getScheme(),
+			AuthorizationInfo tmp = AuthorizationInfo.getAuthorization(challenge.getHost(), challenge.getPort(), info.getScheme(),
 					info.getRealm(), req.getConnection().getContext());
 			if (tmp != null)
 				tmp.addPath("/");
@@ -658,18 +589,15 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	/**
 	 * @return the fixed info is stale=true; null otherwise
 	 */
-	private static AuthorizationInfo digest_check_stale(
-			AuthorizationInfo challenge, RoRequest req, RoResponse resp)
+	private static AuthorizationInfo digest_check_stale(AuthorizationInfo challenge, RoRequest req, RoResponse resp)
 			throws AuthSchemeNotImplException, IOException {
 		AuthorizationInfo cred = null;
 
 		NVPair[] params = challenge.getParams();
 		for (int idx = 0; idx < params.length; idx++) {
 			String name = params[idx].getName();
-			if (name.equalsIgnoreCase("stale")
-					&& params[idx].getValue().equalsIgnoreCase("true")) {
-				cred = AuthorizationInfo.getAuthorization(challenge, req, resp,
-						false);
+			if (name.equalsIgnoreCase("stale") && params[idx].getValue().equalsIgnoreCase("true")) {
+				cred = AuthorizationInfo.getAuthorization(challenge, req, resp, false);
 				if (cred != null) // should always be the case
 					return digest_fixup(cred, req, challenge, resp);
 				break; // should never be reached
@@ -682,8 +610,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	/**
 	 * Handle nextnonce field.
 	 */
-	private static boolean handle_nextnonce(AuthorizationInfo prev,
-			RoRequest req, HttpHeaderElement nextnonce) throws IOException {
+	private static boolean handle_nextnonce(AuthorizationInfo prev, RoRequest req, HttpHeaderElement nextnonce) throws IOException {
 		if (prev == null || nextnonce == null || nextnonce.getValue() == null)
 			return false;
 
@@ -706,19 +633,16 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	/**
 	 * Handle digest field of the Authentication-Info response header.
 	 */
-	private static boolean handle_digest(AuthorizationInfo prev, Response resp,
-			RoRequest req, String hdr_name) throws IOException {
+	private static boolean handle_digest(AuthorizationInfo prev, Response resp, RoRequest req, String hdr_name) throws IOException {
 		if (prev == null)
 			return false;
 
 		NVPair[] params = prev.getParams();
-		VerifyDigest verifier = new VerifyDigest(
-				((String[]) prev.getExtraInfo())[0], getValue(params, "nonce"),
-				req.getMethod(), getValue(params, "uri"), hdr_name, resp);
+		VerifyDigest verifier = new VerifyDigest(((String[]) prev.getExtraInfo())[0], getValue(params, "nonce"), req.getMethod(), getValue(
+				params, "uri"), hdr_name, resp);
 
 		if (resp.hasEntity()) {
-			Log.write(Log.AUTH, "Auth:  pushing md5-check-stream to verify "
-					+ "digest from " + hdr_name);
+			Log.write(Log.AUTH, "Auth:  pushing md5-check-stream to verify " + "digest from " + hdr_name);
 			resp.inp_stream = new MD5InputStream(resp.inp_stream, verifier);
 		} else {
 			Log.write(Log.AUTH, "Auth:  verifying digest from " + hdr_name);
@@ -731,8 +655,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	/**
 	 * Handle rspauth field of the Authentication-Info response header.
 	 */
-	private static boolean handle_rspauth(AuthorizationInfo prev,
-			Response resp, RoRequest req, Vector<HttpHeaderElement> auth_info,
+	private static boolean handle_rspauth(AuthorizationInfo prev, Response resp, RoRequest req, Vector<HttpHeaderElement> auth_info,
 			String hdr_name) throws IOException {
 		if (prev == null)
 			return false;
@@ -757,28 +680,21 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 
 		// create hash verifier to verify rspauth
 
-		VerifyRspAuth verifier = new VerifyRspAuth(params[uri].getValue(),
-				((String[]) prev.getExtraInfo())[0], (alg == -1 ? null
-						: params[alg].getValue()), params[nonce].getValue(),
-				(cnonce == -1 ? "" : params[cnonce].getValue()), (nc == -1 ? ""
-						: params[nc].getValue()), hdr_name, resp);
+		VerifyRspAuth verifier = new VerifyRspAuth(params[uri].getValue(), ((String[]) prev.getExtraInfo())[0], (alg == -1 ? null
+				: params[alg].getValue()), params[nonce].getValue(), (cnonce == -1 ? "" : params[cnonce].getValue()), (nc == -1 ? ""
+				: params[nc].getValue()), hdr_name, resp);
 
 		// if Authentication-Info in header and qop=auth then verify immediately
 
 		HttpHeaderElement qop = null;
-		if (auth_info != null
-				&& (qop = Util.getElement(auth_info, "qop")) != null
-				&& qop.getValue() != null
-				&& (qop.getValue().equalsIgnoreCase("auth") || !resp
-						.hasEntity()
-						&& qop.getValue().equalsIgnoreCase("auth-int"))) {
+		if (auth_info != null && (qop = Util.getElement(auth_info, "qop")) != null && qop.getValue() != null
+				&& (qop.getValue().equalsIgnoreCase("auth") || !resp.hasEntity() && qop.getValue().equalsIgnoreCase("auth-int"))) {
 			Log.write(Log.AUTH, "Auth:  verifying rspauth from " + hdr_name);
 			verifier.verifyHash(MD5.digest(NUL), 0);
 		} else {
 			// else push md5 stream and verify after body
 
-			Log.write(Log.AUTH, "Auth:  pushing md5-check-stream to verify "
-					+ "rspauth from " + hdr_name);
+			Log.write(Log.AUTH, "Auth:  pushing md5-check-stream to verify " + "rspauth from " + hdr_name);
 			resp.inp_stream = new MD5InputStream(resp.inp_stream, verifier);
 		}
 
@@ -788,8 +704,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	/**
 	 * Calc "response" attribute for a request.
 	 */
-	private static String calcResponseAttr(String hash, String[] extra,
-			NVPair[] params, int alg, int uri, int qop, int nonce, int nc,
+	private static String calcResponseAttr(String hash, String[] extra, NVPair[] params, int alg, int uri, int qop, int nonce, int nc,
 			int cnonce, String method) {
 		String A1, A2, resp_val;
 
@@ -805,12 +720,10 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 		A2 = MD5.hexDigest(A2);
 
 		if (qop == -1)
-			resp_val = MD5.hexDigest(A1 + ":" + params[nonce].getValue() + ":"
-					+ A2);
+			resp_val = MD5.hexDigest(A1 + ":" + params[nonce].getValue() + ":" + A2);
 		else
-			resp_val = MD5.hexDigest(A1 + ":" + params[nonce].getValue() + ":"
-					+ params[nc].getValue() + ":" + params[cnonce].getValue()
-					+ ":" + params[qop].getValue() + ":" + A2);
+			resp_val = MD5.hexDigest(A1 + ":" + params[nonce].getValue() + ":" + params[nc].getValue() + ":" + params[cnonce].getValue() + ":"
+					+ params[qop].getValue() + ":" + A2);
 
 		return resp_val;
 	}
@@ -820,8 +733,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	 * draft-ietf-http-authentication-00.txt, but has subsequently been removed.
 	 * Here for backwards compatibility.
 	 */
-	private static String calc_digest(RoRequest req, String A1_hash,
-			String nonce) {
+	private static String calc_digest(RoRequest req, String A1_hash, String nonce) {
 		if (req.getStream() != null)
 			return "";
 
@@ -844,24 +756,16 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 		byte[] entity_body = (req.getData() == null ? NUL : req.getData());
 		String entity_hash = MD5.hexDigest(entity_body);
 
-		String entity_info = MD5.hexDigest(req.getRequestURI() + ":"
-				+ (ct == -1 ? "" : hdrs[ct].getValue()) + ":"
-				+ entity_body.length + ":"
-				+ (ce == -1 ? "" : hdrs[ce].getValue()) + ":"
-				+ (lm == -1 ? "" : hdrs[lm].getValue()) + ":"
+		String entity_info = MD5.hexDigest(req.getRequestURI() + ":" + (ct == -1 ? "" : hdrs[ct].getValue()) + ":" + entity_body.length + ":"
+				+ (ce == -1 ? "" : hdrs[ce].getValue()) + ":" + (lm == -1 ? "" : hdrs[lm].getValue()) + ":"
 				+ (ex == -1 ? "" : hdrs[ex].getValue()));
-		String entity_digest = A1_hash + ":" + nonce + ":" + req.getMethod()
-				+ ":" + (dt == -1 ? "" : hdrs[dt].getValue()) + ":"
+		String entity_digest = A1_hash + ":" + nonce + ":" + req.getMethod() + ":" + (dt == -1 ? "" : hdrs[dt].getValue()) + ":"
 				+ entity_info + ":" + entity_hash;
 
 		if (Log.isEnabled(Log.AUTH)) {
-			Log.write(Log.AUTH,
-					"Auth:  Entity-Info: '" + req.getRequestURI() + ":"
-							+ (ct == -1 ? "" : hdrs[ct].getValue()) + ":"
-							+ entity_body.length + ":"
-							+ (ce == -1 ? "" : hdrs[ce].getValue()) + ":"
-							+ (lm == -1 ? "" : hdrs[lm].getValue()) + ":"
-							+ (ex == -1 ? "" : hdrs[ex].getValue()) + "'");
+			Log.write(Log.AUTH, "Auth:  Entity-Info: '" + req.getRequestURI() + ":" + (ct == -1 ? "" : hdrs[ct].getValue()) + ":"
+					+ entity_body.length + ":" + (ce == -1 ? "" : hdrs[ce].getValue()) + ":" + (lm == -1 ? "" : hdrs[lm].getValue()) + ":"
+					+ (ex == -1 ? "" : hdrs[ex].getValue()) + "'");
 			Log.write(Log.AUTH, "Auth:  Entity-Body: '" + entity_hash + "'");
 			Log.write(Log.AUTH, "Auth:  Entity-Digest: '" + entity_digest + "'");
 		}
@@ -872,11 +776,9 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	/**
 	 * Handle discard token
 	 */
-	private static boolean handle_discard(AuthorizationInfo prev,
-			RoRequest req, HttpHeaderElement discard) {
+	private static boolean handle_discard(AuthorizationInfo prev, RoRequest req, HttpHeaderElement discard) {
 		if (discard != null && prev != null) {
-			AuthorizationInfo.removeAuthorization(prev, req.getConnection()
-					.getContext());
+			AuthorizationInfo.removeAuthorization(prev, req.getConnection().getContext());
 			return true;
 		}
 
@@ -887,7 +789,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	 * Generate <var>num</var> bytes of random data.
 	 * 
 	 * @param num
-	 *            the number of bytes to generate
+	 *           the number of bytes to generate
 	 * @return a byte array of random data
 	 */
 	private static byte[] gen_random_bytes(int num) {
@@ -906,8 +808,8 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 		}
 
 		/*
-		 * This is probably a much better generator, but it can be awfully slow
-		 * (~ 6 secs / byte on my old LX)
+		 * This is probably a much better generator, but it can be awfully slow (~
+		 * 6 secs / byte on my old LX)
 		 */
 		// return new java.security.SecureRandom().getSeed(num);
 
@@ -938,9 +840,9 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	 * case-insensitive search.
 	 * 
 	 * @param list
-	 *            an array of NVPair's
+	 *           an array of NVPair's
 	 * @param key
-	 *            the key to search for
+	 *           the key to search for
 	 * @return the value of the NVPair with that key, or null if not found.
 	 */
 	private final static String getValue(NVPair[] list, String key) {
@@ -958,9 +860,9 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	 * case-insensitive search.
 	 * 
 	 * @param list
-	 *            an array of NVPair's
+	 *           an array of NVPair's
 	 * @param key
-	 *            the key to search for
+	 *           the key to search for
 	 * @return the index of the NVPair with that key, or -1 if not found.
 	 */
 	private final static int getIndex(NVPair[] list, String key) {
@@ -978,11 +880,11 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	 * (case-insensitive). If no name matches, a new entry is created.
 	 * 
 	 * @param list
-	 *            an array of NVPair's
+	 *           an array of NVPair's
 	 * @param key
-	 *            the name of the NVPair
+	 *           the name of the NVPair
 	 * @param val
-	 *            the value of the new NVPair
+	 *           the value of the new NVPair
 	 * @return the (possibly) new list
 	 */
 	private final static NVPair[] setValue(NVPair[] list, String key, String val) {
@@ -1031,8 +933,7 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 		byte[] digest = new byte[hex.length() / 2];
 
 		for (int idx = 0; idx < digest.length; idx++) {
-			digest[idx] = (byte) (0xFF & Integer.parseInt(
-					hex.substring(2 * idx, 2 * (idx + 1)), 16));
+			digest[idx] = (byte) (0xFF & Integer.parseInt(hex.substring(2 * idx, 2 * (idx + 1)), 16));
 		}
 
 		return digest;
@@ -1042,12 +943,11 @@ public class DefaultAuthHandler implements AuthorizationHandler,
 	 * Set a new username/password prompter.
 	 * 
 	 * @param prompt
-	 *            the AuthorizationPrompter to use whenever a username and
-	 *            password are needed; if null, no querying will be done
+	 *           the AuthorizationPrompter to use whenever a username and
+	 *           password are needed; if null, no querying will be done
 	 * @return the previous prompter
 	 */
-	public static synchronized AuthorizationPrompter setAuthorizationPrompter(
-			AuthorizationPrompter prompt) {
+	public static synchronized AuthorizationPrompter setAuthorizationPrompter(AuthorizationPrompter prompt) {
 		AuthorizationPrompter prev = prompter;
 		prompter = prompt;
 		prompterSet = true;
@@ -1103,8 +1003,7 @@ class VerifyRspAuth implements HashVerifier, GlobalConstants {
 	private String hdr;
 	private RoResponse resp;
 
-	public VerifyRspAuth(String uri, String HA1, String alg, String nonce,
-			String cnonce, String nc, String hdr, RoResponse resp) {
+	public VerifyRspAuth(String uri, String HA1, String alg, String nonce, String cnonce, String nc, String hdr, RoResponse resp) {
 		this.uri = uri;
 		this.HA1 = HA1;
 		this.alg = alg;
@@ -1115,6 +1014,7 @@ class VerifyRspAuth implements HashVerifier, GlobalConstants {
 		this.resp = resp;
 	}
 
+	@Override
 	public void verifyHash(byte[] hash, long len) throws IOException {
 		String auth_info = resp.getHeader(hdr);
 		if (auth_info == null)
@@ -1131,10 +1031,7 @@ class VerifyRspAuth implements HashVerifier, GlobalConstants {
 
 		String qop;
 		HttpHeaderElement elem = Util.getElement(pai, "qop");
-		if (elem == null
-				|| (qop = elem.getValue()) == null
-				|| (!qop.equalsIgnoreCase("auth") && !qop
-						.equalsIgnoreCase("auth-int")))
+		if (elem == null || (qop = elem.getValue()) == null || (!qop.equalsIgnoreCase("auth") && !qop.equalsIgnoreCase("auth-int")))
 			return;
 
 		elem = Util.getElement(pai, "rspauth");
@@ -1143,18 +1040,12 @@ class VerifyRspAuth implements HashVerifier, GlobalConstants {
 		byte[] digest = DefaultAuthHandler.unHex(elem.getValue());
 
 		elem = Util.getElement(pai, "cnonce");
-		if (elem != null && elem.getValue() != null
-				&& !elem.getValue().equals(cnonce))
-			throw new IOException("Digest auth scheme: received wrong "
-					+ "client-nonce '" + elem.getValue() + "' - expected '"
-					+ cnonce + "'");
+		if (elem != null && elem.getValue() != null && !elem.getValue().equals(cnonce))
+			throw new IOException("Digest auth scheme: received wrong " + "client-nonce '" + elem.getValue() + "' - expected '" + cnonce + "'");
 
 		elem = Util.getElement(pai, "nc");
-		if (elem != null && elem.getValue() != null
-				&& !elem.getValue().equals(nc))
-			throw new IOException("Digest auth scheme: received wrong "
-					+ "nonce-count '" + elem.getValue() + "' - expected '" + nc
-					+ "'");
+		if (elem != null && elem.getValue() != null && !elem.getValue().equals(nc))
+			throw new IOException("Digest auth scheme: received wrong " + "nonce-count '" + elem.getValue() + "' - expected '" + nc + "'");
 
 		String A1, A2;
 		if (alg != null && alg.equalsIgnoreCase("MD5-sess"))
@@ -1168,18 +1059,15 @@ class VerifyRspAuth implements HashVerifier, GlobalConstants {
 			A2 += ":" + MD5.toHex(hash);
 		A2 = MD5.hexDigest(A2);
 
-		hash = MD5.digest(A1 + ":" + nonce + ":" + nc + ":" + cnonce + ":"
-				+ qop + ":" + A2);
+		hash = MD5.digest(A1 + ":" + nonce + ":" + nc + ":" + cnonce + ":" + qop + ":" + A2);
 
 		for (int idx = 0; idx < hash.length; idx++) {
 			if (hash[idx] != digest[idx])
-				throw new IOException("MD5-Digest mismatch: expected "
-						+ DefaultAuthHandler.hex(digest) + " but calculated "
+				throw new IOException("MD5-Digest mismatch: expected " + DefaultAuthHandler.hex(digest) + " but calculated "
 						+ DefaultAuthHandler.hex(hash));
 		}
 
-		Log.write(Log.AUTH, "Auth:  rspauth from " + hdr
-				+ " successfully verified");
+		Log.write(Log.AUTH, "Auth:  rspauth from " + hdr + " successfully verified");
 	}
 }
 
@@ -1194,8 +1082,7 @@ class VerifyDigest implements HashVerifier, GlobalConstants {
 	private String hdr;
 	private RoResponse resp;
 
-	public VerifyDigest(String HA1, String nonce, String method, String uri,
-			String hdr, RoResponse resp) {
+	public VerifyDigest(String HA1, String nonce, String method, String uri, String hdr, RoResponse resp) {
 		this.HA1 = HA1;
 		this.nonce = nonce;
 		this.method = method;
@@ -1204,6 +1091,7 @@ class VerifyDigest implements HashVerifier, GlobalConstants {
 		this.resp = resp;
 	}
 
+	@Override
 	public void verifyHash(byte[] hash, long len) throws IOException {
 		String auth_info = resp.getHeader(hdr);
 		if (auth_info == null)
@@ -1223,29 +1111,20 @@ class VerifyDigest implements HashVerifier, GlobalConstants {
 
 		byte[] digest = DefaultAuthHandler.unHex(elem.getValue());
 
-		String entity_info = MD5.hexDigest(uri + ":"
-				+ header_val("Content-Type", resp) + ":"
-				+ header_val("Content-Length", resp) + ":"
-				+ header_val("Content-Encoding", resp) + ":"
-				+ header_val("Last-Modified", resp) + ":"
-				+ header_val("Expires", resp));
-		hash = MD5.digest(HA1 + ":" + nonce + ":" + method + ":"
-				+ header_val("Date", resp) + ":" + entity_info + ":"
-				+ MD5.toHex(hash));
+		String entity_info = MD5.hexDigest(uri + ":" + header_val("Content-Type", resp) + ":" + header_val("Content-Length", resp) + ":"
+				+ header_val("Content-Encoding", resp) + ":" + header_val("Last-Modified", resp) + ":" + header_val("Expires", resp));
+		hash = MD5.digest(HA1 + ":" + nonce + ":" + method + ":" + header_val("Date", resp) + ":" + entity_info + ":" + MD5.toHex(hash));
 
 		for (int idx = 0; idx < hash.length; idx++) {
 			if (hash[idx] != digest[idx])
-				throw new IOException("MD5-Digest mismatch: expected "
-						+ DefaultAuthHandler.hex(digest) + " but calculated "
+				throw new IOException("MD5-Digest mismatch: expected " + DefaultAuthHandler.hex(digest) + " but calculated "
 						+ DefaultAuthHandler.hex(hash));
 		}
 
-		Log.write(Log.AUTH, "Auth:  digest from " + hdr
-				+ " successfully verified");
+		Log.write(Log.AUTH, "Auth:  digest from " + hdr + " successfully verified");
 	}
 
-	private static final String header_val(String hdr_name, RoResponse resp)
-			throws IOException {
+	private static final String header_val(String hdr_name, RoResponse resp) throws IOException {
 		String hdr = resp.getHeader(hdr_name);
 		String tlr = resp.getTrailer(hdr_name);
 		return (hdr != null ? hdr : (tlr != null ? tlr : ""));
@@ -1260,8 +1139,8 @@ class SimpleAuthPopup implements AuthorizationPrompter {
 	 * 
 	 * @return the username/password pair
 	 */
-	public NVPair getUsernamePassword(AuthorizationInfo challenge,
-			boolean forProxy) {
+	@Override
+	public NVPair getUsernamePassword(AuthorizationInfo challenge, boolean forProxy) {
 		String line1, line2, line3;
 
 		if (challenge.getScheme().equalsIgnoreCase("SOCKS5")) {
@@ -1269,10 +1148,8 @@ class SimpleAuthPopup implements AuthorizationPrompter {
 			line2 = challenge.getHost();
 			line3 = "Authentication Method: username/password";
 		} else {
-			line1 = "Enter username and password for realm `"
-					+ challenge.getRealm() + "'";
-			line2 = "on host " + challenge.getHost() + ":"
-					+ challenge.getPort();
+			line1 = "Enter username and password for realm `" + challenge.getRealm() + "'";
+			line2 = "on host " + challenge.getHost() + ":" + challenge.getPort();
 			line3 = "Authentication Scheme: " + challenge.getScheme();
 		}
 
@@ -1360,6 +1237,7 @@ class SimpleAuthPopup implements AuthorizationPrompter {
 		 * our event handlers
 		 */
 		private class Ok implements ActionListener {
+			@Override
 			public void actionPerformed(ActionEvent ae) {
 				done = OK;
 				synchronized (BasicAuthBox.this) {
@@ -1369,6 +1247,7 @@ class SimpleAuthPopup implements AuthorizationPrompter {
 		}
 
 		private class Clear implements ActionListener {
+			@Override
 			public void actionPerformed(ActionEvent ae) {
 				user.setText("");
 				pass.setText("");
@@ -1377,6 +1256,7 @@ class SimpleAuthPopup implements AuthorizationPrompter {
 		}
 
 		private class Cancel implements ActionListener {
+			@Override
 			public void actionPerformed(ActionEvent ae) {
 				done = CANCEL;
 				synchronized (BasicAuthBox.this) {
@@ -1386,6 +1266,7 @@ class SimpleAuthPopup implements AuthorizationPrompter {
 		}
 
 		private class Close extends WindowAdapter {
+			@Override
 			public void windowClosing(WindowEvent we) {
 				new Cancel().actionPerformed(null);
 			}
@@ -1396,8 +1277,7 @@ class SimpleAuthPopup implements AuthorizationPrompter {
 		 * 
 		 * @return the username/password pair
 		 */
-		synchronized NVPair getInput(String l1, String l2, String l3,
-				String scheme) {
+		synchronized NVPair getInput(String l1, String l2, String l3, String scheme) {
 			line1.setText(l1);
 			line2.setText(l2);
 			line3.setText(l3);
@@ -1409,9 +1289,7 @@ class SimpleAuthPopup implements AuthorizationPrompter {
 			setResizable(true);
 			pack();
 			setResizable(false);
-			setLocation(
-					(screen.width - getPreferredSize().width) / 2,
-					(int) ((screen.height - getPreferredSize().height) / 2 * .7));
+			setLocation((screen.width - getPreferredSize().width) / 2, (int) ((screen.height - getPreferredSize().height) / 2 * .7));
 
 			boolean user_focus = true;
 			if (scheme.equalsIgnoreCase("NTLM")) {
@@ -1440,10 +1318,10 @@ class SimpleAuthPopup implements AuthorizationPrompter {
 			user.setText("");
 			pass.setText("");
 
-			if (done == CANCEL)
+			if (done == CANCEL) {
 				return null;
-			else
-				return result;
+			}
+			return result;
 		}
 	}
 }
@@ -1461,26 +1339,22 @@ class SimpleAuthPrompt implements AuthorizationPrompter {
 	 * 
 	 * @return the username/password pair
 	 */
-	public NVPair getUsernamePassword(AuthorizationInfo challenge,
-			boolean forProxy) {
+	@Override
+	public NVPair getUsernamePassword(AuthorizationInfo challenge, boolean forProxy) {
 		String user, pass;
 
 		if (challenge.getScheme().equalsIgnoreCase("SOCKS5")) {
-			System.out.println("Enter username and password for SOCKS "
-					+ "server on host " + challenge.getHost());
+			System.out.println("Enter username and password for SOCKS " + "server on host " + challenge.getHost());
 			System.out.println("Authentication Method: username/password");
 		} else {
-			System.out.println("Enter username and password for realm `"
-					+ challenge.getRealm() + "' on host " + challenge.getHost()
-					+ ":" + challenge.getPort());
-			System.out.println("Authentication Scheme: "
-					+ challenge.getScheme());
+			System.out.println("Enter username and password for realm `" + challenge.getRealm() + "' on host " + challenge.getHost() + ":"
+					+ challenge.getPort());
+			System.out.println("Authentication Scheme: " + challenge.getScheme());
 		}
 
 		// get username
 
-		BufferedReader inp = new BufferedReader(
-				new InputStreamReader(System.in));
+		BufferedReader inp = new BufferedReader(new InputStreamReader(System.in));
 		System.out.print("Username: ");
 		System.out.flush();
 		try {
@@ -1519,23 +1393,21 @@ class SimpleAuthPrompt implements AuthorizationPrompter {
 		String os = System.getProperty("os.name");
 		String[] cmd = null;
 
-		if (os.equalsIgnoreCase("Windows 95")
-				|| os.equalsIgnoreCase("Windows NT"))
+		if (os.equalsIgnoreCase("Windows 95") || os.equalsIgnoreCase("Windows NT")) {
 			// I don't think this works on M$ ...
 			cmd = new String[] { "echo", on ? "on" : "off" };
-		else if (os.equalsIgnoreCase("Windows")
-				|| os.equalsIgnoreCase("16-bit Windows"))
-			; // ???
-		else if (os.equalsIgnoreCase("OS/2"))
-			; // ???
-		else if (os.equalsIgnoreCase("Mac OS") || os.equalsIgnoreCase("MacOS"))
-			; // ???
-		else if (os.equalsIgnoreCase("OpenVMS") || os.equalsIgnoreCase("VMS"))
+		} else if (os.equalsIgnoreCase("Windows") || os.equalsIgnoreCase("16-bit Windows")) {
+			// ???
+		} else if (os.equalsIgnoreCase("OS/2")) {
+			// ???
+		} else if (os.equalsIgnoreCase("Mac OS") || os.equalsIgnoreCase("MacOS")) {
+			// ???
+		} else if (os.equalsIgnoreCase("OpenVMS") || os.equalsIgnoreCase("VMS")) {
 			cmd = new String[] { "SET TERMINAL " + (on ? "/ECHO" : "/NOECHO") };
-		else
+		} else {
 			// probably unix
-			cmd = new String[] { "/bin/sh", "-c",
-					"stty " + (on ? "echo" : "-echo") + " < /dev/tty" };
+			cmd = new String[] { "/bin/sh", "-c", "stty " + (on ? "echo" : "-echo") + " < /dev/tty" };
+		}
 
 		if (cmd != null)
 			try {
@@ -1550,10 +1422,8 @@ class SimpleAuthPrompt implements AuthorizationPrompter {
 	static boolean canUseCLPrompt() {
 		String os = System.getProperty("os.name");
 
-		return (os.indexOf("Linux") >= 0 || os.indexOf("SunOS") >= 0
-				|| os.indexOf("Solaris") >= 0 || os.indexOf("BSD") >= 0
-				|| os.indexOf("AIX") >= 0 || os.indexOf("HP-UX") >= 0
-				|| os.indexOf("IRIX") >= 0 || os.indexOf("OSF") >= 0
+		return (os.indexOf("Linux") >= 0 || os.indexOf("SunOS") >= 0 || os.indexOf("Solaris") >= 0 || os.indexOf("BSD") >= 0
+				|| os.indexOf("AIX") >= 0 || os.indexOf("HP-UX") >= 0 || os.indexOf("IRIX") >= 0 || os.indexOf("OSF") >= 0
 				|| os.indexOf("A/UX") >= 0 || os.indexOf("VMS") >= 0);
 	}
 }

@@ -45,7 +45,7 @@ import java.io.FilterInputStream;
  * Jannesen) and the original compress code.
  * 
  * @version 0.3-3 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  */
 class UncompressInputStream extends FilterInputStream {
 	/**
@@ -61,12 +61,13 @@ class UncompressInputStream extends FilterInputStream {
 
 	byte[] one = new byte[1];
 
+	@Override
 	public synchronized int read() throws IOException {
 		int b = in.read(one, 0, 1);
-		if (b == 1)
+		if (b == 1) {
 			return (one[0] & 0xff);
-		else
-			return -1;
+		}
+		return -1;
 	}
 
 	// string table stuff
@@ -96,9 +97,12 @@ class UncompressInputStream extends FilterInputStream {
 	private boolean eof = false;
 	private static final int EXTRA = 64;
 
+	@Override
 	public synchronized int read(byte[] buf, int off, int len) throws IOException {
-		if (eof)
+		if (eof) {
 			return -1;
+		}
+
 		int start = off;
 
 		/*
@@ -293,20 +297,22 @@ class UncompressInputStream extends FilterInputStream {
 			end += got;
 	}
 
+	@Override
 	public synchronized long skip(long num) throws IOException {
 		byte[] tmp = new byte[(int) num];
 		int got = read(tmp, 0, (int) num);
 
-		if (got > 0)
-			return (long) got;
-		else
-			return 0L;
+		if (got > 0) {
+			return got;
+		}
+		return 0L;
 	}
 
+	@Override
 	public synchronized int available() throws IOException {
-		if (eof)
+		if (eof) {
 			return 0;
-
+		}
 		return in.available();
 	}
 

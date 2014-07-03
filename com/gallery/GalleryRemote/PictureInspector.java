@@ -34,17 +34,16 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
@@ -54,191 +53,116 @@ import javax.swing.event.DocumentListener;
 
 import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.model.Picture;
+import com.gallery.GalleryRemote.prictureinspect.CaptionPanel;
+import com.gallery.GalleryRemote.prictureinspect.IconAreaPanel;
+import com.gallery.GalleryRemote.prictureinspect.PathPanel;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 
 /**
- * Bean inspector for Pictures
+ * Bean inspector for Pictures (the right column in the main frame)
  * 
  * @author paour
+ * @author arothe
  */
 public class PictureInspector extends JPanel implements ActionListener, DocumentListener {
 
 	private static final long serialVersionUID = -5594312109149362431L;
-	public static final String MODULE = "PictInspec";
+	private static final String MODULE = "PictInspec";
+	private static final int FIRST_ROW_EXTRA = 8;
 
 	HashMap<String, JLabel> extraLabels = new HashMap<String, JLabel>();
 	HashMap<String, JTextArea> extraTextAreas = new HashMap<String, JTextArea>();
 	ArrayList<String> currentExtraFields = null;
-
-	JLabel jLabel5 = new JLabel();
-	JLabel jLabel6 = new JLabel();
-	JLabel jLabel4 = new JLabel();
-	JLabel jLabel8 = new JLabel();
-	JPanel jSpacer = new JPanel();
-	JLabel jLabel1 = new JLabel();
-	JLabel jLabel2 = new JLabel();
-
-	JScrollPane jScrollPane1 = new JScrollPane();
-	JScrollPane jScrollPane2 = new JScrollPane();
-
-	JButton jDeleteButton = new JButton();
-	JButton jUpButton = new JButton();
-	JButton jDownButton = new JButton();
-
-	JPanel jIconAreaPanel = new JPanel();
-	JTextArea jAlbum = new JTextArea();
-	JTextArea jSize = new JTextArea();
-	JTextArea jCaption = new JTextArea();
-	JTextArea jPath = new JTextArea();
-
+	List<Picture> pictures = null;
 	MainFrame mf = null;
-	java.util.List<Picture> pictures = null;
-	int emptyIconHeight = 0;
-	GridBagLayout gridBagLayout1 = new GridBagLayout();
-	JLabel jIcon = new JLabel();
-	JButton jRotateLeftButton = new JButton();
-	JButton jFlipButton = new JButton();
-	JButton jRotateRightButton = new JButton();
 
-	static int FIRST_ROW_EXTRA = 8;
+
+	JLabel jLabel5;
+	GridBagConstraints jLabel5Constraints;
+
+	JLabel jLabel6;
+	GridBagConstraints jLabel6Constraints;
+
+	JLabel jLabel4;
+	GridBagConstraints jLabel4Constraints;
+
+	JLabel jLabel8;
+	GridBagConstraints jLabel8Constraints;
+
+	JLabel jLabel1;
+	GridBagConstraints jLabel1Constraints;
+
+	JLabel jLabel2;
+	GridBagConstraints jLabel2Constraints;
+
+	JPanel jSpacer;
+	GridBagConstraints jSpacerConstraints;
+
+	JButton jDeleteButton;
+	GridBagConstraints jDeleteButtonConstraints;
+
+	JButton jUpButton;
+	GridBagConstraints jUpButtonConstraints;
+
+	JButton jDownButton;
+	GridBagConstraints jDownButtonConstraints;
+
+	IconAreaPanel jIconAreaPanel;
+	GridBagConstraints jIconAreaPanelConstraints;
+
+	JTextArea jAlbum;
+	GridBagConstraints jAlbumConstraints;
+
+	JTextArea jSize;
+	GridBagConstraints jSizeConstraints;
+
+	PathPanel jPathPanel;
+	GridBagConstraints jPathPanelConstraints;
+
+	CaptionPanel jCaptionPanel;
+	GridBagConstraints jCaptionPanelConstraints;
 
 	/**
 	 * Constructor for the PictureInspector object
 	 */
 	public PictureInspector() {
-		jbInit();
-		jbInitEvents();
-
-		emptyIconHeight = (int) jIcon.getPreferredSize().getHeight();
-		Log.log(Log.LEVEL_TRACE, MODULE, "emptyIconHeight: " + emptyIconHeight);
+		initUI();
+		initEvents();
+		Log.log(Log.LEVEL_TRACE, MODULE, "emptyIconHeight: " + getIconAreaPanel().getEmptyIconHeight());
 	}
 
-	private void jbInit() {
+	private void initUI() {
 		setLayout(new GridBagLayout());
-		jLabel5.setText(GRI18n.getString(MODULE, "Path"));
-		jLabel6.setText(GRI18n.getString(MODULE, "Album"));
-		jLabel4.setText(GRI18n.getString(MODULE, "Caption"));
-		jLabel8.setText(GRI18n.getString(MODULE, "Move"));
-		jLabel1.setText(GRI18n.getString(MODULE, "Size"));
-		jLabel2.setText(GRI18n.getString(MODULE, "Delete"));
 
-		jAlbum.setRows(0);
-		jAlbum.setEditable(false);
-		jAlbum.setFont(UIManager.getFont("Label.font"));
-		jAlbum.setBackground(UIManager.getColor("TextField.inactiveBackground"));
-		jSize.setRows(0);
-		jSize.setEditable(false);
-		jSize.setFont(UIManager.getFont("Label.font"));
-		jSize.setBackground(UIManager.getColor("TextField.inactiveBackground"));
-		jCaption.setLineWrap(true);
-		jCaption.setWrapStyleWord(true);
-		jCaption.setEditable(false);
-		jCaption.setFont(UIManager.getFont("Label.font"));
-		jCaption.setBackground(UIManager.getColor("TextField.inactiveBackground"));
-		jPath.setBackground(UIManager.getColor("TextField.inactiveBackground"));
-		jPath.setFont(UIManager.getFont("Label.font"));
-		jPath.setEditable(false);
-		jPath.setLineWrap(true);
+		add(getPathLabel(), getPathLabelConstraints());
+		add(getAlbumLabel(), getAlbumLabelConstraints());
+		add(getCaptionLabel(), getCaptionLabelConstraints());
+		add(getMoveLabel(), getMoveLabelConstraints());
+		add(getSizeLabel(), getSizeLabelConstraints());
+		add(getDeleteLabel(), getDeleteLabelConstraints());
+		add(getSpacer(), getSpacerConstraints());
+		add(getIconAreaPanel(), getIconAreaPanelConstraints());
+		add(getAlbumTextArea(), getAlbumTextAreaConstraints());
+		add(getSizeTextArea(), getSizeTextAreaConstraints());
+		add(getUpButton(), getUpButtonConstraints());
+		add(getDownButton(), getDownButtonConstraints());
+		add(getDeleteButton(), getDeleteButtonConstraints());
+		add(getPathPanel(), getPathPanelConstraints());
+		add(getCaptionPanel(), getCaptionPanelConstraints());
 
-		setupKeyboardHandling(jCaption);
-
-		jUpButton.setMaximumSize(new Dimension(120, 23));
-		jUpButton.setMinimumSize(new Dimension(120, 23));
-		jUpButton.setPreferredSize(new Dimension(120, 23));
-		jUpButton.setToolTipText(GRI18n.getString(MODULE, "upBtnTip"));
-		jUpButton.setText(GRI18n.getString(MODULE, "upBtn"));
-		jUpButton.setActionCommand("Up");
-		jUpButton.setHorizontalAlignment(SwingConstants.LEFT);
-		jUpButton.setIcon(GalleryRemote.iUp);
-		jDownButton.setMaximumSize(new Dimension(120, 23));
-		jDownButton.setMinimumSize(new Dimension(120, 23));
-		jDownButton.setPreferredSize(new Dimension(120, 23));
-		jDownButton.setToolTipText(GRI18n.getString(MODULE, "dnBtnTip"));
-		jDownButton.setText(GRI18n.getString(MODULE, "dnBtn"));
-		jDownButton.setActionCommand("Down");
-		jDownButton.setHorizontalAlignment(SwingConstants.LEFT);
-		jDownButton.setIcon(GalleryRemote.iDown);
-		jDeleteButton.setMaximumSize(new Dimension(120, 23));
-		jDeleteButton.setMinimumSize(new Dimension(120, 23));
-		jDeleteButton.setPreferredSize(new Dimension(120, 23));
-		jDeleteButton.setToolTipText(GRI18n.getString(MODULE, "delBtnTip"));
-		jDeleteButton.setActionCommand("Delete");
-		jDeleteButton.setHorizontalAlignment(SwingConstants.LEFT);
-		jDeleteButton.setText(GRI18n.getString(MODULE, "Delete"));
-		jDeleteButton.setIcon(GalleryRemote.iDelete);
-
-		jScrollPane1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		jScrollPane1.setBorder(null);
-		jScrollPane2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		jScrollPane2.setBorder(null);
-		jIconAreaPanel.setLayout(gridBagLayout1);
-
-		jIcon.setHorizontalAlignment(SwingConstants.CENTER);
-		jIcon.setHorizontalTextPosition(SwingConstants.CENTER);
-		jIcon.setText(GRI18n.getString(MODULE, "icon"));
-		jIcon.setVerticalTextPosition(SwingConstants.BOTTOM);
-		jRotateLeftButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		jRotateLeftButton.setToolTipText(GRI18n.getString(MODULE, "rotLtTip"));
-		jRotateLeftButton.setActionCommand("Left");
-		jRotateLeftButton.setIcon(GalleryRemote.iLeft);
-		jRotateRightButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		jRotateRightButton.setToolTipText(GRI18n.getString(MODULE, "rotRtTip"));
-		jRotateRightButton.setActionCommand("Right");
-		jRotateRightButton.setIcon(GalleryRemote.iRight);
-		jFlipButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		jFlipButton.setToolTipText(GRI18n.getString(MODULE, "flipTip"));
-		jFlipButton.setActionCommand("Flip");
-		jFlipButton.setIcon(GalleryRemote.iFlip);
-
-		add(jLabel5, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(1, 0, 0,
-				0), 2, 0));
-		add(jLabel6, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(1, 0, 0, 0),
-				2, 0));
-		add(jLabel4, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 0, 0,
-				0), 2, 0));
-		add(jLabel8, new GridBagConstraints(0, 4, 1, 2, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0),
-				2, 0));
-		add(jLabel1, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(1, 0, 0, 0),
-				2, 0));
-		add(jLabel2, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0),
-				2, 0));
-		add(jSpacer, new GridBagConstraints(0, 99, 2, 1, 1.0, 0.1, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(0, 0,
-				0, 0), 0, 0));
-
-		add(jIconAreaPanel, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-				new Insets(0, 0, 0, 0), 0, 0));
-		jIconAreaPanel.add(jIcon, new GridBagConstraints(0, 1, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-				new Insets(0, 0, 0, 0), 0, 0));
-
-		if (ImageUtils.useJpegtran) {
-			jIconAreaPanel.add(jRotateLeftButton, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST,
-					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-			jIconAreaPanel.add(jFlipButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
-					new Insets(0, 0, 0, 0), 0, 0));
-			jIconAreaPanel.add(jRotateRightButton, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST,
-					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		}
-
-		add(jAlbum, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0,
-				0, 0), 0, 0));
-		add(jSize, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
-				0), 0, 0));
-
-		add(jUpButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 0, 0, 0),
-				0, 0));
-		add(jDownButton, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-				new Insets(0, 0, 0, 0), 0, 0));
-		add(jDeleteButton, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 0, 0,
-				0), 0, 0));
-		add(jScrollPane1, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0,
-				0, 0), 0, 0));
-		add(jScrollPane2, new GridBagConstraints(1, 7, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(5, 0, 0,
-				0), 0, 0));
-		jScrollPane1.getViewport().add(jPath, null);
-		jScrollPane2.getViewport().add(jCaption, null);
-
+		setupKeyboardHandling(getCaption());
 		this.setMinimumSize(new Dimension(150, 0));
+	}
+
+	private void initEvents() {
+		jDeleteButton.addActionListener(this);
+		jUpButton.addActionListener(this);
+		jDownButton.addActionListener(this);
+		getRotateLeftButton().addActionListener(this);
+		getRotateRightButton().addActionListener(this);
+		getFlipButton().addActionListener(this);
+		getCaption().getDocument().addDocumentListener(this);
 	}
 
 	private void setupKeyboardHandling(JComponent c) {
@@ -246,21 +170,10 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_MASK), prevFocusAction.getValue(Action.NAME));
 		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), nextPictureAction.getValue(Action.NAME));
 		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), prevPictureAction.getValue(Action.NAME));
-
 		c.getActionMap().put(nextFocusAction.getValue(Action.NAME), nextFocusAction);
 		c.getActionMap().put(prevFocusAction.getValue(Action.NAME), prevFocusAction);
 		c.getActionMap().put(nextPictureAction.getValue(Action.NAME), nextPictureAction);
 		c.getActionMap().put(prevPictureAction.getValue(Action.NAME), prevPictureAction);
-	}
-
-	private void jbInitEvents() {
-		jDeleteButton.addActionListener(this);
-		jUpButton.addActionListener(this);
-		jDownButton.addActionListener(this);
-		jRotateLeftButton.addActionListener(this);
-		jRotateRightButton.addActionListener(this);
-		jFlipButton.addActionListener(this);
-		jCaption.getDocument().addDocumentListener(this);
 	}
 
 	// Event handling
@@ -339,8 +252,8 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		if (pictures != null && pictures.size() == 1) {
 			Picture p = pictures.get(0);
 
-			if (e.getDocument() == jCaption.getDocument()) {
-				p.setCaption(jCaption.getText());
+			if (e.getDocument() == getCaption().getDocument()) {
+				p.setCaption(getCaption().getText());
 			}
 
 			Iterator<String> it = extraTextAreas.keySet().iterator();
@@ -370,7 +283,7 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 	 */
 	public void setMainFrame(MainFrame mf) {
 		this.mf = mf;
-		replaceIcon(jIcon, ImageUtils.defaultThumbnail);
+		replaceIcon(getIcon(), ImageUtils.defaultThumbnail);
 	}
 
 	/**
@@ -384,76 +297,77 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		// Log.logStack(Log.TRACE, MODULE);
 		this.pictures = pictures;
 
-		jIcon.setPreferredSize(new Dimension(0, GalleryRemote.instance().properties.getThumbnailSize().height + emptyIconHeight
-				+ jIcon.getIconTextGap()));
+		getIcon().setPreferredSize(
+				new Dimension(0, GalleryRemote.instance().properties.getThumbnailSize().height + getIconAreaPanel().getEmptyIconHeight()
+						+ getIcon().getIconTextGap()));
 
 		if (pictures == null || pictures.isEmpty()) {
-			jIcon.setText(GRI18n.getString(MODULE, "noPicSel"));
-			replaceIcon(jIcon, ImageUtils.defaultThumbnail);
-			jPath.setText("");
+			getIcon().setText(GRI18n.getString(MODULE, "noPicSel"));
+			replaceIcon(getIcon(), ImageUtils.defaultThumbnail);
+			getPath().setText("");
 			jAlbum.setText("");
 
-			jCaption.setText("");
-			jCaption.setEditable(false);
-			jCaption.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+			getCaption().setText("");
+			getCaption().setEditable(false);
+			getCaption().setBackground(UIManager.getColor("TextField.inactiveBackground"));
 
 			jSize.setText("");
 
 			jUpButton.setEnabled(false);
 			jDownButton.setEnabled(false);
 			jDeleteButton.setEnabled(false);
-			jRotateLeftButton.setEnabled(false);
-			jRotateRightButton.setEnabled(false);
-			jFlipButton.setEnabled(false);
+			getRotateLeftButton().setEnabled(false);
+			getRotateRightButton().setEnabled(false);
+			getFlipButton().setEnabled(false);
 
 			removeExtraFields();
 		} else if (pictures.size() == 1) {
 			Picture p = pictures.get(0);
 
-			replaceIcon(jIcon, mf.getThumbnail(p));
+			replaceIcon(getIcon(), mf.getThumbnail(p));
 			if (p.isOnline()) {
-				jPath.setText(GRI18n.getString(MODULE, "onServer"));
-				jIcon.setText(p.getName());
+				getPath().setText(GRI18n.getString(MODULE, "onServer"));
+				getIcon().setText(p.getName());
 			} else {
-				jIcon.setText(p.getSource().getName());
-				jPath.setText(p.getSource().getParent());
+				getIcon().setText(p.getSource().getName());
+				getPath().setText(p.getSource().getParent());
 			}
 			jAlbum.setText(p.getParentAlbum().getTitle());
 			if (p.getParentAlbum().getGallery().getComm(mf.jStatusBar)
 					.hasCapability(mf.jStatusBar, GalleryCommCapabilities.CAPA_UPLOAD_CAPTION)) {
-				jCaption.setText(p.getCaption());
-				jCaption.setEditable(true);
-				jCaption.setBackground(UIManager.getColor("TextField.background"));
+				getCaption().setText(p.getCaption());
+				getCaption().setEditable(true);
+				getCaption().setBackground(UIManager.getColor("TextField.background"));
 			}
 			jSize.setText(NumberFormat.getInstance().format((int) p.getFileSize()) + " bytes");
 
 			jUpButton.setEnabled(isEnabled());
 			jDownButton.setEnabled(isEnabled());
 			jDeleteButton.setEnabled(isEnabled());
-			jRotateLeftButton.setEnabled(isEnabled());
-			jRotateRightButton.setEnabled(isEnabled());
-			jFlipButton.setEnabled(isEnabled());
+			getRotateLeftButton().setEnabled(isEnabled());
+			getRotateRightButton().setEnabled(isEnabled());
+			getFlipButton().setEnabled(isEnabled());
 
 			addExtraFields(p);
 		} else {
 			Picture p = pictures.get(0);
 
 			Object[] params = { new Integer(pictures.size()) };
-			jIcon.setText(GRI18n.getString(MODULE, "countElemSel", params));
-			replaceIcon(jIcon, ImageUtils.defaultThumbnail);
-			jPath.setText("");
+			getIcon().setText(GRI18n.getString(MODULE, "countElemSel", params));
+			replaceIcon(getIcon(), ImageUtils.defaultThumbnail);
+			getPath().setText("");
 			jAlbum.setText(p.getParentAlbum().getTitle());
-			jCaption.setText("");
-			jCaption.setEditable(false);
-			jCaption.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+			getCaption().setText("");
+			getCaption().setEditable(false);
+			getCaption().setBackground(UIManager.getColor("TextField.inactiveBackground"));
 			jSize.setText(NumberFormat.getInstance().format(Album.getObjectFileSize(pictures)) + " bytes");
 
 			jUpButton.setEnabled(isEnabled());
 			jDownButton.setEnabled(isEnabled());
 			jDeleteButton.setEnabled(isEnabled());
-			jRotateLeftButton.setEnabled(isEnabled());
-			jRotateRightButton.setEnabled(isEnabled());
-			jFlipButton.setEnabled(isEnabled());
+			getRotateLeftButton().setEnabled(isEnabled());
+			getRotateRightButton().setEnabled(isEnabled());
+			getFlipButton().setEnabled(isEnabled());
 
 			removeExtraFields();
 		}
@@ -477,7 +391,7 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 					JLabel label = new JLabel(name);
 					extraLabels.put(name, label);
 					add(label, new GridBagConstraints(0, FIRST_ROW_EXTRA + i, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST,
-							GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 2, 0));
+							GridBagConstraints.NONE, new Insets(5, 5, 0, 0), 2, 0));
 
 					JTextArea field = new JTextArea();
 					extraTextAreas.put(name, field);
@@ -485,7 +399,7 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 					field.setLineWrap(true);
 					field.setWrapStyleWord(true);
 					add(field, new GridBagConstraints(1, FIRST_ROW_EXTRA + i, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-							GridBagConstraints.BOTH, new Insets(5, 0, 0, 0), 0, 0));
+							GridBagConstraints.BOTH, new Insets(5, 5, 0, 5), 0, 0));
 					field.getDocument().addDocumentListener(this);
 					setupKeyboardHandling(field);
 
@@ -531,14 +445,14 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 	@Override
 	public void setEnabled(boolean enabled) {
 		// Log.log(Log.TRACE, MODULE, "setEnabled " + enabled);
-		jIcon.setEnabled(enabled);
+		getIcon().setEnabled(enabled);
 		jUpButton.setEnabled(enabled);
 		jDownButton.setEnabled(enabled);
 		jDeleteButton.setEnabled(enabled);
-		jRotateLeftButton.setEnabled(enabled);
-		jRotateRightButton.setEnabled(enabled);
-		jFlipButton.setEnabled(enabled);
-		jCaption.setEnabled(enabled);
+		getRotateLeftButton().setEnabled(enabled);
+		getRotateRightButton().setEnabled(enabled);
+		getFlipButton().setEnabled(enabled);
+		getCaption().setEnabled(enabled);
 
 		super.setEnabled(enabled);
 	}
@@ -589,5 +503,292 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		}
 
 		((ImageIcon) i).setImage(icon);
+	}
+
+	private JLabel getPathLabel() {
+		if (jLabel5 == null) {
+			jLabel5 = new JLabel();
+			jLabel5.setText(GRI18n.getString(MODULE, "Path"));
+		}
+		return jLabel5;
+	}
+
+	private GridBagConstraints getPathLabelConstraints() {
+		if (jLabel5Constraints == null) {
+			jLabel5Constraints = new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
+					new Insets(0, 0, 0, 0), 2, 0);
+		}
+		return jLabel5Constraints;
+	}
+
+	private JLabel getAlbumLabel() {
+		if (jLabel6 == null) {
+			jLabel6 = new JLabel();
+			jLabel6.setText(GRI18n.getString(MODULE, "Album"));
+		}
+		return jLabel6;
+	}
+
+	private GridBagConstraints getAlbumLabelConstraints() {
+		if (jLabel6Constraints == null) {
+			jLabel6Constraints = new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
+					0, 0, 0), 2, 0);
+		}
+		return jLabel6Constraints;
+	}
+
+	private JLabel getCaptionLabel() {
+		if (jLabel4 == null) {
+			jLabel4 = new JLabel();
+			jLabel4.setText(GRI18n.getString(MODULE, "Caption"));
+		}
+		return jLabel4;
+	}
+
+	private GridBagConstraints getCaptionLabelConstraints() {
+		if (jLabel4Constraints == null) {
+			jLabel4Constraints = new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
+					new Insets(5, 0, 0, 0), 2, 0);
+		}
+		return jLabel4Constraints;
+	}
+
+	private JLabel getMoveLabel() {
+		if (jLabel8 == null) {
+			jLabel8 = new JLabel();
+			jLabel8.setText(GRI18n.getString(MODULE, "Move"));
+		}
+		return jLabel8;
+	}
+
+	private GridBagConstraints getMoveLabelConstraints() {
+		if (jLabel8Constraints == null) {
+			jLabel8Constraints = new GridBagConstraints(0, 4, 1, 2, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
+					0, 0, 0), 2, 0);
+		}
+		return jLabel8Constraints;
+	}
+
+	private JLabel getSizeLabel() {
+		if (jLabel1 == null) {
+			jLabel1 = new JLabel();
+			jLabel1.setText(GRI18n.getString(MODULE, "Size"));
+		}
+		return jLabel1;
+	}
+
+	private GridBagConstraints getSizeLabelConstraints() {
+		if (jLabel1Constraints == null) {
+			jLabel1Constraints = new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
+					0, 0, 0), 2, 0);
+		}
+		return jLabel1Constraints;
+	}
+
+	private JLabel getDeleteLabel() {
+		if (jLabel2 == null) {
+			jLabel2 = new JLabel();
+			jLabel2.setText(GRI18n.getString(MODULE, "Delete"));
+		}
+		return jLabel2;
+	}
+
+	private GridBagConstraints getDeleteLabelConstraints() {
+		if (jLabel2Constraints == null) {
+			jLabel2Constraints = new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
+					0, 0, 0), 2, 0);
+		}
+		return jLabel2Constraints;
+	}
+
+	private JPanel getSpacer() {
+		if (jSpacer == null) {
+			jSpacer = new JPanel();
+		}
+		return jSpacer;
+	}
+
+	private GridBagConstraints getSpacerConstraints() {
+		if (jSpacerConstraints == null) {
+			jSpacerConstraints = new GridBagConstraints(0, 99, 2, 1, 1.0, 0.1, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
+					new Insets(0, 0, 0, 0), 0, 0);
+		}
+		return jSpacerConstraints;
+	}
+
+	private IconAreaPanel getIconAreaPanel() {
+		if (jIconAreaPanel == null) {
+			jIconAreaPanel = new IconAreaPanel();
+		}
+		return jIconAreaPanel;
+	}
+
+	private GridBagConstraints getIconAreaPanelConstraints() {
+		if (jIconAreaPanelConstraints == null) {
+			jIconAreaPanelConstraints = new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+					new Insets(5, 5, 5, 5), 0, 0);
+		}
+		return jIconAreaPanelConstraints;
+	}
+
+	private JTextArea getAlbumTextArea() {
+		if (jAlbum == null) {
+			jAlbum = new JTextArea();
+			jAlbum.setRows(0);
+			jAlbum.setEditable(false);
+			jAlbum.setFont(UIManager.getFont("Label.font"));
+			jAlbum.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+		}
+		return jAlbum;
+	}
+
+	private GridBagConstraints getAlbumTextAreaConstraints() {
+		if (jAlbumConstraints == null) {
+			jAlbumConstraints = new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+					new Insets(0, 5, 0, 5), 0, 0);
+		}
+		return jAlbumConstraints;
+	}
+
+	private JTextArea getSizeTextArea() {
+		if (jSize == null) {
+			jSize = new JTextArea();
+			jSize.setRows(0);
+			jSize.setEditable(false);
+			jSize.setFont(UIManager.getFont("Label.font"));
+			jSize.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+		}
+		return jSize;
+	}
+
+	private GridBagConstraints getSizeTextAreaConstraints() {
+		if (jSizeConstraints == null) {
+			jSizeConstraints = new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+					new Insets(0, 5, 0, 5), 0, 0);
+		}
+		return jSizeConstraints;
+	}
+
+	private JButton getUpButton() {
+		if (jUpButton == null) {
+			jUpButton = new JButton();
+			jUpButton.setMaximumSize(new Dimension(120, 23));
+			jUpButton.setMinimumSize(new Dimension(120, 23));
+			jUpButton.setPreferredSize(new Dimension(120, 23));
+			jUpButton.setToolTipText(GRI18n.getString(MODULE, "upBtnTip"));
+			jUpButton.setText(GRI18n.getString(MODULE, "upBtn"));
+			jUpButton.setActionCommand("Up");
+			jUpButton.setHorizontalAlignment(SwingConstants.LEFT);
+			jUpButton.setIcon(GalleryRemote.iUp);
+		}
+		return jUpButton;
+	}
+
+	private GridBagConstraints getUpButtonConstraints() {
+		if (jUpButtonConstraints == null) {
+			jUpButtonConstraints = new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+					new Insets(2, 0, 0, 0), 0, 0);
+		}
+		return jUpButtonConstraints;
+	}
+
+	private JButton getDownButton() {
+		if (jDownButton == null) {
+			jDownButton = new JButton();
+			jDownButton.setMaximumSize(new Dimension(120, 23));
+			jDownButton.setMinimumSize(new Dimension(120, 23));
+			jDownButton.setPreferredSize(new Dimension(120, 23));
+			jDownButton.setToolTipText(GRI18n.getString(MODULE, "dnBtnTip"));
+			jDownButton.setText(GRI18n.getString(MODULE, "dnBtn"));
+			jDownButton.setActionCommand("Down");
+			jDownButton.setHorizontalAlignment(SwingConstants.LEFT);
+			jDownButton.setIcon(GalleryRemote.iDown);
+		}
+		return jDownButton;
+	}
+
+	private GridBagConstraints getDownButtonConstraints() {
+		if (jDownButtonConstraints == null) {
+			jDownButtonConstraints = new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+					new Insets(0, 0, 0, 0), 0, 0);
+		}
+		return jDownButtonConstraints;
+	}
+
+	private JButton getDeleteButton() {
+		if (jDeleteButton == null) {
+			jDeleteButton = new JButton();
+			jDeleteButton.setMaximumSize(new Dimension(120, 23));
+			jDeleteButton.setMinimumSize(new Dimension(120, 23));
+			jDeleteButton.setPreferredSize(new Dimension(120, 23));
+			jDeleteButton.setToolTipText(GRI18n.getString(MODULE, "delBtnTip"));
+			jDeleteButton.setActionCommand("Delete");
+			jDeleteButton.setHorizontalAlignment(SwingConstants.LEFT);
+			jDeleteButton.setText(GRI18n.getString(MODULE, "Delete"));
+			jDeleteButton.setIcon(GalleryRemote.iDelete);
+		}
+		return jDeleteButton;
+	}
+
+	private GridBagConstraints getDeleteButtonConstraints() {
+		if (jDeleteButtonConstraints == null) {
+			jDeleteButtonConstraints = new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+					new Insets(2, 0, 0, 0), 0, 0);
+		}
+		return jDeleteButtonConstraints;
+	}
+
+	private JButton getRotateLeftButton() {
+		return getIconAreaPanel().getRotateLeftButton();
+	}
+
+	private JButton getRotateRightButton() {
+		return getIconAreaPanel().getRotateRightButton();
+	}
+
+	private JButton getFlipButton() {
+		return getIconAreaPanel().getFlipButton();
+	}
+
+	private JLabel getIcon() {
+		return getIconAreaPanel().getIcon();
+	}
+
+	private PathPanel getPathPanel() {
+		if (jPathPanel == null) {
+			jPathPanel = new PathPanel();
+		}
+		return jPathPanel;
+	}
+
+	private GridBagConstraints getPathPanelConstraints() {
+		if (jPathPanelConstraints == null) {
+			jPathPanelConstraints = new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 5, 0, 5), 0, 0);
+		}
+		return jPathPanelConstraints;
+	}
+
+	private CaptionPanel getCaptionPanel() {
+		if (jCaptionPanel == null) {
+			jCaptionPanel = new CaptionPanel();
+		}
+		return jCaptionPanel;
+	}
+
+	private GridBagConstraints getCaptionPanelConstraints() {
+		if (jCaptionPanelConstraints == null) {
+			jCaptionPanelConstraints = new GridBagConstraints(1, 7, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH,
+					new Insets(5, 5, 0, 5), 0, 0);
+		}
+		return jCaptionPanelConstraints;
+	}
+
+	private JTextArea getCaption() {
+		return getCaptionPanel().getCaption();
+	}
+
+	private JTextArea getPath() {
+		return getPathPanel().getPath();
 	}
 }

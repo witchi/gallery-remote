@@ -42,9 +42,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 public class ColorWellButton extends JButton {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 2001871387146667137L;
 	public static final String MODULE = "ColorWell";
 
@@ -70,17 +68,21 @@ public class ColorWellButton extends JButton {
 			this.color = color;
 		}
 
+		@Override
 		public int getIconWidth() {
 			return 35;
 		}
 
+		@Override
 		public int getIconHeight() {
 			return 10;
 		}
 
+		@Override
 		public void paintIcon(Component c, Graphics g, int x, int y) {
-			if (color == null)
+			if (color == null) {
 				return;
+			}
 
 			g.setColor(color);
 			g.fillRect(x, y, getIconWidth(), getIconHeight());
@@ -90,16 +92,15 @@ public class ColorWellButton extends JButton {
 	}
 
 	class ActionHandler implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent evt) {
 			Frame parent = DialogUtil.findParentWindow(ColorWellButton.this);
 			JDialog dialog;
 			if (parent != null) {
-				dialog = new ColorPickerDialog(parent, GRI18n.getString(MODULE,
-						"colorChooserTitle"), true);
+				dialog = new ColorPickerDialog(parent, GRI18n.getString(MODULE, "colorChooserTitle"), true);
 			} else {
-				dialog = new ColorPickerDialog(
-						JOptionPane.getFrameForComponent(ColorWellButton.this),
-						GRI18n.getString(MODULE, "colorChooserTitle"), true);
+				dialog = new ColorPickerDialog(JOptionPane.getFrameForComponent(ColorWellButton.this), GRI18n.getString(MODULE,
+						"colorChooserTitle"), true);
 			}
 			dialog.pack();
 			dialog.setVisible(true);
@@ -117,14 +118,14 @@ public class ColorWellButton extends JButton {
 
 		public ColorPickerDialog(Frame parent, String title, boolean modal) {
 			super(parent, title, modal);
-
 			init();
 		}
 
 		public void ok() {
 			Color c = chooser.getColor();
-			if (c != null)
+			if (c != null) {
 				setSelectedColor(c);
+			}
 			setVisible(false);
 		}
 
@@ -132,11 +133,13 @@ public class ColorWellButton extends JButton {
 			setVisible(false);
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent evt) {
-			if (evt.getSource() == ok)
+			if (evt.getSource() == ok) {
 				ok();
-			else
+			} else {
 				cancel();
+			}
 		}
 
 		private JColorChooser chooser;
@@ -145,10 +148,11 @@ public class ColorWellButton extends JButton {
 
 		private void init() {
 			Color c = getSelectedColor();
-			if (c == null)
+			if (c == null) {
 				chooser = new JColorChooser();
-			else
+			} else {
 				chooser = new JColorChooser(c);
+			}
 
 			getContentPane().add(BorderLayout.CENTER, chooser);
 

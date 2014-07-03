@@ -41,7 +41,7 @@ import java.util.Hashtable;
  * 307.
  * 
  * @version 0.3-3E 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  */
 class RedirectionModule implements HTTPClientModule {
 	/** a list of permanent redirections (301) */
@@ -78,6 +78,7 @@ class RedirectionModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
+	@Override
 	public int requestHandler(Request req, Response[] resp) {
 		HTTPConnection con = req.getConnection();
 		URI new_loc, cur_loc;
@@ -89,40 +90,36 @@ class RedirectionModule implements HTTPClientModule {
 			copyFrom((RedirectionModule) deferred_redir_list.remove(out));
 			req.copyFrom(saved_req);
 
-			if (new_con)
+			if (new_con) {
 				return REQ_NEWCON_RST;
-			else
-				return REQ_RESTART;
+			}
+			return REQ_RESTART;
 		}
 
 		// handle permanent redirections
 
 		try {
-			cur_loc = new URI(new URI(con.getProtocol(), con.getHost(),
-					con.getPort(), null), req.getRequestURI());
+			cur_loc = new URI(new URI(con.getProtocol(), con.getHost(), con.getPort(), null), req.getRequestURI());
 		} catch (ParseException pe) {
-			throw new Error("HTTPClient Internal Error: unexpected exception '"
-					+ pe + "'");
+			throw new Error("HTTPClient Internal Error: unexpected exception '" + pe + "'");
 		}
 
 		// handle permanent redirections
 
-		Hashtable<URI, URI> perm_redir_list = Util.getList(
-				perm_redir_cntxt_list, req.getConnection().getContext());
-		if ((new_loc = (URI) perm_redir_list.get(cur_loc)) != null) {
+		Hashtable<URI, URI> perm_redir_list = Util.getList(perm_redir_cntxt_list, req.getConnection().getContext());
+		if ((new_loc = perm_redir_list.get(cur_loc)) != null) {
 			/*
 			 * copy query if present in old url but not in new url. This isn't
-			 * strictly conforming, but some scripts fail to properly propagate
-			 * the query string to the Location header.
+			 * strictly conforming, but some scripts fail to properly propagate the
+			 * query string to the Location header.
 			 * 
 			 * Unfortunately it looks like we're fucked either way: some scripts
-			 * fail if you don't propagate the query string, some fail if you
-			 * do... God, don't you just love it when people can't read a spec?
-			 * Anway, since we can't get it right for all scripts we opt to
-			 * follow the spec. String nres = new_loc.getPathAndQuery(), oquery
-			 * = Util.getQuery(req.getRequestURI()), nquery =
-			 * Util.getQuery(nres); if (nquery == null && oquery != null) nres
-			 * += "?" + oquery;
+			 * fail if you don't propagate the query string, some fail if you do...
+			 * God, don't you just love it when people can't read a spec? Anway,
+			 * since we can't get it right for all scripts we opt to follow the
+			 * spec. String nres = new_loc.getPathAndQuery(), oquery =
+			 * Util.getQuery(req.getRequestURI()), nquery = Util.getQuery(nres); if
+			 * (nquery == null && oquery != null) nres += "?" + oquery;
 			 */
 			String nres = new_loc.getPathAndQuery();
 			req.setRequestURI(nres);
@@ -132,27 +129,21 @@ class RedirectionModule implements HTTPClientModule {
 			} catch (ParseException pe) {
 			}
 
-			Log.write(Log.MODS,
-					"RdirM: matched request in permanent "
-							+ "redirection list - redoing request to "
-							+ lastURI.toExternalForm());
+			Log.write(Log.MODS, "RdirM: matched request in permanent " + "redirection list - redoing request to " + lastURI.toExternalForm());
 
 			if (!con.isCompatibleWith(new_loc)) {
 				try {
 					con = new HTTPConnection(new_loc);
 				} catch (Exception e) {
-					throw new Error("HTTPClient Internal Error: unexpected "
-							+ "exception '" + e + "'");
+					throw new Error("HTTPClient Internal Error: unexpected " + "exception '" + e + "'");
 				}
 
-				con.setSSLSocketFactory(req.getConnection()
-						.getSSLSocketFactory());
+				con.setSSLSocketFactory(req.getConnection().getSSLSocketFactory());
 				con.setContext(req.getConnection().getContext());
 				req.setConnection(con);
 				return REQ_NEWCON_RST;
-			} else {
-				return REQ_RESTART;
 			}
+			return REQ_RESTART;
 		}
 
 		return REQ_CONTINUE;
@@ -161,8 +152,8 @@ class RedirectionModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
-	public void responsePhase1Handler(Response resp, RoRequest req)
-			throws IOException {
+	@Override
+	public void responsePhase1Handler(Response resp, RoRequest req) throws IOException {
 		int sts = resp.getStatusCode();
 		if (sts < 301 || sts > 307 || sts == 304) {
 			if (lastURI != null) // it's been redirected
@@ -173,8 +164,8 @@ class RedirectionModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
-	public int responsePhase2Handler(Response resp, Request req)
-			throws IOException {
+	@Override
+	public int responsePhase2Handler(Response resp, Request req) throws IOException {
 		/* handle various response status codes until satisfied */
 
 		int sts = resp.getStatusCode();
@@ -184,13 +175,12 @@ class RedirectionModule implements HTTPClientModule {
 			/*
 			 * Note we only do this munging for POST and PUT. For GET it's not
 			 * necessary; for HEAD we probably want to do another HEAD. For all
-			 * others (i.e. methods from WebDAV, IPP, etc) it's somewhat unclear
-			 * - servers supporting those should really return a 307 or 303, but
-			 * some don't (guess who...), so we just don't touch those.
+			 * others (i.e. methods from WebDAV, IPP, etc) it's somewhat unclear -
+			 * servers supporting those should really return a 307 or 303, but some
+			 * don't (guess who...), so we just don't touch those.
 			 */
 			if (req.getMethod().equals("POST") || req.getMethod().equals("PUT")) {
-				Log.write(Log.MODS, "RdirM: Received status: " + sts + " "
-						+ resp.getReasonLine() + " - treating as 303");
+				Log.write(Log.MODS, "RdirM: Received status: " + sts + " " + resp.getReasonLine() + " - treating as 303");
 
 				sts = 303;
 			}
@@ -199,21 +189,15 @@ class RedirectionModule implements HTTPClientModule {
 		case 303: // See Other (use GET)
 		case 307: // Moved Temporarily (we mean it!)
 
-			Log.write(
-					Log.MODS,
-					"RdirM: Handling status: " + sts + " "
-							+ resp.getReasonLine());
+			Log.write(Log.MODS, "RdirM: Handling status: " + sts + " " + resp.getReasonLine());
 
 			// the spec says automatic redirection may only be done if
 			// the second request is a HEAD or GET.
-			if (!req.getMethod().equals("GET")
-					&& !req.getMethod().equals("HEAD") && sts != 303) {
-				Log.write(Log.MODS, "RdirM: not redirected because "
-						+ "method is neither HEAD nor GET");
+			if (!req.getMethod().equals("GET") && !req.getMethod().equals("HEAD") && sts != 303) {
+				Log.write(Log.MODS, "RdirM: not redirected because " + "method is neither HEAD nor GET");
 
 				if (sts == 301 && resp.getHeader("Location") != null)
-					update_perm_redir_list(req,
-							resLocHdr(resp.getHeader("Location"), req));
+					update_perm_redir_list(req, resLocHdr(resp.getHeader("Location"), req));
 
 				resp.setEffectiveURI(lastURI);
 				return RSP_CONTINUE;
@@ -223,13 +207,11 @@ class RedirectionModule implements HTTPClientModule {
 		case 306: // Switch Proxy
 
 			if (sts == 305 || sts == 306)
-				Log.write(Log.MODS, "RdirM: Handling status: " + sts + " "
-						+ resp.getReasonLine());
+				Log.write(Log.MODS, "RdirM: Handling status: " + sts + " " + resp.getReasonLine());
 
 			// Don't accept 305 from a proxy
 			if (sts == 305 && req.getConnection().getProxyHost() != null) {
-				Log.write(Log.MODS, "RdirM: 305 ignored because "
-						+ "a proxy is already in use");
+				Log.write(Log.MODS, "RdirM: 305 ignored because " + "a proxy is already in use");
 
 				resp.setEffectiveURI(lastURI);
 				return RSP_CONTINUE;
@@ -239,16 +221,14 @@ class RedirectionModule implements HTTPClientModule {
 			 * the level is a primitive way of preventing infinite redirections.
 			 * RFC-2068 set the max to 5, but RFC-2616 has loosened this. Since
 			 * some sites (notably M$) need more levels, this is now set to the
-			 * (arbitrary) value of 15 (god only knows why they need to do even
-			 * 5 redirections...).
+			 * (arbitrary) value of 15 (god only knows why they need to do even 5
+			 * redirections...).
 			 */
 			if (level >= 15 || resp.getHeader("Location") == null) {
 				if (level >= 15)
-					Log.write(Log.MODS, "RdirM: not redirected because "
-							+ "of too many levels of redirection");
+					Log.write(Log.MODS, "RdirM: not redirected because " + "of too many levels of redirection");
 				else
-					Log.write(Log.MODS, "RdirM: not redirected because "
-							+ "no Location header was present");
+					Log.write(Log.MODS, "RdirM: not redirected because " + "no Location header was present");
 
 				resp.setEffectiveURI(lastURI);
 				return RSP_CONTINUE;
@@ -262,12 +242,9 @@ class RedirectionModule implements HTTPClientModule {
 			new_con = false;
 
 			if (sts == 305) {
-				mvd = new HTTPConnection(req.getConnection().getProtocol(), req
-						.getConnection().getHost(), req.getConnection()
-						.getPort());
+				mvd = new HTTPConnection(req.getConnection().getProtocol(), req.getConnection().getHost(), req.getConnection().getPort());
 				mvd.setCurrentProxy(loc.getHost(), loc.getPort());
-				mvd.setSSLSocketFactory(req.getConnection()
-						.getSSLSocketFactory());
+				mvd.setSSLSocketFactory(req.getConnection().getSSLSocketFactory());
 				mvd.setContext(req.getConnection().getContext());
 				new_con = true;
 
@@ -275,12 +252,11 @@ class RedirectionModule implements HTTPClientModule {
 
 				/*
 				 * There was some discussion about this, and especially Foteos
-				 * Macrides (Lynx) said a 305 should also imply a change to GET
-				 * (for security reasons) - see the thread starting at
-				 * http://www
-				 * .ics.uci.edu/pub/ietf/http/hypermail/1997q4/0351.html
-				 * However, this is not in the latest draft, but since I agree
-				 * with Foteos we do it anyway...
+				 * Macrides (Lynx) said a 305 should also imply a change to GET (for
+				 * security reasons) - see the thread starting at http://www
+				 * .ics.uci.edu/pub/ietf/http/hypermail/1997q4/0351.html However,
+				 * this is not in the latest draft, but since I agree with Foteos we
+				 * do it anyway...
 				 */
 				req.setMethod("GET");
 				req.setData(null);
@@ -297,34 +273,29 @@ class RedirectionModule implements HTTPClientModule {
 						mvd = new HTTPConnection(loc);
 						nres = loc.getPathAndQuery();
 					} catch (Exception e) {
-						if (req.getConnection().getProxyHost() == null
-								|| !loc.getScheme().equalsIgnoreCase("ftp"))
+						if (req.getConnection().getProxyHost() == null || !loc.getScheme().equalsIgnoreCase("ftp"))
 							return RSP_CONTINUE;
 
 						// We're using a proxy and the protocol is ftp -
 						// maybe the proxy will also proxy ftp...
-						mvd = new HTTPConnection("http", req.getConnection()
-								.getProxyHost(), req.getConnection()
-								.getProxyPort());
+						mvd = new HTTPConnection("http", req.getConnection().getProxyHost(), req.getConnection().getProxyPort());
 						mvd.setCurrentProxy(null, 0);
 						nres = loc.toExternalForm();
 					}
 
-					mvd.setSSLSocketFactory(req.getConnection()
-							.getSSLSocketFactory());
+					mvd.setSSLSocketFactory(req.getConnection().getSSLSocketFactory());
 					mvd.setContext(req.getConnection().getContext());
 					new_con = true;
 				}
 
 				/*
-				 * copy query if present in old url but not in new url. This
-				 * isn't strictly conforming, but some scripts fail to propagate
-				 * the query properly to the Location header.
+				 * copy query if present in old url but not in new url. This isn't
+				 * strictly conforming, but some scripts fail to propagate the query
+				 * properly to the Location header.
 				 * 
 				 * See comment on line 126. String oquery =
-				 * Util.getQuery(req.getRequestURI()), nquery =
-				 * Util.getQuery(nres); if (nquery == null && oquery != null)
-				 * nres += "?" + oquery;
+				 * Util.getQuery(req.getRequestURI()), nquery = Util.getQuery(nres);
+				 * if (nquery == null && oquery != null) nres += "?" + oquery;
 				 */
 
 				if (sts == 303) {
@@ -339,9 +310,7 @@ class RedirectionModule implements HTTPClientModule {
 					// to do the resend themselves
 					if (req.getStream() != null) {
 						if (!HTTPConnection.deferStreamed) {
-							Log.write(Log.MODS, "RdirM: status " + sts
-									+ " not handled - request "
-									+ "has an output stream");
+							Log.write(Log.MODS, "RdirM: status " + sts + " not handled - request " + "has an output stream");
 							return RSP_CONTINUE;
 						}
 
@@ -356,8 +325,7 @@ class RedirectionModule implements HTTPClientModule {
 						try {
 							update_perm_redir_list(req, new URI(loc, nres));
 						} catch (ParseException pe) {
-							throw new Error("HTTPClient Internal Error: "
-									+ "unexpected exception '" + pe + "'");
+							throw new Error("HTTPClient Internal Error: " + "unexpected exception '" + pe + "'");
 						}
 					}
 				}
@@ -367,8 +335,7 @@ class RedirectionModule implements HTTPClientModule {
 				for (int idx = 0; idx < hdrs.length; idx++)
 					if (hdrs[idx].getName().equalsIgnoreCase("Referer")) {
 						HTTPConnection con = req.getConnection();
-						hdrs[idx] = new NVPair("Referer", con
-								+ req.getRequestURI());
+						hdrs[idx] = new NVPair("Referer", con + req.getRequestURI());
 						break;
 					}
 			}
@@ -387,16 +354,9 @@ class RedirectionModule implements HTTPClientModule {
 				} catch (ParseException pe) { /* ??? */
 				}
 
-				Log.write(
-						Log.MODS,
-						"RdirM: request redirected to "
-								+ lastURI.toExternalForm() + " using method "
-								+ req.getMethod());
+				Log.write(Log.MODS, "RdirM: request redirected to " + lastURI.toExternalForm() + " using method " + req.getMethod());
 			} else {
-				Log.write(
-						Log.MODS,
-						"RdirM: resending request using " + "proxy "
-								+ mvd.getProxyHost() + ":" + mvd.getProxyPort());
+				Log.write(Log.MODS, "RdirM: resending request using " + "proxy " + mvd.getProxyHost() + ":" + mvd.getProxyPort());
 			}
 
 			if (req.getStream() != null)
@@ -415,12 +375,14 @@ class RedirectionModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
+	@Override
 	public void responsePhase3Handler(Response resp, RoRequest req) {
 	}
 
 	/**
 	 * Invoked by the HTTPClient.
 	 */
+	@Override
 	public void trailerHandler(Response resp, RoRequest req) {
 	}
 
@@ -428,22 +390,20 @@ class RedirectionModule implements HTTPClientModule {
 	 * Update the permanent redirection list.
 	 * 
 	 * @param the
-	 *            original request
+	 *           original request
 	 * @param the
-	 *            new location
+	 *           new location
 	 */
 	private static void update_perm_redir_list(RoRequest req, URI new_loc) {
 		HTTPConnection con = req.getConnection();
 		URI cur_loc = null;
 		try {
-			cur_loc = new URI(new URI(con.getProtocol(), con.getHost(),
-					con.getPort(), null), req.getRequestURI());
+			cur_loc = new URI(new URI(con.getProtocol(), con.getHost(), con.getPort(), null), req.getRequestURI());
 		} catch (ParseException pe) {
 		}
 
 		if (!cur_loc.equals(new_loc)) {
-			Hashtable<URI, URI> perm_redir_list = Util.getList(
-					perm_redir_cntxt_list, con.getContext());
+			Hashtable<URI, URI> perm_redir_list = Util.getList(perm_redir_cntxt_list, con.getContext());
 			perm_redir_list.put(cur_loc, new_loc);
 		}
 	}
@@ -454,28 +414,23 @@ class RedirectionModule implements HTTPClientModule {
 	 * request URI.
 	 * 
 	 * @param loc
-	 *            the Location header field
+	 *           the Location header field
 	 * @param req
-	 *            the Request to resolve relative URI's relative to
+	 *           the Request to resolve relative URI's relative to
 	 * @return an absolute URI corresponding to the Location header field
 	 * @exception ProtocolException
-	 *                if the Location header field is completely unparseable
+	 *               if the Location header field is completely unparseable
 	 */
 	private URI resLocHdr(String loc, RoRequest req) throws ProtocolException {
 		try {
-			URI base = new URI(req.getConnection().getProtocol(), req
-					.getConnection().getHost(), req.getConnection().getPort(),
-					null);
+			URI base = new URI(req.getConnection().getProtocol(), req.getConnection().getHost(), req.getConnection().getPort(), null);
 			base = new URI(base, req.getRequestURI());
 			URI res = new URI(base, loc);
 			if (res.getHost() == null)
-				throw new ProtocolException(
-						"Malformed URL in Location header: `" + loc
-								+ "' - missing host field");
+				throw new ProtocolException("Malformed URL in Location header: `" + loc + "' - missing host field");
 			return res;
 		} catch (ParseException pe) {
-			throw new ProtocolException("Malformed URL in Location header: `"
-					+ loc + "' - exception was: " + pe.getMessage());
+			throw new ProtocolException("Malformed URL in Location header: `" + loc + "' - exception was: " + pe.getMessage());
 		}
 	}
 

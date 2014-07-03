@@ -39,7 +39,7 @@ import java.util.Enumeration;
  * This class implements a Hashtable with case-insensitive Strings as keys.
  * 
  * @version 0.3-3 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  */
 class CIHashtable extends Hashtable<Object, Object> {
 	private static final long serialVersionUID = -618926702055361109L;
@@ -51,9 +51,9 @@ class CIHashtable extends Hashtable<Object, Object> {
 	 * specified load factor.
 	 * 
 	 * @param intialCapacity
-	 *            the initial number of buckets
+	 *           the initial number of buckets
 	 * @param loadFactor
-	 *            a number between 0.0 and 1.0
+	 *           a number between 0.0 and 1.0
 	 * @see java.util.Hashtable(int, float)
 	 */
 	public CIHashtable(int initialCapacity, float loadFactor) {
@@ -64,7 +64,7 @@ class CIHashtable extends Hashtable<Object, Object> {
 	 * Create a new CIHashtable with the specified initial capacity.
 	 * 
 	 * @param intialCapacity
-	 *            the initial number of buckets
+	 *           the initial number of buckets
 	 * @see java.util.Hashtable(int)
 	 */
 	public CIHashtable(int initialCapacity) {
@@ -87,7 +87,7 @@ class CIHashtable extends Hashtable<Object, Object> {
 	 * case-insensitive.
 	 * 
 	 * @param key
-	 *            the key
+	 *           the key
 	 * @return the object associated with the key, or null if none found.
 	 * @see java.util.Hashtable.get(Object)
 	 */
@@ -99,9 +99,9 @@ class CIHashtable extends Hashtable<Object, Object> {
 	 * Stores the specified object with the specified key.
 	 * 
 	 * @param key
-	 *            the key
+	 *           the key
 	 * @param value
-	 *            the object to be associated with the key
+	 *           the object to be associated with the key
 	 * @return the object previously associated with the key, or null if there
 	 *         was none.
 	 * @see java.util.Hashtable.put(Object, Object)
@@ -115,7 +115,7 @@ class CIHashtable extends Hashtable<Object, Object> {
 	 * lookup is case insensitive.
 	 * 
 	 * @param key
-	 *            the key
+	 *           the key
 	 * @return true is there is an object associated with key, false otherwise
 	 * @see java.util.Hashtable.containsKey(Object)
 	 */
@@ -128,7 +128,7 @@ class CIHashtable extends Hashtable<Object, Object> {
 	 * lookup is case insensitive.
 	 * 
 	 * @param key
-	 *            the key
+	 *           the key
 	 * @return the object associated with this key, or null if there was none.
 	 * @see java.util.Hashtable.remove(Object)
 	 */
@@ -142,7 +142,8 @@ class CIHashtable extends Hashtable<Object, Object> {
 	 * @return the requested Enumerator
 	 * @see java.util.Hashtable.keys(Object)
 	 */
-	public Enumeration<Object> keys() {
+	@Override
+	public synchronized Enumeration<Object> keys() {
 		return new CIHashtableEnumeration(super.keys());
 	}
 }
@@ -159,10 +160,12 @@ final class CIHashtableEnumeration implements Enumeration<Object> {
 		HTEnum = enum1;
 	}
 
+	@Override
 	public boolean hasMoreElements() {
 		return HTEnum.hasMoreElements();
 	}
 
+	@Override
 	public Object nextElement() {
 		Object tmp = HTEnum.nextElement();
 		if (tmp instanceof CIString)
@@ -199,6 +202,7 @@ final class CIString {
 	}
 
 	/** the hash code was precomputed */
+	@Override
 	public int hashCode() {
 		return hash;
 	}
@@ -222,6 +226,7 @@ final class CIString {
 	/**
 	 * Uses the case insensitive comparison.
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj != null) {
 			if (obj instanceof CIString)
@@ -237,6 +242,7 @@ final class CIString {
 	/**
 	 * Just return the internal string.
 	 */
+	@Override
 	public String toString() {
 		return string;
 	}

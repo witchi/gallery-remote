@@ -28,42 +28,37 @@ import java.util.List;
 import javax.swing.filechooser.FileFilter;
 
 public class GalleryFileFilter extends FileFilter {
-	public static String[] ext = { "gif", "jpeg", "jpg", "avi", "mpg", "mpeg",
-			"moov", "png", "jpe" };
+	public static String[] ext = { "gif", "jpeg", "jpg", "avi", "mpg", "mpeg", "moov", "png", "jpe" };
 	public static final List<String> validExtensions = Arrays.asList(ext);
 
 	public static String[] ext1 = { "gif", "jpeg", "jpg", "png", "jpe" };
 	public static final List<String> manipulateExtensions = Arrays.asList(ext1);
 
 	public static String[] ext2 = { "jpg", "jpeg", "jpe" };
-	public static final List<String> manipulateJpegExtensions = Arrays
-			.asList(ext2);
+	public static final List<String> manipulateJpegExtensions = Arrays.asList(ext2);
 
 	// Accept all directories and all gif, jpg files.
+	@Override
 	public boolean accept(File f) {
 		if (f.isDirectory()) {
 			return true;
 		}
-
 		String extension = getExtension(f);
-
 		return (extension != null && validExtensions.contains(extension));
 	}
 
 	public static boolean canManipulate(String filename) {
 		String extension = getExtension(filename);
-
 		return (extension != null && manipulateExtensions.contains(extension));
 	}
 
 	public static boolean canManipulateJpeg(String filename) {
 		String extension = getExtension(filename);
-
-		return (extension != null && manipulateJpegExtensions
-				.contains(extension));
+		return (extension != null && manipulateJpegExtensions.contains(extension));
 	}
 
 	// The description of this filter
+	@Override
 	public String getDescription() {
 		return "Gallery Items";
 	}

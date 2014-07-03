@@ -1,8 +1,3 @@
-/**
- * User: iluvatar
- * Date: Sep 18, 2003
- * Time: 7:46:36 PM
- */
 package com.gallery.GalleryRemote.util;
 
 import com.gallery.GalleryRemote.GalleryRemote;
@@ -14,6 +9,11 @@ import java.util.*;
 import java.io.InputStream;
 import java.io.IOException;
 
+
+/**
+ * @author iluvatar
+ * @version Sep 18, 2003
+ */
 public class GRI18n implements PreferenceNames {
 	private static final String RESNAME = "com.gallery.GalleryRemote.resources.GRResources";
 	private static final String RESNAME_DEV = "GRResources";
@@ -31,8 +31,7 @@ public class GRI18n implements PreferenceNames {
 
 	static {
 		String myLocale = GalleryRemote.instance().properties.getProperty(UI_LOCALE);
-		devMode = GalleryRemote.instance().properties
-				.getBooleanProperty(UI_LOCALE_DEV);
+		devMode = GalleryRemote.instance().properties.getBooleanProperty(UI_LOCALE_DEV);
 
 		grLocale = parseLocaleString(myLocale);
 
@@ -44,16 +43,13 @@ public class GRI18n implements PreferenceNames {
 	public static Locale parseLocaleString(String localeString) {
 		if (localeString == null) {
 			return Locale.getDefault();
-		} else {
-			int i = localeString.indexOf("_");
-
-			if (i != -1) {
-				return new Locale(localeString.substring(0, i),
-						localeString.substring(i + 1));
-			} else {
-				return new Locale(localeString, "");
-			}
 		}
+		int i = localeString.indexOf("_");
+
+		if (i != -1) {
+			return new Locale(localeString.substring(0, i), localeString.substring(i + 1));
+		}
+		return new Locale(localeString, "");
 	}
 
 	public static void setLocale(String language, String country) {
@@ -67,8 +63,7 @@ public class GRI18n implements PreferenceNames {
 		try {
 			msg = grResBundle.getString(extKey);
 
-			if (devResProperties != null
-					&& devResProperties.getProperty(extKey) == null) {
+			if (devResProperties != null && devResProperties.getProperty(extKey) == null) {
 				if (msg.startsWith("<html>")) {
 					msg = "<html>***" + msg.substring(6);
 				} else {
@@ -92,16 +87,14 @@ public class GRI18n implements PreferenceNames {
 		String msg;
 		String extKey = className + "." + key;
 		try {
-			MessageFormat format = (MessageFormat) formats.get(extKey);
+			MessageFormat format = formats.get(extKey);
 			if (format == null) {
-				format = new MessageFormat(
-						fixQuotes(grResBundle.getString(extKey)), grLocale);
+				format = new MessageFormat(fixQuotes(grResBundle.getString(extKey)), grLocale);
 				formats.put(extKey, format);
 			}
 			msg = format.format(params);
 
-			if (devResProperties != null
-					&& devResProperties.getProperty(extKey) == null) {
+			if (devResProperties != null && devResProperties.getProperty(extKey) == null) {
 				if (msg.startsWith("<html>")) {
 					msg = "<html>***" + msg.substring(6);
 				} else {
@@ -141,8 +134,7 @@ public class GRI18n implements PreferenceNames {
 
 	private static void setResBundle() {
 		try {
-			grResBundle = ResourceBundle.getBundle(devMode ? RESNAME_DEV
-					: RESNAME, grLocale);
+			grResBundle = ResourceBundle.getBundle(devMode ? RESNAME_DEV : RESNAME, grLocale);
 
 			if (devMode) {
 				devResProperties = getLocaleProperties(grLocale);
@@ -159,11 +151,9 @@ public class GRI18n implements PreferenceNames {
 		if (locale == null) {
 			filename = (devMode ? RESNAME_DEV : RESPATH) + ".properties";
 		} else {
-			filename = (devMode ? RESNAME_DEV : RESPATH) + "_"
-					+ locale.toString() + ".properties";
+			filename = (devMode ? RESNAME_DEV : RESPATH) + "_" + locale.toString() + ".properties";
 		}
-		InputStream is = ClassLoader.getSystemClassLoader()
-				.getResourceAsStream(filename);
+		InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(filename);
 		if (is != null) {
 			try {
 				p.load(is);
@@ -206,8 +196,7 @@ public class GRI18n implements PreferenceNames {
 		// this call is apparently very slow...
 		Locale[] list = Locale.getAvailableLocales();
 
-		Log.log(Log.LEVEL_TRACE, MODULE, "The platform supports " + list.length
-				+ " locales. Pruning...");
+		Log.log(Log.LEVEL_TRACE, MODULE, "The platform supports " + list.length + " locales. Pruning...");
 
 		String prefix = "##DUMMY";
 		for (int i = 0; i < list.length; i++) {
@@ -221,8 +210,7 @@ public class GRI18n implements PreferenceNames {
 					Log.log(Log.LEVEL_TRACE, MODULE, "Trying locale: " + loc);
 				}
 
-				locPath = (devMode ? RESNAME_DEV : RESPATH) + "_" + loc
-						+ ".properties";
+				locPath = (devMode ? RESNAME_DEV : RESPATH) + "_" + loc + ".properties";
 				if (ClassLoader.getSystemClassLoader().getResource(locPath) != null) {
 					Log.log(Log.LEVEL_INFO, MODULE, "Found locale: " + loc);
 					aList.add(list[i]);
@@ -231,21 +219,7 @@ public class GRI18n implements PreferenceNames {
 			}
 		}
 
-		Log.log(Log.LEVEL_TRACE, MODULE,
-				"Pruned locales in " + (System.currentTimeMillis() - start)
-						+ "ms");
-		// dialog.setVisible(false);
-
+		Log.log(Log.LEVEL_TRACE, MODULE, "Pruned locales in " + (System.currentTimeMillis() - start) + "ms");
 		return aList;
 	}
-
-	/*
-	 * class PatienceDialog extends JDialog implements Runnable { public boolean
-	 * done = false;
-	 * 
-	 * public void run() { try { Thread.sleep(1000);
-	 * 
-	 * 
-	 * } catch (InterruptedException e) {} } }
-	 */
 }

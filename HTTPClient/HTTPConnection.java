@@ -179,7 +179,7 @@ import javax.net.ssl.SSLSocketFactory;
  * </ul>
  * 
  * @version 0.3-3E 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  */
 public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstants {
 
@@ -487,7 +487,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		}
 
 		try {
-			defaultSSLFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+			defaultSSLFactory = SSLSocketFactory.getDefault();
 		} catch (Throwable t) {
 			// probably class not found exception, for example on Java 1.3
 		}
@@ -659,7 +659,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		// Check domain name list
 
 		for (int idx = 0; idx < non_proxy_dom_list.size(); idx++)
-			if (host.endsWith((String) non_proxy_dom_list.elementAt(idx)))
+			if (host.endsWith(non_proxy_dom_list.elementAt(idx)))
 				return true;
 
 		// Check IP-address and subnet list
@@ -675,8 +675,8 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		} // maybe the proxy has better luck
 
 		for (int idx = 0; idx < non_proxy_addr_list.size(); idx++) {
-			byte[] addr = (byte[]) non_proxy_addr_list.elementAt(idx);
-			byte[] mask = (byte[]) non_proxy_mask_list.elementAt(idx);
+			byte[] addr = non_proxy_addr_list.elementAt(idx);
+			byte[] mask = non_proxy_mask_list.elementAt(idx);
 
 			ip_loop: for (int idx2 = 0; idx2 < host_addr.length; idx2++) {
 				byte[] raw_addr = host_addr[idx2].getAddress();
@@ -1554,7 +1554,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 	 */
 	public NVPair[] getDefaultHeaders() {
 		synchronized (DefaultHeaders) {
-			return (NVPair[]) DefaultHeaders.clone();
+			return DefaultHeaders.clone();
 		}
 	}
 
@@ -1650,6 +1650,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 	 * @param raw
 	 *           if true removes all modules (except for the retry module)
 	 */
+	@Deprecated
 	public void setRawMode(boolean raw) {
 		// Don't remove the retry module
 		String[] modules = { "HTTPClient.CookieModule", "HTTPClient.RedirectionModule", "HTTPClient.AuthorizationModule",
@@ -1995,10 +1996,10 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 	 *         <code>setContext()</code> hasn't been invoked
 	 */
 	public Object getContext() {
-		if (Context != null)
+		if (Context != null) {
 			return Context;
-		else
-			return dflt_context;
+		}
+		return dflt_context;
 	}
 
 	/**
@@ -2229,8 +2230,8 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		// check if addr or subnet already exists
 
 		ip_loop: for (int idx = 0; idx < non_proxy_addr_list.size(); idx++) {
-			byte[] addr = (byte[]) non_proxy_addr_list.elementAt(idx);
-			byte[] mask = (byte[]) non_proxy_mask_list.elementAt(idx);
+			byte[] addr = non_proxy_addr_list.elementAt(idx);
+			byte[] mask = non_proxy_mask_list.elementAt(idx);
 			if (addr.length != ip_addr.length)
 				continue;
 
@@ -2316,8 +2317,8 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		}
 
 		ip_loop: for (int idx = 0; idx < non_proxy_addr_list.size(); idx++) {
-			byte[] addr = (byte[]) non_proxy_addr_list.elementAt(idx);
-			byte[] mask = (byte[]) non_proxy_mask_list.elementAt(idx);
+			byte[] addr = non_proxy_addr_list.elementAt(idx);
+			byte[] mask = non_proxy_mask_list.elementAt(idx);
 			if (addr.length != ip_addr.length)
 				continue;
 
@@ -2593,7 +2594,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 			HTTPClientModule[] mod_insts = new HTTPClientModule[ModuleList.size()];
 
 			for (int idx = 0; idx < ModuleList.size(); idx++) {
-				Class<?> mod = (Class<?>) ModuleList.elementAt(idx);
+				Class<?> mod = ModuleList.elementAt(idx);
 				try {
 					mod_insts[idx] = (HTTPClientModule) mod.newInstance();
 				} catch (Exception e) {
@@ -3037,6 +3038,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 		if (data.length > 0 && listener != null) {
 			new Thread(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						long last = 0;
@@ -3138,7 +3140,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 			EstablishConnection con = new EstablishConnection(actual_host, actual_port, Socks_client);
 			con.start();
 			try {
-				con.join((long) con_timeout);
+				con.join(con_timeout);
 			} catch (InterruptedException ie) {
 			}
 
@@ -3255,7 +3257,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		List<String> names = new ArrayList<String>();
 		Iterator<List<?>> iter = cert.getSubjectAlternativeNames().iterator();
 		while (iter.hasNext()) {
-			List<?> next = (List<?>) iter.next();
+			List<?> next = iter.next();
 			int OID = ((Integer) next.get(0)).intValue();
 
 			switch (OID) {
@@ -3542,8 +3544,8 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 			// remove any 100-continue tokens
 
 			HttpHeaderElement cont = new HttpHeaderElement("100-continue");
-			while (expect_tokens.removeElement(cont))
-				;
+			while (expect_tokens.removeElement(cont)) {
+			}
 
 			// write out header if any tokens left
 
@@ -3667,6 +3669,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 	 * 
 	 * @return the string
 	 */
+	@Override
 	public String toString() {
 		return getProtocol() + "://" + getHost() + (getPort() != URI.defaultPort(getProtocol()) ? ":" + getPort() : "");
 	}
@@ -3703,6 +3706,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 			close = false;
 		}
 
+		@Override
 		public void run() {
 			try {
 				if (Socks_client != null)
@@ -3761,6 +3765,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 			super(os);
 		}
 
+		@Override
 		public void write(byte[] b, int off, int len) throws IOException {
 			while (len > CHUNK_SIZE) {
 				out.write(b, off, CHUNK_SIZE);

@@ -107,7 +107,7 @@ import java.util.Enumeration;
  * to HTTP/1.1.
  * 
  * @version 0.3-3 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  * @since V0.3
  */
 public class HttpURLConnection extends java.net.HttpURLConnection {
@@ -179,20 +179,18 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	private static int proxy_port = -1;
 
 	/**
-	 * Construct a connection to the specified url. A cache of HTTPConnections
-	 * is used to maximize the reuse of these across multiple
-	 * HttpURLConnections.
+	 * Construct a connection to the specified url. A cache of HTTPConnections is
+	 * used to maximize the reuse of these across multiple HttpURLConnections.
 	 * 
 	 * <BR>
 	 * The default method is "GET".
 	 * 
 	 * @param url
-	 *            the url of the request
+	 *           the url of the request
 	 * @exception ProtocolNotSuppException
-	 *                if the protocol is not supported
+	 *               if the protocol is not supported
 	 */
-	public HttpURLConnection(URL url) throws ProtocolNotSuppException,
-			IOException {
+	public HttpURLConnection(URL url) throws ProtocolNotSuppException, IOException {
 		super(url);
 
 		// first read proxy properties and set
@@ -236,28 +234,23 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 
 	/**
 	 * Returns an HTTPConnection. A cache of connections is kept and first
-	 * consulted; only when the cache lookup fails is a new one created and
-	 * added to the cache.
+	 * consulted; only when the cache lookup fails is a new one created and added
+	 * to the cache.
 	 * 
 	 * @param url
-	 *            the url
+	 *           the url
 	 * @return an HTTPConnection
 	 * @exception ProtocolNotSuppException
-	 *                if the protocol is not supported
+	 *               if the protocol is not supported
 	 */
-	protected HTTPConnection getConnection(URL url)
-			throws ProtocolNotSuppException {
+	protected HTTPConnection getConnection(URL url) throws ProtocolNotSuppException {
 		// try the cache, using the host name
 
-		String php = url.getProtocol()
-				+ ":"
-				+ url.getHost()
-				+ ":"
-				+ ((url.getPort() != -1) ? url.getPort() : URI.defaultPort(url
-						.getProtocol()));
+		String php = url.getProtocol() + ":" + url.getHost() + ":"
+				+ ((url.getPort() != -1) ? url.getPort() : URI.defaultPort(url.getProtocol()));
 		php = php.toLowerCase();
 
-		HTTPConnection con = (HTTPConnection) connections.get(php);
+		HTTPConnection con = connections.get(php);
 		if (con != null)
 			return con;
 
@@ -276,16 +269,16 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * connect() is called.
 	 * 
 	 * @param method
-	 *            the http method.
+	 *           the http method.
 	 * @exception ProtocolException
-	 *                if already connected.
+	 *               if already connected.
 	 */
+	@Override
 	public void setRequestMethod(String method) throws ProtocolException {
 		if (connected)
 			throw new ProtocolException("Already connected!");
 
-		Log.write(Log.URLC, "URLC:  (" + urlString
-				+ ") Setting request method: " + method);
+		Log.write(Log.URLC, "URLC:  (" + urlString + ") Setting request method: " + method);
 
 		this.method = method.trim().toUpperCase();
 		method_set = true;
@@ -296,6 +289,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * 
 	 * @return the http method.
 	 */
+	@Override
 	public String getRequestMethod() {
 		return method;
 	}
@@ -305,6 +299,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * 
 	 * @return the http response code returned.
 	 */
+	@Override
 	public int getResponseCode() throws IOException {
 		if (!connected)
 			connect();
@@ -322,6 +317,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * 
 	 * @return the http response message returned with the response code.
 	 */
+	@Override
 	public String getResponseMessage() throws IOException {
 		if (!connected)
 			connect();
@@ -337,9 +333,10 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * Get the value part of a header. Calls connect() if not connected.
 	 * 
 	 * @param name
-	 *            the of the header.
+	 *           the of the header.
 	 * @return the value of the header, or null if no such header was returned.
 	 */
+	@Override
 	public String getHeaderField(String name) {
 		try {
 			if (!connected)
@@ -356,11 +353,12 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * default is returned. Calls connect() if not connected.
 	 * 
 	 * @param name
-	 *            the of the header.
+	 *           the of the header.
 	 * @param def
-	 *            the default value to return in case of an error.
+	 *           the default value to return in case of an error.
 	 * @return the value of the header, or null if no such header was returned.
 	 */
+	@Override
 	public int getHeaderFieldInt(String name, int def) {
 		try {
 			if (!connected)
@@ -372,17 +370,18 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	}
 
 	/**
-	 * Get the value part of a header, interprets it as a date and converts it
-	 * to a long representing the number of milliseconds since 1970. If the
-	 * header does not exist or if its value could not be converted to a date
-	 * then the default is returned. Calls connect() if not connected.
+	 * Get the value part of a header, interprets it as a date and converts it to
+	 * a long representing the number of milliseconds since 1970. If the header
+	 * does not exist or if its value could not be converted to a date then the
+	 * default is returned. Calls connect() if not connected.
 	 * 
 	 * @param name
-	 *            the of the header.
+	 *           the of the header.
 	 * @param def
-	 *            the default value to return in case of an error.
+	 *           the default value to return in case of an error.
 	 * @return the value of the header, or def in case of an error.
 	 */
+	@Override
 	public long getHeaderFieldDate(String name, long def) {
 		try {
 			if (!connected)
@@ -396,22 +395,23 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	private String[] hdr_keys, hdr_values;
 
 	/**
-	 * Gets header name of the n-th header. Calls connect() if not connected.
-	 * The name of the 0-th header is <var>null</var>, even though it the 0-th
-	 * header has a value.
+	 * Gets header name of the n-th header. Calls connect() if not connected. The
+	 * name of the 0-th header is <var>null</var>, even though it the 0-th header
+	 * has a value.
 	 * 
 	 * @param n
-	 *            which header to return.
+	 *           which header to return.
 	 * @return the header name, or null if not that many headers.
 	 */
+	@Override
 	public String getHeaderFieldKey(int n) {
-		if (hdr_keys == null)
+		if (hdr_keys == null) {
 			fill_hdr_arrays();
-
-		if (n >= 0 && n < hdr_keys.length)
+		}
+		if (n >= 0 && n < hdr_keys.length) {
 			return hdr_keys[n];
-		else
-			return null;
+		}
+		return null;
 	}
 
 	/**
@@ -419,17 +419,18 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * The value of 0-th header is the Status-Line (e.g. "HTTP/1.1 200 Ok").
 	 * 
 	 * @param n
-	 *            which header to return.
+	 *           which header to return.
 	 * @return the header value, or null if not that many headers.
 	 */
+	@Override
 	public String getHeaderField(int n) {
-		if (hdr_values == null)
+		if (hdr_values == null) {
 			fill_hdr_arrays();
-
-		if (n >= 0 && n < hdr_values.length)
+		}
+		if (n >= 0 && n < hdr_values.length) {
 			return hdr_values[n];
-		else
-			return null;
+		}
+		return null;
 	}
 
 	/**
@@ -460,8 +461,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 			}
 
 			// the 0'th field is special
-			hdr_values[0] = resp.getVersion() + " " + resp.getStatusCode()
-					+ " " + resp.getReasonLine();
+			hdr_values[0] = resp.getVersion() + " " + resp.getStatusCode() + " " + resp.getReasonLine();
 		} catch (Exception e) {
 			hdr_keys = hdr_values = new String[0];
 		}
@@ -473,13 +473,13 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * 
 	 * @return an InputStream
 	 * @exception ProtocolException
-	 *                if input not enabled.
+	 *               if input not enabled.
 	 * @see java.net.URLConnection#setDoInput(boolean)
 	 */
+	@Override
 	public InputStream getInputStream() throws IOException {
 		if (!doInput)
-			throw new ProtocolException(
-					"Input not enabled! (use setDoInput(true))");
+			throw new ProtocolException("Input not enabled! (use setDoInput(true))");
 
 		if (!connected)
 			connect();
@@ -506,10 +506,10 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * @see java.net.HttpURLConnection#getErrorStream()
 	 * @since V0.3-1
 	 */
+	@Override
 	public InputStream getErrorStream() {
 		try {
-			if (!doInput || !connected || resp.getStatusCode() < 300
-					|| resp.getHeaderAsInt("Content-length") <= 0)
+			if (!doInput || !connected || resp.getStatusCode() < 300 || resp.getHeaderAsInt("Content-length") <= 0)
 				return null;
 
 			return resp.getInputStream();
@@ -536,44 +536,38 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * 
 	 * @return an OutputStream
 	 * @exception ProtocolException
-	 *                if already connect()'ed, if output is not enabled or if
-	 *                the request method does not support output.
+	 *               if already connect()'ed, if output is not enabled or if the
+	 *               request method does not support output.
 	 * @see java.net.URLConnection#setDoOutput(boolean)
 	 * @see HTTPClient.HttpOutputStream
 	 */
+	@Override
 	public synchronized OutputStream getOutputStream() throws IOException {
 		if (connected)
 			throw new ProtocolException("Already connected!");
 
 		if (!doOutput)
-			throw new ProtocolException(
-					"Output not enabled! (use setDoOutput(true))");
+			throw new ProtocolException("Output not enabled! (use setDoOutput(true))");
 		if (!method_set)
 			method = "POST";
-		else if (method.equals("HEAD") || method.equals("GET")
-				|| method.equals("TRACE"))
-			throw new ProtocolException("Method " + method
-					+ " does not support output!");
+		else if (method.equals("HEAD") || method.equals("GET") || method.equals("TRACE"))
+			throw new ProtocolException("Method " + method + " does not support output!");
 
 		if (getRequestProperty("Content-type") == null)
-			setRequestProperty("Content-type",
-					"application/x-www-form-urlencoded");
+			setRequestProperty("Content-type", "application/x-www-form-urlencoded");
 
 		if (output_stream == null) {
-			Log.write(Log.URLC, "URLC:  (" + urlString
-					+ ") creating output stream");
+			Log.write(Log.URLC, "URLC:  (" + urlString + ") creating output stream");
 
 			String cl = getRequestProperty("Content-Length");
 			if (cl != null)
-				output_stream = new HttpOutputStream(
-						Integer.parseInt(cl.trim()));
+				output_stream = new HttpOutputStream(Integer.parseInt(cl.trim()));
 			else {
 				// Hack: because of restrictions when using true output streams
 				// and because form-data is usually quite limited in size, we
 				// first collect all data before sending it if this is
 				// form-data.
-				if (getRequestProperty("Content-type").equals(
-						"application/x-www-form-urlencoded"))
+				if (getRequestProperty("Content-type").equals("application/x-www-form-urlencoded"))
 					output_stream = new ByteArrayOutputStream(300);
 				else
 					output_stream = new HttpOutputStream();
@@ -587,11 +581,12 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	}
 
 	/**
-	 * Gets the url for this connection. If we're connect()'d and the request
-	 * was redirected then the url returned is that of the final request.
+	 * Gets the url for this connection. If we're connect()'d and the request was
+	 * redirected then the url returned is that of the final request.
 	 * 
 	 * @return the final url, or null if any exception occured.
 	 */
+	@Override
 	public URL getURL() {
 		if (connected) {
 			try {
@@ -608,8 +603,9 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * Sets the <var>If-Modified-Since</var> header.
 	 * 
 	 * @param time
-	 *            the number of milliseconds since 1970.
+	 *           the number of milliseconds since 1970.
 	 */
+	@Override
 	public void setIfModifiedSince(long time) {
 		super.setIfModifiedSince(time);
 		setRequestProperty("If-Modified-Since", Util.httpDate(new Date(time)));
@@ -619,13 +615,13 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * Sets an arbitrary request header.
 	 * 
 	 * @param name
-	 *            the name of the header.
+	 *           the name of the header.
 	 * @param value
-	 *            the value for the header.
+	 *           the value for the header.
 	 */
+	@Override
 	public void setRequestProperty(String name, String value) {
-		Log.write(Log.URLC, "URLC:  (" + urlString
-				+ ") Setting request property: " + name + " : " + value);
+		Log.write(Log.URLC, "URLC:  (" + urlString + ") Setting request property: " + name + " : " + value);
 
 		int idx;
 		for (idx = 0; idx < headers.length; idx++) {
@@ -643,9 +639,10 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * Gets the value of a given request header.
 	 * 
 	 * @param name
-	 *            the name of the header.
+	 *           the name of the header.
 	 * @return the value part of the header, or null if no such header.
 	 */
+	@Override
 	public String getRequestProperty(String name) {
 		for (int idx = 0; idx < headers.length; idx++) {
 			if (headers[idx].getName().equalsIgnoreCase(name))
@@ -660,13 +657,13 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * automatically sent with each request.
 	 * 
 	 * @param name
-	 *            the name of the header.
+	 *           the name of the header.
 	 * @param value
-	 *            the value for the header.
+	 *           the value for the header.
 	 */
+	@Deprecated
 	public static void setDefaultRequestProperty(String name, String value) {
-		Log.write(Log.URLC, "URLC:  Setting default request property: " + name
-				+ " : " + value);
+		Log.write(Log.URLC, "URLC:  Setting default request property: " + name + " : " + value);
 
 		int idx;
 		for (idx = 0; idx < default_headers.length; idx++) {
@@ -684,9 +681,10 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * Gets the value for a given default request header.
 	 * 
 	 * @param name
-	 *            the name of the header.
+	 *           the name of the header.
 	 * @return the value part of the header, or null if no such header.
 	 */
+	@Deprecated
 	public static String getDefaultRequestProperty(String name) {
 		for (int idx = 0; idx < default_headers.length; idx++) {
 			if (default_headers[idx].getName().equalsIgnoreCase(name))
@@ -701,8 +699,9 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * this instance only. Cannot be called after <code>connect()</code>.
 	 * 
 	 * @param set
-	 *            enables automatic redirection handling if true.
+	 *           enables automatic redirection handling if true.
 	 */
+	@Override
 	public void setInstanceFollowRedirects(boolean set) {
 		if (connected)
 			throw new IllegalStateException("Already connected!");
@@ -714,14 +713,16 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * @return true if automatic redirection handling for this instance is
 	 *         enabled.
 	 */
+	@Override
 	public boolean getInstanceFollowRedirects() {
 		return do_redir;
 	}
 
 	/**
-	 * Connects to the server (if connection not still kept alive) and issues
-	 * the request.
+	 * Connects to the server (if connection not still kept alive) and issues the
+	 * request.
 	 */
+	@Override
 	public synchronized void connect() throws IOException {
 		if (connected)
 			return;
@@ -739,12 +740,9 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 
 			try {
 				if (output_stream instanceof ByteArrayOutputStream)
-					resp = con.ExtensionMethod(method, resource,
-							((ByteArrayOutputStream) output_stream)
-									.toByteArray(), headers);
+					resp = con.ExtensionMethod(method, resource, ((ByteArrayOutputStream) output_stream).toByteArray(), headers);
 				else
-					resp = con.ExtensionMethod(method, resource,
-							(HttpOutputStream) output_stream, headers);
+					resp = con.ExtensionMethod(method, resource, (HttpOutputStream) output_stream, headers);
 			} catch (ModuleException e) {
 				throw new IOException(e.toString());
 			}
@@ -756,6 +754,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	/**
 	 * Closes all the connections to this server.
 	 */
+	@Override
 	public void disconnect() {
 		Log.write(Log.URLC, "URLC:  (" + urlString + ") Disconnecting ...");
 
@@ -767,6 +766,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * 
 	 * @return true if an http proxy is being used.
 	 */
+	@Override
 	public boolean usingProxy() {
 		return (con.getProxyHost() != null);
 	}
@@ -776,6 +776,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 	 * 
 	 * @return a string containing the HttpURLConnection
 	 */
+	@Override
 	public String toString() {
 		return getClass().getName() + "[" + url + "]";
 	}

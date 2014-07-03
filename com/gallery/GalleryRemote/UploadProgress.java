@@ -65,8 +65,7 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 		jProgress[LEVEL_UPLOAD_ALL] = jProgressGlobal;
 
 		if (dialog != null) {
-			// wierd bug prevents upload... this happens on some versions of the
-			// VM
+			// wierd bug prevents upload... this happens on some versions of the VM
 			// apparently 1.4.2_03-b02 Windows.
 			try {
 				dialog.pack();
@@ -220,8 +219,6 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 
 	@Override
 	public void error(String message) {
-		// JOptionPane.showMessageDialog(this, message, GRI18n.getString(MODULE,
-		// "Error"), JOptionPane.ERROR_MESSAGE);
 		if (jErrors == null) {
 			jErrors = new JTextArea(5, 80);
 			jErrors.setEditable(false);

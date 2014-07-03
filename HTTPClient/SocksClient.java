@@ -59,7 +59,7 @@ import java.net.UnknownHostException;
  * That's all.
  * 
  * @version 0.3-3 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  */
 class SocksClient {
 	/** the host the socks server sits on */
@@ -231,15 +231,15 @@ class SocksClient {
 		InetAddress[] addr_list = InetAddress.getAllByName(host);
 		for (int idx = 0; idx < addr_list.length; idx++) {
 			try {
-				if (localAddr == null)
+				if (localAddr == null) {
 					return new Socket(addr_list[idx], port);
-				else
-					return new Socket(addr_list[idx], port, localAddr, localPort);
+				}
+				return new Socket(addr_list[idx], port, localAddr, localPort);
 			} catch (SocketException se) {
-				if (idx < addr_list.length - 1)
+				if (idx < addr_list.length - 1) {
 					continue; // try next IP address
-				else
-					throw se; // none of them worked
+				}
+				throw se; // none of them worked
 			}
 		}
 
@@ -535,6 +535,7 @@ class SocksClient {
 	 * 
 	 * @return a string containing the host and port of the socks server
 	 */
+	@Override
 	public String toString() {
 		return getClass().getName() + "[" + socks_host + ":" + socks_port + "]";
 	}

@@ -42,7 +42,7 @@ import java.util.zip.InflaterInputStream;
  * handles the "gzip", "deflate", "compress" and "identity" tokens.
  * 
  * @version 0.3-3 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  */
 class ContentEncodingModule implements HTTPClientModule {
 	// Methods
@@ -50,8 +50,8 @@ class ContentEncodingModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
-	public int requestHandler(Request req, Response[] resp)
-			throws ModuleException {
+	@Override
+	public int requestHandler(Request req, Response[] resp) throws ModuleException {
 		// parse Accept-Encoding header
 
 		int idx;
@@ -85,17 +85,14 @@ class ContentEncodingModule implements HTTPClientModule {
 			if (idx == params.length) // no qvalue, i.e. q=1.0
 				return REQ_CONTINUE;
 
-			if (params[idx].getValue() == null
-					|| params[idx].getValue().length() == 0)
-				throw new ModuleException("Invalid q value for \"*\" in "
-						+ "Accept-Encoding header: ");
+			if (params[idx].getValue() == null || params[idx].getValue().length() == 0)
+				throw new ModuleException("Invalid q value for \"*\" in " + "Accept-Encoding header: ");
 
 			try {
 				if (Float.valueOf(params[idx].getValue()).floatValue() > 0.)
 					return REQ_CONTINUE;
 			} catch (NumberFormatException nfe) {
-				throw new ModuleException("Invalid q value for \"*\" in "
-						+ "Accept-Encoding header: " + nfe.getMessage());
+				throw new ModuleException("Invalid q value for \"*\" in " + "Accept-Encoding header: " + nfe.getMessage());
 			}
 		}
 
@@ -120,12 +117,14 @@ class ContentEncodingModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
+	@Override
 	public void responsePhase1Handler(Response resp, RoRequest req) {
 	}
 
 	/**
 	 * Invoked by the HTTPClient.
 	 */
+	@Override
 	public int responsePhase2Handler(Response resp, Request req) {
 		return RSP_CONTINUE;
 	}
@@ -133,11 +132,10 @@ class ContentEncodingModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
-	public void responsePhase3Handler(Response resp, RoRequest req)
-			throws IOException, ModuleException {
+	@Override
+	public void responsePhase3Handler(Response resp, RoRequest req) throws IOException, ModuleException {
 		String ce = resp.getHeader("Content-Encoding");
-		if (ce == null || req.getMethod().equals("HEAD")
-				|| resp.getStatusCode() == 206)
+		if (ce == null || req.getMethod().equals("HEAD") || resp.getStatusCode() == 206)
 			return;
 
 		Vector<HttpHeaderElement> pce;
@@ -150,9 +148,8 @@ class ContentEncodingModule implements HTTPClientModule {
 		if (pce.size() == 0)
 			return;
 
-		String encoding = ((HttpHeaderElement) pce.firstElement()).getName();
-		if (encoding.equalsIgnoreCase("gzip")
-				|| encoding.equalsIgnoreCase("x-gzip")) {
+		String encoding = pce.firstElement().getName();
+		if (encoding.equalsIgnoreCase("gzip") || encoding.equalsIgnoreCase("x-gzip")) {
 			Log.write(Log.MODS, "CEM:   pushing gzip-input-stream");
 
 			resp.inp_stream = new GZIPInputStream(resp.inp_stream);
@@ -164,8 +161,7 @@ class ContentEncodingModule implements HTTPClientModule {
 			resp.inp_stream = new InflaterInputStream(resp.inp_stream);
 			pce.removeElementAt(pce.size() - 1);
 			resp.deleteHeader("Content-length");
-		} else if (encoding.equalsIgnoreCase("compress")
-				|| encoding.equalsIgnoreCase("x-compress")) {
+		} else if (encoding.equalsIgnoreCase("compress") || encoding.equalsIgnoreCase("x-compress")) {
 			Log.write(Log.MODS, "CEM:   pushing uncompress-input-stream");
 
 			resp.inp_stream = new UncompressInputStream(resp.inp_stream);
@@ -175,8 +171,7 @@ class ContentEncodingModule implements HTTPClientModule {
 			Log.write(Log.MODS, "CEM:   ignoring 'identity' token");
 			pce.removeElementAt(pce.size() - 1);
 		} else {
-			Log.write(Log.MODS, "CEM:   Unknown content encoding '" + encoding
-					+ "'");
+			Log.write(Log.MODS, "CEM:   Unknown content encoding '" + encoding + "'");
 		}
 
 		if (pce.size() > 0)
@@ -188,6 +183,7 @@ class ContentEncodingModule implements HTTPClientModule {
 	/**
 	 * Invoked by the HTTPClient.
 	 */
+	@Override
 	public void trailerHandler(Response resp, RoRequest req) {
 	}
 }

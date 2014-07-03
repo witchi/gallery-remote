@@ -53,9 +53,7 @@ public final class XTrustProvider extends java.security.Provider {
 		AccessController.doPrivileged(new PrivilegedAction<Object>() {
 			@Override
 			public Object run() {
-				put("TrustManagerFactory."
-						+ TrustManagerFactoryImpl.getAlgorithm(),
-						TrustManagerFactoryImpl.class.getName());
+				put("TrustManagerFactory." + TrustManagerFactoryImpl.getAlgorithm(), TrustManagerFactoryImpl.class.getName());
 				return null;
 			}
 		});
@@ -64,13 +62,11 @@ public final class XTrustProvider extends java.security.Provider {
 	public static void install() {
 		if (Security.getProvider(NAME) == null) {
 			Security.insertProviderAt(new XTrustProvider(), 2);
-			Security.setProperty("ssl.TrustManagerFactory.algorithm",
-					TrustManagerFactoryImpl.getAlgorithm());
+			Security.setProperty("ssl.TrustManagerFactory.algorithm", TrustManagerFactoryImpl.getAlgorithm());
 		}
 	}
 
-	public final static class TrustManagerFactoryImpl extends
-			TrustManagerFactorySpi {
+	public final static class TrustManagerFactoryImpl extends TrustManagerFactorySpi {
 		public TrustManagerFactoryImpl() {
 		}
 
@@ -78,27 +74,29 @@ public final class XTrustProvider extends java.security.Provider {
 			return "XTrust509";
 		}
 
+		@Override
 		protected void engineInit(KeyStore keystore) throws KeyStoreException {
 		}
 
-		protected void engineInit(ManagerFactoryParameters mgrparams)
-				throws InvalidAlgorithmParameterException {
-			throw new InvalidAlgorithmParameterException(XTrustProvider.NAME
-					+ " does not use ManagerFactoryParameters");
+		@Override
+		protected void engineInit(ManagerFactoryParameters mgrparams) throws InvalidAlgorithmParameterException {
+			throw new InvalidAlgorithmParameterException(XTrustProvider.NAME + " does not use ManagerFactoryParameters");
 		}
 
+		@Override
 		protected TrustManager[] engineGetTrustManagers() {
 			return new TrustManager[] { new X509TrustManager() {
+				@Override
 				public X509Certificate[] getAcceptedIssuers() {
 					return null;
 				}
 
-				public void checkClientTrusted(X509Certificate[] certs,
-						String authType) {
+				@Override
+				public void checkClientTrusted(X509Certificate[] certs, String authType) {
 				}
 
-				public void checkServerTrusted(X509Certificate[] certs,
-						String authType) {
+				@Override
+				public void checkServerTrusted(X509Certificate[] certs, String authType) {
 				}
 			} };
 		}

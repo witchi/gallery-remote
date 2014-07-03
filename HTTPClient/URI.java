@@ -70,7 +70,7 @@ import java.util.Hashtable;
  * 
  * @see <A HREF="http://www.ics.uci.edu/pub/ietf/uri/rfc2396.txt">rfc-2396</A>
  * @version 0.3-3 06/05/2001
- * @author Ronald Tschal�r
+ * @author Ronald Tschalär
  * @since V0.3-1
  */
 public class URI {
@@ -786,7 +786,7 @@ public class URI {
 	 * @return the port number, or 0 if unknown
 	 */
 	public final static int defaultPort(String protocol) {
-		Integer port = (Integer) defaultPorts.get(protocol.trim().toLowerCase());
+		Integer port = defaultPorts.get(protocol.trim().toLowerCase());
 		return (port != null) ? port.intValue() : 0;
 	}
 
@@ -1016,6 +1016,7 @@ public class URI {
 	 * @return the URI as a string
 	 * @see #toExternalForm()
 	 */
+	@Override
 	public String toString() {
 		return stringify(true);
 	}
@@ -1024,6 +1025,7 @@ public class URI {
 	 * @return true if <var>other</var> is either a URI or URL and it matches the
 	 *         current URI
 	 */
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof URI) {
 			URI o = (URI) other;
@@ -1109,6 +1111,7 @@ public class URI {
 	 * 
 	 * @return the hash code
 	 */
+	@Override
 	public int hashCode() {
 		if (hashCode == -1)
 			hashCode = (scheme != null ? unescapeNoPE(scheme, null).hashCode() : 0)

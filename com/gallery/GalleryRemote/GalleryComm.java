@@ -86,12 +86,13 @@ public abstract class GalleryComm implements PreferenceNames {
 		 * least once per GalleryRemote invokation
 		 */
 		CookieModule.setCookiePolicyHandler(new CookiePolicyHandler() {
-			public boolean acceptCookie(Cookie cookie, RoRequest req,
-					RoResponse resp) {
+			@Override
+			public boolean acceptCookie(Cookie cookie, RoRequest req, RoResponse resp) {
 				Log.log(Log.LEVEL_TRACE, MODULE, "Accepting cookie: " + cookie);
 				return true;
 			}
 
+			@Override
 			public boolean sendCookie(Cookie cookie, RoRequest req) {
 				Log.log(Log.LEVEL_TRACE, MODULE, "Sending cookie: " + cookie);
 				return true;
@@ -102,22 +103,20 @@ public abstract class GalleryComm implements PreferenceNames {
 		// http://tp.its.yale.edu/pipermail/cas/2004-March/000348.html
 		// Create a trust manager that does not validate certificate chains
 		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			@Override
 			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-				Log.log(Log.LEVEL_INFO, MODULE,
-						"TrustManager.getAcceptedIssuers");
+				Log.log(Log.LEVEL_INFO, MODULE, "TrustManager.getAcceptedIssuers");
 				return new java.security.cert.X509Certificate[0];
 			}
 
-			public void checkClientTrusted(
-					java.security.cert.X509Certificate[] certs, String authType) {
-				Log.log(Log.LEVEL_INFO, MODULE,
-						"TrustManager.checkClientTrusted");
+			@Override
+			public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+				Log.log(Log.LEVEL_INFO, MODULE, "TrustManager.checkClientTrusted");
 			}
 
-			public void checkServerTrusted(
-					java.security.cert.X509Certificate[] certs, String authType) {
-				Log.log(Log.LEVEL_INFO, MODULE,
-						"TrustManager.checkServerTrusted");
+			@Override
+			public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+				Log.log(Log.LEVEL_INFO, MODULE, "TrustManager.checkServerTrusted");
 			}
 		} };
 
@@ -125,8 +124,7 @@ public abstract class GalleryComm implements PreferenceNames {
 		try {
 			SSLContext sc = SSLContext.getInstance("SSL");
 			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			HttpsURLConnection
-					.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 		} catch (Exception e) {
 			Log.logException(Log.LEVEL_ERROR, MODULE, e);
 		}
@@ -137,11 +135,10 @@ public abstract class GalleryComm implements PreferenceNames {
 	 * Gallery to the server.
 	 * 
 	 * @param su
-	 *            an instance that implements the StatusUpdate interface.
+	 *           an instance that implements the StatusUpdate interface.
 	 */
 	public void uploadFiles(StatusUpdate su, boolean async) {
-		throw new RuntimeException(
-				"This method is not available on this protocol");
+		throw new RuntimeException("This method is not available on this protocol");
 	}
 
 	/**
@@ -149,11 +146,10 @@ public abstract class GalleryComm implements PreferenceNames {
 	 * associated Gallery from the server.
 	 * 
 	 * @param su
-	 *            an instance that implements the StatusUpdate interface.
+	 *           an instance that implements the StatusUpdate interface.
 	 */
 	public void fetchAlbums(StatusUpdate su, boolean async) {
-		throw new RuntimeException(
-				"This method is not available on this protocol");
+		throw new RuntimeException("This method is not available on this protocol");
 	}
 
 	/**
@@ -161,11 +157,10 @@ public abstract class GalleryComm implements PreferenceNames {
 	 * given Album.
 	 * 
 	 * @param su
-	 *            an instance that implements the StatusUpdate interface.
+	 *           an instance that implements the StatusUpdate interface.
 	 */
 	public void albumProperties(StatusUpdate su, Album a, boolean async) {
-		throw new RuntimeException(
-				"This method is not available on this protocol");
+		throw new RuntimeException("This method is not available on this protocol");
 	}
 
 	/**
@@ -173,38 +168,29 @@ public abstract class GalleryComm implements PreferenceNames {
 	 * specified album (or at the root if album is null)
 	 * 
 	 * @param su
-	 *            an instance that implements the StatusUpdate interface.
+	 *           an instance that implements the StatusUpdate interface.
 	 * @param parentAlbum
-	 *            if null, create the album in the root of the gallery;
-	 *            otherwise create as a child of the given album
+	 *           if null, create the album in the root of the gallery; otherwise
+	 *           create as a child of the given album
 	 */
-	public String newAlbum(StatusUpdate su, Album parentAlbum,
-			String newAlbumName, String newAlbumTitle, String newAlbumDesc,
-			boolean async) {
-		throw new RuntimeException(
-				"This method is not available on this protocol");
+	public String newAlbum(StatusUpdate su, Album parentAlbum, String newAlbumName, String newAlbumTitle, String newAlbumDesc, boolean async) {
+		throw new RuntimeException("This method is not available on this protocol");
 	}
 
-	public void fetchAlbumImages(StatusUpdate su, Album a, boolean recusive,
-			boolean async, int maxPictures, boolean random) {
-		throw new RuntimeException(
-				"This method is not available on this protocol");
+	public void fetchAlbumImages(StatusUpdate su, Album a, boolean recusive, boolean async, int maxPictures, boolean random) {
+		throw new RuntimeException("This method is not available on this protocol");
 	}
 
-	public boolean moveAlbum(StatusUpdate su, Album a, Album newParent,
-			boolean async) {
-		throw new RuntimeException(
-				"This method is not available on this protocol");
+	public boolean moveAlbum(StatusUpdate su, Album a, Album newParent, boolean async) {
+		throw new RuntimeException("This method is not available on this protocol");
 	}
 
 	public void login(StatusUpdate su) {
-		throw new RuntimeException(
-				"This method is not available on this protocol");
+		throw new RuntimeException("This method is not available on this protocol");
 	}
 
 	public void incrementViewCount(StatusUpdate su, Picture p) {
-		throw new RuntimeException(
-				"This method is not available on this protocol");
+		throw new RuntimeException("This method is not available on this protocol");
 	}
 
 	public void logOut() {
@@ -233,14 +219,12 @@ public abstract class GalleryComm implements PreferenceNames {
 		return lastRespCode == 401;
 	}
 
-	public static GalleryComm getCommInstance(StatusUpdate su, URL url,
-			Gallery g) {
+	public static GalleryComm getCommInstance(StatusUpdate su, URL url, Gallery g) {
 		try {
 			GalleryProperties p = GalleryRemote.instance().properties;
 
 			// set proxy info
-			String proxyList = System
-					.getProperty("javaplugin.proxy.config.list");
+			String proxyList = System.getProperty("javaplugin.proxy.config.list");
 
 			String proxyHost = null;
 			int proxyPort = 80;
@@ -253,22 +237,18 @@ public abstract class GalleryComm implements PreferenceNames {
 			Class<?> proxyInfoClass = null;
 			Object proxyInfo = null;
 			try {
-				Log.log(Log.LEVEL_TRACE, MODULE,
-						"Trying Java 5 and 6 proxy class (sun.plugin.net.proxy.PluginAutoProxyHandler)");
+				Log.log(Log.LEVEL_TRACE, MODULE, "Trying Java 5 and 6 proxy class (sun.plugin.net.proxy.PluginAutoProxyHandler)");
 
 				// this class is not signed by Gallery, so we can't use the
 				// secure instantiation
-				proxyHelperClass = Class
-						.forName("sun.plugin.net.proxy.PluginAutoProxyHandler");
+				proxyHelperClass = Class.forName("sun.plugin.net.proxy.PluginAutoProxyHandler");
 				// this class is not signed by Gallery, so we can't use the
 				// secure instantiation
-				proxyInfoClass = Class
-						.forName("com.sun.deploy.net.proxy.ProxyInfo");
+				proxyInfoClass = Class.forName("com.sun.deploy.net.proxy.ProxyInfo");
 
 				proxyHelper = proxyHelperClass.newInstance();
-				Object[] proxyInfoArray = (Object[]) proxyHelperClass
-						.getMethod("getProxyInfo", new Class<?>[] { URL.class })
-						.invoke(proxyHelper, new Object[] { url });
+				Object[] proxyInfoArray = (Object[]) proxyHelperClass.getMethod("getProxyInfo", new Class<?>[] { URL.class }).invoke(
+						proxyHelper, new Object[] { url });
 
 				if (proxyInfoArray != null && proxyInfoArray.length != 0) {
 					proxyInfo = proxyInfoArray[0];
@@ -279,81 +259,60 @@ public abstract class GalleryComm implements PreferenceNames {
 
 			if (proxyHelperClass == null) {
 				try {
-					Log.log(Log.LEVEL_TRACE, MODULE,
-							"Trying Java 4 proxy class (sun.plugin.net.proxy.PluginProxyManager)");
+					Log.log(Log.LEVEL_TRACE, MODULE, "Trying Java 4 proxy class (sun.plugin.net.proxy.PluginProxyManager)");
 
 					// this class is not signed by Gallery, so we can't use the
 					// secure instantiation
-					proxyHelperClass = Class
-							.forName("sun.plugin.net.proxy.PluginProxyManager");
+					proxyHelperClass = Class.forName("sun.plugin.net.proxy.PluginProxyManager");
 					// this class is not signed by Gallery, so we can't use the
 					// secure instantiation
-					proxyInfoClass = Class
-							.forName("sun.plugin.net.proxy.ProxyInfo");
+					proxyInfoClass = Class.forName("sun.plugin.net.proxy.ProxyInfo");
 
 					proxyHelper = proxyHelperClass.newInstance();
-					proxyInfo = proxyHelperClass.getMethod("getProxyInfo",
-							new Class[] { URL.class }).invoke(proxyHelper,
-							new Object[] { url });
+					proxyInfo = proxyHelperClass.getMethod("getProxyInfo", new Class[] { URL.class }).invoke(proxyHelper, new Object[] { url });
 				} catch (Throwable e) {
-					Log.log(Log.LEVEL_TRACE, MODULE, "Failed instantiation "
-							+ e);
+					Log.log(Log.LEVEL_TRACE, MODULE, "Failed instantiation " + e);
 				}
 			}
 
 			if (proxyInfo != null) {
 				try {
-					Log.log(Log.LEVEL_TRACE, MODULE,
-							"Got proxy info from Java plugin: " + proxyInfo);
+					Log.log(Log.LEVEL_TRACE, MODULE, "Got proxy info from Java plugin: " + proxyInfo);
 
-					proxyPort = ((Integer) proxyInfoClass.getMethod("getPort",
-							(Class<?>[]) null).invoke(proxyInfo,
-							(Object[]) null)).intValue();
+					proxyPort = ((Integer) proxyInfoClass.getMethod("getPort", (Class<?>[]) null).invoke(proxyInfo, (Object[]) null)).intValue();
 
 					// Plugins 4, 5 and 6 work differently...
 					try {
-						proxyHost = (String) proxyInfoClass.getMethod(
-								"getProxy", (Class<?>[]) null).invoke(
-								proxyInfo, (Object[]) null);
+						proxyHost = (String) proxyInfoClass.getMethod("getProxy", (Class<?>[]) null).invoke(proxyInfo, (Object[]) null);
 					} catch (NoSuchMethodException e) {
-						proxyHost = (String) proxyInfoClass.getMethod(
-								"getHost", (Class<?>[]) null).invoke(proxyInfo,
-								(Object[]) null);
+						proxyHost = (String) proxyInfoClass.getMethod("getHost", (Class<?>[]) null).invoke(proxyInfo, (Object[]) null);
 					}
 				} catch (Throwable e) {
 					Log.log(Log.LEVEL_TRACE, MODULE, "Failed instantiation" + e);
 				}
 			}
 
-			if (proxyHost == null && proxyList != null
-					&& proxyList.length() != 0) {
+			if (proxyHost == null && proxyList != null && proxyList.length() != 0) {
 				try {
 					proxyList = proxyList.toUpperCase();
-					Log.log(Log.LEVEL_TRACE, MODULE,
-							"Plugin Proxy Config List Property: " + proxyList);
+					Log.log(Log.LEVEL_TRACE, MODULE, "Plugin Proxy Config List Property: " + proxyList);
 					// 6.0.0 1/14/03 1.3.1_06 appears to omit HTTP portion of
 					// reported proxy list... Mod to accomodate this...
-					// Expecting proxyList of "HTTP=XXX.XXX.XXX.XXX:Port" OR
-					// "XXX.XXX.XXX.XXX:Port" & assuming HTTP...
+					// Expecting proxyList of "HTTP=xxx.xxx.xxx.xxx:Port" OR
+					// "xxx.xxx.xxx.xxx:Port" & assuming HTTP...
 
 					if (proxyList.indexOf("HTTP=") != -1) {
-						proxyHost = proxyList.substring(
-								proxyList.indexOf("HTTP=") + 5,
-								proxyList.indexOf(":"));
+						proxyHost = proxyList.substring(proxyList.indexOf("HTTP=") + 5, proxyList.indexOf(":"));
 					} else {
-						proxyHost = proxyList.substring(0,
-								proxyList.indexOf(":"));
+						proxyHost = proxyList.substring(0, proxyList.indexOf(":"));
 					}
 					int endOfPort = proxyList.indexOf(",");
 					if (endOfPort < 1)
 						endOfPort = proxyList.length();
-					proxyPort = Integer.parseInt(proxyList.substring(
-							proxyList.indexOf(":") + 1, endOfPort));
-					Log.log(Log.LEVEL_TRACE, MODULE, "proxy " + proxyHost
-							+ " port " + proxyPort);
+					proxyPort = Integer.parseInt(proxyList.substring(proxyList.indexOf(":") + 1, endOfPort));
+					Log.log(Log.LEVEL_TRACE, MODULE, "proxy " + proxyHost + " port " + proxyPort);
 				} catch (Exception e) {
-					Log.log(Log.LEVEL_TRACE, MODULE,
-							"Exception during failover auto proxy detection");
+					Log.log(Log.LEVEL_TRACE, MODULE, "Exception during failover auto proxy detection");
 					Log.logException(Log.LEVEL_ERROR, MODULE, e);
 					proxyHost = null;
 				}
@@ -372,16 +331,13 @@ public abstract class GalleryComm implements PreferenceNames {
 			}
 
 			if (proxyHost != null) {
-				Log.log(Log.LEVEL_TRACE, MODULE, "Setting proxy to "
-						+ proxyHost + ":" + proxyPort);
+				Log.log(Log.LEVEL_TRACE, MODULE, "Setting proxy to " + proxyHost + ":" + proxyPort);
 
 				HTTPConnection.setProxyServer(proxyHost, proxyPort);
 
 				if (proxyUsername != null && proxyUsername.length() > 0) {
-					Log.log(Log.LEVEL_TRACE, MODULE, "Setting proxy auth to "
-							+ proxyUsername + ":" + proxyPassword);
-					AuthorizationInfo.addBasicAuthorization(proxyHost,
-							proxyPort, "", proxyUsername, proxyPassword);
+					Log.log(Log.LEVEL_TRACE, MODULE, "Setting proxy auth to " + proxyUsername + ":" + proxyPassword);
+					AuthorizationInfo.addBasicAuthorization(proxyHost, proxyPort, "", proxyUsername, proxyPassword);
 				}
 
 				// also set Java URLConnection proxy
@@ -399,8 +355,7 @@ public abstract class GalleryComm implements PreferenceNames {
 			addUserInfo(url);
 			String userAgent = g.getUserAgent();
 			if (userAgent != null) {
-				mConnection.setDefaultHeaders(new NVPair[] { new NVPair(
-						"User-Agent", userAgent) });
+				mConnection.setDefaultHeaders(new NVPair[] { new NVPair("User-Agent", userAgent) });
 			}
 
 			if (g.getType() == Gallery.TYPE_STANDALONE) {
@@ -408,45 +363,34 @@ public abstract class GalleryComm implements PreferenceNames {
 				String urlPath = url.getFile();
 
 				if (g.forceGalleryVersion == 0 || g.forceGalleryVersion == 1) {
-					Log.log(Log.LEVEL_TRACE, MODULE, "Trying protocol 2 for "
-							+ url);
+					Log.log(Log.LEVEL_TRACE, MODULE, "Trying protocol 2 for " + url);
 					// Test GalleryComm2
-					String urlPath2 = urlPath
-							+ ((urlPath.endsWith("/")) ? GalleryComm2.SCRIPT_NAME
-									: "/" + GalleryComm2.SCRIPT_NAME);
+					String urlPath2 = urlPath + ((urlPath.endsWith("/")) ? GalleryComm2.SCRIPT_NAME : "/" + GalleryComm2.SCRIPT_NAME);
 					if (tryComm(su, mConnection, urlPath2, null)) {
-						Log.log(Log.LEVEL_TRACE, MODULE,
-								"Server has protocol 2");
+						Log.log(Log.LEVEL_TRACE, MODULE, "Server has protocol 2");
 						return new GalleryComm2(g);
 					}
 				}
 
 				if (g.forceGalleryVersion == 0 || g.forceGalleryVersion == 2) {
-					Log.log(Log.LEVEL_TRACE, MODULE, "Trying protocol 2.5 for "
-							+ url);
+					Log.log(Log.LEVEL_TRACE, MODULE, "Trying protocol 2.5 for " + url);
 					// Test GalleryComm2
-					String urlPath2_5 = urlPath
-							+ ((urlPath.endsWith("/")) ? GalleryComm2_5.SCRIPT_NAME
-									: "/" + GalleryComm2_5.SCRIPT_NAME);
+					String urlPath2_5 = urlPath + ((urlPath.endsWith("/")) ? GalleryComm2_5.SCRIPT_NAME : "/" + GalleryComm2_5.SCRIPT_NAME);
 					StringBuffer sb = new StringBuffer();
 					if (tryComm(su, mConnection, urlPath2_5, sb)) {
-						if (sb != null
-								&& sb.indexOf("ERROR_PERMISSION_DENIED") == -1) {
-							Log.log(Log.LEVEL_TRACE, MODULE,
-									"Server has protocol 2.5");
+						if (sb != null && sb.indexOf("ERROR_PERMISSION_DENIED") == -1) {
+							Log.log(Log.LEVEL_TRACE, MODULE, "Server has protocol 2.5");
 							return new GalleryComm2_5(g);
-						} else {
-							// G2 remote module is deactivated
-							su.error(GRI18n.getString(MODULE,
-									"g2.moduleDisabled"));
 						}
+						// G2 remote module is deactivated
+						su.error(GRI18n.getString(MODULE, "g2.moduleDisabled"));
 					}
 				}
 
 				/*
-				 * Log.log(Log.LEVEL_TRACE, MODULE, "Trying protocol 1 for " +
-				 * url); // Test GalleryComm1 // BUT: only if first try was not
-				 * status code 401 = authorization failure String scriptName =
+				 * Log.log(Log.LEVEL_TRACE, MODULE, "Trying protocol 1 for " + url);
+				 * // Test GalleryComm1 // BUT: only if first try was not status
+				 * code 401 = authorization failure String scriptName =
 				 * "gallery_remote.php"; String urlPath1 = urlPath +
 				 * ((urlPath.endsWith("/")) ? scriptName : "/" + scriptName); if
 				 * (lastRespCode != 401 && tryComm(su, mConnection, urlPath1)) {
@@ -473,8 +417,7 @@ public abstract class GalleryComm implements PreferenceNames {
 				String username = st.nextToken();
 				String password = st.nextToken();
 
-				Log.log(Log.LEVEL_TRACE, MODULE, "Added basic auth params: "
-						+ username + " - " + password);
+				Log.log(Log.LEVEL_TRACE, MODULE, "Added basic auth params: " + username + " - " + password);
 
 				AuthorizePopup.hackUsername = username;
 				AuthorizePopup.hackPassword = password;
@@ -487,8 +430,7 @@ public abstract class GalleryComm implements PreferenceNames {
 		AuthorizePopup.hackPassword = null;
 	}
 
-	private static boolean tryComm(StatusUpdate su, HTTPConnection mConnection,
-			String urlPath, StringBuffer content) {
+	private static boolean tryComm(StatusUpdate su, HTTPConnection mConnection, String urlPath, StringBuffer content) {
 		try {
 			HTTPResponse rsp;
 
@@ -516,8 +458,7 @@ public abstract class GalleryComm implements PreferenceNames {
 				content.append(rsp.getText());
 			}
 
-			Log.log(Log.LEVEL_TRACE, MODULE, "tryComm " + urlPath + ": "
-					+ rspCode);
+			Log.log(Log.LEVEL_TRACE, MODULE, "tryComm " + urlPath + ": " + rspCode);
 
 			return rspCode == 200;
 		} catch (UnknownHostException uhe) {
@@ -531,9 +472,7 @@ public abstract class GalleryComm implements PreferenceNames {
 				if (ioe instanceof javax.net.ssl.SSLPeerUnverifiedException) {
 					Log.logException(Log.LEVEL_ERROR, MODULE, ioe);
 
-					JOptionPane.showMessageDialog((Component) su,
-							GRI18n.getString(MODULE, "noAuth"),
-							GRI18n.getString(MODULE, "error"),
+					JOptionPane.showMessageDialog((Component) su, GRI18n.getString(MODULE, "noAuth"), GRI18n.getString(MODULE, "error"),
 							JOptionPane.ERROR_MESSAGE);
 				} else {
 					Log.logException(Log.LEVEL_ERROR, MODULE, ioe);

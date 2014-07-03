@@ -60,8 +60,7 @@ import java.util.Vector;
  * @author DTAI, Incorporated
  */
 
-public class DummyAppletContext extends Frame implements AppletStub,
-		AppletContext, URLStreamHandlerFactory {
+public class DummyAppletContext extends Frame implements AppletStub, AppletContext, URLStreamHandlerFactory {
 
 	private static final long serialVersionUID = -1730642917347143433L;
 	private TextField status;
@@ -75,7 +74,7 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * Entry point into the standalone program.
 	 * 
 	 * @param args
-	 *            the command line arguments
+	 *           the command line arguments
 	 */
 	public static void main(String args[]) {
 		new DummyAppletContext(args);
@@ -85,10 +84,10 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * Constructor for the main class, given an existing applet object.
 	 * 
 	 * @param applet
-	 *            the applet embedded in this AppletContext
+	 *           the applet embedded in this AppletContext
 	 * @param args
-	 *            the command line arguments. Contains possibly height and
-	 *            width, and any applet parameters
+	 *           the command line arguments. Contains possibly height and width,
+	 *           and any applet parameters
 	 */
 	public DummyAppletContext(Applet applet, String args[]) {
 
@@ -100,17 +99,16 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * default frame (window) width and height.
 	 * 
 	 * @param applet
-	 *            the applet embedded in this AppletContext
+	 *           the applet embedded in this AppletContext
 	 * @param default_width
-	 *            the default width of the window
+	 *           the default width of the window
 	 * @param default_height
-	 *            the default width of the window
+	 *           the default width of the window
 	 * @param args
-	 *            the command line arguments. Contains possibly height and
-	 *            width, and any applet parameters
+	 *           the command line arguments. Contains possibly height and width,
+	 *           and any applet parameters
 	 */
-	public DummyAppletContext(Applet applet, int default_width,
-			int default_height, String args[]) {
+	public DummyAppletContext(Applet applet, int default_width, int default_height, String args[]) {
 
 		super(applet.getClass().getName());
 
@@ -121,8 +119,8 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * Constructor for the main class, from the command line arguments.
 	 * 
 	 * @param args
-	 *            the command line arguments. Contains the name of the applet
-	 *            class, possibly height and width, and any applet parameters.
+	 *           the command line arguments. Contains the name of the applet
+	 *           class, possibly height and width, and any applet parameters.
 	 */
 	public DummyAppletContext(String args[]) {
 
@@ -153,8 +151,7 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * @param startidx index in the args array at which to transitionStart
 	 * parsing
 	 */
-	private void init(Applet applet, int default_width, int default_height,
-			String args[], int startidx) {
+	private void init(Applet applet, int default_width, int default_height, String args[], int startidx) {
 
 		// URL.setURLStreamHandlerFactory( this );
 
@@ -185,10 +182,10 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * parameters (name value pairs).
 	 * 
 	 * @param args
-	 *            the command line arguments. Contains possibly height and
-	 *            width, and any applet parameters
+	 *           the command line arguments. Contains possibly height and width,
+	 *           and any applet parameters
 	 * @param startidx
-	 *            index in the args array at which to transitionStart parsing
+	 *           index in the args array at which to transitionStart parsing
 	 */
 	public void parseArgs(String args[], int startidx) {
 		for (int idx = startidx; idx < (args.length - startidx); idx += 2) {
@@ -201,8 +198,7 @@ public class DummyAppletContext extends Frame implements AppletStub,
 					params.put(args[idx], args[idx + 1]);
 				}
 			} catch (NumberFormatException nfe) {
-				System.err.println("Warning: command line argument "
-						+ args[idx] + " is not a valid number.");
+				System.err.println("Warning: command line argument " + args[idx] + " is not a valid number.");
 			}
 		}
 	}
@@ -212,7 +208,7 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * program.
 	 * 
 	 * @param evt
-	 *            The event that occurred
+	 *           The event that occurred
 	 * @return false if the event was not handled by this object.
 	 */
 	@Override
@@ -242,6 +238,7 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * 
 	 * @return a "file:" URL for the current directory
 	 */
+	@Override
 	public URL getDocumentBase() {
 		URL url = null;
 		try {
@@ -275,6 +272,7 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * 
 	 * @return in this case, the same value as getDocumentBase()
 	 */
+	@Override
 	public final URL getCodeBase() {
 		return getDocumentBase();
 	}
@@ -283,11 +281,12 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * Gets a parameter of the applet.
 	 * 
 	 * @param name
-	 *            the name of the parameter
+	 *           the name of the parameter
 	 * @return the value, or null if not defined
 	 */
+	@Override
 	public final String getParameter(String name) {
-		return (String) params.get(name);
+		return params.get(name);
 	}
 
 	/**
@@ -295,25 +294,26 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * 
 	 * @return this object
 	 */
+	@Override
 	public final AppletContext getAppletContext() {
 		return this;
 	}
 
 	/**
-	 * Called when the applet wants to be resized. This causes the Frame
-	 * (window) to be resized to accomodate the new Applet size.
+	 * Called when the applet wants to be resized. This causes the Frame (window)
+	 * to be resized to accomodate the new Applet size.
 	 * 
 	 * @param width
-	 *            the new width of the applet
+	 *           the new width of the applet
 	 * @param height
-	 *            the new height of the applet
+	 *           the new height of the applet
 	 */
+	@Override
 	public void appletResize(int width, int height) {
 
 		Insets insets = getInsets();
 
-		setSize((width + insets.left + insets.right),
-				(height + status.getPreferredSize().height + insets.top + insets.bottom));
+		setSize((width + insets.left + insets.right), (height + status.getPreferredSize().height + insets.top + insets.bottom));
 	}
 
 	/************ AppletContext methods *************/
@@ -325,31 +325,32 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * be defined at the bottom of this file.)
 	 * 
 	 * @param url
-	 *            URL of the AudioClip to load
+	 *           URL of the AudioClip to load
 	 * @return the AudioClip object if it exists (in our case, this is always
 	 *         null
 	 */
+	@Override
 	public final AudioClip getAudioClip(URL url) {
 		return null;
 	}
 
 	/**
-	 * Gets an image. This usually involves downloading it over the net.
-	 * However, the environment may decide to cache images. This method takes an
-	 * array of URLs, each of which will be tried until the image is found.
+	 * Gets an image. This usually involves downloading it over the net. However,
+	 * the environment may decide to cache images. This method takes an array of
+	 * URLs, each of which will be tried until the image is found.
 	 * 
 	 * @param url
-	 *            URL of the Image to load
+	 *           URL of the Image to load
 	 * @return the Image object
 	 */
+	@Override
 	public final Image getImage(URL url) {
 		return Toolkit.getDefaultToolkit().getImage(filenameFromURL(url));
 	}
 
 	/*
-	 * PRIVATE utility function. Ignores the protocol, and returns a filename
-	 * for a file on the local filesystem (which may or may not exist, of
-	 * course).
+	 * PRIVATE utility function. Ignores the protocol, and returns a filename for
+	 * a file on the local filesystem (which may or may not exist, of course).
 	 * 
 	 * @param url URL to be converted to a filename on the local filesystem.
 	 * 
@@ -373,10 +374,11 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * Gets an applet by name.
 	 * 
 	 * @param name
-	 *            the name of the applet
+	 *           the name of the applet
 	 * @return null if the applet does not exist, and it never does since we
 	 *         never name the applet.
 	 */
+	@Override
 	public final Applet getApplet(String name) {
 		return null;
 	}
@@ -388,6 +390,7 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * @return the Enumeration -- contains ONLY the applet created with this
 	 *         DummyAppletContext
 	 */
+	@Override
 	public final Enumeration<Applet> getApplets() {
 		return applets.elements();
 	}
@@ -398,8 +401,9 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * document was requested and WOULD be loaded if in a browser).
 	 * 
 	 * @param url
-	 *            URL to load
+	 *           URL to load
 	 */
+	@Override
 	public void showDocument(URL url) {
 		status.setText("AppletContext request to show URL " + url.toString());
 	}
@@ -415,13 +419,13 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * <other>
 	 * 
 	 * @param url
-	 *            URL to load
+	 *           URL to load
 	 * @param target
-	 *            the target string
+	 *           the target string
 	 */
+	@Override
 	public void showDocument(URL url, String target) {
-		status.setText("AppletContext request to show URL " + url.toString()
-				+ " in target: " + target);
+		status.setText("AppletContext request to show URL " + url.toString() + " in target: " + target);
 	}
 
 	/**
@@ -429,8 +433,9 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * the window.
 	 * 
 	 * @param text
-	 *            the text to display
+	 *           the text to display
 	 */
+	@Override
 	public void showStatus(String text) {
 		status.setText(text);
 	}
@@ -446,25 +451,25 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * <p/>
 	 * 
 	 * @param key
-	 *            key with which the specified value is to be associated.
+	 *           key with which the specified value is to be associated.
 	 * @param stream
-	 *            stream to be associated with the specified key. If this
-	 *            parameter is <code>null<code>, the specified key is removed
+	 *           stream to be associated with the specified key. If this
+	 *           parameter is <code>null<code>, the specified key is removed
 	 *               in this applet context.
-	 * @throws <code>IOException</code> if the stream size exceeds a certain
-	 *         size limit. Size limit is decided by the implementor of this
-	 *         interface.
+	 * @throws <code>IOException</code> if the stream size exceeds a certain size
+	 *         limit. Size limit is decided by the implementor of this interface.
 	 * @since JDK1.4
 	 */
+	@Override
 	public void setStream(String key, InputStream stream) throws IOException {
 		// To change body of implemented methods use File | Settings | File
 		// Templates.
 	}
 
 	/**
-	 * Returns the stream to which specified key is associated within this
-	 * applet context. Returns <tt>null</tt> if the applet context contains no
-	 * stream for this key.
+	 * Returns the stream to which specified key is associated within this applet
+	 * context. Returns <tt>null</tt> if the applet context contains no stream
+	 * for this key.
 	 * <p/>
 	 * For security reasons, mapping of streams and keys exists for each
 	 * codebase. In other words, applet from one codebase cannot access the
@@ -472,13 +477,14 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * <p/>
 	 * 
 	 * @param key
-	 *            key whose associated stream is to be returned.
+	 *           key whose associated stream is to be returned.
 	 * @return the stream to which this applet context maps the key
 	 * @since JDK1.4
 	 */
+	@Override
 	public InputStream getStream(String key) {
 		return null; // To change body of implemented methods use File |
-						// Settings | File Templates.
+							// Settings | File Templates.
 	}
 
 	/**
@@ -493,9 +499,10 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 *         context.
 	 * @since JDK1.4
 	 */
+	@Override
 	public Iterator<String> getStreamKeys() {
 		return null; // To change body of implemented methods use File |
-						// Settings | File Templates.
+							// Settings | File Templates.
 	}
 
 	/************ URLStreamHandlerFactory methods *************/
@@ -504,39 +511,39 @@ public class DummyAppletContext extends Frame implements AppletStub,
 	 * Creates a new URLStreamHandler instance with the specified protocol.
 	 * 
 	 * @param protocol
-	 *            the protocol to use (ftp, http, nntp, etc.). THIS PROTOCOL IS
-	 *            IGNORED BY THIS APPLET CONTEXT
+	 *           the protocol to use (ftp, http, nntp, etc.). THIS PROTOCOL IS
+	 *           IGNORED BY THIS APPLET CONTEXT
 	 */
+	@Override
 	public URLStreamHandler createURLStreamHandler(String protocol) {
 		return new DummyURLStreamHandler();
 	}
 }
 
-/*
+/**
  * A URL stream handler for all protocols, used to return our dummy
  * implementation of URLConnection to open up a local file when called upon.
  */
-
 class DummyURLStreamHandler extends URLStreamHandler {
 
+	@Override
 	protected final URLConnection openConnection(URL u) throws IOException {
 		return new DummyURLConnection(u);
 	}
 
 }
 
-/*
+/**
  * Our dummy implementation of URLConnection used to open up a local file when
  * called upon with a given URL of ANY protocol type. This allows the applet to
  * easily use the "getInputStream()" function.
  */
-
 class DummyURLConnection extends URLConnection {
 
 	boolean connected = false;
 	InputStream instream;
 
-	/*
+	/**
 	 * Constructor for the DummyURLConnection
 	 */
 
@@ -544,10 +551,10 @@ class DummyURLConnection extends URLConnection {
 		super(url);
 	}
 
-	/*
+	/**
 	 * open the local file
 	 */
-
+	@Override
 	public void connect() throws IOException {
 		if (!connected) {
 			String filename = url.getFile();
@@ -564,10 +571,10 @@ class DummyURLConnection extends URLConnection {
 		}
 	}
 
-	/*
+	/**
 	 * return the open stream to the local file (open if necessary).
 	 */
-
+	@Override
 	public InputStream getInputStream() throws IOException {
 		if (!connected) {
 			connect();

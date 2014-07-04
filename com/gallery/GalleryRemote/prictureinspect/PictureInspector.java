@@ -26,11 +26,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -41,10 +40,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.text.Document;
 
 import com.gallery.GalleryRemote.GalleryCommCapabilities;
 import com.gallery.GalleryRemote.GalleryRemote;
-import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
@@ -55,7 +54,7 @@ import com.gallery.GalleryRemote.util.ImageUtils;
  * @author paour
  * @author arothe
  */
-public class PictureInspector extends JPanel implements PictureInspectorActions {
+public class PictureInspector extends JPanel {
 
 	private static final long serialVersionUID = -5594312109149362431L;
 	private static final String MODULE = "PictInspec";
@@ -63,9 +62,8 @@ public class PictureInspector extends JPanel implements PictureInspectorActions 
 
 	private HashMap<String, JLabel> extraLabels = new HashMap<String, JLabel>();
 	private HashMap<String, PictureFieldTextArea> extraTextAreas = new HashMap<String, PictureFieldTextArea>();
-	private ArrayList<String> currentExtraFields = null;
 	private PictureInspectorModel model;
-	
+
 	private JLabel jLabel5;
 	private GridBagConstraints jLabel5Constraints;
 
@@ -119,6 +117,84 @@ public class PictureInspector extends JPanel implements PictureInspectorActions 
 		initUI();
 	}
 
+	// called by the controller
+	void refresh() {
+		getIcon().setPreferredSize(
+				new Dimension(0, GalleryRemote.instance().properties.getThumbnailSize().height + getIconAreaPanel().getEmptyIconHeight()
+						+ getIcon().getIconTextGap()));
+
+		int count = model.getPictureList().size();
+
+		if (count == 0) {
+			refreshWithNoPicture();
+			return;
+		}
+
+		if (count == 1) {
+			refreshWithOnePicture();
+			return;
+		}
+
+		refreshWithMultiplePictures();
+	}
+
+	// called by the controller
+	Collection<PictureFieldTextArea> setExtraFields(Map<String, Document> docList) {
+		int i = 0;
+		for (String name : docList.keySet()) {
+			JLabel label = new JLabel(name);
+			extraLabels.put(name, label);
+			add(label, getExtraFieldLabelConstraints(i));
+
+			PictureFieldTextArea field = new PictureFieldTextArea();
+			extraTextAreas.put(name, field);
+			field.setFont(UIManager.getFont("Label.font"));
+			field.setLineWrap(true);
+			field.setWrapStyleWord(true);
+			field.setDocument(docList.get(name));
+			add(field, getExtraFieldTextConstraints(i));
+
+			i++;
+		}
+		return extraTextAreas.values();
+	}
+
+	// called by the controller
+	void removeExtraFields() {
+		Iterator<JLabel> it = extraLabels.values().iterator();
+		while (it.hasNext()) {
+			remove(it.next());
+		}
+		Iterator<PictureFieldTextArea> i = extraTextAreas.values().iterator();
+		while (i.hasNext()) {
+			remove(i.next());
+		}
+		extraLabels.clear();
+		extraTextAreas.clear();
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		getIcon().setEnabled(enabled);
+		jUpButton.setEnabled(enabled);
+		jDownButton.setEnabled(enabled);
+		jDeleteButton.setEnabled(enabled);
+		getRotateLeftButton().setEnabled(enabled);
+		getRotateRightButton().setEnabled(enabled);
+		getFlipButton().setEnabled(enabled);
+		getCaption().setEnabled(enabled);
+		super.setEnabled(enabled);
+	}
+
+	private void replaceIcon(JLabel label, Image icon) {
+		Icon i = label.getIcon();
+		if (i == null || !(i instanceof ImageIcon)) {
+			i = new ImageIcon();
+			label.setIcon(i);
+		}
+		((ImageIcon) i).setImage(icon);
+	}
+		
 	private void initUI() {
 		setLayout(new GridBagLayout());
 
@@ -160,12 +236,12 @@ public class PictureInspector extends JPanel implements PictureInspectorActions 
 		getRotateRightButton().setEnabled(false);
 		getFlipButton().setEnabled(false);
 
-		removeExtraFields();
+		model.removeExtraFields();
 	}
 
 	private void refreshWithOnePicture() {
 		Picture p = model.getPictureList().get(0);
-		replaceIcon(getIcon(), mf.getThumbnail(p));
+		replaceIcon(getIcon(), model.getThumbnail(p));
 		if (p.isOnline()) {
 			getPath().setText(GRI18n.getString(MODULE, "onServer"));
 			getIcon().setText(p.getName());
@@ -174,12 +250,13 @@ public class PictureInspector extends JPanel implements PictureInspectorActions 
 			getPath().setText(p.getSource().getParent());
 		}
 		jAlbum.setText(p.getParentAlbum().getTitle());
-		if (p.getParentAlbum().getGallery().getComm(mf.jStatusBar).hasCapability(mf.jStatusBar, GalleryCommCapabilities.CAPA_UPLOAD_CAPTION)) {
+
+		if (model.hasCapability(p, GalleryCommCapabilities.CAPA_UPLOAD_CAPTION)) {
 			getCaption().setText(p.getCaption());
 			getCaption().setEditable(true);
 			getCaption().setBackground(UIManager.getColor("TextField.background"));
 		}
-		jSize.setText(NumberFormat.getInstance().format((int) p.getFileSize()) + " bytes");
+		jSize.setText(model.getFileSize(p) + " bytes");
 		jUpButton.setEnabled(isEnabled());
 		jDownButton.setEnabled(isEnabled());
 		jDeleteButton.setEnabled(isEnabled());
@@ -187,7 +264,7 @@ public class PictureInspector extends JPanel implements PictureInspectorActions 
 		getRotateRightButton().setEnabled(isEnabled());
 		getFlipButton().setEnabled(isEnabled());
 
-		addExtraFields(p);
+		model.setExtraFieldsForPicture(p);
 	}
 
 	private void refreshWithMultiplePictures() {
@@ -200,7 +277,7 @@ public class PictureInspector extends JPanel implements PictureInspectorActions 
 		getCaption().setText("");
 		getCaption().setEditable(false);
 		getCaption().setBackground(UIManager.getColor("TextField.inactiveBackground"));
-		jSize.setText(NumberFormat.getInstance().format(Album.getObjectFileSize(model.getPictureList())) + " bytes");
+		jSize.setText(model.getFileSize(model.getPictureList()) + " bytes");
 
 		jUpButton.setEnabled(isEnabled());
 		jDownButton.setEnabled(isEnabled());
@@ -209,128 +286,9 @@ public class PictureInspector extends JPanel implements PictureInspectorActions 
 		getRotateRightButton().setEnabled(isEnabled());
 		getFlipButton().setEnabled(isEnabled());
 
-		removeExtraFields();
+		model.removeExtraFields();
 	}
 
-	public void refresh() {
-		getIcon().setPreferredSize(
-				new Dimension(0, GalleryRemote.instance().properties.getThumbnailSize().height + getIconAreaPanel().getEmptyIconHeight()
-						+ getIcon().getIconTextGap()));
-
-		int count = model.getPictureList().size();
-
-		if (count == 0) {
-			refreshWithNoPicture();
-			return;
-		}
-
-		if (count == 1) {
-			refreshWithOnePicture();
-			return;
-		}
-
-		refreshWithMultiplePictures();
-	}
-
-	public List<String> getExtraFieldNames() {
-		return new ArrayList<String>(extraTextAreas.keySet());
-	}
-
-	public PictureFieldTextArea getExtraField(String name) {
-		return extraTextAreas.get(name);
-	}
-
-	private void addExtraFields(Picture p) {
-		ArrayList<String> newExtraFields = p.getParentAlbum().getExtraFields();
-
-		if (newExtraFields == null) {
-			removeExtraFields();
-		} else {
-			if (!newExtraFields.equals(currentExtraFields)) {
-				removeExtraFields();
-
-				int i = 0;
-				Iterator<String> it = newExtraFields.iterator();
-				while (it.hasNext()) {
-					String name = it.next();
-					JLabel label = new JLabel(name);
-					extraLabels.put(name, label);
-					add(label, new GridBagConstraints(0, FIRST_ROW_EXTRA + i, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST,
-							GridBagConstraints.NONE, new Insets(5, 5, 0, 0), 2, 0));
-
-					PictureFieldTextArea field = new PictureFieldTextArea();
-					extraTextAreas.put(name, field);
-					field.setFont(UIManager.getFont("Label.font"));
-					field.setLineWrap(true);
-					field.setWrapStyleWord(true);
-					add(field, new GridBagConstraints(1, FIRST_ROW_EXTRA + i, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-							GridBagConstraints.BOTH, new Insets(5, 5, 0, 5), 0, 0));
-					
-					
-					// we must move both routines into the controller, but we can notify it?
-					field.getDocument().addDocumentListener(model);
-					field.addKeyboardListener(model);
-
-					i++;
-				}
-
-				currentExtraFields = newExtraFields;
-			}
-
-			Iterator<String> it = newExtraFields.iterator();
-			while (it.hasNext()) {
-				String name = it.next();
-				String value = p.getExtraField(name);
-				JTextArea field = extraTextAreas.get(name);
-				if (value == null) {
-					field.setText("");
-				} else {
-					field.setText(value);
-				}
-			}
-		}
-	}
-
-	private void removeExtraFields() {
-		Iterator<JLabel> it = extraLabels.values().iterator();
-		while (it.hasNext()) {
-			remove(it.next());
-		}
-		Iterator<PictureFieldTextArea> i = extraTextAreas.values().iterator();
-		while (i.hasNext()) {
-			remove(i.next());
-		}
-		extraLabels.clear();
-		extraTextAreas.clear();
-		currentExtraFields = null;
-	}
-
-	@Override
-	public void setEnabled(boolean enabled) {
-		// Log.log(Log.TRACE, MODULE, "setEnabled " + enabled);
-		getIcon().setEnabled(enabled);
-		jUpButton.setEnabled(enabled);
-		jDownButton.setEnabled(enabled);
-		jDeleteButton.setEnabled(enabled);
-		getRotateLeftButton().setEnabled(enabled);
-		getRotateRightButton().setEnabled(enabled);
-		getFlipButton().setEnabled(enabled);
-		getCaption().setEnabled(enabled);
-		super.setEnabled(enabled);
-	}
-
-	// Focus traversal actions
-
-	public void replaceIcon(JLabel label, Image icon) {
-		Icon i = label.getIcon();
-
-		if (i == null || !(i instanceof ImageIcon)) {
-			i = new ImageIcon();
-			label.setIcon(i);
-		}
-
-		((ImageIcon) i).setImage(icon);
-	}
 
 	private JLabel getPathLabel() {
 		if (jLabel5 == null) {
@@ -619,4 +577,15 @@ public class PictureInspector extends JPanel implements PictureInspectorActions 
 	private JTextArea getPath() {
 		return getPathPanel().getPath();
 	}
+
+	private GridBagConstraints getExtraFieldLabelConstraints(int i) {
+		return new GridBagConstraints(0, FIRST_ROW_EXTRA + i, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
+				new Insets(5, 5, 0, 0), 2, 0);
+	}
+
+	private GridBagConstraints getExtraFieldTextConstraints(int i) {
+		return new GridBagConstraints(1, FIRST_ROW_EXTRA + i, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
+				5, 5, 0, 5), 0, 0);
+	}
+
 }

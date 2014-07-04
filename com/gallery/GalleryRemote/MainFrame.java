@@ -99,6 +99,7 @@ import com.gallery.GalleryRemote.prefs.PreferencesDialog;
 import com.gallery.GalleryRemote.prefs.PropertiesFile;
 import com.gallery.GalleryRemote.prefs.URLPanel;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspector;
+import com.gallery.GalleryRemote.prictureinspect.PictureInspectorController;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 import com.gallery.GalleryRemote.util.OsShutdown;
@@ -200,7 +201,10 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	DroppableList jPicturesList = new DroppableList();
 	JPanel jInspectorPanel = new JPanel();
 	CardLayout jInspectorCardLayout = new CardLayout();
+	
 	PictureInspector jPictureInspector = new PictureInspector();
+	PictureInspectorController jPictureInspectorController = new PictureInspectorController(this, jPictureInspector);
+	
 	AlbumInspector jAlbumInspector = new AlbumInspector();
 	JScrollPane jPictureScroll = new JScrollPane();
 
@@ -289,11 +293,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		albumTreeRenderer.setOpenIcon(null);
 		albumTreeRenderer.setClosedIcon(null);
 		jAlbumTree.setCellRenderer(albumTreeRenderer);
-		// ((JLabel) jAlbumTree.getCellRenderer()).setPreferredSize(new
-		// Dimension(GalleryRemote._().properties.getIntProperty("albumPictureDividerLocation"),
-		// -1));
 		ToolTipManager.sharedInstance().registerComponent(jAlbumTree);
-		// jAlbumTree.setFont(new Font("Arial Unicode MS", Font.PLAIN, 12));
 
 		jPictureInspector.setMainFrame(this);
 		jAlbumInspector.setMainFrame(this);
@@ -590,11 +590,11 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 
 				// status
 				if (currentAlbum == null) {
-					jPictureInspector.setPictures(null);
+					jPictureInspectorController.setPictureList(null);
 
 					jStatusBar.setStatus(GRI18n.getString(MODULE, "notLogged"));
 				} else if (currentAlbum.sizePictures() > 0) {
-					jPictureInspector.setPictures(jPicturesList.getSelectedValuesList());
+					jPictureInspectorController.setPictureList(jPicturesList.getSelectedValuesList());
 
 					int selN = jPicturesList.getSelectedIndices().length;
 
@@ -609,7 +609,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 						jStatusBar.setStatus(GRI18n.getString(MODULE, "statusBarSel", params));
 					}
 				} else {
-					jPictureInspector.setPictures(null);
+					jPictureInspectorController.setPictureList(null);
 
 					jStatusBar.setStatus(GRI18n.getString(MODULE, "noSelection"));
 				}
@@ -661,7 +661,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 				currentAlbum.addListDataListener(this);
 			}
 
-			jPictureInspector.setPictures(null);
+			jPictureInspectorController.setPictureList(null);
 		}
 
 		resetUIState();

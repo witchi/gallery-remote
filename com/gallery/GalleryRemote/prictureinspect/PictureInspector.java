@@ -20,42 +20,30 @@
  */
 package com.gallery.GalleryRemote.prictureinspect;
 
-import java.awt.Component;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
-import com.gallery.GalleryRemote.CoreUtils;
 import com.gallery.GalleryRemote.GalleryCommCapabilities;
 import com.gallery.GalleryRemote.GalleryRemote;
-import com.gallery.GalleryRemote.Log;
-import com.gallery.GalleryRemote.MainFrame;
 import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.util.GRI18n;
@@ -67,71 +55,68 @@ import com.gallery.GalleryRemote.util.ImageUtils;
  * @author paour
  * @author arothe
  */
-public class PictureInspector extends JPanel implements ActionListener, DocumentListener {
+public class PictureInspector extends JPanel implements PictureInspectorActions {
 
 	private static final long serialVersionUID = -5594312109149362431L;
 	private static final String MODULE = "PictInspec";
 	private static final int FIRST_ROW_EXTRA = 8;
 
-	HashMap<String, JLabel> extraLabels = new HashMap<String, JLabel>();
-	HashMap<String, JTextArea> extraTextAreas = new HashMap<String, JTextArea>();
-	ArrayList<String> currentExtraFields = null;
-	List<Picture> pictures = null;
-	MainFrame mf = null;
+	private HashMap<String, JLabel> extraLabels = new HashMap<String, JLabel>();
+	private HashMap<String, PictureFieldTextArea> extraTextAreas = new HashMap<String, PictureFieldTextArea>();
+	private ArrayList<String> currentExtraFields = null;
+	private PictureInspectorModel model;
+	
+	private JLabel jLabel5;
+	private GridBagConstraints jLabel5Constraints;
 
+	private JLabel jLabel6;
+	private GridBagConstraints jLabel6Constraints;
 
-	JLabel jLabel5;
-	GridBagConstraints jLabel5Constraints;
+	private JLabel jLabel4;
+	private GridBagConstraints jLabel4Constraints;
 
-	JLabel jLabel6;
-	GridBagConstraints jLabel6Constraints;
+	private JLabel jLabel8;
+	private GridBagConstraints jLabel8Constraints;
 
-	JLabel jLabel4;
-	GridBagConstraints jLabel4Constraints;
+	private JLabel jLabel1;
+	private GridBagConstraints jLabel1Constraints;
 
-	JLabel jLabel8;
-	GridBagConstraints jLabel8Constraints;
+	private JLabel jLabel2;
+	private GridBagConstraints jLabel2Constraints;
 
-	JLabel jLabel1;
-	GridBagConstraints jLabel1Constraints;
+	private JPanel jSpacer;
+	private GridBagConstraints jSpacerConstraints;
 
-	JLabel jLabel2;
-	GridBagConstraints jLabel2Constraints;
+	private JButton jDeleteButton;
+	private GridBagConstraints jDeleteButtonConstraints;
 
-	JPanel jSpacer;
-	GridBagConstraints jSpacerConstraints;
+	private JButton jUpButton;
+	private GridBagConstraints jUpButtonConstraints;
 
-	JButton jDeleteButton;
-	GridBagConstraints jDeleteButtonConstraints;
+	private JButton jDownButton;
+	private GridBagConstraints jDownButtonConstraints;
 
-	JButton jUpButton;
-	GridBagConstraints jUpButtonConstraints;
+	private IconAreaPanel jIconAreaPanel;
+	private GridBagConstraints jIconAreaPanelConstraints;
 
-	JButton jDownButton;
-	GridBagConstraints jDownButtonConstraints;
+	private JTextArea jAlbum;
+	private GridBagConstraints jAlbumConstraints;
 
-	IconAreaPanel jIconAreaPanel;
-	GridBagConstraints jIconAreaPanelConstraints;
+	private JTextArea jSize;
+	private GridBagConstraints jSizeConstraints;
 
-	JTextArea jAlbum;
-	GridBagConstraints jAlbumConstraints;
+	private PathPanel jPathPanel;
+	private GridBagConstraints jPathPanelConstraints;
 
-	JTextArea jSize;
-	GridBagConstraints jSizeConstraints;
-
-	PathPanel jPathPanel;
-	GridBagConstraints jPathPanelConstraints;
-
-	CaptionPanel jCaptionPanel;
-	GridBagConstraints jCaptionPanelConstraints;
+	private CaptionPanel jCaptionPanel;
+	private GridBagConstraints jCaptionPanelConstraints;
 
 	/**
 	 * Constructor for the PictureInspector object
 	 */
-	public PictureInspector() {
+	public PictureInspector(PictureInspectorModel model) {
+		this.model = model;
 		initUI();
-		initEvents();
-		Log.log(Log.LEVEL_TRACE, MODULE, "emptyIconHeight: " + getIconAreaPanel().getEmptyIconHeight());
 	}
 
 	private void initUI() {
@@ -153,229 +138,109 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		add(getPathPanel(), getPathPanelConstraints());
 		add(getCaptionPanel(), getCaptionPanelConstraints());
 
-		setupKeyboardHandling(getCaption());
 		this.setMinimumSize(new Dimension(150, 0));
-	}
-
-	private void initEvents() {
-		jDeleteButton.addActionListener(this);
-		jUpButton.addActionListener(this);
-		jDownButton.addActionListener(this);
-		getRotateLeftButton().addActionListener(this);
-		getRotateRightButton().addActionListener(this);
-		getFlipButton().addActionListener(this);
-		getCaption().getDocument().addDocumentListener(this);
-	}
-
-	private void setupKeyboardHandling(JComponent c) {
-		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), nextFocusAction.getValue(Action.NAME));
-		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_MASK), prevFocusAction.getValue(Action.NAME));
-		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), nextPictureAction.getValue(Action.NAME));
-		c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), prevPictureAction.getValue(Action.NAME));
-		c.getActionMap().put(nextFocusAction.getValue(Action.NAME), nextFocusAction);
-		c.getActionMap().put(prevFocusAction.getValue(Action.NAME), prevFocusAction);
-		c.getActionMap().put(nextPictureAction.getValue(Action.NAME), nextPictureAction);
-		c.getActionMap().put(prevPictureAction.getValue(Action.NAME), prevPictureAction);
-	}
-
-	// Event handling
-	/**
-	 * Menu and button handling
-	 * 
-	 * @param e
-	 *           Action event
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String command = e.getActionCommand();
-		Log.log(Log.LEVEL_INFO, MODULE, "Command selected " + command);
-
-		if (command.equals("Delete")) {
-			// We must call the MainFrame to delete pictures
-			// so that it can know that the document is now dirty.
-			mf.deleteSelectedPictures();
-		} else if (command.equals("Up")) {
-			// We must call the MainFrame to move pictures
-			// so that it can know that the document is now dirty.
-			mf.movePicturesUp();
-		} else if (command.equals("Down")) {
-			// We must call the MainFrame to move pictures
-			// so that it can know that the document is now dirty.
-			mf.movePicturesDown();
-		} else if (command.equals("Left")) {
-			for (Picture p : pictures) {
-				p.rotateLeft();
-			}
-			setPictures(pictures);
-			mf.repaint();
-			mf.previewFrame.repaint();
-		} else if (command.equals("Right")) {
-			for (Picture p : pictures) {
-				p.rotateRight();
-			}
-			setPictures(pictures);
-			mf.repaint();
-			mf.previewFrame.repaint();
-		} else if (command.equals("Flip")) {
-			for (Picture p : pictures) {
-				p.flip();
-			}
-			setPictures(pictures);
-			mf.repaint();
-			mf.previewFrame.repaint();
-		}
-	}
-
-	/**
-	 * Caption JTextArea events.
-	 */
-	@Override
-	public void insertUpdate(DocumentEvent e) {
-		textUpdate(e);
-	}
-
-	/**
-	 * Caption JTextArea events.
-	 */
-	@Override
-	public void removeUpdate(DocumentEvent e) {
-		textUpdate(e);
-	}
-
-	/**
-	 * Caption JTextArea events.
-	 */
-	@Override
-	public void changedUpdate(DocumentEvent e) {
-		textUpdate(e);
-	}
-
-	public void textUpdate(DocumentEvent e) {
-		if (pictures != null && pictures.size() == 1) {
-			Picture p = pictures.get(0);
-
-			if (e.getDocument() == getCaption().getDocument()) {
-				p.setCaption(getCaption().getText());
-			}
-
-			Iterator<String> it = extraTextAreas.keySet().iterator();
-			while (it.hasNext()) {
-				String name = it.next();
-				JTextArea field = extraTextAreas.get(name);
-
-				if (e.getDocument() == field.getDocument()) {
-					String text = field.getText();
-					if (text.length() == 0) {
-						p.removeExtraField(name);
-					} else {
-						p.setExtraField(name, text);
-					}
-
-					break;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Sets the mainFrame attribute of the PictureInspector object
-	 * 
-	 * @param mf
-	 *           The new mainFrame value
-	 */
-	public void setMainFrame(MainFrame mf) {
-		this.mf = mf;
 		replaceIcon(getIcon(), ImageUtils.defaultThumbnail);
 	}
 
-	/**
-	 * Sets the picture attribute of the PictureInspector object
-	 * 
-	 * @param pictures
-	 *           The new picture value
-	 */
-	public void setPictures(java.util.List<Picture> pictures) {
-		// Log.log(Log.TRACE, MODULE, "setPictures " + pictures);
-		// Log.logStack(Log.TRACE, MODULE);
-		this.pictures = pictures;
+	private void refreshWithNoPicture() {
+		getIcon().setText(GRI18n.getString(MODULE, "noPicSel"));
+		replaceIcon(getIcon(), ImageUtils.defaultThumbnail);
+		getPath().setText("");
+		jAlbum.setText("");
 
+		getCaption().setText("");
+		getCaption().setEditable(false);
+		getCaption().setBackground(UIManager.getColor("TextField.inactiveBackground"));
+
+		jSize.setText("");
+		jUpButton.setEnabled(false);
+		jDownButton.setEnabled(false);
+		jDeleteButton.setEnabled(false);
+		getRotateLeftButton().setEnabled(false);
+		getRotateRightButton().setEnabled(false);
+		getFlipButton().setEnabled(false);
+
+		removeExtraFields();
+	}
+
+	private void refreshWithOnePicture() {
+		Picture p = model.getPictureList().get(0);
+		replaceIcon(getIcon(), mf.getThumbnail(p));
+		if (p.isOnline()) {
+			getPath().setText(GRI18n.getString(MODULE, "onServer"));
+			getIcon().setText(p.getName());
+		} else {
+			getIcon().setText(p.getSource().getName());
+			getPath().setText(p.getSource().getParent());
+		}
+		jAlbum.setText(p.getParentAlbum().getTitle());
+		if (p.getParentAlbum().getGallery().getComm(mf.jStatusBar).hasCapability(mf.jStatusBar, GalleryCommCapabilities.CAPA_UPLOAD_CAPTION)) {
+			getCaption().setText(p.getCaption());
+			getCaption().setEditable(true);
+			getCaption().setBackground(UIManager.getColor("TextField.background"));
+		}
+		jSize.setText(NumberFormat.getInstance().format((int) p.getFileSize()) + " bytes");
+		jUpButton.setEnabled(isEnabled());
+		jDownButton.setEnabled(isEnabled());
+		jDeleteButton.setEnabled(isEnabled());
+		getRotateLeftButton().setEnabled(isEnabled());
+		getRotateRightButton().setEnabled(isEnabled());
+		getFlipButton().setEnabled(isEnabled());
+
+		addExtraFields(p);
+	}
+
+	private void refreshWithMultiplePictures() {
+		Picture p = model.getPictureList().get(0);
+		Object[] params = { new Integer(model.getPictureList().size()) };
+		getIcon().setText(GRI18n.getString(MODULE, "countElemSel", params));
+		replaceIcon(getIcon(), ImageUtils.defaultThumbnail);
+		getPath().setText("");
+		jAlbum.setText(p.getParentAlbum().getTitle());
+		getCaption().setText("");
+		getCaption().setEditable(false);
+		getCaption().setBackground(UIManager.getColor("TextField.inactiveBackground"));
+		jSize.setText(NumberFormat.getInstance().format(Album.getObjectFileSize(model.getPictureList())) + " bytes");
+
+		jUpButton.setEnabled(isEnabled());
+		jDownButton.setEnabled(isEnabled());
+		jDeleteButton.setEnabled(isEnabled());
+		getRotateLeftButton().setEnabled(isEnabled());
+		getRotateRightButton().setEnabled(isEnabled());
+		getFlipButton().setEnabled(isEnabled());
+
+		removeExtraFields();
+	}
+
+	public void refresh() {
 		getIcon().setPreferredSize(
 				new Dimension(0, GalleryRemote.instance().properties.getThumbnailSize().height + getIconAreaPanel().getEmptyIconHeight()
 						+ getIcon().getIconTextGap()));
 
-		if (pictures == null || pictures.isEmpty()) {
-			getIcon().setText(GRI18n.getString(MODULE, "noPicSel"));
-			replaceIcon(getIcon(), ImageUtils.defaultThumbnail);
-			getPath().setText("");
-			jAlbum.setText("");
+		int count = model.getPictureList().size();
 
-			getCaption().setText("");
-			getCaption().setEditable(false);
-			getCaption().setBackground(UIManager.getColor("TextField.inactiveBackground"));
-
-			jSize.setText("");
-
-			jUpButton.setEnabled(false);
-			jDownButton.setEnabled(false);
-			jDeleteButton.setEnabled(false);
-			getRotateLeftButton().setEnabled(false);
-			getRotateRightButton().setEnabled(false);
-			getFlipButton().setEnabled(false);
-
-			removeExtraFields();
-		} else if (pictures.size() == 1) {
-			Picture p = pictures.get(0);
-
-			replaceIcon(getIcon(), mf.getThumbnail(p));
-			if (p.isOnline()) {
-				getPath().setText(GRI18n.getString(MODULE, "onServer"));
-				getIcon().setText(p.getName());
-			} else {
-				getIcon().setText(p.getSource().getName());
-				getPath().setText(p.getSource().getParent());
-			}
-			jAlbum.setText(p.getParentAlbum().getTitle());
-			if (p.getParentAlbum().getGallery().getComm(mf.jStatusBar)
-					.hasCapability(mf.jStatusBar, GalleryCommCapabilities.CAPA_UPLOAD_CAPTION)) {
-				getCaption().setText(p.getCaption());
-				getCaption().setEditable(true);
-				getCaption().setBackground(UIManager.getColor("TextField.background"));
-			}
-			jSize.setText(NumberFormat.getInstance().format((int) p.getFileSize()) + " bytes");
-
-			jUpButton.setEnabled(isEnabled());
-			jDownButton.setEnabled(isEnabled());
-			jDeleteButton.setEnabled(isEnabled());
-			getRotateLeftButton().setEnabled(isEnabled());
-			getRotateRightButton().setEnabled(isEnabled());
-			getFlipButton().setEnabled(isEnabled());
-
-			addExtraFields(p);
-		} else {
-			Picture p = pictures.get(0);
-
-			Object[] params = { new Integer(pictures.size()) };
-			getIcon().setText(GRI18n.getString(MODULE, "countElemSel", params));
-			replaceIcon(getIcon(), ImageUtils.defaultThumbnail);
-			getPath().setText("");
-			jAlbum.setText(p.getParentAlbum().getTitle());
-			getCaption().setText("");
-			getCaption().setEditable(false);
-			getCaption().setBackground(UIManager.getColor("TextField.inactiveBackground"));
-			jSize.setText(NumberFormat.getInstance().format(Album.getObjectFileSize(pictures)) + " bytes");
-
-			jUpButton.setEnabled(isEnabled());
-			jDownButton.setEnabled(isEnabled());
-			jDeleteButton.setEnabled(isEnabled());
-			getRotateLeftButton().setEnabled(isEnabled());
-			getRotateRightButton().setEnabled(isEnabled());
-			getFlipButton().setEnabled(isEnabled());
-
-			removeExtraFields();
+		if (count == 0) {
+			refreshWithNoPicture();
+			return;
 		}
+
+		if (count == 1) {
+			refreshWithOnePicture();
+			return;
+		}
+
+		refreshWithMultiplePictures();
 	}
 
-	void addExtraFields(Picture p) {
+	public List<String> getExtraFieldNames() {
+		return new ArrayList<String>(extraTextAreas.keySet());
+	}
+
+	public PictureFieldTextArea getExtraField(String name) {
+		return extraTextAreas.get(name);
+	}
+
+	private void addExtraFields(Picture p) {
 		ArrayList<String> newExtraFields = p.getParentAlbum().getExtraFields();
 
 		if (newExtraFields == null) {
@@ -388,22 +253,23 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 				Iterator<String> it = newExtraFields.iterator();
 				while (it.hasNext()) {
 					String name = it.next();
-					// String value = p.getExtraField(name);
-
 					JLabel label = new JLabel(name);
 					extraLabels.put(name, label);
 					add(label, new GridBagConstraints(0, FIRST_ROW_EXTRA + i, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST,
 							GridBagConstraints.NONE, new Insets(5, 5, 0, 0), 2, 0));
 
-					JTextArea field = new JTextArea();
+					PictureFieldTextArea field = new PictureFieldTextArea();
 					extraTextAreas.put(name, field);
 					field.setFont(UIManager.getFont("Label.font"));
 					field.setLineWrap(true);
 					field.setWrapStyleWord(true);
 					add(field, new GridBagConstraints(1, FIRST_ROW_EXTRA + i, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
 							GridBagConstraints.BOTH, new Insets(5, 5, 0, 5), 0, 0));
-					field.getDocument().addDocumentListener(this);
-					setupKeyboardHandling(field);
+					
+					
+					// we must move both routines into the controller, but we can notify it?
+					field.getDocument().addDocumentListener(model);
+					field.addKeyboardListener(model);
 
 					i++;
 				}
@@ -425,22 +291,17 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		}
 	}
 
-	void removeExtraFields() {
+	private void removeExtraFields() {
 		Iterator<JLabel> it = extraLabels.values().iterator();
 		while (it.hasNext()) {
-			JLabel label = it.next();
-			remove(label);
+			remove(it.next());
 		}
-
-		Iterator<JTextArea> i = extraTextAreas.values().iterator();
+		Iterator<PictureFieldTextArea> i = extraTextAreas.values().iterator();
 		while (i.hasNext()) {
-			JTextArea textArea = i.next();
-			remove(textArea);
+			remove(i.next());
 		}
-
 		extraLabels.clear();
 		extraTextAreas.clear();
-
 		currentExtraFields = null;
 	}
 
@@ -455,46 +316,10 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		getRotateRightButton().setEnabled(enabled);
 		getFlipButton().setEnabled(enabled);
 		getCaption().setEnabled(enabled);
-
 		super.setEnabled(enabled);
 	}
 
 	// Focus traversal actions
-	public Action nextFocusAction = new AbstractAction("Move Focus Forwards") {
-		private static final long serialVersionUID = -7481079099741609449L;
-
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-			((Component) evt.getSource()).transferFocus();
-		}
-	};
-
-	public Action prevFocusAction = new AbstractAction("Move Focus Backwards") {
-		private static final long serialVersionUID = -4207478878462672331L;
-
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-			((Component) evt.getSource()).transferFocusBackward();
-		}
-	};
-
-	public Action nextPictureAction = new AbstractAction("Select Next Picture") {
-		private static final long serialVersionUID = -3058236737204149574L;
-
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-			CoreUtils.selectNextPicture();
-		}
-	};
-
-	public Action prevPictureAction = new AbstractAction("Select Prev Picture") {
-		private static final long serialVersionUID = 5771498665345070313L;
-
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-			CoreUtils.selectPrevPicture();
-		}
-	};
 
 	public void replaceIcon(JLabel label, Image icon) {
 		Icon i = label.getIcon();
@@ -621,6 +446,7 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 	private IconAreaPanel getIconAreaPanel() {
 		if (jIconAreaPanel == null) {
 			jIconAreaPanel = new IconAreaPanel();
+			jIconAreaPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		}
 		return jIconAreaPanel;
 	}
@@ -671,7 +497,7 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		return jSizeConstraints;
 	}
 
-	private JButton getUpButton() {
+	JButton getUpButton() {
 		if (jUpButton == null) {
 			jUpButton = new JButton();
 			jUpButton.setMaximumSize(new Dimension(120, 23));
@@ -694,7 +520,7 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		return jUpButtonConstraints;
 	}
 
-	private JButton getDownButton() {
+	JButton getDownButton() {
 		if (jDownButton == null) {
 			jDownButton = new JButton();
 			jDownButton.setMaximumSize(new Dimension(120, 23));
@@ -717,7 +543,7 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		return jDownButtonConstraints;
 	}
 
-	private JButton getDeleteButton() {
+	JButton getDeleteButton() {
 		if (jDeleteButton == null) {
 			jDeleteButton = new JButton();
 			jDeleteButton.setMaximumSize(new Dimension(120, 23));
@@ -740,15 +566,15 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		return jDeleteButtonConstraints;
 	}
 
-	private JButton getRotateLeftButton() {
+	JButton getRotateLeftButton() {
 		return getIconAreaPanel().getRotateLeftButton();
 	}
 
-	private JButton getRotateRightButton() {
+	JButton getRotateRightButton() {
 		return getIconAreaPanel().getRotateRightButton();
 	}
 
-	private JButton getFlipButton() {
+	JButton getFlipButton() {
 		return getIconAreaPanel().getFlipButton();
 	}
 
@@ -786,7 +612,7 @@ public class PictureInspector extends JPanel implements ActionListener, Document
 		return jCaptionPanelConstraints;
 	}
 
-	private JTextArea getCaption() {
+	PictureFieldTextArea getCaption() {
 		return getCaptionPanel().getCaption();
 	}
 

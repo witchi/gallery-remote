@@ -15,7 +15,7 @@ import com.gallery.GalleryRemote.Log;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 
-public class IconAreaPanel extends JPanel implements IconAreaActions {
+public class IconAreaPanel extends JPanel {
 	private static final long serialVersionUID = -5451979859370784290L;
 	private static final String MODULE = "PictInspec";
 
@@ -40,7 +40,7 @@ public class IconAreaPanel extends JPanel implements IconAreaActions {
 	private void initUI() {
 		setLayout(new GridBagLayout());
 		add(getIcon(), getIconConstraints());
-		
+
 		if (ImageUtils.useJpegtran) {
 			add(getRotateLeftButton(), getRotateLeftButtonConstraints());
 			add(getFlipButton(), getFlipButtonConstraints());
@@ -53,7 +53,7 @@ public class IconAreaPanel extends JPanel implements IconAreaActions {
 		this.emptyIconHeight = (int) height;
 		Log.log(Log.LEVEL_TRACE, MODULE, "emptyIconHeight: " + getEmptyIconHeight());
 	}
-	
+
 	private GridBagConstraints getIconConstraints() {
 		if (jIconConstraints == null) {
 			jIconConstraints = new GridBagConstraints(0, 1, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
@@ -91,7 +91,7 @@ public class IconAreaPanel extends JPanel implements IconAreaActions {
 			jRotateLeftButton = new JButton();
 			jRotateLeftButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			jRotateLeftButton.setToolTipText(GRI18n.getString(MODULE, "rotLtTip"));
-			jRotateLeftButton.setActionCommand(ACTION_ROTATE_LEFT);
+			jRotateLeftButton.setActionCommand(PictureInspectorActions.ACTION_ROTATE_LEFT);
 			jRotateLeftButton.setIcon(GalleryRemote.iLeft);
 		}
 		return jRotateLeftButton;
@@ -102,7 +102,7 @@ public class IconAreaPanel extends JPanel implements IconAreaActions {
 			jRotateRightButton = new JButton();
 			jRotateRightButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			jRotateRightButton.setToolTipText(GRI18n.getString(MODULE, "rotRtTip"));
-			jRotateRightButton.setActionCommand(ACTION_ROTATE_RIGHT);
+			jRotateRightButton.setActionCommand(PictureInspectorActions.ACTION_ROTATE_RIGHT);
 			jRotateRightButton.setIcon(GalleryRemote.iRight);
 		}
 		return jRotateRightButton;
@@ -113,7 +113,7 @@ public class IconAreaPanel extends JPanel implements IconAreaActions {
 			jFlipButton = new JButton();
 			jFlipButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			jFlipButton.setToolTipText(GRI18n.getString(MODULE, "flipTip"));
-			jFlipButton.setActionCommand(ACTION_FLIP);
+			jFlipButton.setActionCommand(PictureInspectorActions.ACTION_FLIP);
 			jFlipButton.setIcon(GalleryRemote.iFlip);
 		}
 		return jFlipButton;

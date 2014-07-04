@@ -1,13 +1,12 @@
 package com.gallery.GalleryRemote.prictureinspect;
 
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 public class CaptionPanel extends JScrollPane {
 	private static final long serialVersionUID = -5578520363869492620L;
 
-	JTextArea jCaption = new JTextArea();
+	PictureFieldTextArea jCaption = new PictureFieldTextArea();
 
 	public CaptionPanel() {
 		setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -15,9 +14,9 @@ public class CaptionPanel extends JScrollPane {
 		getViewport().add(jCaption, null);
 	}
 
-	public JTextArea getCaption() {
+	public PictureFieldTextArea getCaption() {
 		if (jCaption == null) {
-			jCaption = new JTextArea();
+			jCaption = new PictureFieldTextArea();
 			jCaption.setLineWrap(true);
 			jCaption.setWrapStyleWord(true);
 			jCaption.setEditable(false);
@@ -26,5 +25,4 @@ public class CaptionPanel extends JScrollPane {
 		}
 		return jCaption;
 	}
-
 }

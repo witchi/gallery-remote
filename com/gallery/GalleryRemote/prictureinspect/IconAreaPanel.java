@@ -15,25 +15,22 @@ import com.gallery.GalleryRemote.Log;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 
-public class IconAreaPanel extends JPanel {
+class IconAreaPanel extends JPanel {
 	private static final long serialVersionUID = -5451979859370784290L;
 	private static final String MODULE = "PictInspec";
 
 	private JLabel jIcon;
 	private GridBagConstraints jIconConstraints;
-
 	private JButton jRotateLeftButton;
 	private GridBagConstraints jRotateLeftButtonConstraints;
-
 	private JButton jFlipButton;
 	private GridBagConstraints jFlipButtonConstraints;
-
 	private JButton jRotateRightButton;
 	private GridBagConstraints jRotateRightButtonConstraints;
 
 	private int emptyIconHeight;
 
-	public IconAreaPanel() {
+	IconAreaPanel() {
 		initUI();
 	}
 
@@ -86,40 +83,40 @@ public class IconAreaPanel extends JPanel {
 		return jRotateRightButtonConstraints;
 	}
 
-	public JButton getRotateLeftButton() {
+	JButton getRotateLeftButton() {
 		if (jRotateLeftButton == null) {
 			jRotateLeftButton = new JButton();
 			jRotateLeftButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			jRotateLeftButton.setToolTipText(GRI18n.getString(MODULE, "rotLtTip"));
-			jRotateLeftButton.setActionCommand(PictureInspectorActions.ACTION_ROTATE_LEFT);
+			jRotateLeftButton.setActionCommand(PictureInspectorActions.ROTATE_LEFT.name());
 			jRotateLeftButton.setIcon(GalleryRemote.iLeft);
 		}
 		return jRotateLeftButton;
 	}
 
-	public JButton getRotateRightButton() {
+	JButton getRotateRightButton() {
 		if (jRotateRightButton == null) {
 			jRotateRightButton = new JButton();
 			jRotateRightButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			jRotateRightButton.setToolTipText(GRI18n.getString(MODULE, "rotRtTip"));
-			jRotateRightButton.setActionCommand(PictureInspectorActions.ACTION_ROTATE_RIGHT);
+			jRotateRightButton.setActionCommand(PictureInspectorActions.ROTATE_RIGHT.name());
 			jRotateRightButton.setIcon(GalleryRemote.iRight);
 		}
 		return jRotateRightButton;
 	}
 
-	public JButton getFlipButton() {
+	JButton getFlipButton() {
 		if (jFlipButton == null) {
 			jFlipButton = new JButton();
 			jFlipButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			jFlipButton.setToolTipText(GRI18n.getString(MODULE, "flipTip"));
-			jFlipButton.setActionCommand(PictureInspectorActions.ACTION_FLIP);
+			jFlipButton.setActionCommand(PictureInspectorActions.FLIP.name());
 			jFlipButton.setIcon(GalleryRemote.iFlip);
 		}
 		return jFlipButton;
 	}
 
-	public JLabel getIcon() {
+	JLabel getIcon() {
 		if (jIcon == null) {
 			jIcon = new JLabel();
 			jIcon.setHorizontalAlignment(SwingConstants.CENTER);
@@ -130,7 +127,7 @@ public class IconAreaPanel extends JPanel {
 		return jIcon;
 	}
 
-	public int getEmptyIconHeight() {
+	int getEmptyIconHeight() {
 		return emptyIconHeight;
 	}
 }

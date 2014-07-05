@@ -42,23 +42,23 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 		String command = e.getActionCommand();
 		Log.log(Log.LEVEL_INFO, MODULE, "Command selected " + command);
 
-		if (command.equals(PictureInspectorActions.ACTION_DELETE)) {
+		if (command.equals(PictureInspectorActions.DELETE)) {
 			model.deleteSelectedPictures();
-		} else if (command.equals(PictureInspectorActions.ACTION_UP)) {
+		} else if (command.equals(PictureInspectorActions.UP.name())) {
 			model.movePicturesUp();
-		} else if (command.equals(PictureInspectorActions.ACTION_DOWN)) {
+		} else if (command.equals(PictureInspectorActions.DOWN.name())) {
 			model.movePicturesDown();
-		} else if (command.equals(PictureInspectorActions.ACTION_ROTATE_LEFT)) {
+		} else if (command.equals(PictureInspectorActions.ROTATE_LEFT.name())) {
 			model.rotatePictureLeft();
-		} else if (command.equals(PictureInspectorActions.ACTION_ROTATE_RIGHT)) {
+		} else if (command.equals(PictureInspectorActions.ROTATE_RIGHT.name())) {
 			model.rotatePictureRight();
-		} else if (command.equals(PictureInspectorActions.ACTION_FLIP)) {
+		} else if (command.equals(PictureInspectorActions.FLIP.name())) {
 			model.flipPicture();
-		} else if (command.equals(PictureInspectorActions.ACTION_REFRESH)) {
+		} else if (command.equals(PictureInspectorActions.REFRESH.name())) {
 			refresh();
-		} else if (command.equals(PictureInspectorActions.ACTION_REMOVE_EXTRA_FIELDS)) {
+		} else if (command.equals(PictureInspectorActions.REMOVE_EXTRA_FIELDS.name())) {
 			view.removeExtraFields();
-		} else if (command.equals(PictureInspectorActions.ACTION_SET_EXTRA_FIELDS)) {
+		} else if (command.equals(PictureInspectorActions.SET_EXTRA_FIELDS.name())) {
 			setExtraFields(model.getExtraFields());
 		}
 	}

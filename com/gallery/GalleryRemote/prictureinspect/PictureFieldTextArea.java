@@ -5,7 +5,7 @@ import java.awt.Font;
 
 import javax.swing.text.Document;
 
-public interface PictureFieldTextArea {
+interface PictureFieldTextArea {
 
 	// called by controller
 	void addKeyboardListener(PictureInspectorPresenter listener);

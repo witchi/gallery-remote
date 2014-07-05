@@ -7,7 +7,7 @@ import javax.swing.Action;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
-public class PictureFieldTextAreaImpl extends JTextArea implements PictureFieldTextArea {
+class PictureFieldTextAreaImpl extends JTextArea implements PictureFieldTextArea {
 
 	private static final long serialVersionUID = 6219172601326439093L;
 

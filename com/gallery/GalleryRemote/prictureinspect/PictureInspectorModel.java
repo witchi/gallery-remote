@@ -106,7 +106,7 @@ public class PictureInspectorModel extends AbstractModel {
 			if (doc != extraFieldDocuments.get(name)) {
 				continue;
 			}
-				
+
 			if (doc.getLength() == 0) {
 				p.removeExtraField(name);
 			} else {
@@ -121,24 +121,22 @@ public class PictureInspectorModel extends AbstractModel {
 	}
 
 	private void fireRefreshEvent() {
-		notifyListeners(new ActionEvent(this, 0, PictureInspectorActions.ACTION_REFRESH));
+		notifyListeners(new ActionEvent(this, 0, PictureInspectorActions.REFRESH.name()));
 	}
 
 	private void fireRemoveExtraFieldsEvent() {
-		notifyListeners(new ActionEvent(this, 0, PictureInspectorActions.ACTION_REMOVE_EXTRA_FIELDS));
+		notifyListeners(new ActionEvent(this, 0, PictureInspectorActions.REMOVE_EXTRA_FIELDS.name()));
 	}
 
 	private void fireSetExtraFieldsEvent() {
-		notifyListeners(new ActionEvent(this, 0, PictureInspectorActions.ACTION_SET_EXTRA_FIELDS));
+		notifyListeners(new ActionEvent(this, 0, PictureInspectorActions.SET_EXTRA_FIELDS.name()));
 	}
 
-	// called by view
 	void removeExtraFields() {
 		extraFieldDocuments.clear();
 		fireRemoveExtraFieldsEvent();
 	}
 
-	// called by view
 	void setExtraFieldsForPicture(Picture p) {
 		ArrayList<String> newExtraFields = p.getParentAlbum().getExtraFields();
 

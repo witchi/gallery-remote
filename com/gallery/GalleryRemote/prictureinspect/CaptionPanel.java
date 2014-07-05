@@ -5,18 +5,17 @@ import java.awt.Component;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
-public class CaptionPanel extends JScrollPane {
+class CaptionPanel extends JScrollPane {
 	private static final long serialVersionUID = -5578520363869492620L;
+	private PictureFieldTextArea jCaption;
 
-	PictureFieldTextArea jCaption;
-
-	public CaptionPanel() {
+	CaptionPanel() {
 		setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		setBorder(null);
 		getViewport().add((Component) jCaption, null);
 	}
 
-	public PictureFieldTextArea getCaption() {
+	PictureFieldTextArea getCaption() {
 		if (jCaption == null) {
 			jCaption = new PictureFieldTextAreaImpl();
 			jCaption.setLineWrap(true);

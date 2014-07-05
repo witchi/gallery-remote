@@ -99,8 +99,8 @@ import com.gallery.GalleryRemote.prefs.PreferencesDialog;
 import com.gallery.GalleryRemote.prefs.PropertiesFile;
 import com.gallery.GalleryRemote.prefs.URLPanel;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspector;
-import com.gallery.GalleryRemote.prictureinspect.PictureInspectorController;
-import com.gallery.GalleryRemote.prictureinspect.PictureInspectorControllerImpl;
+import com.gallery.GalleryRemote.prictureinspect.PictureInspectorPresenter;
+import com.gallery.GalleryRemote.prictureinspect.PictureInspectorPresenterImpl;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorImpl;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorModel;
 import com.gallery.GalleryRemote.util.GRI18n;
@@ -207,7 +207,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 
 	PictureInspectorModel jPictureInspectorModel = new PictureInspectorModel(this);
 	PictureInspector jPictureInspector = new PictureInspectorImpl();
-	PictureInspectorController jPictureInspectorController = new PictureInspectorControllerImpl(jPictureInspectorModel, jPictureInspector);
+	PictureInspectorPresenter jPictureInspectorController = new PictureInspectorPresenterImpl(jPictureInspectorModel, jPictureInspector);
 
 	AlbumInspector jAlbumInspector = new AlbumInspector();
 	JScrollPane jPictureScroll = new JScrollPane();

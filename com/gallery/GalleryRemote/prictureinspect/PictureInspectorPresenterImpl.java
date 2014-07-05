@@ -18,7 +18,7 @@ import com.gallery.GalleryRemote.Log;
 import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.model.Picture;
 
-public class PictureInspectorControllerImpl implements ActionListener, DocumentListener, PictureInspectorController {
+public class PictureInspectorPresenterImpl implements ActionListener, DocumentListener, PictureInspectorPresenter {
 
 	private static final String MODULE = "PictInspec";
 
@@ -30,7 +30,7 @@ public class PictureInspectorControllerImpl implements ActionListener, DocumentL
 	private Action nextPictureAction;
 	private Action prevPictureAction;
 
-	public PictureInspectorControllerImpl(PictureInspectorModel model, PictureInspector view) {
+	public PictureInspectorPresenterImpl(PictureInspectorModel model, PictureInspector view) {
 		this.model = model;
 		this.view = view;
 		initEvents();

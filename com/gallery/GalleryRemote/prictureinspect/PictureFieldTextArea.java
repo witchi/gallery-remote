@@ -8,7 +8,7 @@ import javax.swing.text.Document;
 public interface PictureFieldTextArea {
 
 	// called by controller
-	void addKeyboardListener(PictureInspectorController listener);
+	void addKeyboardListener(PictureInspectorPresenter listener);
 
 	Document getDocument();
 

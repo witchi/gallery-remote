@@ -12,7 +12,7 @@ public class PictureFieldTextAreaImpl extends JTextArea implements PictureFieldT
 	private static final long serialVersionUID = 6219172601326439093L;
 
 	@Override
-	public void addKeyboardListener(PictureInspectorController listener) {
+	public void addKeyboardListener(PictureInspectorPresenter listener) {
 		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), listener.getNextFocusAction().getValue(Action.NAME));
 		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_MASK), listener.getPrevFocusAction().getValue(Action.NAME));
 		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), listener.getNextPictureAction().getValue(Action.NAME));

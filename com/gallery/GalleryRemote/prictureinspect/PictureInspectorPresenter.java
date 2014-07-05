@@ -2,7 +2,7 @@ package com.gallery.GalleryRemote.prictureinspect;
 
 import javax.swing.Action;
 
-public interface PictureInspectorController {
+public interface PictureInspectorPresenter {
 
 	// called by view
 	Action getNextFocusAction();

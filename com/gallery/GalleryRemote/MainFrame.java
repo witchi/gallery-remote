@@ -206,7 +206,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	CardLayout jInspectorCardLayout = new CardLayout();
 
 	PictureInspectorModel jPictureInspectorModel = new PictureInspectorModel(this);
-	PictureInspector jPictureInspector = new PictureInspectorImpl(jPictureInspectorModel);
+	PictureInspector jPictureInspector = new PictureInspectorImpl();
 	PictureInspectorController jPictureInspectorController = new PictureInspectorControllerImpl(jPictureInspectorModel, jPictureInspector);
 
 	AlbumInspector jAlbumInspector = new AlbumInspector();
@@ -561,10 +561,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 						&& jAlbumTree.getModel().getChildCount(jAlbumTree.getModel().getRoot()) >= 1;
 				jBrowseButton.setEnabled(enabled && currentAlbum.getCanAdd());
 				jApertureImport.setEnabled(enabled && currentAlbum.getCanAdd());
-				
-				// TODO: maybe we should call the model instead of the view!
-				jPictureInspector.setEnabled(enabled);
-				
+				jPictureInspectorController.setEnabled(enabled);
 				jPicturesList.setEnabled(enabled && currentAlbum.getCanAdd());
 				jNewAlbumButton.setEnabled(!inProgress && currentGallery != null && currentGallery.hasComm()
 						&& currentGallery.getComm(jStatusBar).isLoggedIn()

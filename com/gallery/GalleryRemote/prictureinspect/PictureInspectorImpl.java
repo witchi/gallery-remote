@@ -27,6 +27,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,7 +44,6 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.text.Document;
 
-import com.gallery.GalleryRemote.GalleryCommCapabilities;
 import com.gallery.GalleryRemote.GalleryRemote;
 import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.util.GRI18n;
@@ -63,81 +63,43 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 
 	private HashMap<String, JLabel> extraLabels = new HashMap<String, JLabel>();
 	private HashMap<String, PictureFieldTextArea> extraTextAreas = new HashMap<String, PictureFieldTextArea>();
-	private PictureInspectorModel model;
 
 	private JLabel jLabel5;
 	private GridBagConstraints jLabel5Constraints;
-
 	private JLabel jLabel6;
 	private GridBagConstraints jLabel6Constraints;
-
 	private JLabel jLabel4;
 	private GridBagConstraints jLabel4Constraints;
-
 	private JLabel jLabel8;
 	private GridBagConstraints jLabel8Constraints;
-
 	private JLabel jLabel1;
 	private GridBagConstraints jLabel1Constraints;
-
 	private JLabel jLabel2;
 	private GridBagConstraints jLabel2Constraints;
-
 	private JPanel jSpacer;
 	private GridBagConstraints jSpacerConstraints;
-
 	private JButton jDeleteButton;
 	private GridBagConstraints jDeleteButtonConstraints;
-
 	private JButton jUpButton;
 	private GridBagConstraints jUpButtonConstraints;
-
 	private JButton jDownButton;
 	private GridBagConstraints jDownButtonConstraints;
-
 	private IconAreaPanel jIconAreaPanel;
 	private GridBagConstraints jIconAreaPanelConstraints;
-
 	private JTextArea jAlbum;
 	private GridBagConstraints jAlbumConstraints;
-
 	private JTextArea jSize;
 	private GridBagConstraints jSizeConstraints;
-
 	private PathPanel jPathPanel;
 	private GridBagConstraints jPathPanelConstraints;
-
 	private CaptionPanel jCaptionPanel;
 	private GridBagConstraints jCaptionPanelConstraints;
 
 	/**
 	 * Constructor for the PictureInspector object
 	 */
-	public PictureInspectorImpl(PictureInspectorModel model) {
-		this.model = model;
+	public PictureInspectorImpl() {
 		initUI();
-	}
-
-	// called by the controller
-	@Override
-	public void refresh() {
-		getIcon().setPreferredSize(
-				new Dimension(0, GalleryRemote.instance().properties.getThumbnailSize().height + getIconAreaPanel().getEmptyIconHeight()
-						+ getIcon().getIconTextGap()));
-
-		int count = model.getPictureList().size();
-
-		if (count == 0) {
-			refreshWithNoPicture();
-			return;
-		}
-
-		if (count == 1) {
-			refreshWithOnePicture();
-			return;
-		}
-
-		refreshWithMultiplePictures();
 	}
 
 	// called by the controller
@@ -222,7 +184,13 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 		replaceIcon(getIcon(), ImageUtils.defaultThumbnail);
 	}
 
-	private void refreshWithNoPicture() {
+	// called by the controller
+	@Override
+	public void refreshWithoutPicture() {
+		getIcon().setPreferredSize(
+				new Dimension(0, GalleryRemote.instance().properties.getThumbnailSize().height + getIconAreaPanel().getEmptyIconHeight()
+						+ getIcon().getIconTextGap()));
+
 		getIcon().setText(GRI18n.getString(MODULE, "noPicSel"));
 		replaceIcon(getIcon(), ImageUtils.defaultThumbnail);
 		getPath().setText("");
@@ -239,13 +207,17 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 		getRotateLeftButton().setEnabled(false);
 		getRotateRightButton().setEnabled(false);
 		getFlipButton().setEnabled(false);
-
-		model.removeExtraFields();
 	}
 
-	private void refreshWithOnePicture() {
-		Picture p = model.getPictureList().get(0);
-		replaceIcon(getIcon(), model.getThumbnail(p));
+	// called by the controller
+	@Override
+	public void refreshWithOnePicture(PictureInspectorDTO dto) {
+		getIcon().setPreferredSize(
+				new Dimension(0, GalleryRemote.instance().properties.getThumbnailSize().height + getIconAreaPanel().getEmptyIconHeight()
+						+ getIcon().getIconTextGap()));
+
+		Picture p = dto.getPicture();
+		replaceIcon(getIcon(), dto.getThumbnail());
 		if (p.isOnline()) {
 			getPath().setText(GRI18n.getString(MODULE, "onServer"));
 			getIcon().setText(p.getName());
@@ -255,33 +227,36 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 		}
 		jAlbum.setText(p.getParentAlbum().getTitle());
 
-		if (model.hasCapability(p, GalleryCommCapabilities.CAPA_UPLOAD_CAPTION)) {
+		if (dto.hasCapability()) {
 			getCaption().setText(p.getCaption());
 			getCaption().setEditable(true);
 			getCaption().setBackground(UIManager.getColor("TextField.background"));
 		}
-		jSize.setText(model.getFileSize(p) + " bytes");
+		jSize.setText(NumberFormat.getInstance().format(p.getFileSize()) + " bytes");
 		jUpButton.setEnabled(isEnabled());
 		jDownButton.setEnabled(isEnabled());
 		jDeleteButton.setEnabled(isEnabled());
 		getRotateLeftButton().setEnabled(isEnabled());
 		getRotateRightButton().setEnabled(isEnabled());
 		getFlipButton().setEnabled(isEnabled());
-
-		model.setExtraFieldsForPicture(p);
 	}
 
-	private void refreshWithMultiplePictures() {
-		Picture p = model.getPictureList().get(0);
-		Object[] params = { new Integer(model.getPictureList().size()) };
+	// called by the controller
+	@Override
+	public void refreshWithMultiplePictures(PictureInspectorDTO dto) {
+		getIcon().setPreferredSize(
+				new Dimension(0, GalleryRemote.instance().properties.getThumbnailSize().height + getIconAreaPanel().getEmptyIconHeight()
+						+ getIcon().getIconTextGap()));
+
+		Object[] params = { new Integer(dto.getPictureListSize()) };
 		getIcon().setText(GRI18n.getString(MODULE, "countElemSel", params));
 		replaceIcon(getIcon(), ImageUtils.defaultThumbnail);
 		getPath().setText("");
-		jAlbum.setText(p.getParentAlbum().getTitle());
+		jAlbum.setText(dto.getPicture().getParentAlbum().getTitle());
 		getCaption().setText("");
 		getCaption().setEditable(false);
 		getCaption().setBackground(UIManager.getColor("TextField.inactiveBackground"));
-		jSize.setText(model.getFileSize(model.getPictureList()) + " bytes");
+		jSize.setText(NumberFormat.getInstance().format(dto.getFileSize()) + " bytes");
 
 		jUpButton.setEnabled(isEnabled());
 		jDownButton.setEnabled(isEnabled());
@@ -289,8 +264,6 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 		getRotateLeftButton().setEnabled(isEnabled());
 		getRotateRightButton().setEnabled(isEnabled());
 		getFlipButton().setEnabled(isEnabled());
-
-		model.removeExtraFields();
 	}
 
 	private JLabel getPathLabel() {

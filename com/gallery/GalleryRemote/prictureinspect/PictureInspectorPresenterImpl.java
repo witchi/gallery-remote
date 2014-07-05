@@ -36,7 +36,6 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 		initEvents();
 	}
 
-	// Event handling
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();

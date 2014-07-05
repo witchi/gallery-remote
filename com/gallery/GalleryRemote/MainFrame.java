@@ -99,10 +99,11 @@ import com.gallery.GalleryRemote.prefs.PreferencesDialog;
 import com.gallery.GalleryRemote.prefs.PropertiesFile;
 import com.gallery.GalleryRemote.prefs.URLPanel;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspector;
-import com.gallery.GalleryRemote.prictureinspect.PictureInspectorPresenter;
-import com.gallery.GalleryRemote.prictureinspect.PictureInspectorPresenterImpl;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorImpl;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorModel;
+import com.gallery.GalleryRemote.prictureinspect.PictureInspectorModelImpl;
+import com.gallery.GalleryRemote.prictureinspect.PictureInspectorPresenter;
+import com.gallery.GalleryRemote.prictureinspect.PictureInspectorPresenterImpl;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 import com.gallery.GalleryRemote.util.OsShutdown;
@@ -205,7 +206,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	JPanel jInspectorPanel = new JPanel();
 	CardLayout jInspectorCardLayout = new CardLayout();
 
-	PictureInspectorModel jPictureInspectorModel = new PictureInspectorModel(this);
+	PictureInspectorModel jPictureInspectorModel = new PictureInspectorModelImpl(this);
 	PictureInspector jPictureInspector = new PictureInspectorImpl();
 	PictureInspectorPresenter jPictureInspectorController = new PictureInspectorPresenterImpl(jPictureInspectorModel, jPictureInspector);
 

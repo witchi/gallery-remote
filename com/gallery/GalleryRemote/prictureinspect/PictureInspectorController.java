@@ -9,4 +9,7 @@ public interface PictureInspectorController {
 	Action getPrevFocusAction();
 	Action getNextPictureAction();
 	Action getPrevPictureAction();
+	
+	// called by MainFrame
+	void setEnabled(boolean enabled);
 }

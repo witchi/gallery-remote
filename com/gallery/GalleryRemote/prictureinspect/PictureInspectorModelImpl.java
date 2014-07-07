@@ -15,18 +15,21 @@ import javax.swing.text.PlainDocument;
 import com.gallery.GalleryRemote.MainFrame;
 import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.util.AbstractModel;
+import com.gallery.GalleryRemote.util.GRI18n;
 
 public class PictureInspectorModelImpl extends AbstractModel implements PictureInspectorModel {
 
+	private static final String MODULE = "PictInspec";
 	private MainFrame mainFrame;
 	private List<Picture> pictureList = null;
-	private HashMap<String, Document> extraFieldDocuments;
-	private Document captionDocument;
+	private final HashMap<String, Document> extraFieldDocuments;
+	private final HashMap<String, Document> fieldDocuments;
 
 	public PictureInspectorModelImpl(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 		this.pictureList = new ArrayList<Picture>();
 		this.extraFieldDocuments = new HashMap<String, Document>();
+		this.fieldDocuments = new HashMap<String, Document>();
 	}
 
 	@Override
@@ -105,8 +108,8 @@ public class PictureInspectorModelImpl extends AbstractModel implements PictureI
 
 		Picture p = pictureList.get(0);
 
-		if (doc == captionDocument) {
-			p.setCaption(getDocumentText(captionDocument));
+		if (doc == fieldDocuments.get("Caption")) {
+			p.setCaption(getDocumentText(fieldDocuments.get("Caption")));
 			return;
 		}
 
@@ -137,10 +140,6 @@ public class PictureInspectorModelImpl extends AbstractModel implements PictureI
 		notifyListeners(new ActionEvent(this, 0, PictureInspectorActions.REMOVE_EXTRA_FIELDS.name()));
 	}
 
-	private void fireSetExtraFieldsEvent() {
-		notifyListeners(new ActionEvent(this, 0, PictureInspectorActions.SET_EXTRA_FIELDS.name()));
-	}
-
 	@Override
 	public void removeExtraFields() {
 		extraFieldDocuments.clear();
@@ -148,16 +147,16 @@ public class PictureInspectorModelImpl extends AbstractModel implements PictureI
 	}
 
 	@Override
-	public void setExtraFieldsForPicture(Picture p) {
+	public Map<String, Document> getExtraFieldDocuments(Picture p) {
 		ArrayList<String> newExtraFields = p.getParentAlbum().getExtraFields();
 
 		if (newExtraFields == null) {
 			removeExtraFields();
-			return;
+			return Collections.unmodifiableMap(extraFieldDocuments);
 		}
 
 		if (newExtraFields.equals(extraFieldDocuments.keySet())) {
-			return;
+			return Collections.unmodifiableMap(extraFieldDocuments);
 		}
 
 		removeExtraFields();
@@ -171,16 +170,41 @@ public class PictureInspectorModelImpl extends AbstractModel implements PictureI
 			}
 			extraFieldDocuments.put(name, d);
 		}
-		fireSetExtraFieldsEvent();
+		return Collections.unmodifiableMap(extraFieldDocuments);
 	}
 
 	@Override
-	public Map<String, Document> getExtraFields() {
-		return Collections.unmodifiableMap(extraFieldDocuments);
+	public Map<String, Document> getFieldDocuments() {
+		if (fieldDocuments.isEmpty()) {
+			fieldDocuments.put("Path", new PlainDocument());
+			fieldDocuments.put("Album", new PlainDocument());
+			fieldDocuments.put("Size", new PlainDocument());
+			fieldDocuments.put("Caption", new PlainDocument());
+			Document d = new PlainDocument();
+			try {
+				d.remove(0, d.getLength());
+				d.insertString(0, GRI18n.getString(MODULE, "icon"), null);
+			} catch (BadLocationException e) {
+				// do nothing
+			}
+			fieldDocuments.put("Icon", d);
+		}
+		return Collections.unmodifiableMap(fieldDocuments);
 	}
 
 	@Override
 	public boolean hasCapability(Picture p, int capability) {
 		return p.getParentAlbum().getGallery().getComm(mainFrame.jStatusBar).hasCapability(mainFrame.jStatusBar, capability);
+	}
+
+	@Override
+	public void setDocumentText(String name, String text) {
+		Document d = fieldDocuments.get(name);
+		try {
+			d.remove(0, d.getLength());
+			d.insertString(0, text, null);
+		} catch (BadLocationException e) {
+			// do nothing
+		}
 	}
 }

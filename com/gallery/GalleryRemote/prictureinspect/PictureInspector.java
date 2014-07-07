@@ -25,7 +25,9 @@ interface PictureInspector {
 
 	void setFieldDocuments(Map<String, Document> map);
 
-	Collection<PictureFieldTextArea> setExtraFields(Map<String, Document> docList);
+	void setExtraFields(Map<String, Document> docList);
+
+	Collection<PictureFieldTextArea> getExtraFields();
 
 	void removeExtraFields();
 

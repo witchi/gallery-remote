@@ -11,7 +11,7 @@ import com.gallery.GalleryRemote.model.Picture;
 
 public interface PictureInspectorModel {
 
-	// called by MainFrame (TODO: should we change that to presenter)
+	// called by MainFrame
 	void setPictureList(List<Picture> pictureList);
 
 	// called by presenter
@@ -27,8 +27,10 @@ public interface PictureInspectorModel {
 
 	void flipPicture();
 
-	Map<String, Document> getExtraFields();
+	Map<String, Document> getExtraFieldDocuments(Picture p);
 
+	Map<String, Document> getFieldDocuments(); 
+	
 	void documentUpdate(Document document);
 
 	List<Picture> getPictureList();
@@ -37,9 +39,9 @@ public interface PictureInspectorModel {
 
 	Image getThumbnail(Picture picture);
 
-	void setExtraFieldsForPicture(Picture picture);
-
 	void addActionListener(ActionListener l);
 	
 	boolean hasCapability(Picture picture, int capability);
+	
+	void setDocumentText(String name, String text);
 }

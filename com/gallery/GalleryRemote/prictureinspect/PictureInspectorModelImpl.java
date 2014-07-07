@@ -12,6 +12,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
+import com.gallery.GalleryRemote.GalleryCommCapabilities;
 import com.gallery.GalleryRemote.MainFrame;
 import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.util.AbstractModel;
@@ -193,7 +194,7 @@ public class PictureInspectorModelImpl extends AbstractModel implements PictureI
 	}
 
 	@Override
-	public boolean hasCapability(Picture p, int capability) {
+	public boolean hasCapability(Picture p, GalleryCommCapabilities capability) {
 		return p.getParentAlbum().getGallery().getComm(mainFrame.jStatusBar).hasCapability(mainFrame.jStatusBar, capability);
 	}
 

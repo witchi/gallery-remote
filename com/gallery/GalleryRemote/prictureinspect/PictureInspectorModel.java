@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.swing.text.Document;
 
+import com.gallery.GalleryRemote.GalleryCommCapabilities;
 import com.gallery.GalleryRemote.model.Picture;
 
 public interface PictureInspectorModel {
@@ -29,8 +30,8 @@ public interface PictureInspectorModel {
 
 	Map<String, Document> getExtraFieldDocuments(Picture p);
 
-	Map<String, Document> getFieldDocuments(); 
-	
+	Map<String, Document> getFieldDocuments();
+
 	void documentUpdate(Document document);
 
 	List<Picture> getPictureList();
@@ -40,8 +41,8 @@ public interface PictureInspectorModel {
 	Image getThumbnail(Picture picture);
 
 	void addActionListener(ActionListener l);
-	
-	boolean hasCapability(Picture picture, int capability);
-	
+
+	boolean hasCapability(Picture picture, GalleryCommCapabilities capability);
+
 	void setDocumentText(String name, String text);
 }

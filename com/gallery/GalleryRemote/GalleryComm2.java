@@ -65,7 +65,7 @@ import com.gallery.GalleryRemote.util.UrlMessageDialog;
  * @author paour
  * @author <a href="mailto:tim_miller@users.sourceforge.net">Tim Miller</a>
  */
-public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts, GalleryCommCapabilities, PreferenceNames {
+public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts, PreferenceNames {
 	/*
 	 * Implementation notes: One GalleryComm2 instance is needed per Gallery
 	 * server (since the protocol only logs into each server once). So the
@@ -100,14 +100,14 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts, Gal
 	 */
 	protected int serverMinorVersion = 0;
 
-	private static int[] capabilities1;
-	private static int[] capabilities2;
-	private static int[] capabilities5;
-	private static int[] capabilities7;
-	private static int[] capabilities9;
-	private static int[] capabilities13;
-	private static int[] capabilities14;
-	private static int[] capabilities15;
+	private static GalleryCommCapabilities[] capabilities1;
+	private static GalleryCommCapabilities[] capabilities2;
+	private static GalleryCommCapabilities[] capabilities5;
+	private static GalleryCommCapabilities[] capabilities7;
+	private static GalleryCommCapabilities[] capabilities9;
+	private static GalleryCommCapabilities[] capabilities13;
+	private static GalleryCommCapabilities[] capabilities14;
+	private static GalleryCommCapabilities[] capabilities15;
 
 	/*
 	 * -------------------------------------------------------------------------
@@ -130,26 +130,52 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts, Gal
 		 * we'll be able to add more capabilities, such as CAPA_NEW_ALBUM (since
 		 * 2.1)
 		 */
-		capabilities = new int[] { CAPA_UPLOAD_FILES, CAPA_FETCH_ALBUMS, CAPA_UPLOAD_CAPTION, CAPA_FETCH_HIERARCHICAL, CAPA_ALBUM_INFO };
-		capabilities1 = new int[] { CAPA_UPLOAD_FILES, CAPA_FETCH_ALBUMS, CAPA_UPLOAD_CAPTION, CAPA_FETCH_HIERARCHICAL, CAPA_ALBUM_INFO,
-				CAPA_NEW_ALBUM };
-		capabilities2 = new int[] { CAPA_UPLOAD_FILES, CAPA_FETCH_ALBUMS, CAPA_UPLOAD_CAPTION, CAPA_FETCH_HIERARCHICAL, CAPA_ALBUM_INFO,
-				CAPA_NEW_ALBUM, CAPA_FETCH_ALBUMS_PRUNE };
-		capabilities5 = new int[] { CAPA_UPLOAD_FILES, CAPA_FETCH_ALBUMS, CAPA_UPLOAD_CAPTION, CAPA_FETCH_HIERARCHICAL, CAPA_ALBUM_INFO,
-				CAPA_NEW_ALBUM, CAPA_FETCH_ALBUMS_PRUNE, CAPA_FORCE_FILENAME };
-		capabilities7 = new int[] { CAPA_UPLOAD_FILES, CAPA_FETCH_ALBUMS, CAPA_UPLOAD_CAPTION, CAPA_FETCH_HIERARCHICAL, CAPA_ALBUM_INFO,
-				CAPA_NEW_ALBUM, CAPA_FETCH_ALBUMS_PRUNE, CAPA_FORCE_FILENAME, CAPA_MOVE_ALBUM };
-		capabilities9 = new int[] { CAPA_UPLOAD_FILES, CAPA_FETCH_ALBUMS, CAPA_UPLOAD_CAPTION, CAPA_FETCH_HIERARCHICAL, CAPA_ALBUM_INFO,
-				CAPA_NEW_ALBUM, CAPA_FETCH_ALBUMS_PRUNE, CAPA_FORCE_FILENAME, CAPA_MOVE_ALBUM, CAPA_FETCH_ALBUM_IMAGES };
-		capabilities13 = new int[] { CAPA_UPLOAD_FILES, CAPA_FETCH_ALBUMS, CAPA_UPLOAD_CAPTION, CAPA_FETCH_HIERARCHICAL, CAPA_ALBUM_INFO,
-				CAPA_NEW_ALBUM, CAPA_FETCH_ALBUMS_PRUNE, CAPA_FORCE_FILENAME, CAPA_MOVE_ALBUM, CAPA_FETCH_ALBUM_IMAGES, CAPA_FETCH_ALBUMS_TOO,
-				CAPA_FETCH_NON_WRITEABLE_ALBUMS };
-		capabilities14 = new int[] { CAPA_UPLOAD_FILES, CAPA_FETCH_ALBUMS, CAPA_UPLOAD_CAPTION, CAPA_FETCH_HIERARCHICAL, CAPA_ALBUM_INFO,
-				CAPA_NEW_ALBUM, CAPA_FETCH_ALBUMS_PRUNE, CAPA_FORCE_FILENAME, CAPA_MOVE_ALBUM, CAPA_FETCH_ALBUM_IMAGES, CAPA_FETCH_ALBUMS_TOO,
-				CAPA_FETCH_NON_WRITEABLE_ALBUMS, CAPA_FETCH_HONORS_HIDDEN };
-		capabilities15 = new int[] { CAPA_UPLOAD_FILES, CAPA_FETCH_ALBUMS, CAPA_UPLOAD_CAPTION, CAPA_FETCH_HIERARCHICAL, CAPA_ALBUM_INFO,
-				CAPA_NEW_ALBUM, CAPA_FETCH_ALBUMS_PRUNE, CAPA_FORCE_FILENAME, CAPA_MOVE_ALBUM, CAPA_FETCH_ALBUM_IMAGES, CAPA_FETCH_ALBUMS_TOO,
-				CAPA_FETCH_NON_WRITEABLE_ALBUMS, CAPA_FETCH_HONORS_HIDDEN, CAPA_IMAGE_MAX_SIZE };
+		capabilities = new GalleryCommCapabilities[] { GalleryCommCapabilities.CAPA_UPLOAD_FILES, GalleryCommCapabilities.CAPA_FETCH_ALBUMS,
+				GalleryCommCapabilities.CAPA_UPLOAD_CAPTION, GalleryCommCapabilities.CAPA_FETCH_HIERARCHICAL,
+				GalleryCommCapabilities.CAPA_ALBUM_INFO };
+		capabilities1 = new GalleryCommCapabilities[] { GalleryCommCapabilities.CAPA_UPLOAD_FILES, GalleryCommCapabilities.CAPA_FETCH_ALBUMS,
+				GalleryCommCapabilities.CAPA_UPLOAD_CAPTION, GalleryCommCapabilities.CAPA_FETCH_HIERARCHICAL,
+				GalleryCommCapabilities.CAPA_ALBUM_INFO, GalleryCommCapabilities.CAPA_NEW_ALBUM };
+		capabilities2 = new GalleryCommCapabilities[] { GalleryCommCapabilities.CAPA_UPLOAD_FILES, GalleryCommCapabilities.CAPA_FETCH_ALBUMS,
+				GalleryCommCapabilities.CAPA_UPLOAD_CAPTION, GalleryCommCapabilities.CAPA_FETCH_HIERARCHICAL,
+				GalleryCommCapabilities.CAPA_ALBUM_INFO, GalleryCommCapabilities.CAPA_NEW_ALBUM,
+				GalleryCommCapabilities.CAPA_FETCH_ALBUMS_PRUNE };
+		capabilities5 = new GalleryCommCapabilities[] { GalleryCommCapabilities.CAPA_UPLOAD_FILES, GalleryCommCapabilities.CAPA_FETCH_ALBUMS,
+				GalleryCommCapabilities.CAPA_UPLOAD_CAPTION, GalleryCommCapabilities.CAPA_FETCH_HIERARCHICAL,
+				GalleryCommCapabilities.CAPA_ALBUM_INFO, GalleryCommCapabilities.CAPA_NEW_ALBUM,
+				GalleryCommCapabilities.CAPA_FETCH_ALBUMS_PRUNE, GalleryCommCapabilities.CAPA_FORCE_FILENAME };
+		capabilities7 = new GalleryCommCapabilities[] { GalleryCommCapabilities.CAPA_UPLOAD_FILES, GalleryCommCapabilities.CAPA_FETCH_ALBUMS,
+				GalleryCommCapabilities.CAPA_UPLOAD_CAPTION, GalleryCommCapabilities.CAPA_FETCH_HIERARCHICAL,
+				GalleryCommCapabilities.CAPA_ALBUM_INFO, GalleryCommCapabilities.CAPA_NEW_ALBUM,
+				GalleryCommCapabilities.CAPA_FETCH_ALBUMS_PRUNE, GalleryCommCapabilities.CAPA_FORCE_FILENAME,
+				GalleryCommCapabilities.CAPA_MOVE_ALBUM };
+		capabilities9 = new GalleryCommCapabilities[] { GalleryCommCapabilities.CAPA_UPLOAD_FILES, GalleryCommCapabilities.CAPA_FETCH_ALBUMS,
+				GalleryCommCapabilities.CAPA_UPLOAD_CAPTION, GalleryCommCapabilities.CAPA_FETCH_HIERARCHICAL,
+				GalleryCommCapabilities.CAPA_ALBUM_INFO, GalleryCommCapabilities.CAPA_NEW_ALBUM,
+				GalleryCommCapabilities.CAPA_FETCH_ALBUMS_PRUNE, GalleryCommCapabilities.CAPA_FORCE_FILENAME,
+				GalleryCommCapabilities.CAPA_MOVE_ALBUM, GalleryCommCapabilities.CAPA_FETCH_ALBUM_IMAGES };
+		capabilities13 = new GalleryCommCapabilities[] { GalleryCommCapabilities.CAPA_UPLOAD_FILES,
+				GalleryCommCapabilities.CAPA_FETCH_ALBUMS, GalleryCommCapabilities.CAPA_UPLOAD_CAPTION,
+				GalleryCommCapabilities.CAPA_FETCH_HIERARCHICAL, GalleryCommCapabilities.CAPA_ALBUM_INFO,
+				GalleryCommCapabilities.CAPA_NEW_ALBUM, GalleryCommCapabilities.CAPA_FETCH_ALBUMS_PRUNE,
+				GalleryCommCapabilities.CAPA_FORCE_FILENAME, GalleryCommCapabilities.CAPA_MOVE_ALBUM,
+				GalleryCommCapabilities.CAPA_FETCH_ALBUM_IMAGES, GalleryCommCapabilities.CAPA_FETCH_ALBUMS_TOO,
+				GalleryCommCapabilities.CAPA_FETCH_NON_WRITEABLE_ALBUMS };
+		capabilities14 = new GalleryCommCapabilities[] { GalleryCommCapabilities.CAPA_UPLOAD_FILES,
+				GalleryCommCapabilities.CAPA_FETCH_ALBUMS, GalleryCommCapabilities.CAPA_UPLOAD_CAPTION,
+				GalleryCommCapabilities.CAPA_FETCH_HIERARCHICAL, GalleryCommCapabilities.CAPA_ALBUM_INFO,
+				GalleryCommCapabilities.CAPA_NEW_ALBUM, GalleryCommCapabilities.CAPA_FETCH_ALBUMS_PRUNE,
+				GalleryCommCapabilities.CAPA_FORCE_FILENAME, GalleryCommCapabilities.CAPA_MOVE_ALBUM,
+				GalleryCommCapabilities.CAPA_FETCH_ALBUM_IMAGES, GalleryCommCapabilities.CAPA_FETCH_ALBUMS_TOO,
+				GalleryCommCapabilities.CAPA_FETCH_NON_WRITEABLE_ALBUMS, GalleryCommCapabilities.CAPA_FETCH_HONORS_HIDDEN };
+		capabilities15 = new GalleryCommCapabilities[] { GalleryCommCapabilities.CAPA_UPLOAD_FILES,
+				GalleryCommCapabilities.CAPA_FETCH_ALBUMS, GalleryCommCapabilities.CAPA_UPLOAD_CAPTION,
+				GalleryCommCapabilities.CAPA_FETCH_HIERARCHICAL, GalleryCommCapabilities.CAPA_ALBUM_INFO,
+				GalleryCommCapabilities.CAPA_NEW_ALBUM, GalleryCommCapabilities.CAPA_FETCH_ALBUMS_PRUNE,
+				GalleryCommCapabilities.CAPA_FORCE_FILENAME, GalleryCommCapabilities.CAPA_MOVE_ALBUM,
+				GalleryCommCapabilities.CAPA_FETCH_ALBUM_IMAGES, GalleryCommCapabilities.CAPA_FETCH_ALBUMS_TOO,
+				GalleryCommCapabilities.CAPA_FETCH_NON_WRITEABLE_ALBUMS, GalleryCommCapabilities.CAPA_FETCH_HONORS_HIDDEN,
+				GalleryCommCapabilities.CAPA_IMAGE_MAX_SIZE };
 
 		// the algorithm for search needs the ints to be sorted.
 		Arrays.sort(capabilities);

@@ -20,29 +20,17 @@
  */
 package com.gallery.GalleryRemote;
 
-
 /**
- * This interface includes capacity keys for various versions of
- * the Gallery Remote protocols.
+ * This interface includes capacity keys for various versions of the Gallery
+ * Remote protocols.
  * 
  * @author Pierre-Luc Paour
+ * @author arothe
  * @version $id$
  */
-public interface GalleryCommCapabilities {
-	public static final int CAPA_UPLOAD_FILES = 1;
-	public static final int CAPA_FETCH_ALBUMS = 2;
-	public static final int CAPA_UPLOAD_CAPTION = 3;
-	public static final int CAPA_FETCH_HIERARCHICAL = 4;
-	public static final int CAPA_ALBUM_INFO = 5;
-	public static final int CAPA_NEW_ALBUM = 6;
-	public static final int CAPA_FETCH_ALBUMS_PRUNE = 7;
-	public static final int CAPA_FORCE_FILENAME = 8;
-	public static final int CAPA_FETCH_ALBUM_IMAGES = 9;
-	public static final int CAPA_MOVE_ALBUM = 10;
-	public static final int CAPA_FETCH_ALBUMS_TOO = 11;
-	public static final int CAPA_FETCH_NON_WRITEABLE_ALBUMS = 12;
-	public static final int CAPA_FETCH_HONORS_HIDDEN = 13;
-	public static final int CAPA_IMAGE_MAX_SIZE = 14;
-	public static final int CAPA_INCREMENT_VIEW_COUNT = 15;
-	public static final int CAPA_FETCH_RANDOM = 16;
+public enum GalleryCommCapabilities {
+	CAPA_UPLOAD_FILES, CAPA_FETCH_ALBUMS, CAPA_UPLOAD_CAPTION, CAPA_FETCH_HIERARCHICAL, CAPA_ALBUM_INFO, 
+	CAPA_NEW_ALBUM, CAPA_FETCH_ALBUMS_PRUNE, CAPA_FORCE_FILENAME, CAPA_FETCH_ALBUM_IMAGES, CAPA_MOVE_ALBUM,
+	CAPA_FETCH_ALBUMS_TOO, CAPA_FETCH_NON_WRITEABLE_ALBUMS, CAPA_FETCH_HONORS_HIDDEN, CAPA_IMAGE_MAX_SIZE, 
+	CAPA_INCREMENT_VIEW_COUNT, CAPA_FETCH_RANDOM;
 }

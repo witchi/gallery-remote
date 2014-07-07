@@ -65,7 +65,7 @@ import com.gallery.GalleryRemote.util.GRI18n;
 public abstract class GalleryComm implements PreferenceNames {
 	private static final String MODULE = "GalComm";
 
-	int[] capabilities = null;
+	GalleryCommCapabilities[] capabilities = null;
 	private static int lastRespCode = 0;
 
 	/** Flag to hold logged in status. Only need to log in once. */
@@ -203,7 +203,7 @@ public abstract class GalleryComm implements PreferenceNames {
 		return isLoggedIn;
 	}
 
-	public boolean hasCapability(StatusUpdate su, int capability) {
+	public boolean hasCapability(StatusUpdate su, GalleryCommCapabilities capability) {
 		if (!isLoggedIn() && !triedLogin) {
 			login(su);
 		}

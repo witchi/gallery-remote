@@ -1,8 +1,10 @@
 package com.gallery.GalleryRemote.prictureinspect;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Map;
 
@@ -14,9 +16,12 @@ import javax.swing.text.Document;
 
 import com.gallery.GalleryRemote.CoreUtils;
 import com.gallery.GalleryRemote.GalleryCommCapabilities;
+import com.gallery.GalleryRemote.GalleryRemote;
 import com.gallery.GalleryRemote.Log;
 import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.model.Picture;
+import com.gallery.GalleryRemote.util.GRI18n;
+import com.gallery.GalleryRemote.util.ImageUtils;
 
 public class PictureInspectorPresenterImpl implements ActionListener, DocumentListener, PictureInspectorPresenter {
 
@@ -33,6 +38,7 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 	public PictureInspectorPresenterImpl(PictureInspectorModel model, PictureInspector view) {
 		this.model = model;
 		this.view = view;
+		initDocuments();
 		initEvents();
 	}
 
@@ -57,8 +63,6 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 			refresh();
 		} else if (command.equals(PictureInspectorActions.REMOVE_EXTRA_FIELDS.name())) {
 			view.removeExtraFields();
-		} else if (command.equals(PictureInspectorActions.SET_EXTRA_FIELDS.name())) {
-			setExtraFields(model.getExtraFields());
 		}
 	}
 
@@ -142,9 +146,9 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 		view.setEnabled(enabled);
 	}
 
-	// called by an action of the model
 	private void setExtraFields(Map<String, Document> docList) {
-		Collection<PictureFieldTextArea> fieldSet = view.setExtraFields(docList);
+		view.setExtraFields(docList);
+		Collection<PictureFieldTextArea> fieldSet = view.getExtraFields();
 		for (PictureFieldTextArea field : fieldSet) {
 			field.getDocument().addDocumentListener(this);
 			field.addKeyboardListener(this);
@@ -153,31 +157,63 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 
 	// called by an action of the model
 	private void refresh() {
-		int count = model.getPictureList().size();
+		Picture p;
 		PictureInspectorDTO dto = new PictureInspectorDTO();
 
-		switch (count) {
+		dto.setIconSize(new Dimension(0, GalleryRemote.instance().properties.getThumbnailSize().height + view.getEmptyIconHeight()
+				+ view.getIconTextGap()));
+
+		switch (model.getPictureList().size()) {
 		case 0:
-			view.refreshWithoutPicture();
+			dto.setThumbnail(ImageUtils.defaultThumbnail);
+			dto.setCapability(false);
+			dto.setViewEnabled(false);
+
+			model.setDocumentText("Icon", GRI18n.getString(MODULE, "noPicSel"));
+			model.setDocumentText("Path", "");
+			model.setDocumentText("Album", "");
+			model.setDocumentText("Size", "");
+			model.setDocumentText("Caption", "");
+
+			view.refresh(dto);
 			model.removeExtraFields();
 			break;
 
 		case 1:
-			Picture p = model.getPictureList().get(0);
-			dto.setPicture(p);
+			p = model.getPictureList().get(0);
 			dto.setThumbnail(model.getThumbnail(p));
 			dto.setCapability(model.hasCapability(p, GalleryCommCapabilities.CAPA_UPLOAD_CAPTION));
+			dto.setViewEnabled(view.isEnabled());
 
-			view.refreshWithOnePicture(dto);
-			model.setExtraFieldsForPicture(p);
+			if (p.isOnline()) {
+				model.setDocumentText("Path", GRI18n.getString(MODULE, "onServer"));
+				model.setDocumentText("Icon", p.getName());
+			} else {
+				model.setDocumentText("Icon", p.getSource().getName());
+				model.setDocumentText("Path", p.getSource().getParent());
+			}
+			model.setDocumentText("Album", p.getParentAlbum().getTitle());
+			model.setDocumentText("Size", NumberFormat.getInstance().format(p.getFileSize()) + " bytes");
+			model.setDocumentText("Caption", p.getCaption());
+
+			view.refresh(dto);
+			setExtraFields(model.getExtraFieldDocuments(p));
 			break;
 
 		default:
-			dto.setPicture(model.getPictureList().get(0));
-			dto.setPictureListSize(model.getPictureList().size());
-			dto.setFileSize((int) Album.getObjectFileSize(model.getPictureList()));
+			p = model.getPictureList().get(0);
+			dto.setThumbnail(ImageUtils.defaultThumbnail);
+			dto.setCapability(false);
+			dto.setViewEnabled(view.isEnabled());
 
-			view.refreshWithMultiplePictures(dto);
+			Object[] params = { new Integer(model.getPictureList().size()) };
+			model.setDocumentText("Icon", GRI18n.getString(MODULE, "countElemSel", params));
+			model.setDocumentText("Path", "");
+			model.setDocumentText("Album", p.getParentAlbum().getTitle());
+			model.setDocumentText("Size", NumberFormat.getInstance().format((int) Album.getObjectFileSize(model.getPictureList())) + " bytes");
+			model.setDocumentText("Caption", "");
+
+			view.refresh(dto);
 			model.removeExtraFields();
 			break;
 		}
@@ -193,5 +229,9 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 		view.getCaption().getDocument().addDocumentListener(this);
 		view.getCaption().addKeyboardListener(this);
 		model.addActionListener(this);
+	}
+
+	private void initDocuments() {
+		view.setFieldDocuments(model.getFieldDocuments());
 	}
 }

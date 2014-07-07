@@ -234,4 +234,9 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 	private void initDocuments() {
 		view.setFieldDocuments(model.getFieldDocuments());
 	}
+
+	@Override
+	public Component getView() {
+		return (Component) view;
+	}
 }

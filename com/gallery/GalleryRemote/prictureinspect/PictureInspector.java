@@ -6,31 +6,40 @@ import java.util.Map;
 import javax.swing.AbstractButton;
 import javax.swing.text.Document;
 
-public interface PictureInspector {
+/**
+ * This interface is used by the PictureInspectorPresenter to access the view.
+ * 
+ * @author arothe
+ */
+interface PictureInspector {
 
-	// called by view
+	void setEnabled(boolean enabled);
+
+	boolean isEnabled();
+
+	void refresh(PictureInspectorDTO dto);
+
+	int getEmptyIconHeight();
+
+	int getIconTextGap();
+
+	void setFieldDocuments(Map<String, Document> map);
+
 	Collection<PictureFieldTextArea> setExtraFields(Map<String, Document> docList);
 
 	void removeExtraFields();
-	
+
+	PictureFieldTextArea getCaption();
+
 	AbstractButton getDeleteButton();
-	
+
 	AbstractButton getUpButton();
-	
+
 	AbstractButton getDownButton();
-	
+
 	AbstractButton getRotateLeftButton();
-	
+
 	AbstractButton getRotateRightButton();
-	
+
 	AbstractButton getFlipButton();
-	
-	PictureFieldTextArea getCaption(); 
-	
-	// called by controller
-	void setEnabled(boolean enabled);
-	void refreshWithOnePicture(PictureInspectorDTO dto);
-	void refreshWithoutPicture();
-	void refreshWithMultiplePictures(PictureInspectorDTO dto);
-	
 }

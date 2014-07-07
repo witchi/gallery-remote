@@ -6,7 +6,6 @@ import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -19,7 +18,7 @@ class IconAreaPanel extends JPanel {
 	private static final long serialVersionUID = -5451979859370784290L;
 	private static final String MODULE = "PictInspec";
 
-	private JLabel jIcon;
+	private PictureInspectorIcon jIcon;
 	private GridBagConstraints jIconConstraints;
 	private JButton jRotateLeftButton;
 	private GridBagConstraints jRotateLeftButtonConstraints;
@@ -116,12 +115,11 @@ class IconAreaPanel extends JPanel {
 		return jFlipButton;
 	}
 
-	JLabel getIcon() {
+	PictureInspectorIcon getIcon() {
 		if (jIcon == null) {
-			jIcon = new JLabel();
+			jIcon = new PictureInspectorIcon();
 			jIcon.setHorizontalAlignment(SwingConstants.CENTER);
 			jIcon.setHorizontalTextPosition(SwingConstants.CENTER);
-			jIcon.setText(GRI18n.getString(MODULE, "icon"));
 			jIcon.setVerticalTextPosition(SwingConstants.BOTTOM);
 		}
 		return jIcon;

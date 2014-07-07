@@ -63,17 +63,17 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	private HashMap<String, PictureFieldTextArea> extraTextAreas = new HashMap<String, PictureFieldTextArea>();
 
 	private JLabel jPathLabel;
-	private GridBagConstraints jLabel5Constraints;
+	private GridBagConstraints jPathLabelConstraints;
 	private JLabel jAlbumLabel;
-	private GridBagConstraints jLabel6Constraints;
+	private GridBagConstraints jAlbumLabelConstraints;
 	private JLabel jCaptionLabel;
-	private GridBagConstraints jLabel4Constraints;
+	private GridBagConstraints jCaptionLabelConstraints;
 	private JLabel jMoveLabel;
-	private GridBagConstraints jLabel8Constraints;
+	private GridBagConstraints jMoveLabelConstraints;
 	private JLabel jSizeLabel;
-	private GridBagConstraints jLabel1Constraints;
+	private GridBagConstraints jSizeLabelConstraints;
 	private JLabel jDeleteLabel;
-	private GridBagConstraints jLabel2Constraints;
+	private GridBagConstraints jDeleteLabelConstraints;
 	private JPanel jSpacer;
 	private GridBagConstraints jSpacerConstraints;
 	private JButton jDeleteButton;
@@ -211,11 +211,11 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	}
 
 	private GridBagConstraints getPathLabelConstraints() {
-		if (jLabel5Constraints == null) {
-			jLabel5Constraints = new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
+		if (jPathLabelConstraints == null) {
+			jPathLabelConstraints = new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
 					new Insets(0, 0, 0, 0), 2, 0);
 		}
-		return jLabel5Constraints;
+		return jPathLabelConstraints;
 	}
 
 	private JLabel getAlbumLabel() {
@@ -227,11 +227,11 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	}
 
 	private GridBagConstraints getAlbumLabelConstraints() {
-		if (jLabel6Constraints == null) {
-			jLabel6Constraints = new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
+		if (jAlbumLabelConstraints == null) {
+			jAlbumLabelConstraints = new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
 					0, 0, 0), 2, 0);
 		}
-		return jLabel6Constraints;
+		return jAlbumLabelConstraints;
 	}
 
 	private JLabel getCaptionLabel() {
@@ -243,11 +243,11 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	}
 
 	private GridBagConstraints getCaptionLabelConstraints() {
-		if (jLabel4Constraints == null) {
-			jLabel4Constraints = new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
+		if (jCaptionLabelConstraints == null) {
+			jCaptionLabelConstraints = new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
 					new Insets(5, 0, 0, 0), 2, 0);
 		}
-		return jLabel4Constraints;
+		return jCaptionLabelConstraints;
 	}
 
 	private JLabel getMoveLabel() {
@@ -259,11 +259,11 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	}
 
 	private GridBagConstraints getMoveLabelConstraints() {
-		if (jLabel8Constraints == null) {
-			jLabel8Constraints = new GridBagConstraints(0, 4, 1, 2, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
+		if (jMoveLabelConstraints == null) {
+			jMoveLabelConstraints = new GridBagConstraints(0, 4, 1, 2, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
 					0, 0, 0), 2, 0);
 		}
-		return jLabel8Constraints;
+		return jMoveLabelConstraints;
 	}
 
 	private JLabel getSizeLabel() {
@@ -275,11 +275,11 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	}
 
 	private GridBagConstraints getSizeLabelConstraints() {
-		if (jLabel1Constraints == null) {
-			jLabel1Constraints = new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
+		if (jSizeLabelConstraints == null) {
+			jSizeLabelConstraints = new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
 					0, 0, 0), 2, 0);
 		}
-		return jLabel1Constraints;
+		return jSizeLabelConstraints;
 	}
 
 	private JLabel getDeleteLabel() {
@@ -291,11 +291,11 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	}
 
 	private GridBagConstraints getDeleteLabelConstraints() {
-		if (jLabel2Constraints == null) {
-			jLabel2Constraints = new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
+		if (jDeleteLabelConstraints == null) {
+			jDeleteLabelConstraints = new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
 					0, 0, 0), 2, 0);
 		}
-		return jLabel2Constraints;
+		return jDeleteLabelConstraints;
 	}
 
 	private JPanel getSpacer() {

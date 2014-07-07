@@ -7,11 +7,11 @@ import javax.swing.text.Document;
 
 interface PictureFieldTextArea {
 
-	// called by controller
+// called by controller
 	void addKeyboardListener(PictureInspectorPresenter listener);
 
 	Document getDocument();
-
+	
 	// called by view
 	void setText(String text);
 

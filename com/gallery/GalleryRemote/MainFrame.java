@@ -98,7 +98,6 @@ import com.gallery.GalleryRemote.prefs.PreferenceNames;
 import com.gallery.GalleryRemote.prefs.PreferencesDialog;
 import com.gallery.GalleryRemote.prefs.PropertiesFile;
 import com.gallery.GalleryRemote.prefs.URLPanel;
-import com.gallery.GalleryRemote.prictureinspect.PictureInspector;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorImpl;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorModel;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorModelImpl;
@@ -207,8 +206,8 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	CardLayout jInspectorCardLayout = new CardLayout();
 
 	PictureInspectorModel jPictureInspectorModel = new PictureInspectorModelImpl(this);
-	PictureInspector jPictureInspector = new PictureInspectorImpl();
-	PictureInspectorPresenter jPictureInspectorController = new PictureInspectorPresenterImpl(jPictureInspectorModel, jPictureInspector);
+	PictureInspectorPresenter jPictureInspectorPresenter = new PictureInspectorPresenterImpl(jPictureInspectorModel,
+			new PictureInspectorImpl());
 
 	AlbumInspector jAlbumInspector = new AlbumInspector();
 	JScrollPane jPictureScroll = new JScrollPane();
@@ -562,7 +561,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 						&& jAlbumTree.getModel().getChildCount(jAlbumTree.getModel().getRoot()) >= 1;
 				jBrowseButton.setEnabled(enabled && currentAlbum.getCanAdd());
 				jApertureImport.setEnabled(enabled && currentAlbum.getCanAdd());
-				jPictureInspectorController.setEnabled(enabled);
+				jPictureInspectorPresenter.setEnabled(enabled);
 				jPicturesList.setEnabled(enabled && currentAlbum.getCanAdd());
 				jNewAlbumButton.setEnabled(!inProgress && currentGallery != null && currentGallery.hasComm()
 						&& currentGallery.getComm(jStatusBar).isLoggedIn()
@@ -1194,7 +1193,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 				new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 2, 2, 2), 0, 0));
 		jInspectorDivider.add(jInspectorPanel, JSplitPane.RIGHT);
 		jInspectorDivider.add(jAlbumPictureDivider, JSplitPane.LEFT);
-		JScrollPane pictureInspectorScroll = new JScrollPane((Component) jPictureInspector);
+		JScrollPane pictureInspectorScroll = new JScrollPane(jPictureInspectorPresenter.getView());
 		pictureInspectorScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		jInspectorPanel.add(pictureInspectorScroll, CARD_PICTURE);
 		JScrollPane albumInspectorScroll = new JScrollPane(jAlbumInspector);

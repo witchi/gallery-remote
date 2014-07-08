@@ -1067,14 +1067,14 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		jUploadButton.setActionCommand("Upload");
 		jUploadButton.setToolTipText(GRI18n.getString(MODULE, "upldBtnTip"));
 		jInspectorDivider.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-		jInspectorDivider.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(Color.white, new Color(148, 145, 140)), GRI18n
-				.getString(MODULE, "inspDvdr")));
+		jInspectorDivider.setBorder(BorderFactory.createEmptyBorder(10, 5, 0, 5));
 		jInspectorDivider.setOneTouchExpandable(true);
 		jInspectorDivider.setResizeWeight(.66);
+
 		jAlbumPictureDivider.setOneTouchExpandable(true);
 		jAlbumPictureDivider.setResizeWeight(.5);
-		jTopPanel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(Color.white, new Color(148, 145, 140)), GRI18n.getString(
-				MODULE, "panel1")));
+
+		jTopPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 10, 5));
 		jBrowseButton.setText(GRI18n.getString(MODULE, "brwsBtnTxt"));
 		jBrowseButton.setActionCommand("Browse");
 		jBrowseButton.setToolTipText(GRI18n.getString(MODULE, "brwsBtnTip"));
@@ -1175,8 +1175,8 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		jNewGalleryButton.setIcon(GalleryRemote.iNewGallery);
 		jInspectorPanel.setLayout(jInspectorCardLayout);
 		jPictureScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		jPictureScroll.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(), GRI18n.getString(MODULE, "pictures")));
-		jAlbumScroll.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(), GRI18n.getString(MODULE, "albums")));
+		jPictureScroll.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), GRI18n.getString(MODULE, "pictures")));
+		jAlbumScroll.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), GRI18n.getString(MODULE, "albums")));
 		jAlbumScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		setupKeyboardHandling(jPictureScroll);
 		setupKeyboardHandling(jAlbumScroll);

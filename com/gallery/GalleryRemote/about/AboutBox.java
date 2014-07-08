@@ -23,7 +23,6 @@ package com.gallery.GalleryRemote.about;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JDialog;
 
@@ -34,6 +33,7 @@ import com.gallery.GalleryRemote.util.GRI18n;
  * Gallery Remote About Box
  * 
  * @author paour
+ * @author arothe
  */
 public class AboutBox extends JDialog {
 
@@ -66,7 +66,7 @@ public class AboutBox extends JDialog {
 	private void initUI() {
 		setModal(true);
 		setUndecorated(true);
-		
+
 		getContentPane().add(getAboutPanel(), BorderLayout.CENTER);
 		setTitle(GRI18n.getString(MODULE, "title"));
 
@@ -77,21 +77,10 @@ public class AboutBox extends JDialog {
 		addMouseListener(new java.awt.event.MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				thisWindowClosing();
+				setVisible(false);
+				dispose();
 			}
 		});
-		addWindowListener(new java.awt.event.WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				thisWindowClosing();
-			}
-		});
-	}
-
-	// Close the window when the box is clicked
-	private void thisWindowClosing() {
-		setVisible(false);
-		dispose();
 	}
 
 	/**

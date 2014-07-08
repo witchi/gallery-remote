@@ -65,7 +65,8 @@ public class AboutBox extends JDialog {
 
 	private void initUI() {
 		setModal(true);
-
+		setUndecorated(true);
+		
 		getContentPane().add(getAboutPanel(), BorderLayout.CENTER);
 		setTitle(GRI18n.getString(MODULE, "title"));
 

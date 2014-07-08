@@ -1,18 +1,15 @@
 package com.gallery.GalleryRemote;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.SystemColor;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.border.BevelBorder;
 
 import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.util.DialogUtil;
@@ -68,8 +65,7 @@ public class StatusBar extends JPanel implements StatusUpdate {
 	}
 
 	@Override
-	public void startProgress(int level, int minValue, int maxValue,
-			String message, boolean undetermined) {
+	public void startProgress(int level, int minValue, int maxValue, String message, boolean undetermined) {
 		data[level].minValue = minValue;
 		data[level].maxValue = maxValue;
 		data[level].value = 0;
@@ -163,8 +159,7 @@ public class StatusBar extends JPanel implements StatusUpdate {
 
 			// find the next active level
 			// currentLevel = level - 1;
-			while (currentLevel > LEVEL_GENERIC
-					&& data[currentLevel].active == false) {
+			while (currentLevel > LEVEL_GENERIC && data[currentLevel].active == false) {
 				currentLevel--;
 			}
 
@@ -185,8 +180,7 @@ public class StatusBar extends JPanel implements StatusUpdate {
 
 	@Override
 	public void error(String message) {
-		JOptionPane.showMessageDialog(DialogUtil.findParentWindow(this),
-				message, GRI18n.getString(MODULE, "Error"),
+		JOptionPane.showMessageDialog(DialogUtil.findParentWindow(this), message, GRI18n.getString(MODULE, "Error"),
 				JOptionPane.ERROR_MESSAGE);
 	}
 
@@ -195,25 +189,21 @@ public class StatusBar extends JPanel implements StatusUpdate {
 		jProgress.setPreferredSize(new Dimension(progressWidth, 20));
 		jProgress.setMaximumSize(new Dimension(progressWidth, 20));
 		jProgress.setStringPainted(false);
+		jProgress.setBorder(BorderFactory.createEtchedBorder());
 
-		jStatus.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED,
-				Color.white, SystemColor.control, SystemColor.control,
-				Color.gray));
+		jStatus.setBorder(BorderFactory.createEtchedBorder());
 		jStatus.setMinimumSize(new Dimension(100, 20));
 		jStatus.setPreferredSize(new Dimension(100, 20));
 
 		setLayout(new GridBagLayout());
-		add(jStatus, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0,
-				GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-				new Insets(0, 0, 0, 0), 0, 0));
-		add(jProgress, new GridBagConstraints(1, 0, 1, 1, 0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
-						0, 0, 0, 0), 0, 0));
+		add(jStatus, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4,
+				4), 0, 0));
+		add(jProgress, new GridBagConstraints(1, 0, 1, 1, 0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(4, 4, 4, 4),
+				0, 0));
 	}
 
 	private void resetUIState() {
-		Log.log(Log.LEVEL_TRACE, MODULE, "level: " + currentLevel + " - "
-				+ data[currentLevel].message + " - " + data[currentLevel].value);
+		Log.log(Log.LEVEL_TRACE, MODULE, "level: " + currentLevel + " - " + data[currentLevel].message + " - " + data[currentLevel].value);
 		if (currentLevel >= 0) {
 			jProgress.setMinimum(data[currentLevel].minValue);
 			jProgress.setValue(data[currentLevel].value);
@@ -225,10 +215,8 @@ public class StatusBar extends JPanel implements StatusUpdate {
 				// we end up here if the method is not implemented and we don't
 				// have indeterminate progress
 				// bars: come up with our own...
-				if (data[currentLevel].undetermined
-						&& data[currentLevel].undeterminedThread == null) {
-					data[currentLevel].undeterminedThread = new UndeterminedThread(
-							StatusBar.this, currentLevel);
+				if (data[currentLevel].undetermined && data[currentLevel].undeterminedThread == null) {
+					data[currentLevel].undeterminedThread = new UndeterminedThread(StatusBar.this, currentLevel);
 					data[currentLevel].undeterminedThread.start();
 				}
 			}
@@ -275,13 +263,11 @@ public class StatusBar extends JPanel implements StatusUpdate {
 			while (!interrupted()) {
 				if (su.getProgressValue(level) >= su.getProgressMaxValue(level)) {
 					forward = false;
-				} else if (su.getProgressValue(level) <= su
-						.getProgressMinValue(level)) {
+				} else if (su.getProgressValue(level) <= su.getProgressMinValue(level)) {
 					forward = true;
 				}
 
-				su.updateProgressValue(level, su.getProgressValue(level)
-						+ (forward ? 1 : -1));
+				su.updateProgressValue(level, su.getProgressValue(level) + (forward ? 1 : -1));
 
 				try {
 					sleep(500);

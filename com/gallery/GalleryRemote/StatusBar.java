@@ -9,53 +9,76 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 
 import com.gallery.GalleryRemote.model.Picture;
+import com.gallery.GalleryRemote.statusbar.StatusLabel;
+import com.gallery.GalleryRemote.statusbar.StatusProgress;
 import com.gallery.GalleryRemote.util.DialogUtil;
 import com.gallery.GalleryRemote.util.GRI18n;
+import com.sun.istack.internal.logging.Logger;
 
 /**
- * Created by IntelliJ IDEA. User: paour Date: Sep 17, 2003
+ * @author paour
+ * @version Sep 17, 2003
  */
 public class StatusBar extends JPanel implements StatusUpdate {
 
 	private static final long serialVersionUID = -3346018784723463138L;
+	private static final Logger log = Logger.getLogger(StatusBar.class);
+
 	public static final String MODULE = "StatusBar";
-	JProgressBar jProgress = new JProgressBar();
-	JLabel jStatus = new JLabel();
+
+	private StatusProgress jProgressBar;
+	private StatusLabel jStatusLabel;
 
 	StatusLevelData data[] = new StatusLevelData[NUM_LEVELS];
 	int currentLevel = -1;
 
-	int progressWidth;
-
 	public StatusBar(int progressWidth) {
-		for (int i = 0; i < data.length; i++) {
-			data[i] = new StatusLevelData();
-		}
-
-		data[0].active = true;
-
-		this.progressWidth = progressWidth;
-
-		jbInit();
+		initStatusLevel();
+		initUI(progressWidth);
 	}
 
 	public StatusBar() {
 		this(150);
 	}
 
+	private void initStatusLevel() {
+		for (int i = 0; i < data.length; i++) {
+			data[i] = new StatusLevelData();
+		}
+		data[0].active = true;
+	}
+
+	private void initUI(int progressWidth) {
+		setLayout(new GridBagLayout());
+		add(getStatusLabel(), new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+				new Insets(4, 4, 4, 4), 0, 0));
+		add(getProgressBar(progressWidth), new GridBagConstraints(1, 0, 1, 1, 0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+				new Insets(4, 4, 4, 4), 0, 0));
+	}
+
+	private StatusProgress getProgressBar(int progressWidth) {
+		if (jProgressBar == null) {
+			jProgressBar = new StatusProgress(progressWidth);
+		}
+		return jProgressBar;
+	}
+
+	private StatusLabel getStatusLabel() {
+		if (jStatusLabel == null) {
+			jStatusLabel = new StatusLabel();
+		}
+		return jStatusLabel;
+	}
+
 	boolean raiseLevel(int level) {
 		if (level < currentLevel) {
 			return false;
 		}
-
 		if (level > currentLevel) {
 			currentLevel = level;
-			// data[currentLevel].active = true;
 		}
-
 		return true;
 	}
 
@@ -120,7 +143,6 @@ public class StatusBar extends JPanel implements StatusUpdate {
 
 	@Override
 	public void setUndetermined(int level, boolean undetermined) {
-		// To change body of implemented methods use Options | File Templates.
 	}
 
 	@Override
@@ -163,14 +185,8 @@ public class StatusBar extends JPanel implements StatusUpdate {
 				currentLevel--;
 			}
 
-			// if (currentLevel == -1) {
 			resetUIState();
-			// } else {
-			// resetUIState();
-			// }
 		}
-
-		// setStatus(message);
 	}
 
 	@Override
@@ -184,33 +200,15 @@ public class StatusBar extends JPanel implements StatusUpdate {
 				JOptionPane.ERROR_MESSAGE);
 	}
 
-	public void jbInit() {
-		jProgress.setMinimumSize(new Dimension(10, 20));
-		jProgress.setPreferredSize(new Dimension(progressWidth, 20));
-		jProgress.setMaximumSize(new Dimension(progressWidth, 20));
-		jProgress.setStringPainted(false);
-		jProgress.setBorder(BorderFactory.createEtchedBorder());
-
-		jStatus.setBorder(BorderFactory.createEtchedBorder());
-		jStatus.setMinimumSize(new Dimension(100, 20));
-		jStatus.setPreferredSize(new Dimension(100, 20));
-
-		setLayout(new GridBagLayout());
-		add(jStatus, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4,
-				4), 0, 0));
-		add(jProgress, new GridBagConstraints(1, 0, 1, 1, 0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(4, 4, 4, 4),
-				0, 0));
-	}
-
 	private void resetUIState() {
 		Log.log(Log.LEVEL_TRACE, MODULE, "level: " + currentLevel + " - " + data[currentLevel].message + " - " + data[currentLevel].value);
 		if (currentLevel >= 0) {
-			jProgress.setMinimum(data[currentLevel].minValue);
-			jProgress.setValue(data[currentLevel].value);
-			jProgress.setMaximum(data[currentLevel].maxValue);
+			jProgressBar.setMinimum(data[currentLevel].minValue);
+			jProgressBar.setValue(data[currentLevel].value);
+			jProgressBar.setMaximum(data[currentLevel].maxValue);
 
 			try {
-				jProgress.setIndeterminate(data[currentLevel].undetermined);
+				jProgressBar.setIndeterminate(data[currentLevel].undetermined);
 			} catch (Throwable t) {
 				// we end up here if the method is not implemented and we don't
 				// have indeterminate progress
@@ -221,13 +219,13 @@ public class StatusBar extends JPanel implements StatusUpdate {
 				}
 			}
 
-			jStatus.setText(data[currentLevel].message);
+			jStatusLabel.setText(data[currentLevel].message);
 		} else {
-			jStatus.setText("");
-			jProgress.setValue(jProgress.getMinimum());
+			jStatusLabel.setText("");
+			jProgressBar.setValue(jProgressBar.getMinimum());
 
 			try {
-				jProgress.setIndeterminate(false);
+				jProgressBar.setIndeterminate(false);
 			} catch (Throwable t) {
 				data[currentLevel].undeterminedThread.interrupt();
 			}

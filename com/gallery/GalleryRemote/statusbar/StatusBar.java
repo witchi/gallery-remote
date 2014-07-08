@@ -1,35 +1,37 @@
-package com.gallery.GalleryRemote;
+package com.gallery.GalleryRemote.statusbar;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import com.gallery.GalleryRemote.GalleryRemote;
+import com.gallery.GalleryRemote.Log;
+import com.gallery.GalleryRemote.StatusUpdate;
 import com.gallery.GalleryRemote.model.Picture;
-import com.gallery.GalleryRemote.statusbar.StatusLabel;
-import com.gallery.GalleryRemote.statusbar.StatusProgress;
 import com.gallery.GalleryRemote.util.DialogUtil;
 import com.gallery.GalleryRemote.util.GRI18n;
-import com.sun.istack.internal.logging.Logger;
+import com.gallery.GalleryRemote.util.log.Logger;
 
 /**
  * @author paour
+ * @author arothe
+ * 
  * @version Sep 17, 2003
  */
 public class StatusBar extends JPanel implements StatusUpdate {
 
 	private static final long serialVersionUID = -3346018784723463138L;
-	private static final Logger log = Logger.getLogger(StatusBar.class);
+	private static final Logger LOGGER = Logger.getLogger(StatusBar.class);
 
 	public static final String MODULE = "StatusBar";
 
 	private StatusProgress jProgressBar;
+	private GridBagConstraints jProgressConstraints;
 	private StatusLabel jStatusLabel;
+	private GridBagConstraints jStatusLabelConstraints;
 
 	StatusLevelData data[] = new StatusLevelData[NUM_LEVELS];
 	int currentLevel = -1;
@@ -52,10 +54,16 @@ public class StatusBar extends JPanel implements StatusUpdate {
 
 	private void initUI(int progressWidth) {
 		setLayout(new GridBagLayout());
-		add(getStatusLabel(), new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-				new Insets(4, 4, 4, 4), 0, 0));
-		add(getProgressBar(progressWidth), new GridBagConstraints(1, 0, 1, 1, 0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
-				new Insets(4, 4, 4, 4), 0, 0));
+		add(getStatusLabel(), getStatusLabelConstraints());
+		add(getProgressBar(progressWidth), getProgressConstraints());
+	}
+
+	private GridBagConstraints getProgressConstraints() {
+		if (jProgressConstraints == null) {
+			jProgressConstraints = new GridBagConstraints(1, 0, 1, 1, 0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
+					4, 4, 4, 4), 0, 0);
+		}
+		return jProgressConstraints;
 	}
 
 	private StatusProgress getProgressBar(int progressWidth) {
@@ -63,6 +71,14 @@ public class StatusBar extends JPanel implements StatusUpdate {
 			jProgressBar = new StatusProgress(progressWidth);
 		}
 		return jProgressBar;
+	}
+
+	private GridBagConstraints getStatusLabelConstraints() {
+		if (jStatusLabelConstraints == null) {
+			jStatusLabelConstraints = new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+					new Insets(4, 4, 4, 4), 0, 0);
+		}
+		return jStatusLabelConstraints;
 	}
 
 	private StatusLabel getStatusLabel() {
@@ -108,6 +124,9 @@ public class StatusBar extends JPanel implements StatusUpdate {
 		if (level == currentLevel && data[level].active) {
 			resetUIState();
 		} else {
+			LOGGER.fine("Trying to use updateProgressValue when not progressOn or with wrong level");
+			LOGGER.fine(Thread.currentThread().getStackTrace());
+
 			// Log.log(Log.TRACE, MODULE,
 			// "Trying to use updateProgressValue when not progressOn or with wrong level");
 			// Log.logStack(Log.TRACE, MODULE);
@@ -122,6 +141,9 @@ public class StatusBar extends JPanel implements StatusUpdate {
 		if (level == currentLevel && data[level].active) {
 			resetUIState();
 		} else {
+			LOGGER.fine("Trying to use updateProgressValue when not progressOn or with wrong level");
+			LOGGER.fine(Thread.currentThread().getStackTrace());
+
 			// Log.log(Log.TRACE, MODULE,
 			// "Trying to use updateProgressValue when not progressOn or with wrong level");
 			// Log.logStack(Log.TRACE, MODULE);
@@ -135,6 +157,9 @@ public class StatusBar extends JPanel implements StatusUpdate {
 		if (level == currentLevel && data[level].active) {
 			resetUIState();
 		} else {
+			LOGGER.fine("Trying to use updateProgressValue when not progressOn or with wrong level");
+			LOGGER.fine(Thread.currentThread().getStackTrace());
+
 			// Log.log(Log.TRACE, MODULE,
 			// "Trying to use updateProgressStatus when not progressOn or with wrong level");
 			// Log.logStack(Log.TRACE, MODULE);
@@ -201,7 +226,9 @@ public class StatusBar extends JPanel implements StatusUpdate {
 	}
 
 	private void resetUIState() {
+		LOGGER.fine("level: " + currentLevel + " - " + data[currentLevel].message + " - " + data[currentLevel].value);
 		Log.log(Log.LEVEL_TRACE, MODULE, "level: " + currentLevel + " - " + data[currentLevel].message + " - " + data[currentLevel].value);
+
 		if (currentLevel >= 0) {
 			jProgressBar.setMinimum(data[currentLevel].minValue);
 			jProgressBar.setValue(data[currentLevel].value);
@@ -236,42 +263,4 @@ public class StatusBar extends JPanel implements StatusUpdate {
 	public void doneUploading(String newItemName, Picture picture) {
 	}
 
-	class StatusLevelData {
-		boolean active = false;
-		String message;
-		int minValue;
-		int maxValue;
-		int value;
-		boolean undetermined;
-		UndeterminedThread undeterminedThread;
-	}
-
-	public class UndeterminedThread extends Thread {
-		StatusUpdate su;
-		int level;
-
-		public UndeterminedThread(StatusUpdate su, int level) {
-			this.su = su;
-			this.level = level;
-		}
-
-		@Override
-		public void run() {
-			boolean forward = true;
-			while (!interrupted()) {
-				if (su.getProgressValue(level) >= su.getProgressMaxValue(level)) {
-					forward = false;
-				} else if (su.getProgressValue(level) <= su.getProgressMinValue(level)) {
-					forward = true;
-				}
-
-				su.updateProgressValue(level, su.getProgressValue(level) + (forward ? 1 : -1));
-
-				try {
-					sleep(500);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-	}
 }

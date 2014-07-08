@@ -22,7 +22,7 @@ public class StatusBarModel {
 			data.put(l, new StatusLevelData(l));
 		}
 
-		data.get(StatusLevel.LEVEL_GENERIC).setActive(true);
+		data.get(StatusLevel.GENERIC).setActive(true);
 		currentLevel = StatusLevel.NONE;
 	}
 
@@ -76,7 +76,7 @@ public class StatusBarModel {
 
 	StatusLevel getPrevStatusLevel(StatusLevel level) {
 		StatusLevel sl = level;
-		while (sl.ordinal() > StatusLevel.LEVEL_GENERIC.ordinal() && data.get(sl).isActive() == false) {
+		while (sl.ordinal() > StatusLevel.GENERIC.ordinal() && data.get(sl).isActive() == false) {
 			sl = StatusLevel.values()[sl.ordinal() - 1];
 		}
 		return sl;
@@ -84,10 +84,9 @@ public class StatusBarModel {
 
 	void setCurrentStatusLevel(StatusLevel level) {
 		if (level == null) {
-			this.currentLevel = StatusLevel.LEVEL_GENERIC;
+			this.currentLevel = StatusLevel.GENERIC;
 		} else {
 			this.currentLevel = level;
 		}
-
 	}
 }

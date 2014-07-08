@@ -85,6 +85,9 @@ public class StatusBar extends JPanel {
 		getProgressBar().setValue(dto.getValue());
 		getProgressBar().setMaximum(dto.getMaxValue());
 		getStatusLabel().setText(dto.getMessage());
+		if (hasIndeterminateProgress()) {
+			getProgressBar().setIndeterminate(dto.isUndetermined());
+		}
 	}
 
 }

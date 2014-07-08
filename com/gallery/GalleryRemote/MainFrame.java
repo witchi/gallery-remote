@@ -689,14 +689,14 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	}
 
 	public void importApertureSelection() {
-		jStatusBar.startProgress(StatusLevel.LEVEL_UNINTERUPTIBLE, 0, 100, GRI18n.getString(MODULE, "apertureStartImport"), true);
+		jStatusBar.startProgress(StatusLevel.UNINTERRUPTIBLE, 0, 100, GRI18n.getString(MODULE, "apertureStartImport"), true);
 		jStatusBar.setInProgress(true);
 		new Thread() {
 			@Override
 			public void run() {
 				ArrayList<String> resultList = ImageUtils.importApertureSelection();
 				if (resultList == null || resultList.size() == 0) {
-					jStatusBar.stopProgress(StatusLevel.LEVEL_UNINTERUPTIBLE, GRI18n.getString(MODULE, "apertureCancelImport"));
+					jStatusBar.stopProgress(StatusLevel.UNINTERRUPTIBLE, GRI18n.getString(MODULE, "apertureCancelImport"));
 					jStatusBar.setInProgress(false);
 					return;
 				}
@@ -722,7 +722,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 				getCurrentAlbum().addPictures(pictures);
 				preloadThumbnails(pictures.iterator());
 
-				jStatusBar.stopProgress(StatusLevel.LEVEL_UNINTERUPTIBLE, GRI18n.getString(MODULE, "apertureDoneImport"));
+				jStatusBar.stopProgress(StatusLevel.UNINTERRUPTIBLE, GRI18n.getString(MODULE, "apertureDoneImport"));
 				jStatusBar.setInProgress(false);
 			}
 		}.start();

@@ -20,7 +20,7 @@ public class UndeterminedThread extends Thread {
 	public void run() {
 		boolean forward = true;
 
-		while (!interrupted()) {
+		while (!isInterrupted()) {
 			if (su.getProgressValue(level) >= su.getProgressMaxValue(level)) {
 				forward = false;
 			} else if (su.getProgressValue(level) <= su.getProgressMinValue(level)) {

@@ -65,7 +65,7 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 
 	@Override
 	public void setStatus(String message) {
-		updateProgressStatus(StatusLevel.LEVEL_GENERIC, message);
+		updateProgressStatus(StatusLevel.GENERIC, message);
 	}
 
 	@Override
@@ -145,11 +145,18 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 
 	@Override
 	public void stopProgress(StatusLevel level, String message) {
-		StatusLevelData dto = model.getStatusLevelData(StatusLevel.LEVEL_GENERIC);
+		
+		StatusLevelData dto = model.getStatusLevelData(StatusLevel.GENERIC);
 		dto.setMessage(message);
 		model.setStatusLevelData(dto);
 
+		LOGGER.fine("stop level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
+		Log.log(Log.LEVEL_TRACE, MODULE, "level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
+		
 		dto = model.getStatusLevelData(level);
+
+		LOGGER.fine("stop level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
+		Log.log(Log.LEVEL_TRACE, MODULE, "level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
 
 		if (level == model.getCurrentStatusLevel() && dto.isActive()) {
 			model.determineLevel(level);
@@ -159,7 +166,7 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 			dto.setValue(0);
 			dto.setUndetermined(false);
 
-			if (level.ordinal() > StatusLevel.LEVEL_GENERIC.ordinal()) {
+			if (level.ordinal() > StatusLevel.GENERIC.ordinal()) {
 				dto.setActive(false);
 			}
 

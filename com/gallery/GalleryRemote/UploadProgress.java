@@ -66,10 +66,10 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 
 		jbInit();
 
-		jLabel[StatusLevel.LEVEL_UPLOAD_ONE.ordinal()] = jLabelDetail;
-		jLabel[StatusLevel.LEVEL_UPLOAD_ALL.ordinal()] = jLabelGlobal;
-		jProgress[StatusLevel.LEVEL_UPLOAD_ONE.ordinal()] = jProgressDetail;
-		jProgress[StatusLevel.LEVEL_UPLOAD_ALL.ordinal()] = jProgressGlobal;
+		jLabel[StatusLevel.UPLOAD_ONE.ordinal()] = jLabelDetail;
+		jLabel[StatusLevel.UPLOAD_ALL.ordinal()] = jLabelGlobal;
+		jProgress[StatusLevel.UPLOAD_ONE.ordinal()] = jProgressDetail;
+		jProgress[StatusLevel.UPLOAD_ALL.ordinal()] = jProgressGlobal;
 
 		if (dialog != null) {
 			// wierd bug prevents upload... this happens on some versions of the VM
@@ -198,7 +198,7 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 			} catch (Throwable t) {
 			}
 
-			if (level == StatusLevel.LEVEL_UPLOAD_ALL) {
+			if (level == StatusLevel.UPLOAD_ALL) {
 				// we're done...
 				if (jErrors != null) {
 					// there were errors, don't dismiss the dialog just yet
@@ -259,7 +259,7 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 
 	@Override
 	public void setStatus(String message) {
-		updateProgressStatus(StatusLevel.LEVEL_GENERIC, message);
+		updateProgressStatus(StatusLevel.GENERIC, message);
 	}
 
 	@Override
@@ -290,7 +290,7 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 	}
 
 	boolean checkLevel(StatusLevel level) {
-		return level == StatusLevel.LEVEL_UPLOAD_ONE || level == StatusLevel.LEVEL_UPLOAD_ALL;
+		return level == StatusLevel.UPLOAD_ONE || level == StatusLevel.UPLOAD_ALL;
 	}
 
 	@Override

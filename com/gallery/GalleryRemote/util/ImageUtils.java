@@ -768,7 +768,7 @@ public class ImageUtils {
 
 				int size = conn.getContentLength();
 
-				su.startProgress(StatusLevel.LEVEL_BACKGROUND, 0, size, GRI18n.getString(MODULE, "down.start", new Object[] { filename }),
+				su.startProgress(StatusLevel.BACKGROUND, 0, size, GRI18n.getString(MODULE, "down.start", new Object[] { filename }),
 						false);
 
 				Log.log(Log.LEVEL_TRACE, MODULE, "Saving " + p + " to " + f.getPath());
@@ -786,10 +786,10 @@ public class ImageUtils {
 
 					long now = System.currentTimeMillis();
 					if (t != -1 && now - t > 1000) {
-						su.updateProgressValue(StatusLevel.LEVEL_BACKGROUND, dl);
+						su.updateProgressValue(StatusLevel.BACKGROUND, dl);
 						int speed = (int) (dl / (now - start) * 1000 / 1024);
 						su.updateProgressStatus(
-								StatusLevel.LEVEL_BACKGROUND,
+								StatusLevel.BACKGROUND,
 								GRI18n.getString(MODULE, "down.progress", new Object[] { filename, new Integer(dl / 1024),
 										new Integer(size / 1024), new Integer(speed) }));
 
@@ -819,12 +819,12 @@ public class ImageUtils {
 				}
 			}
 
-			su.stopProgress(StatusLevel.LEVEL_BACKGROUND, GRI18n.getString(MODULE, "down.end", new Object[] { filename }));
+			su.stopProgress(StatusLevel.BACKGROUND, GRI18n.getString(MODULE, "down.end", new Object[] { filename }));
 		} catch (IOException e) {
 			Log.logException(Log.LEVEL_ERROR, MODULE, e);
 			f = null;
 
-			su.stopProgress(StatusLevel.LEVEL_BACKGROUND, "Downloading " + p + " failed");
+			su.stopProgress(StatusLevel.BACKGROUND, "Downloading " + p + " failed");
 		}
 
 		if (stop) {

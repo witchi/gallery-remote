@@ -20,7 +20,6 @@
  */
 package com.gallery.GalleryRemote.prictureinspect;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -32,7 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -105,13 +103,10 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 			extraLabels.put(name, label);
 			add(label, getExtraFieldLabelConstraints(i));
 
-			PictureFieldTextArea field = new PictureFieldTextAreaImpl();
-			extraTextAreas.put(name, field);
-			field.setFont(UIManager.getFont("Label.font"));
-			field.setLineWrap(true);
-			field.setWrapStyleWord(true);
-			field.setDocument(docList.get(name));
-			add((Component) field, getExtraFieldTextConstraints(i));
+			ExtraFieldPanel panel = new ExtraFieldPanel();
+			extraTextAreas.put(name, panel.getField());
+			panel.getField().setDocument(docList.get(name));
+			add(panel, getExtraFieldTextConstraints(i));
 
 			i++;
 		}
@@ -178,6 +173,7 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 		add(getCaptionPanel(), getCaptionPanelConstraints());
 
 		this.setMinimumSize(new Dimension(150, 0));
+		this.setPreferredSize(new Dimension(150,0));
 		replaceIcon(getIcon(), ImageUtils.defaultThumbnail); // TODO: move that to
 																				// presenter
 	}
@@ -228,8 +224,8 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 
 	private GridBagConstraints getAlbumLabelConstraints() {
 		if (jAlbumLabelConstraints == null) {
-			jAlbumLabelConstraints = new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
-					0, 0, 0), 2, 0);
+			jAlbumLabelConstraints = new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+					new Insets(0, 0, 0, 0), 2, 0);
 		}
 		return jAlbumLabelConstraints;
 	}
@@ -260,8 +256,8 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 
 	private GridBagConstraints getMoveLabelConstraints() {
 		if (jMoveLabelConstraints == null) {
-			jMoveLabelConstraints = new GridBagConstraints(0, 4, 1, 2, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
-					0, 0, 0), 2, 0);
+			jMoveLabelConstraints = new GridBagConstraints(0, 4, 1, 2, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(
+					0, 0, 0, 0), 2, 0);
 		}
 		return jMoveLabelConstraints;
 	}
@@ -276,8 +272,8 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 
 	private GridBagConstraints getSizeLabelConstraints() {
 		if (jSizeLabelConstraints == null) {
-			jSizeLabelConstraints = new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
-					0, 0, 0), 2, 0);
+			jSizeLabelConstraints = new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(
+					0, 0, 0, 0), 2, 0);
 		}
 		return jSizeLabelConstraints;
 	}
@@ -292,8 +288,8 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 
 	private GridBagConstraints getDeleteLabelConstraints() {
 		if (jDeleteLabelConstraints == null) {
-			jDeleteLabelConstraints = new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
-					0, 0, 0), 2, 0);
+			jDeleteLabelConstraints = new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+					new Insets(0, 0, 0, 0), 2, 0);
 		}
 		return jDeleteLabelConstraints;
 	}
@@ -316,7 +312,8 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	private IconAreaPanel getIconAreaPanel() {
 		if (jIconAreaPanel == null) {
 			jIconAreaPanel = new IconAreaPanel();
-			jIconAreaPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+			// jIconAreaPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK,
+			// 1));
 		}
 		return jIconAreaPanel;
 	}

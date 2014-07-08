@@ -3,6 +3,7 @@ package com.gallery.GalleryRemote.prictureinspect;
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.swing.border.Border;
 import javax.swing.text.Document;
 
 interface PictureFieldTextArea {
@@ -28,5 +29,7 @@ interface PictureFieldTextArea {
 	void setFont(Font font);
 
 	void setDocument(Document doc);
+	
+	void setBorder(Border border);
 
 }

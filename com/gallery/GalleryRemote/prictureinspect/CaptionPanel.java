@@ -2,6 +2,7 @@ package com.gallery.GalleryRemote.prictureinspect;
 
 import java.awt.Component;
 
+import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
@@ -12,7 +13,8 @@ class CaptionPanel extends JScrollPane {
 	CaptionPanel() {
 		setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		setBorder(null);
-		getViewport().add((Component) jCaption, null);
+		getViewport().add((Component) getCaption(), null);
+		setBorder(BorderFactory.createEtchedBorder());
 	}
 
 	PictureFieldTextArea getCaption() {

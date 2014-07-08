@@ -44,10 +44,10 @@ import com.gallery.GalleryRemote.GalleryComm;
 import com.gallery.GalleryRemote.GalleryCommCapabilities;
 import com.gallery.GalleryRemote.GalleryRemote;
 import com.gallery.GalleryRemote.Log;
-import com.gallery.GalleryRemote.StatusUpdate;
 import com.gallery.GalleryRemote.prefs.GalleryProperties;
 import com.gallery.GalleryRemote.prefs.PreferenceNames;
 import com.gallery.GalleryRemote.prefs.PropertiesFile;
+import com.gallery.GalleryRemote.statusbar.StatusUpdate;
 import com.gallery.GalleryRemote.util.GRI18n;
 
 /**

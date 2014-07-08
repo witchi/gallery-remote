@@ -10,11 +10,11 @@ import javax.swing.JList;
 import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.model.Gallery;
 import com.gallery.GalleryRemote.model.Picture;
+import com.gallery.GalleryRemote.statusbar.StatusUpdate;
 
 /**
- * Created by IntelliJ IDEA.
- * User: paour
- * Date: Jan 14, 2004
+ * @author paour
+ * @version Jan 14, 2004
  */
 public interface GalleryRemoteCore {
 	public void startup();

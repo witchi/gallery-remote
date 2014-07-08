@@ -72,17 +72,19 @@ import com.gallery.GalleryRemote.CancellableTransferListener;
 import com.gallery.GalleryRemote.GalleryFileFilter;
 import com.gallery.GalleryRemote.GalleryRemote;
 import com.gallery.GalleryRemote.Log;
-import com.gallery.GalleryRemote.StatusUpdate;
 import com.gallery.GalleryRemote.model.ExifData;
 import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.prefs.GalleryProperties;
 import com.gallery.GalleryRemote.prefs.PreferenceNames;
 import com.gallery.GalleryRemote.prefs.PropertiesFile;
+import com.gallery.GalleryRemote.statusbar.StatusLevel;
+import com.gallery.GalleryRemote.statusbar.StatusUpdate;
 
 /**
  * Interface to common image manipulation routines
  * 
  * @author paour
+ * @author arothe
  */
 
 public class ImageUtils {
@@ -766,7 +768,7 @@ public class ImageUtils {
 
 				int size = conn.getContentLength();
 
-				su.startProgress(StatusUpdate.LEVEL_BACKGROUND, 0, size, GRI18n.getString(MODULE, "down.start", new Object[] { filename }),
+				su.startProgress(StatusLevel.LEVEL_BACKGROUND, 0, size, GRI18n.getString(MODULE, "down.start", new Object[] { filename }),
 						false);
 
 				Log.log(Log.LEVEL_TRACE, MODULE, "Saving " + p + " to " + f.getPath());
@@ -784,10 +786,10 @@ public class ImageUtils {
 
 					long now = System.currentTimeMillis();
 					if (t != -1 && now - t > 1000) {
-						su.updateProgressValue(StatusUpdate.LEVEL_BACKGROUND, dl);
+						su.updateProgressValue(StatusLevel.LEVEL_BACKGROUND, dl);
 						int speed = (int) (dl / (now - start) * 1000 / 1024);
 						su.updateProgressStatus(
-								StatusUpdate.LEVEL_BACKGROUND,
+								StatusLevel.LEVEL_BACKGROUND,
 								GRI18n.getString(MODULE, "down.progress", new Object[] { filename, new Integer(dl / 1024),
 										new Integer(size / 1024), new Integer(speed) }));
 
@@ -817,12 +819,12 @@ public class ImageUtils {
 				}
 			}
 
-			su.stopProgress(StatusUpdate.LEVEL_BACKGROUND, GRI18n.getString(MODULE, "down.end", new Object[] { filename }));
+			su.stopProgress(StatusLevel.LEVEL_BACKGROUND, GRI18n.getString(MODULE, "down.end", new Object[] { filename }));
 		} catch (IOException e) {
 			Log.logException(Log.LEVEL_ERROR, MODULE, e);
 			f = null;
 
-			su.stopProgress(StatusUpdate.LEVEL_BACKGROUND, "Downloading " + p + " failed");
+			su.stopProgress(StatusLevel.LEVEL_BACKGROUND, "Downloading " + p + " failed");
 		}
 
 		if (stop) {

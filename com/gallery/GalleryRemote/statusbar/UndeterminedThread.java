@@ -1,12 +1,17 @@
 package com.gallery.GalleryRemote.statusbar;
 
-import com.gallery.GalleryRemote.StatusUpdate;
-
+/**
+ * This thread animates the progressbar from left to right and right to the
+ * left.
+ * 
+ * @author arothe
+ * 
+ */
 public class UndeterminedThread extends Thread {
 	private StatusUpdate su;
-	private int level;
+	private StatusLevel level;
 
-	public UndeterminedThread(StatusUpdate su, int level) {
+	public UndeterminedThread(StatusUpdate su, StatusLevel level) {
 		this.su = su;
 		this.level = level;
 	}
@@ -14,6 +19,7 @@ public class UndeterminedThread extends Thread {
 	@Override
 	public void run() {
 		boolean forward = true;
+
 		while (!interrupted()) {
 			if (su.getProgressValue(level) >= su.getProgressMaxValue(level)) {
 				forward = false;

@@ -45,6 +45,10 @@ import com.gallery.GalleryRemote.model.Gallery;
 import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.prefs.PreferenceNames;
 import com.gallery.GalleryRemote.statusbar.StatusBar;
+import com.gallery.GalleryRemote.statusbar.StatusBarModel;
+import com.gallery.GalleryRemote.statusbar.StatusBarPresenter;
+import com.gallery.GalleryRemote.statusbar.StatusBarPresenterImpl;
+import com.gallery.GalleryRemote.statusbar.StatusUpdate;
 import com.gallery.GalleryRemote.util.DialogUtil;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
@@ -61,7 +65,7 @@ public class GRAppletMini extends GRApplet implements GalleryRemoteCore, ActionL
 
 	JButton jUpload;
 	JButton jAdd;
-	StatusBar jStatusBar;
+	StatusBarPresenter jStatusBar;
 	JScrollPane jScrollPane;
 	DroppableList jPicturesList;
 	// JPanel jContentPanel;
@@ -263,7 +267,7 @@ public class GRAppletMini extends GRApplet implements GalleryRemoteCore, ActionL
 	protected void jbInit() {
 		jUpload = new JButton();
 		jAdd = new JButton();
-		jStatusBar = new StatusBar(75);
+		jStatusBar = new StatusBarPresenterImpl(new StatusBarModel(), new StatusBar(75));
 		jScrollPane = new JScrollPane();
 		jPicturesList = new DroppableList();
 		// jContentPanel = new JPanel(new GridBagLayout());
@@ -323,7 +327,7 @@ public class GRAppletMini extends GRApplet implements GalleryRemoteCore, ActionL
 		this.getContentPane().add(jButtonPanel,
 				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
-				jStatusBar,
+				jStatusBar.getView(),
 				new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
 						0, 0));
 

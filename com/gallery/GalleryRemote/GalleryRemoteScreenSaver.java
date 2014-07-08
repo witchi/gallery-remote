@@ -25,6 +25,8 @@ import com.gallery.GalleryRemote.model.Gallery;
 import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.prefs.PreferenceNames;
 import com.gallery.GalleryRemote.prefs.PropertiesFile;
+import com.gallery.GalleryRemote.statusbar.StatusUpdate;
+import com.gallery.GalleryRemote.statusbar.StatusUpdateAdapter;
 import com.gallery.GalleryRemote.util.ImageLoaderUtil;
 import com.gallery.GalleryRemote.util.ImageUtils;
 import com.gallery.GalleryRemote.util.log.Logger;

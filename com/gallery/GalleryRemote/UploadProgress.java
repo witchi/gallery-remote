@@ -22,9 +22,16 @@ import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 
 import com.gallery.GalleryRemote.model.Picture;
+import com.gallery.GalleryRemote.statusbar.StatusLevel;
+import com.gallery.GalleryRemote.statusbar.StatusUpdate;
 import com.gallery.GalleryRemote.util.DialogUtil;
 import com.gallery.GalleryRemote.util.GRI18n;
 
+/**
+ * 
+ * @author arothe
+ * @author et al.
+ */
 public class UploadProgress implements StatusUpdate, ActionListener {
 	public static final String MODULE = "UploadProgress";
 
@@ -41,8 +48,8 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 	JPanel jPanel2 = new JPanel();
 	JTextArea jErrors = null;
 
-	JLabel jLabel[] = new JLabel[NUM_LEVELS];
-	JProgressBar jProgress[] = new JProgressBar[NUM_LEVELS];
+	JLabel jLabel[] = new JLabel[StatusLevel.values().length];
+	JProgressBar jProgress[] = new JProgressBar[StatusLevel.values().length];
 
 	ActionListener cancelListener = null;
 	JButton jCancel = new JButton();
@@ -59,10 +66,10 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 
 		jbInit();
 
-		jLabel[LEVEL_UPLOAD_ONE] = jLabelDetail;
-		jLabel[LEVEL_UPLOAD_ALL] = jLabelGlobal;
-		jProgress[LEVEL_UPLOAD_ONE] = jProgressDetail;
-		jProgress[LEVEL_UPLOAD_ALL] = jProgressGlobal;
+		jLabel[StatusLevel.LEVEL_UPLOAD_ONE.ordinal()] = jLabelDetail;
+		jLabel[StatusLevel.LEVEL_UPLOAD_ALL.ordinal()] = jLabelGlobal;
+		jProgress[StatusLevel.LEVEL_UPLOAD_ONE.ordinal()] = jProgressDetail;
+		jProgress[StatusLevel.LEVEL_UPLOAD_ALL.ordinal()] = jProgressGlobal;
 
 		if (dialog != null) {
 			// wierd bug prevents upload... this happens on some versions of the VM
@@ -137,61 +144,61 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 
 	/* level-bound methods */
 	@Override
-	public void startProgress(int level, int minValue, int maxValue, String message, boolean undetermined) {
+	public void startProgress(StatusLevel level, int minValue, int maxValue, String message, boolean undetermined) {
 		if (checkLevel(level)) {
-			jProgress[level].setMinimum(minValue);
-			jProgress[level].setMaximum(maxValue);
+			jProgress[level.ordinal()].setMinimum(minValue);
+			jProgress[level.ordinal()].setMaximum(maxValue);
 			try {
-				jProgress[level].setIndeterminate(undetermined);
+				jProgress[level.ordinal()].setIndeterminate(undetermined);
 			} catch (Throwable t) {
 			}
 
-			jLabel[level].setText(message);
+			jLabel[level.ordinal()].setText(message);
 		}
 	}
 
 	@Override
-	public void updateProgressValue(int level, int value) {
+	public void updateProgressValue(StatusLevel level, int value) {
 		if (checkLevel(level)) {
-			jProgress[level].setValue(value);
+			jProgress[level.ordinal()].setValue(value);
 		}
 	}
 
 	@Override
-	public void updateProgressValue(int level, int value, int maxValue) {
+	public void updateProgressValue(StatusLevel level, int value, int maxValue) {
 		if (checkLevel(level)) {
-			jProgress[level].setValue(value);
-			jProgress[level].setMaximum(maxValue);
+			jProgress[level.ordinal()].setValue(value);
+			jProgress[level.ordinal()].setMaximum(maxValue);
 		}
 	}
 
 	@Override
-	public void updateProgressStatus(int level, String message) {
+	public void updateProgressStatus(StatusLevel level, String message) {
 		if (checkLevel(level)) {
-			jLabel[level].setText(message);
+			jLabel[level.ordinal()].setText(message);
 		}
 	}
 
 	@Override
-	public void setUndetermined(int level, boolean undetermined) {
+	public void setUndetermined(StatusLevel level, boolean undetermined) {
 		try {
-			jProgress[level].setIndeterminate(undetermined);
+			jProgress[level.ordinal()].setIndeterminate(undetermined);
 		} catch (Throwable t) {
 		}
 	}
 
 	@Override
-	public void stopProgress(int level, String message) {
+	public void stopProgress(StatusLevel level, String message) {
 		if (checkLevel(level)) {
-			jProgress[level].setMaximum(jProgress[level].getMinimum());
-			jLabel[level].setText(message);
+			jProgress[level.ordinal()].setMaximum(jProgress[level.ordinal()].getMinimum());
+			jLabel[level.ordinal()].setText(message);
 
 			try {
-				jProgress[level].setIndeterminate(false);
+				jProgress[level.ordinal()].setIndeterminate(false);
 			} catch (Throwable t) {
 			}
 
-			if (level == LEVEL_UPLOAD_ALL) {
+			if (level == StatusLevel.LEVEL_UPLOAD_ALL) {
 				// we're done...
 				if (jErrors != null) {
 					// there were errors, don't dismiss the dialog just yet
@@ -252,38 +259,38 @@ public class UploadProgress implements StatusUpdate, ActionListener {
 
 	@Override
 	public void setStatus(String message) {
-		updateProgressStatus(LEVEL_GENERIC, message);
+		updateProgressStatus(StatusLevel.LEVEL_GENERIC, message);
 	}
 
 	@Override
-	public int getProgressValue(int level) {
+	public int getProgressValue(StatusLevel level) {
 		if (checkLevel(level)) {
-			return jProgress[level].getValue();
+			return jProgress[level.ordinal()].getValue();
 		}
 
 		return 0;
 	}
 
 	@Override
-	public int getProgressMinValue(int level) {
+	public int getProgressMinValue(StatusLevel level) {
 		if (checkLevel(level)) {
-			return jProgress[level].getMinimum();
+			return jProgress[level.ordinal()].getMinimum();
 		}
 
 		return 0;
 	}
 
 	@Override
-	public int getProgressMaxValue(int level) {
+	public int getProgressMaxValue(StatusLevel level) {
 		if (checkLevel(level)) {
-			return jProgress[level].getMaximum();
+			return jProgress[level.ordinal()].getMaximum();
 		}
 
 		return 0;
 	}
 
-	boolean checkLevel(int level) {
-		return level == LEVEL_UPLOAD_ONE || level == LEVEL_UPLOAD_ALL;
+	boolean checkLevel(StatusLevel level) {
+		return level == StatusLevel.LEVEL_UPLOAD_ONE || level == StatusLevel.LEVEL_UPLOAD_ALL;
 	}
 
 	@Override

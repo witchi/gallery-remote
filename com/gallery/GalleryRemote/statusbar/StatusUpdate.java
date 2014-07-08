@@ -18,71 +18,42 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.gallery.GalleryRemote;
+package com.gallery.GalleryRemote.statusbar;
 
 import com.gallery.GalleryRemote.model.Picture;
 
 /**
- * This is an event adapter for the StatusUpdateListener class.
+ * This interface decouples the status updating methods from MainFrame.
  * 
  * @author <a href="mailto:tim_miller@users.sourceforge.net">Tim Miller</a>
  * @version $id$
  */
-public class StatusUpdateAdapter implements StatusUpdate {
+public interface StatusUpdate {
 	/* level-bound methods */
-	@Override
-	public void startProgress(int level, int min, int max, String message, boolean undetermined) {
-	}
+	public void setStatus(String message);
 
-	@Override
-	public void updateProgressValue(int level, int value) {
-	}
+	public void startProgress(StatusLevel level, int min, int max, String message, boolean undetermined);
 
-	@Override
-	public void updateProgressValue(int level, int value, int maxValue) {
-	}
+	public void updateProgressValue(StatusLevel level, int value);
 
-	@Override
-	public void setUndetermined(int level, boolean undetermined) {
-	}
+	public void updateProgressValue(StatusLevel level, int value, int maxValue);
 
-	@Override
-	public void updateProgressStatus(int level, String message) {
-	}
+	public void updateProgressStatus(StatusLevel level, String message);
 
-	@Override
-	public void stopProgress(int level, String message) {
-	}
+	public void setUndetermined(StatusLevel level, boolean undetermined);
+
+	public int getProgressValue(StatusLevel level);
+
+	public int getProgressMinValue(StatusLevel level);
+
+	public int getProgressMaxValue(StatusLevel level);
+
+	public void stopProgress(StatusLevel level, String message);
 
 	/* level-independant methods */
-	@Override
-	public void setInProgress(boolean inProgress) {
-	}
+	public void setInProgress(boolean inProgress);
 
-	@Override
-	public void setStatus(String message) {
-	}
+	public void error(String message);
 
-	@Override
-	public void error(String message) {
-	}
-
-	@Override
-	public int getProgressValue(int level) {
-		return 0;
-	}
-
-	@Override
-	public int getProgressMinValue(int level) {
-		return 0;
-	}
-
-	@Override
-	public int getProgressMaxValue(int level) {
-		return 0;
-	}
-
-	@Override
-	public void doneUploading(String newItemName, Picture picture) {
-	}
+	public void doneUploading(String newItemName, Picture picture);
 }

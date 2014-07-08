@@ -104,15 +104,20 @@ import com.gallery.GalleryRemote.prictureinspect.PictureInspectorModelImpl;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorPresenter;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorPresenterImpl;
 import com.gallery.GalleryRemote.statusbar.StatusBar;
+import com.gallery.GalleryRemote.statusbar.StatusBarModel;
+import com.gallery.GalleryRemote.statusbar.StatusBarPresenter;
+import com.gallery.GalleryRemote.statusbar.StatusBarPresenterImpl;
+import com.gallery.GalleryRemote.statusbar.StatusLevel;
+import com.gallery.GalleryRemote.statusbar.StatusUpdate;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 import com.gallery.GalleryRemote.util.OsShutdown;
 
 /**
- * Description of the Class
  * 
  * @author jackodog
  * @author paour
+ * @author arothe
  */
 public class MainFrame extends JFrame implements ActionListener, ItemListener, ListSelectionListener, ListDataListener,
 		TreeSelectionListener, TreeModelListener, FocusListener, GalleryRemoteCore, PreferenceNames {
@@ -146,7 +151,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 
 	boolean running = true;
 
-	public StatusBar jStatusBar = new StatusBar();
+	public StatusBarPresenter jStatusBar = new StatusBarPresenterImpl(new StatusBarModel(), new StatusBar());
 
 	PictureSelection ps = null;
 
@@ -684,14 +689,14 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	}
 
 	public void importApertureSelection() {
-		jStatusBar.startProgress(StatusUpdate.LEVEL_UNINTERUPTIBLE, 0, 100, GRI18n.getString(MODULE, "apertureStartImport"), true);
+		jStatusBar.startProgress(StatusLevel.LEVEL_UNINTERUPTIBLE, 0, 100, GRI18n.getString(MODULE, "apertureStartImport"), true);
 		jStatusBar.setInProgress(true);
 		new Thread() {
 			@Override
 			public void run() {
 				ArrayList<String> resultList = ImageUtils.importApertureSelection();
 				if (resultList == null || resultList.size() == 0) {
-					jStatusBar.stopProgress(StatusUpdate.LEVEL_UNINTERUPTIBLE, GRI18n.getString(MODULE, "apertureCancelImport"));
+					jStatusBar.stopProgress(StatusLevel.LEVEL_UNINTERUPTIBLE, GRI18n.getString(MODULE, "apertureCancelImport"));
 					jStatusBar.setInProgress(false);
 					return;
 				}
@@ -717,7 +722,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 				getCurrentAlbum().addPictures(pictures);
 				preloadThumbnails(pictures.iterator());
 
-				jStatusBar.stopProgress(StatusUpdate.LEVEL_UNINTERUPTIBLE, GRI18n.getString(MODULE, "apertureDoneImport"));
+				jStatusBar.stopProgress(StatusLevel.LEVEL_UNINTERUPTIBLE, GRI18n.getString(MODULE, "apertureDoneImport"));
 				jStatusBar.setInProgress(false);
 			}
 		}.start();
@@ -1220,7 +1225,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		jBottomPanel.add(sortPanel, null);
 		jBottomPanel.add(jUploadButton, null);
 		this.getContentPane().add(
-				jStatusBar,
+				jStatusBar.getView(),
 				new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
 						0, 0));
 		jTopPanel.add(jGalleryCombo, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,

@@ -22,11 +22,14 @@ import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.prefs.PreferenceNames;
 import com.gallery.GalleryRemote.prefs.SlideshowPanel;
 import com.gallery.GalleryRemote.statusbar.StatusBar;
+import com.gallery.GalleryRemote.statusbar.StatusBarModel;
+import com.gallery.GalleryRemote.statusbar.StatusBarPresenterImpl;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 
 /**
  * @author paour
+ * @author arothe
  * @version Oct 30, 2003
  */
 public class GRAppletSlideshow extends GRAppletMini implements GalleryRemoteCore, ActionListener, ListDataListener, PreferenceNames {
@@ -66,7 +69,7 @@ public class GRAppletSlideshow extends GRAppletMini implements GalleryRemoteCore
 
 		jStart = new JButton(GRI18n.getString(MODULE, "Start"));
 
-		jStatusBar = new StatusBar(75);
+		jStatusBar = new StatusBarPresenterImpl(new StatusBarModel(), new StatusBar(75));
 
 		jSlidePanel = new SlideshowPanel();
 
@@ -94,7 +97,7 @@ public class GRAppletSlideshow extends GRAppletMini implements GalleryRemoteCore
 				new GridBagConstraints(0, 4, 1, 1, 0.1, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0,
 						0));
 		getContentPane().add(
-				jStatusBar,
+				jStatusBar.getView(),
 				new GridBagConstraints(0, 5, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
 						0, 0));
 
@@ -164,8 +167,8 @@ public class GRAppletSlideshow extends GRAppletMini implements GalleryRemoteCore
 					}
 
 					if (album.getSize() > index) {
-						ImageUtils.download(picturesList.get(index), getGraphicsConfiguration().getBounds().getSize(), GalleryRemote
-								.instance().getCore().getMainStatusUpdate(), null);
+						ImageUtils.download(picturesList.get(index), getGraphicsConfiguration().getBounds().getSize(), GalleryRemote.instance()
+								.getCore().getMainStatusUpdate(), null);
 					} else {
 						JOptionPane.showMessageDialog(GRAppletSlideshow.this, GRI18n.getString(MODULE, "emptyAlbum"));
 					}

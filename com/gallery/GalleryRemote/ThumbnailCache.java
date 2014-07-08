@@ -35,6 +35,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
 import com.gallery.GalleryRemote.model.Picture;
+import com.gallery.GalleryRemote.statusbar.StatusLevel;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 
@@ -43,6 +44,7 @@ import com.gallery.GalleryRemote.util.ImageUtils;
  * list of Pictures
  * 
  * @author paour
+ * @author arothe
  */
 public class ThumbnailCache implements Runnable {
 	public static final String MODULE = "ThumbCache";
@@ -59,7 +61,7 @@ public class ThumbnailCache implements Runnable {
 		Thread.yield();
 		int loaded = 0;
 		GalleryRemote.instance().getCore().getMainStatusUpdate()
-				.startProgress(StatusUpdate.LEVEL_CACHE, 0, toLoad.size(), GRI18n.getString(MODULE, "loadThmb"), false);
+				.startProgress(StatusLevel.LEVEL_CACHE, 0, toLoad.size(), GRI18n.getString(MODULE, "loadThmb"), false);
 		// Log.log(Log.TRACE, MODULE, "Starting " + iFilename);
 		while (!toLoad.isEmpty()) {
 			Picture p = toLoad.pop();
@@ -108,14 +110,14 @@ public class ThumbnailCache implements Runnable {
 
 				Log.log(Log.LEVEL_TRACE, MODULE, "update progress " + loaded + "/" + (loaded + toLoad.size()));
 				GalleryRemote.instance().getCore().getMainStatusUpdate()
-						.updateProgressValue(StatusUpdate.LEVEL_CACHE, loaded, loaded + toLoad.size());
+						.updateProgressValue(StatusLevel.LEVEL_CACHE, loaded, loaded + toLoad.size());
 				GalleryRemote.instance().getCore().thumbnailLoadedNotify();
 			}
 		}
 		stillRunning = false;
 
 		GalleryRemote.instance().getCore().getMainStatusUpdate()
-				.stopProgress(StatusUpdate.LEVEL_CACHE, GRI18n.getString(MODULE, "thmbLoaded"));
+				.stopProgress(StatusLevel.LEVEL_CACHE, GRI18n.getString(MODULE, "thmbLoaded"));
 
 		// Log.log(Log.TRACE, MODULE, "Ending");
 	}

@@ -14,6 +14,7 @@ import HTTPClient.NVPair;
 
 import com.gallery.GalleryRemote.model.Gallery;
 import com.gallery.GalleryRemote.model.Picture;
+import com.gallery.GalleryRemote.statusbar.StatusUpdate;
 import com.gallery.GalleryRemote.util.GRI18n;
 
 public class GalleryComm2_5 extends GalleryComm2 {

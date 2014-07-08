@@ -21,6 +21,7 @@ import com.gallery.GalleryRemote.model.Gallery;
 import com.gallery.GalleryRemote.model.Picture;
 import com.gallery.GalleryRemote.prefs.PreferenceNames;
 import com.gallery.GalleryRemote.prefs.SlideshowPanel;
+import com.gallery.GalleryRemote.statusbar.StatusBar;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 

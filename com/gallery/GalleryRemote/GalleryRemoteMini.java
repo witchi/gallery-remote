@@ -1,6 +1,7 @@
 package com.gallery.GalleryRemote;
 
 import com.gallery.GalleryRemote.util.DialogUtil;
+import com.gallery.GalleryRemote.util.log.Logger;
 import com.gallery.GalleryRemote.prefs.PropertiesFile;
 import com.gallery.GalleryRemote.prefs.PreferenceNames;
 
@@ -19,6 +20,11 @@ public class GalleryRemoteMini extends GalleryRemote {
 
 		CoreUtils.initCore();
 
+		try {
+			Logger.setup(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
+		} catch (IOException e) {
+			throw new RuntimeException("Problems with creating the log files");
+		}
 		Log.startLog(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
 	}
 

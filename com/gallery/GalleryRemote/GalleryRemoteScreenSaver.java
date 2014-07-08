@@ -27,6 +27,7 @@ import com.gallery.GalleryRemote.prefs.PreferenceNames;
 import com.gallery.GalleryRemote.prefs.PropertiesFile;
 import com.gallery.GalleryRemote.util.ImageLoaderUtil;
 import com.gallery.GalleryRemote.util.ImageUtils;
+import com.gallery.GalleryRemote.util.log.Logger;
 
 /**
  * @author paour
@@ -53,11 +54,15 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements GalleryRe
 	@Override
 	protected void initializeGR() {
 		super.initializeGR();
-
 		CoreUtils.initCore();
 
+		try {
+			Logger.setup(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
+		} catch (IOException e) {
+			throw new RuntimeException("Problems with creating the log files");
+		}
+		
 		Log.startLog(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
-
 		startup();
 	}
 

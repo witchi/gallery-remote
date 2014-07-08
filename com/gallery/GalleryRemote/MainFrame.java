@@ -103,6 +103,7 @@ import com.gallery.GalleryRemote.prictureinspect.PictureInspectorModel;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorModelImpl;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorPresenter;
 import com.gallery.GalleryRemote.prictureinspect.PictureInspectorPresenterImpl;
+import com.gallery.GalleryRemote.statusbar.StatusBar;
 import com.gallery.GalleryRemote.util.GRI18n;
 import com.gallery.GalleryRemote.util.ImageUtils;
 import com.gallery.GalleryRemote.util.OsShutdown;

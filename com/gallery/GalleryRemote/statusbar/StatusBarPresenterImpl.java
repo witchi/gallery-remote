@@ -28,8 +28,8 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 
 		StatusLevelData data = model.getCurrentLevelData();
 
-		LOGGER.fine("level: " + data.getLevel() + " - " + data.getMessage() + " - " + data.getValue());
-		Log.log(Log.LEVEL_TRACE, MODULE, "level: " + data.getLevel() + " - " + data.getMessage() + " - " + data.getValue());
+		LOGGER.fine("reset ui level: " + data.getLevel() + " - " + data.getMessage() + " - " + data.getValue());
+		Log.log(Log.LEVEL_TRACE, MODULE, "reset ui level: " + data.getLevel() + " - " + data.getMessage() + " - " + data.getValue());
 
 		try {
 			view.setIndeterminateProgress(data.isUndetermined());
@@ -50,6 +50,10 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 	public void startProgress(StatusLevel level, int minValue, int maxValue, String message, boolean undetermined) {
 
 		StatusLevelData dto = new StatusLevelData(level);
+		
+		LOGGER.fine("start level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
+		Log.log(Log.LEVEL_TRACE, MODULE, "start level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
+		
 		dto.setMinValue(minValue);
 		dto.setMaxValue(maxValue);
 		dto.setValue(0);
@@ -151,12 +155,12 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 		model.setStatusLevelData(dto);
 
 		LOGGER.fine("stop level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
-		Log.log(Log.LEVEL_TRACE, MODULE, "level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
+		Log.log(Log.LEVEL_TRACE, MODULE, "stop level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
 		
 		dto = model.getStatusLevelData(level);
 
 		LOGGER.fine("stop level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
-		Log.log(Log.LEVEL_TRACE, MODULE, "level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
+		Log.log(Log.LEVEL_TRACE, MODULE, "stop level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
 
 		if (level == model.getCurrentStatusLevel() && dto.isActive()) {
 			model.determineLevel(level);

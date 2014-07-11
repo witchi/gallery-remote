@@ -1,8 +1,6 @@
 package com.gallery.GalleryRemote.albuminspector;
 
 import java.awt.event.ActionEvent;
-import java.util.Enumeration;
-import java.util.Vector;
 
 import com.gallery.GalleryRemote.GalleryCommCapabilities;
 import com.gallery.GalleryRemote.MainFrame;
@@ -86,32 +84,4 @@ public class AlbumInspectorModelImpl extends AbstractModel implements AlbumInspe
 		album.setOverrideResizeDimension(dimension);
 
 	}
-
-	@Override
-	public String getName() {
-		return album.getName();
-	}
-
-	@Override
-	public boolean hasParent(Album parent) {
-		return album.getParentAlbum() == parent;
-	}
-
-	@Override
-	public Vector<Album> removeAlbumFromList(Vector<Album> list, boolean deep) {
-		Vector<Album> copy = new Vector<Album>(list);
-		removeChildren(copy, album, deep);
-		return copy;
-	}
-
-	private void removeChildren(Vector<Album> list, Album album, boolean deep) {
-		if (!deep) {
-			list.remove(album);
-		}
-		for (Enumeration<Album> it = album.children(); it.hasMoreElements();) {
-			Album subAlbum = it.nextElement();
-			removeChildren(list, subAlbum, true);
-		}
-	}
-
 }

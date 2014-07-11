@@ -1,7 +1,5 @@
 package com.gallery.GalleryRemote.albuminspector;
 
-import java.util.Vector;
-
 import com.gallery.GalleryRemote.GalleryCommCapabilities;
 import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.model.Gallery;
@@ -30,14 +28,8 @@ public interface AlbumInspectorModel {
 	void startSlideshow();
 
 	boolean hasCapability(GalleryCommCapabilities capability);
-	
+
 	int getOverrideResizeDimension();
-	
+
 	void setOverrideResizeDimension(int dimension);
-	
-	String getName();
-	
-	boolean hasParent(Album parent);
-	
-	Vector<Album> removeAlbumFromList(Vector<Album> list, boolean deep);
 }

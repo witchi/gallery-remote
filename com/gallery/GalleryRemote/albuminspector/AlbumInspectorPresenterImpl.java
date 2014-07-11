@@ -11,19 +11,20 @@ import java.awt.event.KeyListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
-import javax.swing.UIManager;
 
 import com.gallery.GalleryRemote.CoreUtils;
 import com.gallery.GalleryRemote.GalleryCommCapabilities;
 import com.gallery.GalleryRemote.GalleryRemote;
-import com.gallery.GalleryRemote.Log;
 import com.gallery.GalleryRemote.MoveAlbumDialog;
 import com.gallery.GalleryRemote.model.Album;
+import com.gallery.GalleryRemote.prefs.PreferenceNames;
 import com.gallery.GalleryRemote.prefs.UploadPanel;
+import com.gallery.GalleryRemote.util.DialogUtil;
+import com.gallery.GalleryRemote.util.log.Logger;
 
 public class AlbumInspectorPresenterImpl implements ActionListener, ItemListener, KeyListener, AlbumInspectorPresenter {
 
-	private static final String MODULE = "AlbmInspec";
+	private static final Logger LOGGER = Logger.getLogger(AlbumInspectorPresenterImpl.class);
 
 	private AlbumInspectorModel model;
 	private AlbumInspector view;
@@ -59,9 +60,7 @@ public class AlbumInspectorPresenterImpl implements ActionListener, ItemListener
 		view.getResizeToDefault().addItemListener(this);
 		view.getResizeToForce().addItemListener(this);
 		view.getResizeTo().addActionListener(this);
-
-		// TODO: should we implement our own interface+class ???
-		view.getResizeTo().getEditor().getEditorComponent().addKeyListener(this);
+		view.getResizeTo().addKeyboardListener(this);
 	}
 
 	private void initDocuments() {
@@ -150,20 +149,24 @@ public class AlbumInspectorPresenterImpl implements ActionListener, ItemListener
 		}
 
 		JComponent source = (JComponent) e.getSource();
-		Log.log(Log.LEVEL_TRACE, MODULE, "Item state changed " + source);
+		LOGGER.fine("Item state changed " + source);
 
-		if (source == jBeginning) {
-			album.setOverrideAddToBeginning(new Boolean(jBeginning.isSelected()));
-		} else if (source == jResizeBeforeUpload) {
-			album.setOverrideResize(new Boolean(jResizeBeforeUpload.isSelected()));
+		if (source == view.getBeginning()) {
 
-			resetUIState();
-		} else if (source == jResizeToDefault || source == jResizeToForce) {
-			album.setOverrideResizeDefault(new Boolean(jResizeToDefault.isSelected()));
+			model.setOverrideAddToBeginning(view.getBeginning().isSelected());
 
-			resetUIState();
+		} else if (source == view.getResizeBeforeUpload()) {
+
+			model.setOverrideResize(view.getResizeBeforeUpload().isSelected());
+			refresh();
+
+		} else if (source == view.getResizeToDefault() || source == view.getResizeToForce()) {
+
+			model.setOverrideResizeDefault(view.getResizeToDefault().isSelected());
+			refresh();
+
 		} else {
-			Log.log(Log.LEVEL_TRACE, MODULE, "Unknown source " + source);
+			LOGGER.fine("Unknown source " + source);
 		}
 
 		ignoreNextComboBoxChanged = false;
@@ -177,110 +180,112 @@ public class AlbumInspectorPresenterImpl implements ActionListener, ItemListener
 
 		String command = e.getActionCommand();
 		JComponent source = (JComponent) e.getSource();
-		Log.log(Log.LEVEL_TRACE, MODULE, "Action selected " + command);
+		LOGGER.fine("Action selected " + command);
 
-		if (source == jFetch) {
-			mf.fetchAlbumImages();
-		} else if (source == jNew) {
-			mf.newAlbum();
-		} else if (source == jApply) {
-			// todo
-		} else if (source == jMove) {
-			MoveAlbumDialog mad = new MoveAlbumDialog(mf, album.getGallery(), album);
+		if (source == view.getFetchButton()) {
+			model.fetchAlbumImages();
+
+		} else if (source == view.getMoveButton()) {
+
+			MoveAlbumDialog mad = new MoveAlbumDialog(DialogUtil.findParentWindow((Component) view), model);
 			Album newParent = mad.getNewParent();
 
 			if (newParent != null) {
-				album.moveAlbumTo(GalleryRemote.instance().getCore().getMainStatusUpdate(), newParent);
+				model.moveAlbumTo(GalleryRemote.instance().getCore().getMainStatusUpdate(), newParent);
 
-				// todo: this is too drastic...
-				album.getGallery().reload();
-
-				// album.moveAlbumTo(null, null);
+				// TODO: this is too drastic...
+				model.getGallery().reload();
 			}
-		} else if (source == jSlideshow) {
-			mf.slideshow();
-		} else if (source == jResizeTo) {
+
+		} else if (source == view.getSlideshowButton()) {
+			model.startSlideshow();
+
+		} else if (source == view.getResizeTo()) {
 			if ("comboBoxChanged".equals(command)) {
 				if (ignoreNextComboBoxChanged) {
 					ignoreNextComboBoxChanged = false;
 				} else {
-					readResizeTo(jResizeTo.getSelectedItem().toString());
+					readResizeTo(view.getResizeTo().getSelectedItemAsString());
 				}
 			}
 		} else {
-			Log.log(Log.LEVEL_TRACE, MODULE, "Unknown source " + source);
+			LOGGER.fine("Unknown source " + source);
 		}
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		// do nothing
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		readResizeTo(jResizeTo.getEditor().getItem().toString());
+		readResizeTo(view.getResizeTo().getEditedItem());
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
+		// do nothing
 	}
 
-	void refresh(AlbumInspectorDTO dto) {
+	void refresh() {
 
 		boolean oldIgnoreItemChanges = ignoreItemChanges;
 		ignoreItemChanges = true;
 
-		if (album == null) {
-			jName.setText("");
-			jTitle.setText("");
-			jSummary.setText("");
-			jPictures.setText("");
+		AlbumInspectorDTO dto = new AlbumInspectorDTO();
+		Album album = model.getAlbum();
 
-			setEnabledContent(false);
-		} else {
-			setEnabledContent(true);
+		if (album != null) {
+			dto.setHasAlbum(true);
+			dto.setName(album.getName());
+			dto.setTitle(album.getTitle());
+			dto.setSummary(album.getSummary());
+			dto.setNumberOfPictures(album.getSize());
+			dto.setEnabled(true);
+			dto.setSelectedResizeBeforeUpload(album.getResize());
+			dto.setSelectedResizeToDefault(album.getResizeDefault());
+			dto.setSelectedResizeToForce(!album.getResizeDefault());
 
-			// setActive(jName, true);
-			jName.setText(album.getName());
+			UploadPanel.setupComboValue(album.getResizeDimension(), view.getResizeTo());
 
-			// setActive(jTitle, true);
-			jTitle.setText(album.getTitle());
-
-			// setActive(jSummary, true);
-			jSummary.setText(album.getSummary());
-
-			jPictures.setText("" + album.getSize());
-
-			jResizeBeforeUpload.setSelected(album.getResize());
-			jResizeToDefault.setSelected(album.getResizeDefault());
-			jResizeToForce.setSelected(!album.getResizeDefault());
-			UploadPanel.setupComboValue(album.getResizeDimension(), jResizeTo);
 			// hack: the JComboBox will fire an action when the value is changed
+			// TODO add a method to the ResizeTo class, which consumes the action
+			// event
+			// why is it placed after the setupComboValue(), which changes the
+			// value?
+
 			ignoreNextComboBoxChanged = true;
-			jBeginning.setSelected(album.getAddToBeginning());
 
-			jFetch.setEnabled(album.getGallery().getComm(mf.jStatusBar)
-					.hasCapability(mf.jStatusBar, GalleryCommCapabilities.CAPA_FETCH_ALBUM_IMAGES));
-			jMove.setEnabled(album.getGallery().getComm(mf.jStatusBar).hasCapability(mf.jStatusBar, GalleryCommCapabilities.CAPA_MOVE_ALBUM));
-
-			jSlideshow.setEnabled(album.getSize() > 0);
+			dto.setSelectedAddBeginning(album.getAddToBeginning());
+			dto.setEnabledFetch(model.hasCapability(GalleryCommCapabilities.CAPA_FETCH_ALBUM_IMAGES));
+			dto.setEnabledMove(model.hasCapability(GalleryCommCapabilities.CAPA_MOVE_ALBUM));
+			dto.setEnabledSlideshow(album.getSize() > 0);
 		}
 
-		// todo: protocol support
-		jApply.setEnabled(false);
-		jName.setEditable(false);
-		jName.setBackground(UIManager.getColor("TextField.inactiveBackground"));
-		jTitle.setEditable(false);
-		jTitle.setBackground(UIManager.getColor("TextField.inactiveBackground"));
-		jSummary.setEditable(false);
-		jSummary.setBackground(UIManager.getColor("TextField.inactiveBackground"));
-
-		jPictures.setEditable(false);
-		jPictures.setBackground(UIManager.getColor("TextField.inactiveBackground"));
-
-		view.resetUI(dto);
-
+		view.refresh(dto);
 		ignoreItemChanges = oldIgnoreItemChanges;
 	}
 
+	private void readResizeTo(String text) {
+		if (ignoreItemChanges) {
+			return;
+		}
+
+		try {
+			int overrideDimension = model.getOverrideResizeDimension();
+			int newOverrideDimension = Integer.parseInt(text);
+
+			if (overrideDimension == -1
+					|| (newOverrideDimension == GalleryRemote.instance().properties.getIntDimensionProperty(PreferenceNames.RESIZE_TO))) {
+				return;
+			}
+
+			LOGGER.fine("Overriding dimension to " + newOverrideDimension);
+			model.setOverrideResizeDimension(newOverrideDimension);
+
+		} catch (NumberFormatException ee) {
+			LOGGER.throwing(ee);
+		}
+	}
 }

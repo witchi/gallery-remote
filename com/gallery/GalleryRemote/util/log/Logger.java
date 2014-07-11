@@ -32,6 +32,14 @@ public class Logger {
 		logger.fine(string);
 	}
 
+	public void severe(String string) {
+		logger.severe(string);
+	}
+	
+	public void throwing(Throwable thrown) {
+		logger.log(Level.FINE, thrown.getMessage(), thrown);
+	}
+	
 	public static void setup(int level, boolean toConsole) throws IOException {
 
 		java.util.logging.Logger logger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);

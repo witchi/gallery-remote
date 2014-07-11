@@ -27,20 +27,15 @@ import java.awt.Insets;
 
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import com.gallery.GalleryRemote.GalleryRemote;
-import com.gallery.GalleryRemote.Log;
-import com.gallery.GalleryRemote.model.Album;
 import com.gallery.GalleryRemote.prefs.PreferenceNames;
-import com.gallery.GalleryRemote.prefs.UploadPanel.ResizeSize;
 import com.gallery.GalleryRemote.util.GRI18n;
 
 /**
- * Bean inspector for Pictures
+ * Bean inspector for albums
  * 
  * @author paour
  * @author arothe
@@ -53,20 +48,17 @@ public class AlbumInspectorImpl extends JPanel implements PreferenceNames, Album
 
 	private JPanel jSpacer;
 
-	private JButton jFetch;
-	private JButton jSlideshow;
+	private JButton jFetchButton;
+	private JButton jSlideshowButton;
 
 	private OverridePanel jOverridePanel;
-	private PropsPanel jPanelProps;
+	private PropsPanel jPropsPanel;
 
 	private GridBagConstraints jPropsPanelConstraints;
 	private GridBagConstraints jOverridePanelConstraints;
 	private GridBagConstraints jFetchButtonConstraints;
 	private GridBagConstraints jSlideshowButtonConstraints;
 	private GridBagConstraints jSpacerConstraints;
-
-	GridBagLayout gridBagLayout1 = new GridBagLayout();
-	Album album = null;
 
 	public AlbumInspectorImpl() {
 		initUI();
@@ -81,20 +73,20 @@ public class AlbumInspectorImpl extends JPanel implements PreferenceNames, Album
 
 	@Override
 	public AbstractButton getFetchButton() {
-		if (jFetch == null) {
-			jFetch = new JButton();
-			jFetch.setText(GRI18n.getString(MODULE, "Fetch"));
+		if (jFetchButton == null) {
+			jFetchButton = new JButton();
+			jFetchButton.setText(GRI18n.getString(MODULE, "Fetch"));
 		}
-		return jFetch;
+		return jFetchButton;
 	}
 
 	@Override
 	public AbstractButton getSlideshowButton() {
-		if (jSlideshow == null) {
-			jSlideshow = new JButton();
-			jSlideshow.setText(GRI18n.getString(MODULE, "Slideshow"));
+		if (jSlideshowButton == null) {
+			jSlideshowButton = new JButton();
+			jSlideshowButton.setText(GRI18n.getString(MODULE, "Slideshow"));
 		}
-		return jSlideshow;
+		return jSlideshowButton;
 	}
 
 	private OverridePanel getOverridePanel() {
@@ -105,10 +97,10 @@ public class AlbumInspectorImpl extends JPanel implements PreferenceNames, Album
 	}
 
 	private PropsPanel getPropsPanel() {
-		if (jPanelProps == null) {
-			jPanelProps = new PropsPanel();
+		if (jPropsPanel == null) {
+			jPropsPanel = new PropsPanel();
 		}
-		return jPanelProps;
+		return jPropsPanel;
 	}
 
 	private GridBagConstraints getPropsPanelConstraints() {
@@ -197,7 +189,7 @@ public class AlbumInspectorImpl extends JPanel implements PreferenceNames, Album
 	}
 
 	@Override
-	public JComboBox<ResizeSize> getResizeTo() {
+	public AlbumFieldComboBox getResizeTo() {
 		return getOverridePanel().getResizeToComboBox();
 	}
 
@@ -221,52 +213,46 @@ public class AlbumInspectorImpl extends JPanel implements PreferenceNames, Album
 		return getOverridePanel().getResizeBeforeUploadCheckBox();
 	}
 
-	// ---- factor below
-
-	private void readResizeTo(String text) {
-		if (ignoreItemChanges) {
-			return;
-		}
-
-		try {
-			int overrideDimension = album.getOverrideResizeDimension();
-
-			// if (text.length() > 0) {
-			int newOverrideDimension = Integer.parseInt(text);
-
-			if (overrideDimension != -1 || (newOverrideDimension != GalleryRemote.instance().properties.getIntDimensionProperty(RESIZE_TO))) {
-				Log.log(Log.LEVEL_TRACE, MODULE, "Overriding dimension to " + newOverrideDimension);
-				album.setOverrideResizeDimension(newOverrideDimension);
-			}
-			// }
-		} catch (NumberFormatException ee) {
-			Log.logException(Log.LEVEL_ERROR, MODULE, ee);
-		}
+	private JLabel getApplyLabel() {
+		return getPropsPanel().getApplyLabel();
 	}
-
+	
+	private AlbumFieldTextArea getPictureTextArea() {
+		return getPropsPanel().getPictureTextArea();
+	}
+	
 	@Override
 	public void refresh(AlbumInspectorDTO dto) {
-		boolean oldIgnoreItemChanges = ignoreItemChanges;
-		ignoreItemChanges = true;
 
-		if (album != null && jResizeBeforeUpload.isSelected()) {
-			jResizeToDefault.setEnabled(true);
-			jResizeToForce.setEnabled(true);
+		// TODO: can we move the if-statements into the presenter?
+		// TODO: add more settings, use dto
+		if (dto.hasAlbum() && getResizeBeforeUpload().isSelected()) {
+			getResizeToDefault().setEnabled(true);
+			getResizeToForce().setEnabled(true);
 
-			if (jResizeToForce.isSelected()) {
-				jResizeTo.setEnabled(true);
-				jResizeTo.setBackground(UIManager.getColor("TextField.background"));
+			if (getResizeToForce().isSelected()) {
+				getResizeTo().setEnabled(true);
+				getResizeTo().setBackground(UIManager.getColor("TextField.background"));
 			} else {
-				jResizeTo.setEnabled(false);
-				jResizeTo.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+				getResizeTo().setEnabled(false);
+				getResizeTo().setBackground(UIManager.getColor("TextField.inactiveBackground"));
 			}
 		} else {
-			jResizeToDefault.setEnabled(false);
-			jResizeToForce.setEnabled(false);
-			jResizeTo.setEnabled(false);
-			jResizeTo.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+			getResizeToDefault().setEnabled(false);
+			getResizeToForce().setEnabled(false);
+			getResizeTo().setEnabled(false);
+			getResizeTo().setBackground(UIManager.getColor("TextField.inactiveBackground"));
 		}
 
-		ignoreItemChanges = oldIgnoreItemChanges;
+		// todo: protocol support
+		getApplyLabel().setEnabled(false);
+		getNameTextArea().setEditable(false);
+		getNameTextArea().setBackground(UIManager.getColor("TextField.inactiveBackground"));
+		getTitleTextArea().setEditable(false);
+		getTitleTextArea().setBackground(UIManager.getColor("TextField.inactiveBackground"));
+		getSummaryTextArea().setEditable(false);
+		getSummaryTextArea().setBackground(UIManager.getColor("TextField.inactiveBackground"));
+		getPictureTextArea().setEditable(false);
+		getPictureTextArea().setBackground(UIManager.getColor("TextField.inactiveBackground"));
 	}
 }

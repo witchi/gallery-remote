@@ -1,15 +1,16 @@
 package com.gallery.GalleryRemote.albuminspector;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -27,7 +28,7 @@ class PropsPanel extends JPanel {
 	private JLabel jSummaryLabel;
 
 	private FieldPanel jTitle;
-	private JTextArea jPictures;
+	private AlbumFieldTextArea jPictures;
 	private FieldPanel jName;
 	private FieldPanel jSummary;
 
@@ -69,7 +70,7 @@ class PropsPanel extends JPanel {
 		add(getSummaryLabel(), getSummaryLabelConstraints());
 		add(getSummaryField(), getSummaryFieldConstraints());
 		add(getPictureLabel(), getPictureLabelConstraints());
-		add(getPictureTextArea(), getPictureTextAreaConstraints());
+		add((Component) getPictureTextArea(), getPictureTextAreaConstraints());
 
 		add(getApplyLabel(), getApplyLabelConstraints());
 		add(getMoveButton(), getMoveButtonConstraints());
@@ -192,9 +193,9 @@ class PropsPanel extends JPanel {
 		return jPictureLabel;
 	}
 
-	private JTextArea getPictureTextArea() {
+	AlbumFieldTextArea getPictureTextArea() {
 		if (jPictures == null) {
-			jPictures = new JTextArea();
+			jPictures = new AlbumFieldTextAreaImpl();
 			jPictures.setFont(UIManager.getFont("Label.font"));
 			jPictures.setEditable(false);
 			jPictures.setBackground(UIManager.getColor("TextField.inactiveBackground"));
@@ -223,7 +224,7 @@ class PropsPanel extends JPanel {
 		return jName;
 	}
 
-	private JLabel getApplyLabel() {
+	JLabel getApplyLabel() {
 		if (jApply == null) {
 			jApply = new JLabel();
 			jApply.setText(GRI18n.getString(MODULE, "Apply"));
@@ -231,7 +232,7 @@ class PropsPanel extends JPanel {
 		return jApply;
 	}
 
-	JButton getMoveButton() {
+	AbstractButton getMoveButton() {
 		if (jMove == null) {
 			jMove = new JButton();
 			jMove.setText(GRI18n.getString(MODULE, "Move"));

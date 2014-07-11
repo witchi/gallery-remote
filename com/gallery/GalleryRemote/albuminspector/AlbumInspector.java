@@ -1,9 +1,6 @@
 package com.gallery.GalleryRemote.albuminspector;
 
 import javax.swing.AbstractButton;
-import javax.swing.JComboBox;
-
-import com.gallery.GalleryRemote.prefs.UploadPanel.ResizeSize;
 
 public interface AlbumInspector {
 
@@ -21,7 +18,7 @@ public interface AlbumInspector {
 
 	AbstractButton getMoveButton();
 
-	JComboBox<ResizeSize> getResizeTo();
+	AlbumFieldComboBox getResizeTo();
 
 	AbstractButton getResizeToForce();
 

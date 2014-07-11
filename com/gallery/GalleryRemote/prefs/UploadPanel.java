@@ -13,7 +13,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -23,6 +22,8 @@ import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
 import com.gallery.GalleryRemote.Log;
+import com.gallery.GalleryRemote.albuminspector.AlbumFieldComboBox;
+import com.gallery.GalleryRemote.albuminspector.AlbumFieldComboBoxImpl;
 import com.gallery.GalleryRemote.util.GRI18n;
 
 /**
@@ -36,7 +37,7 @@ public class UploadPanel extends PreferencePanel implements ActionListener, Pref
 	JLabel icon = new JLabel(GRI18n.getString(MODULE, "icon"));
 
 	JPanel jPanel1 = new JPanel();
-	JComboBox<ResizeSize> resizeTo = new JComboBox<ResizeSize>(defaultSizes);
+	AlbumFieldComboBox resizeTo = new AlbumFieldComboBoxImpl(defaultSizes);
 	JPanel jPanel2 = new JPanel();
 
 	JRadioButton setCaptionNone = new JRadioButton();
@@ -97,7 +98,7 @@ public class UploadPanel extends PreferencePanel implements ActionListener, Pref
 		resetUIState();
 	}
 
-	public static void setupComboValue(int size, JComboBox<ResizeSize> resizeTo) {
+	public static void setupComboValue(int size, AlbumFieldComboBox resizeTo) {
 		MutableComboBoxModel<ResizeSize> model = (MutableComboBoxModel<ResizeSize>) resizeTo.getModel();
 		boolean found = false;
 
@@ -137,7 +138,7 @@ public class UploadPanel extends PreferencePanel implements ActionListener, Pref
 					// if (selectedItem instanceof ResizeSize) {
 					// i = ((ResizeSize) selectedItem).size;
 					// }
-					i = Integer.parseInt(resizeTo.getSelectedItem().toString());
+					i = Integer.parseInt(resizeTo.getSelectedItemAsString());
 				} catch (Exception e) {
 					Log.log(Log.LEVEL_ERROR, MODULE, "resizeTo size should be integer numbers");
 				}
@@ -226,7 +227,7 @@ public class UploadPanel extends PreferencePanel implements ActionListener, Pref
 
 		this.add(jPanel1, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				0, 0, 5, 0), 0, 0));
-		jPanel1.add(resizeTo, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+		jPanel1.add((Component) resizeTo, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 				new Insets(0, 0, 0, 0), 0, 0));
 		jPanel1.add(resizeToDefault, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
 				new Insets(0, 20, 0, 0), 0, 0));

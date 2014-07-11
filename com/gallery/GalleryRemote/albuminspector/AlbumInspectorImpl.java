@@ -216,13 +216,17 @@ public class AlbumInspectorImpl extends JPanel implements PreferenceNames, Album
 	private JLabel getApplyLabel() {
 		return getPropsPanel().getApplyLabel();
 	}
-	
+
 	private AlbumFieldTextArea getPictureTextArea() {
 		return getPropsPanel().getPictureTextArea();
 	}
-	
+
 	@Override
 	public void refresh(AlbumInspectorDTO dto) {
+
+		getNameTextArea().setText(dto.getName());
+		getTitleTextArea().setText(dto.getTitle());
+		getSummaryTextArea().setText(dto.getSummary());
 
 		// TODO: can we move the if-statements into the presenter?
 		// TODO: add more settings, use dto

@@ -37,8 +37,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import com.gallery.GalleryRemote.albuminspector.AlbumInspectorModel;
 import com.gallery.GalleryRemote.model.Album;
-import com.gallery.GalleryRemote.model.Gallery;
 import com.gallery.GalleryRemote.util.DialogUtil;
 import com.gallery.GalleryRemote.util.GRI18n;
 
@@ -53,9 +53,7 @@ public class MoveAlbumDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = -5217703609161413941L;
 	public final static String MODULE = "MoveAlbum";
 
-	Gallery gallery = null;
-	Album album = null;
-	// Album rootAlbum = null;
+	AlbumInspectorModel model = null;
 
 	JLabel jLabel2 = new JLabel();
 	JLabel jLabel3 = new JLabel();
@@ -80,11 +78,10 @@ public class MoveAlbumDialog extends JDialog implements ActionListener {
 	 * @param defaultAlbum
 	 *           Description of Parameter
 	 */
-	public MoveAlbumDialog(Frame owner, Gallery gallery, Album album) {
+	public MoveAlbumDialog(Frame owner, AlbumInspectorModel albumModel) {
 		super(owner, true);
 
-		this.gallery = gallery;
-		this.album = album;
+		this.model = albumModel;
 
 		jbInit();
 
@@ -99,16 +96,17 @@ public class MoveAlbumDialog extends JDialog implements ActionListener {
 		this.setModal(true);
 		this.setTitle(GRI18n.getString(MODULE, "title"));
 
-		Vector<Album> albums = new Vector<Album>(gallery.getFlatAlbumList());
+		Vector<Album> albums = new Vector<Album>(model.getGallery().getFlatAlbumList());
 		// rootAlbum = new Album(gallery);
 		// rootAlbum.setSuppressEvents(true);
 		// rootAlbum.setTitle(GRI18n.getString(MODULE, "rootAlbmTitle"));
 		// rootAlbum.setName("root.root");
-		Object rootAlbum = gallery.getRoot();
+		Album rootAlbum = (Album) model.getGallery().getRoot();
+		Album album = model.getAlbum();
 		if (album.getParentAlbum() == rootAlbum) {
 			albums.remove(rootAlbum);
 		}
-		removeChildren(albums, album);
+		removeAlbumFromList(albums, album, true);
 
 		jAlbum = new JComboBox<Album>(albums);
 		jAlbum.setFont(UIManager.getFont("Label.font"));
@@ -144,15 +142,6 @@ public class MoveAlbumDialog extends JDialog implements ActionListener {
 		getRootPane().setDefaultButton(jOk);
 	}
 
-	public void removeChildren(Vector<Album> albums, Album album) {
-		for (Enumeration<Album> it = album.children(); it.hasMoreElements();) {
-			Album subAlbum = it.nextElement();
-			removeChildren(albums, subAlbum);
-		}
-
-		albums.remove(album);
-	}
-
 	/**
 	 * Description of the Method
 	 * 
@@ -178,5 +167,15 @@ public class MoveAlbumDialog extends JDialog implements ActionListener {
 
 	public Album getNewParent() {
 		return newParent;
+	}
+
+	private void removeAlbumFromList(Vector<Album> list, Album album, boolean deep) {
+		if (!deep) {
+			list.remove(album);
+		}
+		for (Enumeration<Album> it = album.children(); it.hasMoreElements();) {
+			Album subAlbum = it.nextElement();
+			removeAlbumFromList(list, subAlbum, true);
+		}
 	}
 }

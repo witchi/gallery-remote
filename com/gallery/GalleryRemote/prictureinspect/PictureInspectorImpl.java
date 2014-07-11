@@ -312,8 +312,6 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	private IconAreaPanel getIconAreaPanel() {
 		if (jIconAreaPanel == null) {
 			jIconAreaPanel = new IconAreaPanel();
-			// jIconAreaPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK,
-			// 1));
 		}
 		return jIconAreaPanel;
 	}

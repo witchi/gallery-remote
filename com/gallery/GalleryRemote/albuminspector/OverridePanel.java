@@ -1,6 +1,7 @@
 package com.gallery.GalleryRemote.albuminspector;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -8,7 +9,6 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
@@ -16,7 +16,6 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 import com.gallery.GalleryRemote.prefs.UploadPanel;
-import com.gallery.GalleryRemote.prefs.UploadPanel.ResizeSize;
 import com.gallery.GalleryRemote.util.GRI18n;
 
 public class OverridePanel extends JPanel {
@@ -33,7 +32,7 @@ public class OverridePanel extends JPanel {
 	private JCheckBox jResizeBeforeUpload;
 	private JRadioButton jResizeToDefault;
 	private JRadioButton jResizeToForce;
-	private JComboBox<ResizeSize> jResizeTo;
+	private AlbumFieldComboBoxImpl jResizeTo;
 	private JCheckBox jBeginning;
 
 	private ButtonGroup buttonGroup;
@@ -49,7 +48,7 @@ public class OverridePanel extends JPanel {
 		add(getResizeBeforeUploadCheckBox(), getResizeBeforeUploadConstraints());
 		add(getResizeToDefaultRadioButton(), getResizeToDefaultConstraints());
 		add(getResizeToForceRadioButton(), getResizeToForceConstraints());
-		add(getResizeToComboBox(), getResizeToConstraints());
+		add((Component) getResizeToComboBox(), getResizeToConstraints());
 		add(getBeginningCheckBox(), getBeginningConstraints());
 
 		getButtonGroup().add(getResizeToDefaultRadioButton());
@@ -82,14 +81,14 @@ public class OverridePanel extends JPanel {
 		return new TitledBorder(etched, GRI18n.getString(MODULE, "Override"));
 	}
 
-	JComboBox<ResizeSize> getResizeToComboBox() {
+	AlbumFieldComboBox getResizeToComboBox() {
 		if (jResizeTo == null) {
-			jResizeTo = new JComboBox<ResizeSize>(UploadPanel.defaultSizes);
+			jResizeTo = new AlbumFieldComboBoxImpl(UploadPanel.defaultSizes);
 			jResizeTo.setToolTipText(GRI18n.getString(MODULE, "res2W"));
 			jResizeTo.setEditable(true);
 			jResizeTo.setRenderer(new UploadPanel.SizeListRenderer()); // TODO:
 																							// refactor
-																							// it
+																							// it ?
 		}
 		return jResizeTo;
 	}

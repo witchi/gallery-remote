@@ -20,23 +20,38 @@
  */
 package com.gallery.galleryremote.prefs;
 
-import com.gallery.galleryremote.Base64;
-import com.gallery.galleryremote.Log;
-
-import java.awt.*;
-import java.io.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
+
+import com.gallery.galleryremote.Base64;
+import com.gallery.galleryremote.Log;
+import com.gallery.galleryremote.util.log.Logger;
 
 /**
  * GalleryProperties: access property data with a higher level of abstraction
  * 
  * @author paour
+ * @author arothe
  */
 public class GalleryProperties extends Properties implements PreferenceNames {
 
 	private static final long serialVersionUID = 1347760811688657295L;
+	private static final Logger LOGGER = Logger.getLogger(GalleryProperties.class);
 	public static final String MODULE = "GalProps";
 
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
@@ -499,7 +514,8 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 
 		for (int i = 0; i < namesArray.length; i++) {
 			String name = (String) namesArray[i];
-			Log.log(level, module, logPropertiesHelper(name));
+			LOGGER.info(logPropertiesHelper(name));
+			// Log.log(level, module, logPropertiesHelper(name));
 		}
 	}
 

@@ -10,12 +10,16 @@ import javax.swing.ImageIcon;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.prefs.PropertiesFile;
 import com.gallery.galleryremote.util.OsShutdown;
+import com.gallery.galleryremote.util.log.LogManager;
 import com.gallery.galleryremote.util.log.Logger;
 
 /**
- * Created by IntelliJ IDEA. User: paour Date: Jan 14, 2004
+ * @author paour 
+ * @version Jan 14, 2004
  */
 public class GalleryRemoteMainFrame extends GalleryRemote {
+	
+	private static final Logger LOGGER = Logger.getLogger(GalleryRemoteMainFrame.class);
 	private MainFrame mainFrame = null;
 
 	@Override
@@ -36,7 +40,8 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 			try {
 				pf.createNewFile();
 			} catch (IOException e) {
-				Log.logException(Log.LEVEL_ERROR, MODULE, e);
+				LOGGER.throwing(e);
+				//Log.logException(Log.LEVEL_ERROR, MODULE, e);
 			}
 		}
 
@@ -49,7 +54,8 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 				Method m = c.getMethod("exec", (Class<?>[]) null);
 				m.invoke(null, new Object[] { "chmod -R go-rwx " + f.getPath().replaceAll(" ", "\\ ") });
 			} catch (Throwable e) {
-				Log.logException(Log.LEVEL_ERROR, MODULE, e);
+				LOGGER.throwing(e);
+				//Log.logException(Log.LEVEL_ERROR, MODULE, e);
 			}
 		}
 
@@ -65,9 +71,9 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 		super.initializeGR();
 
 		try {
-			Logger.setup(properties.getIntProperty(PreferenceNames.LOG_LEVEL), properties.getBooleanProperty("toSysOut"));
+			LogManager.setup(properties.getIntProperty(PreferenceNames.LOG_LEVEL), properties.getBooleanProperty("toSysOut"));
 		} catch (IOException e) {
-			throw new RuntimeException("Problems with creating the log files");
+			throw new RuntimeException("Problems with creating log file");
 		}
 
 		Log.startLog(
@@ -85,7 +91,8 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 				System.exit(0);
 			}
 		} catch (Exception e) {
-			Log.logException(Log.LEVEL_CRITICAL, "Startup", e);
+			LOGGER.throwing(e);
+			//Log.logException(Log.LEVEL_CRITICAL, "Startup", e);
 			Log.shutdown();
 		}
 
@@ -136,7 +143,8 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 			iLeft = new ImageIcon(GalleryRemote.class.getResource("/RotateLeft24.gif"));
 			iFlip = new ImageIcon(GalleryRemote.class.getResource("/FlipHoriz24.gif"));
 		} catch (Exception e) {
-			Log.logException(Log.LEVEL_ERROR, MODULE, e);
+			LOGGER.throwing(e);
+			//Log.logException(Log.LEVEL_ERROR, MODULE, e);
 		}
 	}
 }

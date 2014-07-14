@@ -1,6 +1,7 @@
 package com.gallery.galleryremote;
 
 import com.gallery.galleryremote.util.DialogUtil;
+import com.gallery.galleryremote.util.log.LogManager;
 import com.gallery.galleryremote.util.log.Logger;
 import com.gallery.galleryremote.prefs.PropertiesFile;
 import com.gallery.galleryremote.prefs.PreferenceNames;
@@ -11,9 +12,13 @@ import java.io.IOException;
 
 /**
  * @author paour
+ * @author arothe
  * @version Jan 14, 2004
  */
 public class GalleryRemoteMini extends GalleryRemote {
+
+	private static final Logger LOGGER = Logger.getLogger(GalleryRemoteMini.class);
+
 	@Override
 	protected void initializeGR() {
 		super.initializeGR();
@@ -21,7 +26,7 @@ public class GalleryRemoteMini extends GalleryRemote {
 		CoreUtils.initCore();
 
 		try {
-			Logger.setup(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
+			LogManager.setup(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
 		} catch (IOException e) {
 			throw new RuntimeException("Problems with creating the log files");
 		}
@@ -44,7 +49,8 @@ public class GalleryRemoteMini extends GalleryRemote {
 			try {
 				pf.createNewFile();
 			} catch (IOException e) {
-				Log.logException(Log.LEVEL_ERROR, MODULE, e);
+				LOGGER.throwing(e);
+				//Log.logException(Log.LEVEL_ERROR, MODULE, e);
 			}
 		}
 

@@ -29,6 +29,7 @@ import com.gallery.galleryremote.statusbar.StatusUpdate;
 import com.gallery.galleryremote.statusbar.StatusUpdateAdapter;
 import com.gallery.galleryremote.util.ImageLoaderUtil;
 import com.gallery.galleryremote.util.ImageUtils;
+import com.gallery.galleryremote.util.log.LogManager;
 import com.gallery.galleryremote.util.log.Logger;
 
 /**
@@ -37,6 +38,8 @@ import com.gallery.galleryremote.util.log.Logger;
  */
 public class GalleryRemoteScreenSaver extends GalleryRemote implements GalleryRemoteCore, PreferenceNames, ListDataListener,
 		ImageLoaderUtil.ImageLoaderUser {
+
+	private static final Logger LOGGER = Logger.getLogger(GalleryRemoteScreenSaver.class);
 
 	DefaultComboBoxModel<Gallery> galleries = null;
 	Gallery gallery;
@@ -59,11 +62,12 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements GalleryRe
 		CoreUtils.initCore();
 
 		try {
-			Logger.setup(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
+			LogManager.setup(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL),
+					instance().properties.getBooleanProperty("toSysOut"));
 		} catch (IOException e) {
 			throw new RuntimeException("Problems with creating the log files");
 		}
-		
+
 		Log.startLog(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
 		startup();
 	}
@@ -86,7 +90,8 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements GalleryRe
 			try {
 				pf.createNewFile();
 			} catch (IOException e) {
-				Log.logException(Log.LEVEL_ERROR, MODULE, e);
+				LOGGER.throwing(e);
+				// Log.logException(Log.LEVEL_ERROR, MODULE, e);
 			}
 		}
 

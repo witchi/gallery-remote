@@ -1,62 +1,53 @@
 <project name="GalleryRemote" default="compile" basedir=".">
 	<description>
 		A part of the Gallery project
- </description>
+	</description>
+
 	<!-- set global properties for this build -->
 	<property file="build.properties" />
 
-	<property name="src" location="." />
-	<property name="build" location="build" />
-	<property name="lib" location="lib" />
-	<property name="img" location="img" />
-	<property name="dist" location="dist" />
-	<property name="install" location="gallery_remote_Build_Output/Web_Installers/InstData" />
+	<property name="dir.src" location="src" />
+	<property name="dir.build" location="build" />
+	<property name="dir.lib" location="lib" />
+	<property name="dir.img" location="src/img" />
+	<property name="dir.dest" location="dest" />
+	<property name="file.keystore" location="${dir.build}/gallery_keystore" />
 
-	<!-- define the following properties in build.properties:
-   iafolder: the folder where the InstallAnywhere executable is located
-   nsis.path: the folder where NSIS (the Nullsoft Installer System) is located
-   docbase: the Gallery docs CVS directory (obsolete)
-   debug.params: optional debug parameters for the screensaver debug -->
+	<path id="path.classpath">
+		<fileset dir="${dir.lib}" includes="**/*.jar" />
+		<pathelement path="${dir.img}" />
+	</path>
 
-	<target name="init">
+	<target name="prepare">
 		<!-- Create the time stamp -->
 		<tstamp />
-		<!-- Create the build directory structure used by compile -->
-		<mkdir dir="${build}" />
-	</target>
+		<available property="keystore.present" file="${file.keystore}" />
 
-	<target name="compile" depends="init" description="compile the source">
-		<!-- Compile the java code from ${src} into ${build} -->
-		<javac includeantruntime="false" srcdir="${src}" destdir="${build}" includes="com/**,HTTPClient/**,edu/**" listfiles="on" debug="on" nowarn="off" source="1.7" target="1.7">
-			<classpath>
-				<pathelement location="lib/AppleJavaExtensions.jar" />
-				<pathelement location="lib/metadata-extractor-2.1.jar" />
-				<pathelement location="lib/saverbeans-api.jar" />
-				<pathelement location="lib/junit-4.4.jar" />
-				<pathelement location="lib/ant.jar" />
-			</classpath>
-			<compilerarg value="-XDignore.symbol.file" />
-			<compilerarg value="-Xlint:deprecation" />
-		</javac>
+		<mkdir dir="${dir.build}" />
+		<mkdir dir="${dir.dest}" />
 
-		<!-- other files needed -->
-		<copy file="${src}/rar_about_gr1.png" todir="${build}" />
-		<copy file="${src}/rar_icon_32.gif" todir="${build}" />
-		<copy file="${src}/rar_icon_16.gif" todir="${build}" />
-		<copy file="${src}/com/gallery/GalleryRemote/prefs/panes.properties" todir="${build}/com/gallery/GalleryRemote/prefs" />
-		<copy todir="${build}/com/gallery/GalleryRemote/resources">
-			<fileset dir="${src}/com/gallery/GalleryRemote/resources">
-			</fileset>
+		<copy todir="${dir.build}">
+			<fileset dir="${dir.src}" includes="**/resources/**" />
+			<fileset dir="${dir.src}" includes="**/*.xml" />
+			<fileset dir="${dir.src}" includes="**/*.png" />
+			<fileset dir="${dir.src}" includes="**/*.gif" />
+			<fileset dir="${dir.src}" includes="**/*.properties" />
 		</copy>
 	</target>
 
-	<target name="run" depends="compile" description="compile then run">
+	<target name="compile" depends="prepare" description="compile the source">
+		<!-- Compile the java code from ${dir.src} into ${dir.build} -->
+		<javac includeantruntime="false" srcdir="${dir.src}" destdir="${dir.build}" classpathref="path.classpath" includes="com/**,ch/**,edu/**" listfiles="on" debug="on" nowarn="off" source="1.7" target="1.7">
+			<compilerarg value="-XDignore.symbol.file" />
+			<compilerarg value="-Xlint:deprecation" />
+		</javac>
+	</target>
 
+	<target name="run" depends="compile" description="compile then run">
 		<java classname="com.gallery.GalleryRemote.GalleryRemote" fork="true" maxmemory="256M">
 			<classpath>
-				<pathelement location="lib/metadata-extractor-2.1.jar" />
-				<pathelement path="${build}" />
-				<pathelement path="img" />
+				<pathelement location="${dir.build}" />
+				<path refid="path.classpath" />
 			</classpath>
 		</java>
 	</target>
@@ -67,33 +58,38 @@
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005" />
 			<classpath>
-				<pathelement location="lib/metadata-extractor-2.1.jar" />
-				<pathelement path="${build}" />
-				<pathelement path="img" />
+				<pathelement path="${dir.build}" />
+				<path refid="path.classpath" />
 			</classpath>
 		</java>
 	</target>
 
-	<target name="jar" depends="clean,compile" description="create a jar of the source">
+	<target name="clean" description="clean work files">
+		<!-- Delete the ${dir.build} and ${dist} directory trees -->
+		<delete dir="${dir.build}" />
+		<delete dir="${dir.dist}" />
+	</target>
 
-		<delete file="GalleryRemote.jar" />
-		<jar destfile="GalleryRemote.jar">
-			<fileset dir="${build}" />
+
+	<target name="galleryremote_jar" depends="clean,compile">
+		<delete file="${dir.dest}/GalleryRemote.jar" />
+		<jar destfile="${dir.dest}/GalleryRemote.jar">
+			<fileset dir="${dir.build}" />
 			<fileset dir="." includes="*.properties,ApertureToGallery.applescript" excludes="postchangelog.properties" />
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Main-Class" value="com.gallery.GalleryRemote.GalleryRemote" />
-				<attribute name="Class-Path" value="lib/metadata-extractor-2.1.jar img/" />
+				<attribute name="Class-Path" value="${dir.lib}/metadata-extractor-2.1.jar ${dir.img}/" />
 			</manifest>
 		</jar>
 
-		<signjar jar="GalleryRemote.jar" alias="gallery" storepass="gallery" />
+		<signjar jar="${dir.dest}/GalleryRemote.jar" alias="gallery" storepass="gallery" />
 	</target>
 
-	<target name="applet_jar" depends="compile,applet_img_jar" description="create a jar for the applet version of GR">
-
-		<jar destfile="GalleryRemoteApplet.jar" index="true">
-			<fileset dir="${build}" includesfile="AppletMiniExcludes.txt" excludesfile="AppletExcludes.txt" />
+	<target name="galleryremoteapplet_jar" depends="clean,compile">
+		<delete file="${dir.dest}/GalleryRemoteApplet.jar" />
+		<jar destfile="${dir.dest}/GalleryRemoteApplet.jar" index="true">
+			<fileset dir="${dir.build}" includesfile="AppletMiniExcludes.txt" excludesfile="AppletExcludes.txt" />
 			<fileset dir="." includes="*.properties" excludes="postchangelog.properties" />
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
@@ -102,14 +98,13 @@
 
 		<!-- For testing you can self sign the jar. To create a key:-->
 		<!-- $keytool -genkey -alias gallery -keypass gallery-->
-		<signjar jar="GalleryRemoteApplet.jar" alias="gallery" storepass="gallery" />
+		<signjar jar="${dir.dest}/GalleryRemoteApplet.jar" alias="gallery" storepass="gallery" />
 	</target>
 
-	<target name="applet_mini_jar" depends="compile" description="create a jar for the applet version of GR">
-
-		<delete file="GalleryRemoteAppletMini.jar" />
-		<jar destfile="GalleryRemoteAppletMini.jar" index="true">
-			<fileset dir="${build}" excludes="HTTPClient/*">
+	<target name="galleryremoteappletmini_jar" depends="clean,compile">
+		<delete file="${dir.dest}/GalleryRemoteAppletMini.jar" />
+		<jar destfile="${dir.dest}/GalleryRemoteAppletMini.jar" index="true">
+			<fileset dir="${dir.build}" excludes="ch/*">
 				<excludesfile name="AppletMiniExcludes.txt" />
 				<excludesfile name="AppletExcludes.txt" />
 			</fileset>
@@ -119,57 +114,46 @@
 			</manifest>
 		</jar>
 
-		<signjar jar="GalleryRemoteAppletMini.jar" alias="gallery" storepass="gallery" />
+		<signjar jar="${dir.dest}/GalleryRemoteAppletMini.jar" alias="gallery" storepass="gallery" />
 	</target>
 
-	<target name="httpclient_jar" depends="compile" description="create a jar for the HTTP library">
-
-		<delete file="GalleryRemoteHTTPClient.jar" />
-		<jar destfile="GalleryRemoteHTTPClient.jar" index="true">
-			<fileset dir="${build}" includes="HTTPClient/*" />
+	<target name="galleryremotehttpclient_jar" depends="clean,compile">
+		<delete file="${dir.dest}/GalleryRemoteHTTPClient.jar" />
+		<jar destfile="${dir.dest}/GalleryRemoteHTTPClient.jar" index="true">
+			<fileset dir="${dir.build}" includes="ch/*" />
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 			</manifest>
 		</jar>
 
-		<signjar jar="GalleryRemoteHTTPClient.jar" alias="gallery" storepass="gallery" />
+		<signjar jar="${dir.dest}/GalleryRemoteHTTPClient.jar" alias="gallery" storepass="gallery" />
 	</target>
 
-	<target name="zip" depends="jar" description="create a zip patch of the Gallery Remote install">
+	<target name="img_jar" depends="clean,compile">
+		<jar destfile="${dir.dest}/img.jar">
+			<fileset dir="${img}" />
+			<fileset dir="." includes="rar_about_gr1.png" />
+		</jar>
 
-		<zip destfile="gallery_remote.zip">
-			<fileset dir="." includes="defaults.properties" />
-			<fileset dir="." includes="ChangeLog" />
-			<fileset dir="." includes="GalleryRemote.jar" />
-			<fileset dir="." includes="ReadMe.html" />
-			<zipfileset dir="./lib" includes="metadata-extractor-2.1.jar" prefix="lib" />
-			<zipfileset dir="./img" includes="*" prefix="img" />
-			<zipfileset dir="./com/gallery/GalleryRemote/resources" includes="GRResources.properties" prefix="img" />
-		</zip>
+		<signjar jar="${dir.dest}/img.jar" alias="gallery" storepass="gallery" />
 	</target>
 
-	<target name="applet_zip" depends="applet_mini_jar, applet_jar, httpclient_jar" description="create a zip of the applets">
+	<target name="appletimg_jar" depends="clean,compile">
+		<copy file="imagemagick/im.properties.applet" tofile="${img}/im.properties" />
+		<copy file="jpegtran/jpegtran.properties.applet" tofile="${img}/jpegtran.properties" />
 
-		<zip destfile="gallery_remote_applets.zip">
-			<fileset dir="." includes="GalleryRemoteAppletMini.jar, GalleryRemoteApplet.jar, GalleryRemoteHTTPClient.jar, applet_img.jar" />
-		</zip>
+		<jar destfile="${dir.dest}/applet_img.jar">
+			<fileset dir="${img}" />
+		</jar>
+
+		<delete file="${img}/im.properties" />
+		<delete file="${img}/jpegtran.properties" />
 	</target>
 
-	<target name="testWin">
-		<condition property="onWin">
-			<os family="windows" />
-		</condition>
-	</target>
-
-	<target name="clean" description="clean work files">
-		<!-- Delete the ${build} and ${dist} directory trees -->
-		<delete dir="${build}" />
-		<delete dir="${dist}" />
-	</target>
+	<target name="jar" depends="galleryremote_jar,galleryremoteapplet_jar,galleryremoteappletmini_jar,galleryremotehttpclient_jar,img_jar,appletimg_jar" description="create a jar of the source" />
 
 	<target name="scrub" description="clean up all output files">
-		<delete dir="${build}" />
-		<delete dir="${dist}" />
+		<delete dir="${dir.build}" />
 		<delete file="GalleryRemote.jar" />
 		<delete file="GalleryRemoteAppletMini.jar" />
 		<delete file="GalleryRemote.MacOSX.NoVM.tgz" />
@@ -182,69 +166,7 @@
 		<delete dir="Gallery Remote.app" />
 	</target>
 
-	<target name="img_jar" description="create a jar of the images">
-
-		<jar destfile="img.jar">
-			<fileset dir="${img}" />
-			<fileset dir="." includes="rar_about_gr1.png" />
-		</jar>
-
-		<signjar jar="img.jar" alias="gallery" storepass="gallery" />
-	</target>
-
-	<target name="applet_img_jar" description="create a jar of the images">
-
-		<copy file="imagemagick/im.properties.applet" tofile="${img}/im.properties" />
-		<copy file="jpegtran/jpegtran.properties.applet" tofile="${img}/jpegtran.properties" />
-
-		<jar destfile="applet_img.jar">
-			<fileset dir="${img}" />
-		</jar>
-
-		<delete file="${img}/im.properties" />
-		<delete file="${img}/jpegtran.properties" />
-	</target>
-
-	<target name="executable_macosx" depends="jar, img_jar" description="Build a MacOSX executable">
-
-		<delete dir="Gallery Remote.app" />
-
-		<property file="defaults.properties" />
-
-		<taskdef name="jarbundler" classpath="${lib}/jarbundler.jar" classname="com.loomcom.ant.tasks.jarbundler.JarBundler" />
-
-		<jarbundler dir="." name="Gallery Remote" mainclass="com.gallery.GalleryRemote.GalleryRemote" icon="rar_icon_128_gr1.icns" jars="./GalleryRemote.jar ${lib}/metadata-extractor-2.1.jar ./img.jar" execs="./jpegtran/macos/jpegtran" stubfile="${lib}/JavaApplicationStub" workingdirectory="$APP_PACKAGE" version="${version}" infostring="Gallery Remote ${version}, (c) 2003" aboutmenuname="Gallery Remote" jvmversion="1.3+" />
-
-		<copy file="imagemagick/macos/im.properties" tofile="Gallery Remote.app/imagemagick/im.properties" />
-		<copy file="jpegtran/macos/jpegtran.properties" tofile="Gallery Remote.app/jpegtran/jpegtran.properties" />
-	</target>
-
-	<target name="installer_macosx" depends="executable_macosx" description="Build a MacOSX package">
-
-		<tar destfile="GalleryRemote.MacOSX.NoVM.tgz" compression="gzip">
-			<tarfileset dir="." prefix="Gallery Remote">
-				<include name="Gallery Remote.app/**" />
-				<exclude name="Gallery Remote.app/Contents/MacOS/*" />
-			</tarfileset>
-			<tarfileset dir="Gallery Remote.app/Contents/MacOS" prefix="Gallery Remote/Gallery Remote.app/Contents/MacOS/" mode="777">
-				<include name="*" />
-			</tarfileset>
-		</tar>
-	</target>
-
-	<target name="upload" description="Upload to SF.net">
-
-		<loadproperties srcfile="defaults.properties" />
-
-		<move file="${install}/Windows/NoVM/InstallGalleryRemote.exe" tofile="${install}/staging/GalleryRemote.${version}.Win32.NoVM.exe" />
-		<move file="${install}/Windows/VM/InstallGalleryRemote.exe" tofile="${install}/staging/GalleryRemote.${version}.Win32.VM.exe" />
-		<move file="${install}/Linux/NoVM/InstallGalleryRemote.bin" tofile="${install}/staging/GalleryRemote.${version}.Linux.NoVM.bin" />
-		<move file="${install}/Linux/VM/InstallGalleryRemote.bin" tofile="${install}/staging/GalleryRemote.${version}.Linux.VM.bin" />
-		<move file="${install}/Solaris/NoVM/InstallGalleryRemote.bin" tofile="${install}/staging/GalleryRemote.${version}.Solaris.NoVM.bin" />
-		<move file="${install}/GenericUnix/InstallGalleryRemote.bin" tofile="${install}/staging/GalleryRemote.${version}.Unix.NoVM.bin" />
-		<move file="${install}/Java/InstallGalleryRemote.jar" tofile="${install}/staging/GalleryRemote.${version}.jar" />
-	</target>
-
+	<!-- Creates the keystore for jar signing. Will be generated once. -->
 	<target name="create_keystore" description="Creates a self-signed certificate">
 		<exec executable="keytool">
 			<arg line="-genkey -keyalg RSA -alias gallery -dname &quot;CN=gallery.sourceforge.net, OU=Gallery, O=Gallery, L=Menlo Park, ST=California, C=US&quot; -keypass gallery -storepass gallery" />
@@ -257,163 +179,14 @@
 		</exec>
 	</target>
 
-	<target name="nightly" depends="zip, installer_macosx, applet_zip" description="Run all the tasks for a nightly build" />
-
-
-	<!-- SaverBeans screensaver -->
-	<target name="sbproperties">
-		<property file="defaults.properties" />
-
-		<property name="sbbuild" value="build/sb" />
-
-		<property name="screensaver" value="Gallery" />
-		<property name="screensaverez" value="Gallery" />
-		<property name="screensavershort" value="gallery" />
-		<property name="screensavershortfull" value="gallery_screensaver" />
-		<property name="screensaver.class" value="com.gallery.GalleryRemote.GRScreenSaver" />
-
-		<!-- Values for the Windows installer -->
-		<property name="productName" value="Gallery Remote Screensaver" />
-		<property name="productVersion" value="${version}" />
-		<property name="productPublisher" value="The Gallery project" />
-		<property name="productWebSite" value="http://gallery.sf.net/" />
-	</target>
-
-	<target name="sbcheck-nsis" description="Check if NSIS is present">
-		<fail unless="nsis.path">
-      Property nsis.path not found.  Please copy
-      build.properties.sample to build.properties and
-      follow the instructions in that file.
-    </fail>
-		<available file="${nsis.path}" property="nsis.present" />
-		<fail unless="nsis.present">
-      Property nsis.path is invalid.  Please set
-      it to the installation path of NSIS.
-    </fail>
-	</target>
-
-	<target name="sbdefine" description="Define custom tasks">
-		<taskdef name="foreachscreensaver" classname="org.jdesktop.jdic.screensaver.autogen.ForEachScreensaver" classpath="lib/saverbeans-ant.jar" />
-		<taskdef name="makewin32installscript" classname="org.jdesktop.jdic.screensaver.autogen.NsiGeneratorTask" classpath="lib/saverbeans-ant.jar" />
-	</target>
-
-	<target name="sbinit" depends="sbproperties,sbdefine" />
-
-	<target name="sbcompile" depends="sbinit,compile" description="Compile the screensaver">
-		<copy file="imagemagick/im.properties.applet" tofile="${img}/im.properties" />
-		<copy file="jpegtran/jpegtran.properties.applet" tofile="${img}/jpegtran.properties" />
-
-		<jar destfile="GalleryRemoteScreenSaver.jar" index="true">
-			<fileset dir="${build}" excludesfile="ScreenSaverExcludes.txt" />
-			<fileset dir="." includes="*.properties" excludes="postchangelog.properties" />
-			<fileset dir="${img}" includes="default.gif,im.properties,jpegtran.properties" />
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-			</manifest>
-		</jar>
-
-		<delete file="${img}/im.properties" />
-		<delete file="${img}/jpegtran.properties" />
-
-		<!-- Generate Makefile and Unix source distribution for each -->
-		<mkdir dir="${sbbuild}/unix" />
-		<foreachscreensaver confDir="${src}/sbconf" outDir="${sbbuild}/unix" os="unix" />
-		<!-- Generate Windows .scr and binary distribution for each -->
-		<mkdir dir="${sbbuild}/win32" />
-		<foreachscreensaver confDir="${src}/sbconf" outDir="${sbbuild}/win32" os="win32" />
-	</target>
-
-	<!-- Create screensaver distribution -->
-	<target name="sbdist" depends="sbcompile">
-		<!-- Create distribution for win32: -->
-		<mkdir dir="${dist}/${screensavershort}-win32" />
-		<copy todir="${dist}/${screensavershort}-win32">
-			<fileset dir="lib">
-				<include name="saverbeans-api.jar" />
-			</fileset>
-			<fileset dir=".">
-				<include name="GalleryRemoteScreenSaver.jar" />
-			</fileset>
-			<fileset dir="${sbbuild}/win32">
-				<include name="*.scr" />
-			</fileset>
-			<fileset dir="${basedir}">
-				<include name="COPYING" />
-			</fileset>
-		</copy>
-		<zip destfile="${dist}/${screensavershort}-win32.zip" basedir="${dist}" includes="${screensavershort}-win32/**" />
-
-		<!-- Create distribution for Unix: -->
-		<mkdir dir="${dist}/${screensavershortfull}.${version}.Unix" />
-		<copy todir="${dist}/${screensavershortfull}.${version}.Unix">
-			<fileset dir="lib">
-				<include name="saverbeans-api.jar" />
-			</fileset>
-			<fileset dir=".">
-				<include name="GalleryRemoteScreenSaver.jar" />
-			</fileset>
-			<fileset dir="${src}/sbconf">
-				<include name="*.xml" />
-			</fileset>
-			<fileset dir="${sbbuild}/unix" />
-			<fileset dir="${basedir}">
-				<include name="COPYING" />
-			</fileset>
-		</copy>
-		<zip destfile="${dist}/${screensavershortfull}.${version}.Unix.zip" basedir="${dist}" includes="${screensavershortfull}.${version}.Unix/**" />
-	</target>
-
-	<target name="sbwin32-installer" depends="sbinit,sbcheck-nsis,sbdist">
-		<mkdir dir="${sbbuild}/win32-installer" />
-		<makewin32installscript productName="${productName}" productVersion="${productVersion}" productPublisher="${productPublisher}" productWebSite="${productWebSite}" licenseFile="${basedir}/LICENSE" outputFilename="${screensavershortfull}.${version}.exe" saverbeansSdkPath="lib" outFile="${dist}/${screensavershort}.nsi" jarDir="${basedir}" scrDir="${sbbuild}/win32">
-			<fileset dir="${src}/sbconf" includes="*.xml" />
-		</makewin32installscript>
-		<!-- Launch makensis on script to create the installer -->
-		<exec executable="${nsis.path}/makensis.exe" failonerror="true">
-			<arg line="${dist}/${screensavershort}.nsi" />
-		</exec>
-	</target>
-
-	<!--
-    - Compile and debug screensaver in a JFrame.
-    - Can optionally attach to process using your Java IDE.  Change
-    - to suspend=y if you need to debug before the first frame.
-    - Use the port number that the JVM gives you.
-    -->
-	<target name="sbdebug" depends="sbcompile">
-		<java classname="org.jdesktop.jdic.screensaver.ScreensaverFrame" fork="true">
-			<classpath>
-				<pathelement location="GalleryRemoteScreenSaver.jar" />
-				<pathelement location="lib/saverbeans-api.jar" />
-			</classpath>
-			<arg value="${screensaver.class}" />
-			<arg line="${debug.params}" />
-		</java>
-	</target>
-
 	<target name="slideshowtest" depends="compile">
 		<java classname="com.gallery.GalleryRemote.DummyAppletContext" fork="true">
 			<classpath>
-				<pathelement location="lib/metadata-extractor-2.1.jar" />
-				<pathelement path="${build}" />
-				<pathelement path="img" />
+				<pathelement path="${dir.build}" />
+				<path refid="path.classpath" />
 			</classpath>
 			<arg line="com.gallery.GalleryRemote.GRAppletSlideshow -width 300 -height 450 gr_url http://www.paour.com/gallery2/ gr_gallery_version 2 gr_album 100401" />
 		</java>
 	</target>
 
-	<target name="install_applets" depends="applet_jar, applet_mini_jar, httpclient_jar, applet_img_jar">
-		<copy file="GalleryRemoteHTTPClient.jar" tofile="../gallery/java/GalleryRemoteHTTPClient.jar" />
-		<copy file="GalleryRemoteAppletMini.jar" tofile="../gallery/java/GalleryRemoteAppletMini.jar" />
-		<copy file="GalleryRemoteApplet.jar" tofile="../gallery/java/GalleryRemoteApplet.jar" />
-		<copy file="applet_img.jar" tofile="../gallery/java/applet_img.jar" />
-
-		<copy file="GalleryRemoteHTTPClient.jar" tofile="../gallery2/modules/uploadapplet/applets/GalleryRemoteHTTPClient.jar" />
-		<copy file="GalleryRemoteAppletMini.jar" tofile="../gallery2/modules/uploadapplet/applets/GalleryRemoteAppletMini.jar" />
-		<copy file="applet_img.jar" tofile="../gallery2/modules/uploadapplet/applets/applet_img.jar" />
-
-		<copy file="GalleryRemoteHTTPClient.jar" tofile="../gallery2/modules/slideshowapplet/applets/GalleryRemoteHTTPClient.jar" />
-		<copy file="GalleryRemoteAppletMini.jar" tofile="../gallery2/modules/slideshowapplet/applets/GalleryRemoteAppletMini.jar" />
-		<copy file="applet_img.jar" tofile="../gallery2/modules/slideshowapplet/applets/applet_img.jar" />
-	</target>
 </project>

@@ -44,7 +44,7 @@
 	</target>
 
 	<target name="run" depends="compile" description="compile then run">
-		<java classname="com.gallery.GalleryRemote.GalleryRemote" fork="true" maxmemory="256M">
+		<java classname="com.gallery.galleryremote.GalleryRemote" fork="true" maxmemory="256M">
 			<classpath>
 				<pathelement location="${dir.build}" />
 				<path refid="path.classpath" />
@@ -54,7 +54,7 @@
 
 	<target name="debug" depends="compile" description="compile then run">
 
-		<java classname="com.gallery.GalleryRemote.GalleryRemote" fork="true" maxmemory="256M">
+		<java classname="com.gallery.galleryremote.GalleryRemote" fork="true" maxmemory="256M">
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005" />
 			<classpath>

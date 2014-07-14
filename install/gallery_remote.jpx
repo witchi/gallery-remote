@@ -11,7 +11,7 @@
   <property category="idl" name="ProcessIDL" value="false"/>
   <property category="javaFormatting" name="EventStyle" value="0"/>
   <property category="runtime.0" name="RunnableType" value="com.borland.jbuilder.runtime.ApplicationRunner"/>
-  <property category="runtime.0" name="application.class" value="com.gallery.GalleryRemote.GalleryRemote"/>
+  <property category="runtime.0" name="application.class" value="com.gallery.galleryremote.GalleryRemote"/>
   <property category="runtime.0" name="appserver.ejbJarsSaved" value="1"/>
   <property category="runtime.0" name="appserver.parameters" value="-jts -jns -jss -jdb"/>
   <property category="runtime.0" name="appserver.servername" value="standard"/>
@@ -51,9 +51,9 @@
   <property category="sys" name="Version" value="1.0"/>
   <property category="sys" name="VersionLabel" value="@version"/>
   <property category="sys" name="WorkingDirectory" value="."/>
-  <property category="sys" name="palette.bean.chooser.beans" value="com.gallery.GalleryRemote.StatusBar;"/>
-  <property category="sys" name="uidesign.size.com.gallery.GalleryRemote.MainFrame" value="593,523"/>
-  <property category="sys" name="uidesign.size.com.gallery.GalleryRemote.NewAlbumDialog" value="400,170"/>
-  <property category="sys" name="uidesign.size.com.gallery.GalleryRemote.Update" value="563,437"/>
+  <property category="sys" name="palette.bean.chooser.beans" value="com.gallery.galleryremote.StatusBar;"/>
+  <property category="sys" name="uidesign.size.com.gallery.galleryremote.MainFrame" value="593,523"/>
+  <property category="sys" name="uidesign.size.com.gallery.galleryremote.NewAlbumDialog" value="400,170"/>
+  <property category="sys" name="uidesign.size.com.gallery.galleryremote.Update" value="563,437"/>
   <node name="com.gallery" type="Package"/>
 </project>

@@ -181,7 +181,7 @@ it will search for ones in this list]]></string>
 							<method name="addElement">
 								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="888fb898bdb8">
 									<property name="propertyValue">
-										<string><![CDATA[com.gallery.GalleryRemote.GalleryRemote]]></string>
+										<string><![CDATA[com.gallery.galleryremote.GalleryRemote]]></string>
 									</property>
 									<property name="propertyName">
 										<string><![CDATA[lax.main.class]]></string>
@@ -236,7 +236,7 @@ and any path to a file to read from that file]]></string>
 						</object>
 					</property>
 					<property name="mainClass">
-						<string><![CDATA[com.gallery.GalleryRemote.GalleryRemote]]></string>
+						<string><![CDATA[com.gallery.galleryremote.GalleryRemote]]></string>
 					</property>
 				</object>
 			</property>
@@ -3546,7 +3546,7 @@ it will search for ones in this list]]></string>
 													<method name="addElement">
 														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="888fb972bdfc">
 															<property name="propertyValue">
-																<string><![CDATA[com.gallery.GalleryRemote.GalleryRemote]]></string>
+																<string><![CDATA[com.gallery.galleryremote.GalleryRemote]]></string>
 															</property>
 															<property name="propertyName">
 																<string><![CDATA[lax.main.class]]></string>
@@ -3601,7 +3601,7 @@ and any path to a file to read from that file]]></string>
 												</object>
 											</property>
 											<property name="mainClass">
-												<string><![CDATA[com.gallery.GalleryRemote.GalleryRemote]]></string>
+												<string><![CDATA[com.gallery.galleryremote.GalleryRemote]]></string>
 											</property>
 										</object>
 										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="b9742fe8a8d4">

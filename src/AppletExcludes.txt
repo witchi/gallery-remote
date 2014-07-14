@@ -1,2 +1,0 @@
-com/gallery/GalleryRemote/insecureutil/*
-com/gallery/GalleryRemote/DummyAppletContext*

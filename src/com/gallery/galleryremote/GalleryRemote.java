@@ -23,6 +23,7 @@ package com.gallery.galleryremote;
 import java.applet.Applet;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -36,6 +37,7 @@ import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.prefs.GalleryProperties;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.prefs.PropertiesFile;
+import com.gallery.galleryremote.util.log.LogManager;
 
 /**
  * Main class and entry point of Gallery Remote
@@ -86,6 +88,14 @@ public abstract class GalleryRemote implements PreferenceNames {
 	}
 
 	protected void initializeGR() {
+		
+		try {
+			LogManager.setup(properties.getIntProperty(PreferenceNames.LOG_LEVEL), properties.getBooleanProperty("toSysOut"));
+		} catch (IOException e) {
+			throw new RuntimeException("Problems with creating log file");
+		}
+
+
 		try {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

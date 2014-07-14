@@ -8,6 +8,8 @@ public class Logger {
 
 	private Logger(java.util.logging.Logger logger) {
 		this.logger = logger;
+		this.logger.setLevel(Level.ALL);
+		//this.logger.setParent(parent);
 	}
 
 	public static Logger getLogger(Class<?> clazz) {

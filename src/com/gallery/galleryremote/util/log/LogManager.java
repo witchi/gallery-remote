@@ -10,10 +10,10 @@ import java.util.logging.Level;
 
 public class LogManager {
 
+	// TODO: this is called too late, but we need the properties
 	public static void setup(int level, boolean toConsole) throws IOException {
 
 		java.util.logging.Logger logger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
-		logger.setUseParentHandlers(true);
 
 		if (!toConsole) {
 			java.util.logging.Logger rootLogger = java.util.logging.Logger.getLogger("");

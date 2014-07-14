@@ -92,9 +92,9 @@ public abstract class GalleryRemote implements PreferenceNames {
 			} catch (Exception e) {
 			}
 
-			if (Float.parseFloat(System.getProperty("java.specification.version")) < 1.39) {
+			if (Float.parseFloat(System.getProperty("java.specification.version")) < 1.7) {
 				JOptionPane.showMessageDialog(null, "Gallery Remote is not supported on Java "
-						+ "Virtual Machines older than 1.4. Please install a recent VM " + "and try running Gallery Remote again.", "VM too old",
+						+ "Virtual Machines older than 1.7. Please install a recent VM " + "and try running Gallery Remote again.", "VM too old",
 						JOptionPane.ERROR_MESSAGE);
 
 				System.exit(1);

@@ -2,12 +2,13 @@ package com.gallery.galleryremote.util.log;
 
 import java.util.logging.Level;
 
-public class Logger {
+public final class Logger {
 
 	private java.util.logging.Logger logger;
 
 	private Logger(java.util.logging.Logger logger) {
 		this.logger = logger;
+		this.logger.setParent(java.util.logging.Logger.getLogger(Logger.class.getName()));
 	}
 
 	/**

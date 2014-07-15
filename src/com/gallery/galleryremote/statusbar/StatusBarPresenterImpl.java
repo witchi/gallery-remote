@@ -4,22 +4,21 @@ import java.awt.Component;
 
 import javax.swing.JOptionPane;
 
+import com.gallery.galleryremote.GalleryRemote;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.util.DialogUtil;
 import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.util.log.Logger;
-import com.gallery.galleryremote.GalleryRemote;
-import com.gallery.galleryremote.Log;
 
 public class StatusBarPresenterImpl implements StatusBarPresenter {
 
-	public static final String MODULE = "StatusBar";
 	private static final Logger LOGGER = Logger.getLogger(StatusBar.class);
 
 	private StatusBar view;
 	private StatusBarModel model;
 
 	public StatusBarPresenterImpl(StatusBarModel model, StatusBar view) {
+		LOGGER.fine("Creating class instance...");
 		this.model = model;
 		this.view = view;
 	}
@@ -49,9 +48,7 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 	public void startProgress(StatusLevel level, int minValue, int maxValue, String message, boolean undetermined) {
 
 		StatusLevelData dto = new StatusLevelData(level);
-
 		LOGGER.fine("start level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
-		Log.log(Log.LEVEL_TRACE, MODULE, "start level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
 
 		dto.setMinValue(minValue);
 		dto.setMaxValue(maxValue);
@@ -176,8 +173,8 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 
 	@Override
 	public void error(String message) {
-		JOptionPane.showMessageDialog(DialogUtil.findParentWindow(view), message, GRI18n.getString(MODULE, "Error"),
-				JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(DialogUtil.findParentWindow(view), message,
+				GRI18n.getString(StatusBarPresenterImpl.class.getPackage().getName(), "Error"), JOptionPane.ERROR_MESSAGE);
 	}
 
 	@Override

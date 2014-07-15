@@ -8,10 +8,15 @@ public class Logger {
 
 	private Logger(java.util.logging.Logger logger) {
 		this.logger = logger;
-		this.logger.setLevel(Level.ALL);
-		//this.logger.setParent(parent);
 	}
 
+	/**
+	 * The default config for every logger (set by VM):
+	 * <p>
+	 * ConsoleHandler, Level.INFO
+	 * </p>
+	 * We replace this settings, if we have read the Gallery properties.
+	 */
 	public static Logger getLogger(Class<?> clazz) {
 		return new Logger(java.util.logging.Logger.getLogger(clazz.getName()));
 	}
@@ -39,5 +44,12 @@ public class Logger {
 	public void info(String msg) {
 		logger.info(msg);
 	}
-	
+
+	public void log(Level level, String msg) {
+		logger.log(level, msg);
+	}
+
+	public void warning(String msg) {
+		logger.warning(msg);
+	}
 }

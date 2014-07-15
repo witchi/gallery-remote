@@ -37,9 +37,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
 
 import com.gallery.galleryremote.Base64;
-import com.gallery.galleryremote.Log;
 import com.gallery.galleryremote.util.log.Logger;
 
 /**
@@ -344,7 +344,9 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 		if ((st = new StringTokenizer(value, ",")).countTokens() == 2) {
 			return new Dimension(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
 		}
-		Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key + " = " + value + " is missing or malformed (should be width,height)");
+		LOGGER.warning("Parameter " + key + " = " + value + " is missing or malformed (should be width,height)");
+		// Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key + " = " + value +
+		// " is missing or malformed (should be width,height)");
 		return null;
 	}
 
@@ -382,7 +384,9 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 		if ((st = new StringTokenizer(value, ",")).countTokens() == 3) {
 			return new Color(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
 		}
-		Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key + " = " + value + " is missing or malformed (should be red,green,blue)");
+		// Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key + " = " + value +
+		// " is missing or malformed (should be red,green,blue)");
+		LOGGER.warning("Parameter " + key + " = " + value + " is missing or malformed (should be red,green,blue)");
 		return null;
 	}
 
@@ -400,7 +404,9 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 			return new Rectangle(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
 					Integer.parseInt(st.nextToken()));
 		}
-		Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key + " is missing or malformed (should be x,y,width,height)");
+		// Log.log(Log.LEVEL_ERROR, MODULE, "Parameter " + key +
+		// " is missing or malformed (should be x,y,width,height)");
+		LOGGER.warning("Parameter " + key + " is missing or malformed (should be x,y,width,height)");
 		return null;
 	}
 
@@ -498,7 +504,7 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 		return tmp;
 	}
 
-	public void logProperties(int level, String module) {
+	public void logProperties(Level level, String module) {
 		if (module == null) {
 			module = MODULE;
 		}
@@ -514,7 +520,7 @@ public class GalleryProperties extends Properties implements PreferenceNames {
 
 		for (int i = 0; i < namesArray.length; i++) {
 			String name = (String) namesArray[i];
-			LOGGER.info(logPropertiesHelper(name));
+			LOGGER.log(level, logPropertiesHelper(name));
 			// Log.log(level, module, logPropertiesHelper(name));
 		}
 	}

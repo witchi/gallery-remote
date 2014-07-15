@@ -1,4 +1,4 @@
-package com.gallery.galleryremote.prictureinspect;
+package com.gallery.galleryremote.pictureinspector;
 
 import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;

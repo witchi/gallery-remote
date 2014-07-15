@@ -1,4 +1,4 @@
-package com.gallery.galleryremote.prictureinspect;
+package com.gallery.galleryremote.pictureinspector;
 
 import java.awt.Color;
 import java.awt.Font;

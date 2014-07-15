@@ -96,6 +96,7 @@ import com.gallery.galleryremote.albuminspector.AlbumInspectorModel;
 import com.gallery.galleryremote.albuminspector.AlbumInspectorModelImpl;
 import com.gallery.galleryremote.albuminspector.AlbumInspectorPresenter;
 import com.gallery.galleryremote.albuminspector.AlbumInspectorPresenterImpl;
+import com.gallery.galleryremote.cache.ThumbnailCache;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.model.Picture;

@@ -26,7 +26,7 @@ public class GalleryRemoteMini extends GalleryRemote {
 		CoreUtils.initCore();
 
 		try {
-			LogManager.setup(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
+			LogManager.init(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL), instance().properties.getBooleanProperty("toSysOut"));
 		} catch (IOException e) {
 			throw new RuntimeException("Problems with creating the log files");
 		}

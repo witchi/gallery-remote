@@ -70,6 +70,12 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 	protected void initializeGR() {
 		super.initializeGR();
 
+		try {
+			LogManager.init(properties.getIntProperty(PreferenceNames.LOG_LEVEL), properties.getBooleanProperty("toSysOut"));
+		} catch (IOException e) {
+			throw new RuntimeException("Problems with creating log file");
+		}
+
 		Log.startLog(
 				properties.getIntProperty(PreferenceNames.LOG_LEVEL),
 				properties.getBooleanProperty("toSysOut")

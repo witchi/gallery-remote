@@ -62,7 +62,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements GalleryRe
 		CoreUtils.initCore();
 
 		try {
-			LogManager.setup(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL),
+			LogManager.init(instance().properties.getIntProperty(PreferenceNames.LOG_LEVEL),
 					instance().properties.getBooleanProperty("toSysOut"));
 		} catch (IOException e) {
 			throw new RuntimeException("Problems with creating the log files");

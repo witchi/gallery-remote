@@ -23,10 +23,10 @@ package com.gallery.galleryremote;
 import java.applet.Applet;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.logging.Level;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -37,7 +37,6 @@ import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.prefs.GalleryProperties;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.prefs.PropertiesFile;
-import com.gallery.galleryremote.util.log.LogManager;
 
 /**
  * Main class and entry point of Gallery Remote
@@ -88,13 +87,6 @@ public abstract class GalleryRemote implements PreferenceNames {
 	}
 
 	protected void initializeGR() {
-		
-		try {
-			LogManager.setup(properties.getIntProperty(PreferenceNames.LOG_LEVEL), properties.getBooleanProperty("toSysOut"));
-		} catch (IOException e) {
-			throw new RuntimeException("Problems with creating log file");
-		}
-
 
 		try {
 			try {
@@ -113,13 +105,13 @@ public abstract class GalleryRemote implements PreferenceNames {
 			createProperties();
 
 			// log system properties
-			new GalleryProperties(System.getProperties()).logProperties(Log.LEVEL_INFO, "SysProps");
+			new GalleryProperties(System.getProperties()).logProperties(Level.FINE, "SysProps");
 
 			// log system environment
-			new GalleryProperties(System.getenv()).logProperties(Log.LEVEL_INFO, "SysEnv");
+			new GalleryProperties(System.getenv()).logProperties(Level.FINE, "SysEnv");
 
 			// log properties
-			properties.logProperties(Log.LEVEL_TRACE, "UsrProps");
+			properties.logProperties(Level.FINE, "UsrProps");
 
 			loadIcons();
 

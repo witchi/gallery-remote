@@ -9,14 +9,19 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+import com.sun.istack.internal.logging.Logger;
+
 class StatusProgress extends JPanel {
 
 	private static final long serialVersionUID = 5584670140758675762L;
+	private static final Logger LOGGER = Logger.getLogger(StatusProgress.class);
+
 	private JProgressBar bar;
 	private GridBagConstraints barConstraints;
 	private final int progressWidth;
 
 	StatusProgress(int progressWidth) {
+		LOGGER.fine("Creating class instance...");
 		this.progressWidth = progressWidth;
 		initUI();
 	}

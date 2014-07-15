@@ -4,13 +4,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.istack.internal.logging.Logger;
+
 public class StatusBarModel {
 
+	private static final Logger LOGGER = Logger.getLogger(StatusBarModel.class);
 	private HashMap<StatusLevel, StatusLevelData> data;
 	private Map<StatusLevel, UndeterminedThread> threads;
 	private StatusLevel currentLevel;
 
 	public StatusBarModel() {
+		LOGGER.fine("Creating class instance...");
 		initStatusLevel();
 	}
 

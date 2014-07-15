@@ -6,6 +6,8 @@ import java.awt.Insets;
 
 import javax.swing.JPanel;
 
+import com.sun.istack.internal.logging.Logger;
+
 /**
  * @author paour
  * @author arothe
@@ -15,6 +17,7 @@ import javax.swing.JPanel;
 public class StatusBar extends JPanel {
 
 	private static final long serialVersionUID = -3346018784723463138L;
+	private static final Logger LOGGER = Logger.getLogger(StatusBar.class);
 
 	private StatusProgress jProgressBar;
 	private GridBagConstraints jProgressConstraints;
@@ -23,6 +26,7 @@ public class StatusBar extends JPanel {
 	private final int progressWidth;
 
 	public StatusBar(int progressWidth) {
+		LOGGER.fine("Creating class instance...");
 		this.progressWidth = progressWidth;
 		initUI();
 	}

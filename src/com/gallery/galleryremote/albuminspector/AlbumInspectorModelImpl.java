@@ -6,16 +6,20 @@ import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.statusbar.StatusUpdate;
 import com.gallery.galleryremote.util.AbstractModel;
+import com.gallery.galleryremote.util.log.Logger;
 import com.gallery.galleryremote.GalleryCommCapabilities;
 import com.gallery.galleryremote.MainFrame;
 
 public class AlbumInspectorModelImpl extends AbstractModel implements AlbumInspectorModel {
 
+	private static final Logger LOGGER = Logger.getLogger(AlbumInspectorModelImpl.class); 
+	
 	// TODO: remove the direct reference to mainframe by listeners
 	private MainFrame mainFrame;
 	private Album album;
 
 	public AlbumInspectorModelImpl(MainFrame mainFrame) {
+		LOGGER.fine("Creating class instance...");
 		this.mainFrame = mainFrame;
 	}
 

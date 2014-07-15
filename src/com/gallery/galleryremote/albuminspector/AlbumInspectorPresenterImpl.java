@@ -38,6 +38,7 @@ public class AlbumInspectorPresenterImpl implements ActionListener, ItemListener
 	private boolean ignoreNextComboBoxChanged;
 
 	public AlbumInspectorPresenterImpl(AlbumInspectorModel model, AlbumInspector view) {
+		LOGGER.fine("Creating class instance...");
 		this.model = model;
 		this.view = view;
 		initDocuments();

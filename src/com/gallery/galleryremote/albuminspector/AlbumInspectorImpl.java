@@ -33,6 +33,7 @@ import javax.swing.UIManager;
 
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.util.GRI18n;
+import com.gallery.galleryremote.util.log.Logger;
 
 /**
  * Bean inspector for albums
@@ -44,6 +45,7 @@ import com.gallery.galleryremote.util.GRI18n;
 public class AlbumInspectorImpl extends JPanel implements PreferenceNames, AlbumInspector {
 
 	private static final long serialVersionUID = 8406883123834053126L;
+	private static final Logger LOGGER = Logger.getLogger(AlbumInspectorImpl.class);
 	private static final String MODULE = "AlbmInspec";
 
 	private JPanel jSpacer;
@@ -61,6 +63,7 @@ public class AlbumInspectorImpl extends JPanel implements PreferenceNames, Album
 	private GridBagConstraints jSpacerConstraints;
 
 	public AlbumInspectorImpl() {
+		LOGGER.fine("Creating class instance...");
 		initUI();
 	}
 

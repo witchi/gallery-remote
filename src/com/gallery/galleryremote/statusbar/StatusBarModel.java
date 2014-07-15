@@ -23,7 +23,7 @@ public class StatusBarModel {
 		}
 
 		data.get(StatusLevel.GENERIC).setActive(true);
-		currentLevel = StatusLevel.NONE;
+		currentLevel = StatusLevel.GENERIC;
 	}
 
 	boolean raiseLevel(StatusLevel level) {

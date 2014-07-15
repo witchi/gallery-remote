@@ -14,18 +14,18 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 
+import com.gallery.galleryremote.CoreUtils;
+import com.gallery.galleryremote.GalleryCommCapabilities;
+import com.gallery.galleryremote.GalleryRemote;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.util.ImageUtils;
-import com.gallery.galleryremote.CoreUtils;
-import com.gallery.galleryremote.GalleryCommCapabilities;
-import com.gallery.galleryremote.GalleryRemote;
-import com.gallery.galleryremote.Log;
+import com.gallery.galleryremote.util.log.Logger;
 
 public class PictureInspectorPresenterImpl implements ActionListener, DocumentListener, PictureInspectorPresenter {
 
-	private static final String MODULE = "PictInspec";
+	private static final Logger LOGGER = Logger.getLogger(PictureInspectorPresenterImpl.class);
 
 	private PictureInspectorModel model;
 	private PictureInspector view;
@@ -36,6 +36,7 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 	private Action prevPictureAction;
 
 	public PictureInspectorPresenterImpl(PictureInspectorModel model, PictureInspector view) {
+		LOGGER.fine("Creating class instance...");
 		this.model = model;
 		this.view = view;
 		initDocuments();
@@ -45,7 +46,7 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
-		Log.log(Log.LEVEL_INFO, MODULE, "Command selected " + command);
+		LOGGER.info("Command selected " + command);
 
 		if (command.equals(PictureInspectorActions.DELETE)) {
 			model.deleteSelectedPictures();
@@ -169,7 +170,7 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 			dto.setCapability(false);
 			dto.setViewEnabled(false);
 
-			model.setDocumentText("Icon", GRI18n.getString(MODULE, "noPicSel"));
+			model.setDocumentText("Icon", GRI18n.getString(this.getClass().getPackage().getName(), "noPicSel"));
 			model.setDocumentText("Path", "");
 			model.setDocumentText("Album", "");
 			model.setDocumentText("Size", "");
@@ -186,7 +187,7 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 			dto.setViewEnabled(view.isEnabled());
 
 			if (p.isOnline()) {
-				model.setDocumentText("Path", GRI18n.getString(MODULE, "onServer"));
+				model.setDocumentText("Path", GRI18n.getString(this.getClass().getPackage().getName(), "onServer"));
 				model.setDocumentText("Icon", p.getName());
 			} else {
 				model.setDocumentText("Icon", p.getSource().getName());
@@ -207,7 +208,7 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 			dto.setViewEnabled(view.isEnabled());
 
 			Object[] params = { new Integer(model.getPictureList().size()) };
-			model.setDocumentText("Icon", GRI18n.getString(MODULE, "countElemSel", params));
+			model.setDocumentText("Icon", GRI18n.getString(this.getClass().getPackage().getName(), "countElemSel", params));
 			model.setDocumentText("Path", "");
 			model.setDocumentText("Album", p.getParentAlbum().getTitle());
 			model.setDocumentText("Size", NumberFormat.getInstance().format((int) Album.getObjectFileSize(model.getPictureList())) + " bytes");

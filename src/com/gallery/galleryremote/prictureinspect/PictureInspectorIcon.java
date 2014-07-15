@@ -7,15 +7,19 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
+import com.gallery.galleryremote.util.log.Logger;
+
 public class PictureInspectorIcon extends JLabel implements DocumentListener {
 
 	private static final long serialVersionUID = 5502733913250753072L;
+	private static final Logger LOGGER = Logger.getLogger(PictureInspectorIcon.class);
 	private Document document;
 
 	public PictureInspectorIcon() {
+		LOGGER.fine("Creating class instance...");
 		document = new PlainDocument();
 	}
-	
+
 	public void setDocument(Document doc) {
 		this.document = doc;
 		doc.addDocumentListener(this);

@@ -6,11 +6,16 @@ import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
+import com.gallery.galleryremote.util.log.Logger;
+
 class CaptionPanel extends JScrollPane {
+
 	private static final long serialVersionUID = -5578520363869492620L;
+	private static final Logger LOGGER = Logger.getLogger(CaptionPanel.class);
 	private PictureFieldTextArea jCaption;
 
 	CaptionPanel() {
+		LOGGER.fine("Creating class instance...");
 		setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		setBorder(null);
 		getViewport().add((Component) getCaption(), null);

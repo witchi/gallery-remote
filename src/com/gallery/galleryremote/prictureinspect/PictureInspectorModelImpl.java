@@ -15,18 +15,21 @@ import javax.swing.text.PlainDocument;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.util.AbstractModel;
 import com.gallery.galleryremote.util.GRI18n;
+import com.gallery.galleryremote.util.log.Logger;
 import com.gallery.galleryremote.GalleryCommCapabilities;
 import com.gallery.galleryremote.MainFrame;
 
 public class PictureInspectorModelImpl extends AbstractModel implements PictureInspectorModel {
 
-	private static final String MODULE = "PictInspec";
+	private static final Logger LOGGER = Logger.getLogger(PictureInspectorModelImpl.class);
+
 	private MainFrame mainFrame;
 	private List<Picture> pictureList = null;
 	private final HashMap<String, Document> extraFieldDocuments;
 	private final HashMap<String, Document> fieldDocuments;
 
 	public PictureInspectorModelImpl(MainFrame mainFrame) {
+		LOGGER.fine("Creating class instance...");
 		this.mainFrame = mainFrame;
 		this.pictureList = new ArrayList<Picture>();
 		this.extraFieldDocuments = new HashMap<String, Document>();
@@ -184,7 +187,7 @@ public class PictureInspectorModelImpl extends AbstractModel implements PictureI
 			Document d = new PlainDocument();
 			try {
 				d.remove(0, d.getLength());
-				d.insertString(0, GRI18n.getString(MODULE, "icon"), null);
+				d.insertString(0, GRI18n.getString(this.getClass().getPackage().getName(), "icon"), null);
 			} catch (BadLocationException e) {
 				// do nothing
 			}

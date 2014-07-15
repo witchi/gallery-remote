@@ -9,14 +9,15 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import com.gallery.galleryremote.GalleryRemote;
 import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.util.ImageUtils;
-import com.gallery.galleryremote.GalleryRemote;
-import com.gallery.galleryremote.Log;
+import com.gallery.galleryremote.util.log.Logger;
 
 class IconAreaPanel extends JPanel {
+
 	private static final long serialVersionUID = -5451979859370784290L;
-	private static final String MODULE = "PictInspec";
+	private static final Logger LOGGER = Logger.getLogger(IconAreaPanel.class);
 
 	private PictureInspectorIcon jIcon;
 	private GridBagConstraints jIconConstraints;
@@ -30,6 +31,7 @@ class IconAreaPanel extends JPanel {
 	private int emptyIconHeight;
 
 	IconAreaPanel() {
+		LOGGER.fine("Creating class instance...");
 		initUI();
 	}
 
@@ -47,7 +49,7 @@ class IconAreaPanel extends JPanel {
 
 	private void setEmptyIconHeight(double height) {
 		this.emptyIconHeight = (int) height;
-		Log.log(Log.LEVEL_TRACE, MODULE, "emptyIconHeight: " + getEmptyIconHeight());
+		LOGGER.fine("emptyIconHeight: " + getEmptyIconHeight());
 	}
 
 	private GridBagConstraints getIconConstraints() {
@@ -86,7 +88,7 @@ class IconAreaPanel extends JPanel {
 		if (jRotateLeftButton == null) {
 			jRotateLeftButton = new JButton();
 			jRotateLeftButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			jRotateLeftButton.setToolTipText(GRI18n.getString(MODULE, "rotLtTip"));
+			jRotateLeftButton.setToolTipText(GRI18n.getString(this.getClass().getPackage().getName(), "rotLtTip"));
 			jRotateLeftButton.setActionCommand(PictureInspectorActions.ROTATE_LEFT.name());
 			jRotateLeftButton.setIcon(GalleryRemote.iLeft);
 		}
@@ -97,7 +99,7 @@ class IconAreaPanel extends JPanel {
 		if (jRotateRightButton == null) {
 			jRotateRightButton = new JButton();
 			jRotateRightButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			jRotateRightButton.setToolTipText(GRI18n.getString(MODULE, "rotRtTip"));
+			jRotateRightButton.setToolTipText(GRI18n.getString(this.getClass().getPackage().getName(), "rotRtTip"));
 			jRotateRightButton.setActionCommand(PictureInspectorActions.ROTATE_RIGHT.name());
 			jRotateRightButton.setIcon(GalleryRemote.iRight);
 		}
@@ -108,7 +110,7 @@ class IconAreaPanel extends JPanel {
 		if (jFlipButton == null) {
 			jFlipButton = new JButton();
 			jFlipButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			jFlipButton.setToolTipText(GRI18n.getString(MODULE, "flipTip"));
+			jFlipButton.setToolTipText(GRI18n.getString(this.getClass().getPackage().getName(), "flipTip"));
 			jFlipButton.setActionCommand(PictureInspectorActions.FLIP.name());
 			jFlipButton.setIcon(GalleryRemote.iFlip);
 		}

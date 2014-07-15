@@ -7,7 +7,7 @@
  * @date 06 August 1998
  */
 
-package com.gallery.galleryremote;
+package com.gallery.galleryremote.util;
 
 public class Base64 {
 	public static String encode(String data) {

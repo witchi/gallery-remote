@@ -39,7 +39,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
-import com.gallery.galleryremote.Base64;
+import com.gallery.galleryremote.util.Base64;
 import com.gallery.galleryremote.util.log.Logger;
 
 /**

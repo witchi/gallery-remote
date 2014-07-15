@@ -29,7 +29,6 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 		StatusLevelData data = model.getCurrentLevelData();
 
 		LOGGER.fine("reset ui level: " + data.getLevel() + " - " + data.getMessage() + " - " + data.getValue());
-		Log.log(Log.LEVEL_TRACE, MODULE, "reset ui level: " + data.getLevel() + " - " + data.getMessage() + " - " + data.getValue());
 
 		try {
 			view.setIndeterminateProgress(data.isUndetermined());
@@ -50,10 +49,10 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 	public void startProgress(StatusLevel level, int minValue, int maxValue, String message, boolean undetermined) {
 
 		StatusLevelData dto = new StatusLevelData(level);
-		
+
 		LOGGER.fine("start level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
 		Log.log(Log.LEVEL_TRACE, MODULE, "start level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
-		
+
 		dto.setMinValue(minValue);
 		dto.setMaxValue(maxValue);
 		dto.setValue(0);
@@ -76,18 +75,16 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 	public void updateProgressValue(StatusLevel level, int value) {
 		StatusLevelData dto = model.getStatusLevelData(level);
 		dto.setValue(value);
+		model.setStatusLevelData(dto);
 
 		if (level == model.getCurrentStatusLevel() && dto.isActive()) {
 			resetUIState();
 			return;
 		}
 
-		LOGGER.fine("Trying to use updateProgressValue when not progressOn or with wrong level");
+		LOGGER.fine("Trying to use updateProgressValue when not progressOn (" + dto.isActive() + ") or with wrong level ("
+				+ model.getCurrentStatusLevel() + " -> " + level + ")");
 		LOGGER.fine(Thread.currentThread().getStackTrace());
-
-		// Log.log(Log.TRACE, MODULE,
-		// "Trying to use updateProgressValue when not progressOn or with wrong level");
-		// Log.logStack(Log.TRACE, MODULE);
 	}
 
 	@Override
@@ -95,36 +92,32 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 		StatusLevelData dto = model.getStatusLevelData(level);
 		dto.setValue(value);
 		dto.setMaxValue(maxValue);
+		model.setStatusLevelData(dto);
 
 		if (level == model.getCurrentStatusLevel() && dto.isActive()) {
 			resetUIState();
 			return;
 		}
 
-		LOGGER.fine("Trying to use updateProgressValue when not progressOn or with wrong level");
+		LOGGER.fine("Trying to use updateProgressValue when not progressOn (" + dto.isActive() + ") or with wrong level ("
+				+ model.getCurrentStatusLevel() + " -> " + level + ")");
 		LOGGER.fine(Thread.currentThread().getStackTrace());
-
-		// Log.log(Log.TRACE, MODULE,
-		// "Trying to use updateProgressValue when not progressOn or with wrong level");
-		// Log.logStack(Log.TRACE, MODULE);
 	}
 
 	@Override
 	public void updateProgressStatus(StatusLevel level, String message) {
 		StatusLevelData dto = model.getStatusLevelData(level);
 		dto.setMessage(message);
+		model.setStatusLevelData(dto);
 
 		if (level == model.getCurrentStatusLevel() && dto.isActive()) {
 			resetUIState();
 			return;
 		}
 
-		LOGGER.fine("Trying to use updateProgressValue when not progressOn or with wrong level");
+		LOGGER.fine("Trying to use updateProgressStatus when not progressOn (" + dto.isActive() + ") or with wrong level ("
+				+ model.getCurrentStatusLevel() + " -> " + level + ")");
 		LOGGER.fine(Thread.currentThread().getStackTrace());
-
-		// Log.log(Log.TRACE, MODULE,
-		// "Trying to use updateProgressValue when not progressOn or with wrong level");
-		// Log.logStack(Log.TRACE, MODULE);
 	}
 
 	@Override
@@ -149,18 +142,13 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 
 	@Override
 	public void stopProgress(StatusLevel level, String message) {
-		
+
 		StatusLevelData dto = model.getStatusLevelData(StatusLevel.GENERIC);
 		dto.setMessage(message);
 		model.setStatusLevelData(dto);
 
-		LOGGER.fine("stop level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
-		Log.log(Log.LEVEL_TRACE, MODULE, "stop level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
-		
 		dto = model.getStatusLevelData(level);
-
 		LOGGER.fine("stop level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
-		Log.log(Log.LEVEL_TRACE, MODULE, "stop level: " + dto.getLevel() + " - " + dto.getMessage() + " - " + dto.getValue());
 
 		if (level == model.getCurrentStatusLevel() && dto.isActive()) {
 			model.determineLevel(level);
@@ -173,6 +161,7 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 			if (level.ordinal() > StatusLevel.GENERIC.ordinal()) {
 				dto.setActive(false);
 			}
+			model.setStatusLevelData(dto);
 
 			// find the previous active level
 			model.setCurrentStatusLevel(model.getPrevStatusLevel(model.getCurrentStatusLevel()));

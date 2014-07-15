@@ -1,7 +1,7 @@
 package com.gallery.galleryremote.statusbar;
 
 class StatusLevelData {
-	private StatusLevel level = StatusLevel.NONE;
+	private StatusLevel level = StatusLevel.GENERIC;
 	private boolean active = false;
 	private String message = "";
 	private int minValue = 0;

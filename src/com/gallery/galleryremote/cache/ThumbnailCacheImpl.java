@@ -159,4 +159,8 @@ public class ThumbnailCacheImpl implements ThumbnailCache {
 				.startProgress(StatusLevel.CACHE, 0, toLoad.size(), GRI18n.getString(this.getClass(), "loadThmb"), false);
 	}
 
+	@Override
+	public String[] acceptedImageFormats() {
+		return new String[] {"jpeg", "png", "bmp", "gif"};
+	}
 }

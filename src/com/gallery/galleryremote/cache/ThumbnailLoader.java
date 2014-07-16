@@ -100,23 +100,27 @@ class ThumbnailLoader extends Thread implements Loader {
 	private Image fetchThumbnailImage(Picture p) {
 
 		LOGGER.fine("Fetching thumbnail " + p.getUrlThumbnail());
+		
 		Image img = null;
-		try {
-			URLConnection conn = ImageUtils.openUrlConnection(p.getUrlThumbnail(), p);
-			conn.connect();
-
-			ImageReader reader = ImageIO.getImageReadersByFormatName("jpeg").next();
-			ImageInputStream inputStream = ImageIO.createImageInputStream(conn.getInputStream());
-			reader.setInput(inputStream);
-			img = reader.read(0);
-			reader.dispose();
-
-		} catch (IIOException e) {
-			LOGGER.throwing(e);
-		} catch (IOException e) {
-			LOGGER.throwing(e);
+		for (String format : cache.acceptedImageFormats()) {
+			LOGGER.fine("fetching with \"" + format + "\" image format reader");		
+			try {
+				URLConnection conn = ImageUtils.openUrlConnection(p.getUrlThumbnail(), p);
+				conn.connect();
+				
+				ImageReader reader = ImageIO.getImageReadersByFormatName(format).next();
+				ImageInputStream inputStream = ImageIO.createImageInputStream(conn.getInputStream());
+				reader.setInput(inputStream);
+				img = reader.read(0);
+				reader.dispose();
+				break;
+				
+			} catch (IIOException e) {
+				LOGGER.throwing(e);
+			} catch (IOException e) {
+				LOGGER.throwing(e);
+			} 
 		}
-
 		return img;
 	}
 }

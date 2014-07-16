@@ -30,4 +30,6 @@ public interface ThumbnailCache {
 	void reload();
 	
 	void flushMemory();
+	
+	String[] acceptedImageFormats();
 }

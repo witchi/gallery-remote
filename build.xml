@@ -11,6 +11,7 @@
 	<property name="dir.lib" location="lib" />
 	<property name="dir.img" location="src/img" />
 	<property name="dir.dest" location="dest" />
+	<property name="dir.install" location="install" />
 	<property name="file.keystore" location="${dir.build}/gallery_keystore" />
 
 	<path id="path.classpath">
@@ -75,7 +76,7 @@
 		<delete file="${dir.dest}/GalleryRemote.jar" />
 		<jar destfile="${dir.dest}/GalleryRemote.jar">
 			<fileset dir="${dir.build}" />
-			<fileset dir="." includes="*.properties,ApertureToGallery.applescript" excludes="postchangelog.properties" />
+			<fileset dir="." includes="*.properties,${dir.install}/ApertureToGallery.applescript" excludes="postchangelog.properties" />
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Main-Class" value="com.gallery.GalleryRemote.GalleryRemote" />
@@ -89,7 +90,7 @@
 	<target name="galleryremoteapplet_jar" depends="clean,compile">
 		<delete file="${dir.dest}/GalleryRemoteApplet.jar" />
 		<jar destfile="${dir.dest}/GalleryRemoteApplet.jar" index="true">
-			<fileset dir="${dir.build}" includesfile="AppletMiniExcludes.txt" excludesfile="AppletExcludes.txt" />
+			<fileset dir="${dir.build}" includesfile="${dir.install}/AppletMiniExcludes.txt" excludesfile="${dir.install}/AppletExcludes.txt" />
 			<fileset dir="." includes="*.properties" excludes="postchangelog.properties" />
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
@@ -104,9 +105,9 @@
 	<target name="galleryremoteappletmini_jar" depends="clean,compile">
 		<delete file="${dir.dest}/GalleryRemoteAppletMini.jar" />
 		<jar destfile="${dir.dest}/GalleryRemoteAppletMini.jar" index="true">
-			<fileset dir="${dir.build}" excludes="ch/*">
-				<excludesfile name="AppletMiniExcludes.txt" />
-				<excludesfile name="AppletExcludes.txt" />
+			<fileset dir="${dir.build}" excludes="ch/">
+				<excludesfile name="${dir.install}/AppletMiniExcludes.txt" />
+				<excludesfile name="${dir.install}/AppletExcludes.txt" />
 			</fileset>
 			<fileset dir="." includes="*.properties" excludes="postchangelog.properties" />
 			<manifest>
@@ -120,7 +121,7 @@
 	<target name="galleryremotehttpclient_jar" depends="clean,compile">
 		<delete file="${dir.dest}/GalleryRemoteHTTPClient.jar" />
 		<jar destfile="${dir.dest}/GalleryRemoteHTTPClient.jar" index="true">
-			<fileset dir="${dir.build}" includes="ch/*" />
+			<fileset dir="${dir.build}" includes="ch/" />
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 			</manifest>
@@ -131,7 +132,7 @@
 
 	<target name="img_jar" depends="clean,compile">
 		<jar destfile="${dir.dest}/img.jar">
-			<fileset dir="${img}" />
+			<fileset dir="${dir.img}" />
 			<fileset dir="." includes="rar_about_gr1.png" />
 		</jar>
 
@@ -139,32 +140,18 @@
 	</target>
 
 	<target name="appletimg_jar" depends="clean,compile">
-		<copy file="imagemagick/im.properties.applet" tofile="${img}/im.properties" />
-		<copy file="jpegtran/jpegtran.properties.applet" tofile="${img}/jpegtran.properties" />
+		<copy file="${dir.src}/imagemagick/im.properties.applet" tofile="${dir.img}/im.properties" />
+		<copy file="${dir.src}/jpegtran/jpegtran.properties.applet" tofile="${dir.img}/jpegtran.properties" />
 
 		<jar destfile="${dir.dest}/applet_img.jar">
-			<fileset dir="${img}" />
+			<fileset dir="${dir.img}" />
 		</jar>
 
-		<delete file="${img}/im.properties" />
-		<delete file="${img}/jpegtran.properties" />
+		<delete file="${dir.img}/im.properties" />
+		<delete file="${dir.img}/jpegtran.properties" />
 	</target>
 
 	<target name="jar" depends="galleryremote_jar,galleryremoteapplet_jar,galleryremoteappletmini_jar,galleryremotehttpclient_jar,img_jar,appletimg_jar" description="create a jar of the source" />
-
-	<target name="scrub" description="clean up all output files">
-		<delete dir="${dir.build}" />
-		<delete file="GalleryRemote.jar" />
-		<delete file="GalleryRemoteAppletMini.jar" />
-		<delete file="GalleryRemote.MacOSX.NoVM.tgz" />
-		<delete file="GalleryRemoteHTTPClient.jar" />
-		<delete file="img.jar" />
-		<delete file="applet_img.jar" />
-		<delete file="GalleryRemoteApplet.jar" />
-		<delete file="gallery_remote_applets.zip" />
-		<delete file="gallery_remote.zip" />
-		<delete dir="Gallery Remote.app" />
-	</target>
 
 	<!-- Creates the keystore for jar signing. Will be generated once. -->
 	<target name="create_keystore" description="Creates a self-signed certificate">

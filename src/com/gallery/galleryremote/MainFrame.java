@@ -97,6 +97,7 @@ import com.gallery.galleryremote.albuminspector.AlbumInspectorModelImpl;
 import com.gallery.galleryremote.albuminspector.AlbumInspectorPresenter;
 import com.gallery.galleryremote.albuminspector.AlbumInspectorPresenterImpl;
 import com.gallery.galleryremote.cache.ThumbnailCache;
+import com.gallery.galleryremote.cache.ThumbnailCacheImpl;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.model.Picture;
@@ -153,7 +154,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	// private Album currentAlbum = null;
 	private boolean inProgress = false;
 
-	ThumbnailCache thumbnailCache = new ThumbnailCache();
+	ThumbnailCache thumbnailCache = new ThumbnailCacheImpl();
 
 	boolean running = true;
 

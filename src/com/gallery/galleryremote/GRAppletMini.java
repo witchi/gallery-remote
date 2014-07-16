@@ -41,6 +41,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.gallery.galleryremote.cache.ThumbnailCache;
+import com.gallery.galleryremote.cache.ThumbnailCacheImpl;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.model.Picture;
@@ -364,7 +365,7 @@ public class GRAppletMini extends GRApplet implements GalleryRemoteCore, ActionL
 			Log.logException(Log.LEVEL_ERROR, MODULE, e);
 		}
 
-		thumbnailCache = new ThumbnailCache();
+		thumbnailCache = new ThumbnailCacheImpl();
 	}
 
 	public void jbUpdate() {

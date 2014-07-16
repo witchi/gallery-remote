@@ -103,7 +103,8 @@ public class GRApplet extends JApplet {
 		jLabel.setText("<HTML><CENTER>The Gallery Remote applet has stopped, you can navigate away or close the window</CENTER></HTML>");
 	}
 
-	protected AppletInfo getGRAppletInfo() {
+	// AR: changed from protected to pubic final
+	public final AppletInfo getGRAppletInfo() {
 		AppletInfo info = new AppletInfo();
 
 		info.gallery = new Gallery(GalleryRemote.instance().getCore()
@@ -259,9 +260,10 @@ public class GRApplet extends JApplet {
 		return info;
 	}
 
-	class AppletInfo {
-		String albumName;
-		Gallery gallery;
-		String slideshowFrom;
+	// AR: public final added to class, public added to member fields
+	public final class AppletInfo {
+		public String albumName;
+		public Gallery gallery;
+		public String slideshowFrom;
 	}
 }

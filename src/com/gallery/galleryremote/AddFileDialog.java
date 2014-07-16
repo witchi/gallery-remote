@@ -30,7 +30,8 @@ import java.io.File;
 public class AddFileDialog {
 	public static final String MODULE = "AddFileDialog";
 
-	static File[] addFiles(Component parent) {
+	// AR: public final added
+	public final static File[] addFiles(Component parent) {
 		JFileChooser fc = new JFileChooser();
 
 		fc.addChoosableFileFilter(new GalleryFileFilter());

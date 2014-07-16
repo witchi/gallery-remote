@@ -44,19 +44,20 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import com.gallery.galleryremote.main.MainFrame;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.util.ImageLoaderUtil;
 import com.gallery.galleryremote.util.ImageUtils;
 
-public class PreviewFrame extends JFrame implements PreferenceNames,
-		ImageLoaderUtil.ImageLoaderUser {
+public class PreviewFrame extends JFrame implements PreferenceNames, ImageLoaderUtil.ImageLoaderUser {
 
 	private static final long serialVersionUID = 3498443714616453620L;
 	public static final String MODULE = "PreviewFrame";
 	Rectangle currentRect = null;
-	ImageLoaderUtil loader;
+	// AR: public added
+	public ImageLoaderUtil loader;
 
 	public void initComponents() {
 		setTitle(GRI18n.getString(MODULE, "title"));
@@ -75,15 +76,14 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 		addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
 			public void windowActivated(java.awt.event.WindowEvent e) {
-				MainFrame mainFrame = (MainFrame) GalleryRemote.instance()
-						.getMainFrame();
+				MainFrame mainFrame = (MainFrame) GalleryRemote.instance().getMainFrame();
 
-				if (mainFrame.activating == PreviewFrame.this) {
-					mainFrame.activating = null;
+				if (mainFrame.getActivating() == PreviewFrame.this) {
+					mainFrame.setActivating(null);
 					return;
 				}
 
-				if (mainFrame.activating == null && mainFrame.isVisible()) {
+				if (mainFrame.getActivating() == null && mainFrame.isVisible()) {
 					/*
 					 * WindowListener mfWindowListener =
 					 * mainFrame.getWindowListeners()[0]; WindowListener
@@ -92,7 +92,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 					 * mainFrame.removeWindowListener(mfWindowListener);
 					 */
 
-					mainFrame.activating = PreviewFrame.this;
+					mainFrame.setActivating(PreviewFrame.this);
 					mainFrame.toFront();
 					toFront();
 
@@ -107,9 +107,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 		CropGlassPane glass = new CropGlassPane();
 		setGlassPane(glass);
 		glass.setVisible(true);
-		loader = new ImageLoaderUtil(
-				GalleryRemote.instance().properties.getIntProperty("cacheSize", 10),
-				this);
+		loader = new ImageLoaderUtil(GalleryRemote.instance().properties.getIntProperty("cacheSize", 10), this);
 	}
 
 	@Override
@@ -162,8 +160,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 		@Override
 		public void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g;
-			Color c = GalleryRemote.instance().properties
-					.getColorProperty(SLIDESHOW_COLOR);
+			Color c = GalleryRemote.instance().properties.getColorProperty(SLIDESHOW_COLOR);
 			if (c != null) {
 				g.setColor(c);
 			} else {
@@ -176,24 +173,18 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 				// Log.log(Log.LEVEL_TRACE, MODULE, "New image: " +
 				// loader.imageShowNow);
 
-				Image tmpImage = ImageUtils.rotateImage(loader.imageShowNow,
-						loader.pictureShowWant.getAngle(),
+				Image tmpImage = ImageUtils.rotateImage(loader.imageShowNow, loader.pictureShowWant.getAngle(),
 						loader.pictureShowWant.isFlipped(), this);
 
-				currentRect = new Rectangle(getLocation().x
-						+ (getWidth() - tmpImage.getWidth(this)) / 2,
-						getLocation().y
-								+ (getHeight() - tmpImage.getHeight(this)) / 2,
-						tmpImage.getWidth(this), tmpImage.getHeight(this));
+				currentRect = new Rectangle(getLocation().x + (getWidth() - tmpImage.getWidth(this)) / 2, getLocation().y
+						+ (getHeight() - tmpImage.getHeight(this)) / 2, tmpImage.getWidth(this), tmpImage.getHeight(this));
 
-				g2.drawImage(tmpImage, currentRect.x, currentRect.y,
-						getContentPane());
+				g2.drawImage(tmpImage, currentRect.x, currentRect.y, getContentPane());
 			}
 		}
 	}
 
-	class CropGlassPane extends JComponent implements MouseListener,
-			MouseMotionListener {
+	class CropGlassPane extends JComponent implements MouseListener, MouseMotionListener {
 
 		private static final long serialVersionUID = 6033021304558249809L;
 		Color background = new Color(100, 100, 100, 150);
@@ -224,8 +215,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 				localCurrentPicture = loader.pictureShowNow;
 			}
 
-			if (loader.pictureShowNow == null || loader.imageShowNow == null
-					|| loader.pictureShowNow.isOnline()) {
+			if (loader.pictureShowNow == null || loader.imageShowNow == null || loader.pictureShowNow.isOnline()) {
 				cacheRect = null;
 				return;
 			}
@@ -233,32 +223,23 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 			if (currentRect != null && start != null && end != null) {
 				Rectangle ct = loader.pictureShowNow.getCropTo();
 				if (ct != null) {
-					AffineTransform t = ImageUtils.createTransform(getBounds(),
-							currentRect, loader.pictureShowNow.getDimension(),
-							loader.pictureShowNow.getAngle(),
-							loader.pictureShowNow.isFlipped());
+					AffineTransform t = ImageUtils.createTransform(getBounds(), currentRect, loader.pictureShowNow.getDimension(),
+							loader.pictureShowNow.getAngle(), loader.pictureShowNow.isFlipped());
 
 					try {
-						cacheRect = getRect(t.inverseTransform(
-								ct.getLocation(), null), t.inverseTransform(
-								new Point(ct.x + ct.width, ct.y + ct.height),
-								null));
+						cacheRect = getRect(t.inverseTransform(ct.getLocation(), null),
+								t.inverseTransform(new Point(ct.x + ct.width, ct.y + ct.height), null));
 
 						g.setColor(background);
 						g.setClip(currentRect);
 						g.fillRect(0, 0, cacheRect.x, getHeight());
-						g.fillRect(cacheRect.x, 0, getWidth() - cacheRect.x,
-								cacheRect.y);
-						g.fillRect(cacheRect.x, cacheRect.y + cacheRect.height,
-								getWidth() - cacheRect.x, getHeight()
-										- cacheRect.y - cacheRect.height);
-						g.fillRect(cacheRect.x + cacheRect.width, cacheRect.y,
-								getWidth() - cacheRect.x - cacheRect.width,
-								cacheRect.height);
+						g.fillRect(cacheRect.x, 0, getWidth() - cacheRect.x, cacheRect.y);
+						g.fillRect(cacheRect.x, cacheRect.y + cacheRect.height, getWidth() - cacheRect.x, getHeight() - cacheRect.y
+								- cacheRect.height);
+						g.fillRect(cacheRect.x + cacheRect.width, cacheRect.y, getWidth() - cacheRect.x - cacheRect.width, cacheRect.height);
 
 						g.setColor(Color.black);
-						g.drawRect(cacheRect.x, cacheRect.y, cacheRect.width,
-								cacheRect.height);
+						g.drawRect(cacheRect.x, cacheRect.y, cacheRect.width, cacheRect.height);
 
 						g.setColor(background);
 						drawThirds(g, cacheRect);
@@ -305,8 +286,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 			}
 
 			g.setFont(g.getFont());
-			ImageLoaderUtil.paintOutline(g, message, 5, getBounds().height - 5,
-					1);
+			ImageLoaderUtil.paintOutline(g, message, 5, getBounds().height - 5, 1);
 		}
 
 		public void updateRect() {
@@ -333,31 +313,20 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 		}
 
 		private void drawThirds(Graphics g, Rectangle r) {
-			if (GalleryRemote.instance().properties.getBooleanProperty(
-					PREVIEW_DRAW_THIRDS, false)
-					|| "thirds".equals(GalleryRemote.instance().properties
-							.getProperty(PREVIEW_DRAW_THIRDS))) {
-				g.drawLine(r.x + r.width / 3, r.y, r.x + r.width / 3, r.y
-						+ r.height);
-				g.drawLine(r.x + r.width * 2 / 3, r.y, r.x + r.width * 2 / 3,
-						r.y + r.height);
-				g.drawLine(r.x, r.y + r.height / 3, r.x + r.width, r.y
-						+ r.height / 3);
-				g.drawLine(r.x, r.y + r.height * 2 / 3, r.x + r.width, r.y
-						+ r.height * 2 / 3);
-			} else if ("golden".equals(GalleryRemote.instance().properties
-					.getProperty(PREVIEW_DRAW_THIRDS))) {
+			if (GalleryRemote.instance().properties.getBooleanProperty(PREVIEW_DRAW_THIRDS, false)
+					|| "thirds".equals(GalleryRemote.instance().properties.getProperty(PREVIEW_DRAW_THIRDS))) {
+				g.drawLine(r.x + r.width / 3, r.y, r.x + r.width / 3, r.y + r.height);
+				g.drawLine(r.x + r.width * 2 / 3, r.y, r.x + r.width * 2 / 3, r.y + r.height);
+				g.drawLine(r.x, r.y + r.height / 3, r.x + r.width, r.y + r.height / 3);
+				g.drawLine(r.x, r.y + r.height * 2 / 3, r.x + r.width, r.y + r.height * 2 / 3);
+			} else if ("golden".equals(GalleryRemote.instance().properties.getProperty(PREVIEW_DRAW_THIRDS))) {
 				double p = 1.6180339887499;
 				double gw = r.width * p / (2 * p + 1);
 				double gh = r.height * p / (2 * p + 1);
-				g.drawLine((int) (r.x + gw), r.y, (int) (r.x + gw), r.y
-						+ r.height);
-				g.drawLine((int) (r.x + r.width - gw), r.y, (int) (r.x
-						+ r.width - gw), r.y + r.height);
-				g.drawLine(r.x, (int) (r.y + gh), r.x + r.width,
-						(int) (r.y + gh));
-				g.drawLine(r.x, (int) (r.y + r.height - gh), r.x + r.width,
-						(int) (r.y + r.height - gh));
+				g.drawLine((int) (r.x + gw), r.y, (int) (r.x + gw), r.y + r.height);
+				g.drawLine((int) (r.x + r.width - gw), r.y, (int) (r.x + r.width - gw), r.y + r.height);
+				g.drawLine(r.x, (int) (r.y + gh), r.x + r.width, (int) (r.y + gh));
+				g.drawLine(r.x, (int) (r.y + r.height - gh), r.x + r.width, (int) (r.y + r.height - gh));
 			}
 		}
 
@@ -385,8 +354,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (loader.pictureShowNow == null || currentRect == null
-					|| loader.pictureShowNow.isOnline()) {
+			if (loader.pictureShowNow == null || currentRect == null || loader.pictureShowNow.isOnline()) {
 				return;
 			}
 
@@ -401,8 +369,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 			switch (movingEdge) {
 			case SwingConstants.NORTH:
 				// keep bottom-right
-				start = makeValid(new Point(cacheRect.x + cacheRect.width,
-						cacheRect.y + cacheRect.height));
+				start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y + cacheRect.height));
 				break;
 
 			case SwingConstants.SOUTH:
@@ -412,8 +379,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 
 			case SwingConstants.WEST:
 				// keep bottom-right
-				start = makeValid(new Point(cacheRect.x + cacheRect.width,
-						cacheRect.y + cacheRect.height));
+				start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y + cacheRect.height));
 				break;
 
 			case SwingConstants.EAST:
@@ -423,20 +389,17 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 
 			case SwingConstants.NORTH_WEST:
 				// keep bottom-right
-				start = makeValid(new Point(cacheRect.x + cacheRect.width,
-						cacheRect.y + cacheRect.height));
+				start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y + cacheRect.height));
 				break;
 
 			case SwingConstants.NORTH_EAST:
 				// keep bottom-left
-				start = makeValid(new Point(cacheRect.x, cacheRect.y
-						+ cacheRect.height));
+				start = makeValid(new Point(cacheRect.x, cacheRect.y + cacheRect.height));
 				break;
 
 			case SwingConstants.SOUTH_WEST:
 				// keep top-right
-				start = makeValid(new Point(cacheRect.x + cacheRect.width,
-						cacheRect.y));
+				start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y));
 				break;
 
 			case SwingConstants.SOUTH_EAST:
@@ -466,23 +429,18 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 			inDrag = false;
 			centerMode = false;
 
-			if (loader.pictureShowNow == null || oldRect == null
-					|| loader.pictureShowNow.isOnline()) {
+			if (loader.pictureShowNow == null || oldRect == null || loader.pictureShowNow.isOnline()) {
 				return;
 			}
 
-			AffineTransform t = ImageUtils.createTransform(getBounds(),
-					currentRect, loader.pictureShowNow.getDimension(),
-					loader.pictureShowNow.getAngle(),
-					loader.pictureShowNow.isFlipped());
+			AffineTransform t = ImageUtils.createTransform(getBounds(), currentRect, loader.pictureShowNow.getDimension(),
+					loader.pictureShowNow.getAngle(), loader.pictureShowNow.isFlipped());
 			// pictureShowNow.setCropTo(getRect(t.transform(transitionStart,
 			// null), t.transform(end, null)));
 
 			Rectangle tmpRect = new Rectangle();
-			tmpRect.setFrameFromDiagonal(
-					t.transform(oldRect.getLocation(), null),
-					t.transform(new Point(oldRect.x + oldRect.width, oldRect.y
-							+ oldRect.height), null));
+			tmpRect.setFrameFromDiagonal(t.transform(oldRect.getLocation(), null),
+					t.transform(new Point(oldRect.x + oldRect.width, oldRect.y + oldRect.height), null));
 			loader.pictureShowNow.setCropTo(tmpRect);
 
 			setCursor(Cursor.getDefaultCursor());
@@ -505,26 +463,22 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 			Point2D p;
 			switch (movingEdge) {
 			case SwingConstants.NORTH:
-				p = makeValid(new Point(cacheRect.x,
-						(int) (e.getPoint().getY())));
+				p = makeValid(new Point(cacheRect.x, (int) (e.getPoint().getY())));
 				modifiers = 0;
 				break;
 
 			case SwingConstants.SOUTH:
-				p = makeValid(new Point(cacheRect.x + cacheRect.width,
-						(int) (e.getPoint().getY())));
+				p = makeValid(new Point(cacheRect.x + cacheRect.width, (int) (e.getPoint().getY())));
 				modifiers = 0;
 				break;
 
 			case SwingConstants.WEST:
-				p = makeValid(new Point((int) (e.getPoint().getX()),
-						cacheRect.y));
+				p = makeValid(new Point((int) (e.getPoint().getX()), cacheRect.y));
 				modifiers = 0;
 				break;
 
 			case SwingConstants.EAST:
-				p = makeValid(new Point((int) (e.getPoint().getX()),
-						cacheRect.y + cacheRect.height));
+				p = makeValid(new Point((int) (e.getPoint().getX()), cacheRect.y + cacheRect.height));
 				modifiers = 0;
 				break;
 
@@ -541,15 +495,12 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 				double dx = e.getPoint().getX() - moveCropStart.getX();
 				double dy = e.getPoint().getY() - moveCropStart.getY();
 
-				start = makeValid(new Point((int) (cacheRect.x + dx),
-						(int) (cacheRect.y + dy)));
-				p = new Point((int) (start.getX() + cacheRect.width),
-						(int) (start.getY() + cacheRect.height));
+				start = makeValid(new Point((int) (cacheRect.x + dx), (int) (cacheRect.y + dy)));
+				p = new Point((int) (start.getX() + cacheRect.width), (int) (start.getY() + cacheRect.height));
 
 				if (!isValid(p)) {
 					p = makeValid(p);
-					start = new Point((int) (p.getX() - cacheRect.width),
-							(int) (p.getY() - cacheRect.height));
+					start = new Point((int) (p.getX() - cacheRect.width), (int) (p.getY() - cacheRect.height));
 				}
 				modifiers = 0;
 				break;
@@ -581,23 +532,19 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 
 				// reverse rectangle
 				Dimension target;
-				int sameOrientation = (Math.abs(dx) - Math.abs(dy))
-						* (currentRect.width - currentRect.height);
+				int sameOrientation = (Math.abs(dx) - Math.abs(dy)) * (currentRect.width - currentRect.height);
 				if (sameOrientation > 0) {
 					target = new Dimension(dx, dy);
 				} else {
 					target = new Dimension(dy, dx);
 				}
 
-				Dimension d = ImageUtils.getSizeKeepRatio(
-						currentRect.getSize(), target, false);
+				Dimension d = ImageUtils.getSizeKeepRatio(currentRect.getSize(), target, false);
 
 				if (sameOrientation > 0) {
-					p.setLocation(start.getX() + d.width, start.getY()
-							+ d.height);
+					p.setLocation(start.getX() + d.width, start.getY() + d.height);
 				} else {
-					p.setLocation(start.getX() + d.height, start.getY()
-							+ d.width);
+					p.setLocation(start.getX() + d.height, start.getY() + d.width);
 				}
 			}
 
@@ -610,8 +557,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			if (loader.pictureShowNow == null || loader.imageShowNow == null
-					|| loader.pictureShowNow.isOnline() || cacheRect == null) {
+			if (loader.pictureShowNow == null || loader.imageShowNow == null || loader.pictureShowNow.isOnline() || cacheRect == null) {
 				movingEdge = 0;
 				setCursor(Cursor.getDefaultCursor());
 				return;
@@ -622,67 +568,55 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 
 			boolean canMove = false;
 
-			if (px >= cacheRect.x + TOLERANCE
-					&& px <= cacheRect.x + cacheRect.width - TOLERANCE) {
+			if (px >= cacheRect.x + TOLERANCE && px <= cacheRect.x + cacheRect.width - TOLERANCE) {
 				if (Math.abs(py - cacheRect.y) < TOLERANCE) {
 					movingEdge = SwingConstants.NORTH;
-					setCursor(Cursor
-							.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+					setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
 					canMove = true;
 				} else if (Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
 					movingEdge = SwingConstants.SOUTH;
-					setCursor(Cursor
-							.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+					setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
 					canMove = true;
 				}
 			}
 
-			if (py >= cacheRect.y + TOLERANCE
-					&& py <= cacheRect.y + cacheRect.height - TOLERANCE) {
+			if (py >= cacheRect.y + TOLERANCE && py <= cacheRect.y + cacheRect.height - TOLERANCE) {
 				if (Math.abs(px - cacheRect.x) < TOLERANCE) {
 					movingEdge = SwingConstants.WEST;
-					setCursor(Cursor
-							.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+					setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
 					canMove = true;
 				} else if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE) {
 					movingEdge = SwingConstants.EAST;
-					setCursor(Cursor
-							.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+					setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
 					canMove = true;
 				}
 			}
 
-			if (Math.abs(px - cacheRect.x) < TOLERANCE
-					&& Math.abs(py - cacheRect.y) < TOLERANCE) {
+			if (Math.abs(px - cacheRect.x) < TOLERANCE && Math.abs(py - cacheRect.y) < TOLERANCE) {
 				movingEdge = SwingConstants.NORTH_WEST;
 				setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
 				canMove = true;
 			}
 
-			if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE
-					&& Math.abs(py - cacheRect.y) < TOLERANCE) {
+			if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE && Math.abs(py - cacheRect.y) < TOLERANCE) {
 				movingEdge = SwingConstants.NORTH_EAST;
 				setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
 				canMove = true;
 			}
 
-			if (Math.abs(px - cacheRect.x) < TOLERANCE
-					&& Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
+			if (Math.abs(px - cacheRect.x) < TOLERANCE && Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
 				movingEdge = SwingConstants.SOUTH_WEST;
 				setCursor(Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR));
 				canMove = true;
 			}
 
-			if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE
-					&& Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
+			if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE && Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
 				movingEdge = SwingConstants.SOUTH_EAST;
 				setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
 				canMove = true;
 			}
 
-			if (px >= cacheRect.x + TOLERANCE
-					&& px <= cacheRect.x + cacheRect.width - TOLERANCE
-					&& py >= cacheRect.y + TOLERANCE
+			if (px >= cacheRect.x + TOLERANCE && px <= cacheRect.x + cacheRect.width - TOLERANCE && py >= cacheRect.y + TOLERANCE
 					&& py <= cacheRect.y + cacheRect.height - TOLERANCE) {
 				movingEdge = INSIDE;
 				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
@@ -735,8 +669,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames,
 			double px = p.getX();
 			double py = p.getY();
 
-			return px >= currentRect.x && py >= currentRect.y
-					&& px <= currentRect.x + currentRect.width - 1
+			return px >= currentRect.x && py >= currentRect.y && px <= currentRect.x + currentRect.width - 1
 					&& py <= currentRect.y + currentRect.height - 1;
 		}
 	}

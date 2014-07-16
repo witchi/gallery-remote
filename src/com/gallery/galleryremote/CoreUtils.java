@@ -138,7 +138,8 @@ public class CoreUtils {
 		}
 	}
 
-	static class FileCellRenderer extends DefaultListCellRenderer {
+	// AR: public added
+	public static class FileCellRenderer extends DefaultListCellRenderer {
 
 		private static final long serialVersionUID = -7506167308544454638L;
 

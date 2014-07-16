@@ -12,12 +12,12 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
+import com.gallery.galleryremote.GalleryCommCapabilities;
+import com.gallery.galleryremote.main.MainFrame;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.util.AbstractModel;
 import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.util.log.Logger;
-import com.gallery.galleryremote.GalleryCommCapabilities;
-import com.gallery.galleryremote.MainFrame;
 
 public class PictureInspectorModelImpl extends AbstractModel implements PictureInspectorModel {
 
@@ -53,7 +53,7 @@ public class PictureInspectorModelImpl extends AbstractModel implements PictureI
 		}
 		fireRefreshEvent();
 		mainFrame.repaint();
-		mainFrame.previewFrame.repaint();
+		mainFrame.getPreview().repaint();
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class PictureInspectorModelImpl extends AbstractModel implements PictureI
 		}
 		fireRefreshEvent();
 		mainFrame.repaint();
-		mainFrame.previewFrame.repaint();
+		mainFrame.getPreview().repaint();
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class PictureInspectorModelImpl extends AbstractModel implements PictureI
 		}
 		fireRefreshEvent();
 		mainFrame.repaint();
-		mainFrame.previewFrame.repaint();
+		mainFrame.getPreview().repaint();
 	}
 
 	@Override
@@ -198,7 +198,7 @@ public class PictureInspectorModelImpl extends AbstractModel implements PictureI
 
 	@Override
 	public boolean hasCapability(Picture p, GalleryCommCapabilities capability) {
-		return p.getParentAlbum().getGallery().getComm(mainFrame.jStatusBar).hasCapability(mainFrame.jStatusBar, capability);
+		return p.getParentAlbum().getGallery().getComm(mainFrame.getStatusBar()).hasCapability(mainFrame.getStatusBar(), capability);
 	}
 
 	@Override

@@ -27,11 +27,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeModelListener;
 
+import com.gallery.galleryremote.main.MainFrame;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.GalleryRemote;
 import com.gallery.galleryremote.Log;
-import com.gallery.galleryremote.MainFrame;
 
 /**
  * @author paour

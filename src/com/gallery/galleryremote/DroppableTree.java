@@ -46,6 +46,7 @@ import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
+import com.gallery.galleryremote.main.MainFrame;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.util.GRI18n;

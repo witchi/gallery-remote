@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 
 import javax.swing.ImageIcon;
 
+import com.gallery.galleryremote.main.MainFrame;
+import com.gallery.galleryremote.main.MainFrameImpl;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.prefs.PropertiesFile;
 import com.gallery.galleryremote.util.OsShutdown;
@@ -14,11 +16,11 @@ import com.gallery.galleryremote.util.log.LogManager;
 import com.gallery.galleryremote.util.log.Logger;
 
 /**
- * @author paour 
+ * @author paour
  * @version Jan 14, 2004
  */
 public class GalleryRemoteMainFrame extends GalleryRemote {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(GalleryRemoteMainFrame.class);
 	private MainFrame mainFrame = null;
 
@@ -41,7 +43,7 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 				pf.createNewFile();
 			} catch (IOException e) {
 				LOGGER.throwing(e);
-				//Log.logException(Log.LEVEL_ERROR, MODULE, e);
+				// Log.logException(Log.LEVEL_ERROR, MODULE, e);
 			}
 		}
 
@@ -55,7 +57,7 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 				m.invoke(null, new Object[] { "chmod -R go-rwx " + f.getPath().replaceAll(" ", "\\ ") });
 			} catch (Throwable e) {
 				LOGGER.throwing(e);
-				//Log.logException(Log.LEVEL_ERROR, MODULE, e);
+				// Log.logException(Log.LEVEL_ERROR, MODULE, e);
 			}
 		}
 
@@ -83,7 +85,7 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 
 		try {
 			if (isAppletMode() || !Update.upgrade()) {
-				mainFrame = new MainFrame();
+				mainFrame = new MainFrameImpl();
 				CoreUtils.initCore();
 				mainFrame.initMainFrame();
 			} else {
@@ -92,7 +94,7 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 			}
 		} catch (Exception e) {
 			LOGGER.throwing(e);
-			//Log.logException(Log.LEVEL_CRITICAL, "Startup", e);
+			// Log.logException(Log.LEVEL_CRITICAL, "Startup", e);
 			Log.shutdown();
 		}
 
@@ -109,12 +111,12 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 
 	@Override
 	public Frame getMainFrame() {
-		return mainFrame;
+		return (Frame) mainFrame;
 	}
 
 	@Override
 	public GalleryRemoteCore getCore() {
-		return mainFrame;
+		return (GalleryRemoteCore) mainFrame;
 	}
 
 	@Override
@@ -144,7 +146,7 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 			iFlip = new ImageIcon(GalleryRemote.class.getResource("/FlipHoriz24.gif"));
 		} catch (Exception e) {
 			LOGGER.throwing(e);
-			//Log.logException(Log.LEVEL_ERROR, MODULE, e);
+			// Log.logException(Log.LEVEL_ERROR, MODULE, e);
 		}
 	}
 }

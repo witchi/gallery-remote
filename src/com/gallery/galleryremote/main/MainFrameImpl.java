@@ -1,28 +1,5 @@
-/*
- *  Gallery Remote - a File Upload Utility for Gallery
- *
- *  Gallery - a web based photo album viewer and editor
- *  Copyright (C) 2000-2001 Bharat Mediratta
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or (at
- *  your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-package com.gallery.galleryremote;
+package com.gallery.galleryremote.main;
 
-// todo: save
-//import JSX.ObjIn;
-//import JSX.ObjOut;
 import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -90,6 +67,21 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.gallery.galleryremote.AddFileDialog;
+import com.gallery.galleryremote.CoreUtils;
+import com.gallery.galleryremote.DroppableList;
+import com.gallery.galleryremote.DroppableTree;
+import com.gallery.galleryremote.GRApplet;
+import com.gallery.galleryremote.GalleryComm;
+import com.gallery.galleryremote.GalleryCommCapabilities;
+import com.gallery.galleryremote.GalleryRemote;
+import com.gallery.galleryremote.GalleryRemoteCore;
+import com.gallery.galleryremote.Log;
+import com.gallery.galleryremote.NewAlbumDialog;
+import com.gallery.galleryremote.PictureSelection;
+import com.gallery.galleryremote.PreviewFrame;
+import com.gallery.galleryremote.SlideshowFrame;
+import com.gallery.galleryremote.UploadProgress;
 import com.gallery.galleryremote.about.AboutBox;
 import com.gallery.galleryremote.albuminspector.AlbumInspectorImpl;
 import com.gallery.galleryremote.albuminspector.AlbumInspectorModel;
@@ -120,20 +112,14 @@ import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.util.ImageUtils;
 import com.gallery.galleryremote.util.OsShutdown;
 
-/**
- * 
- * @author jackodog
- * @author paour
- * @author arothe
- */
-public class MainFrame extends JFrame implements ActionListener, ItemListener, ListSelectionListener, ListDataListener,
-		TreeSelectionListener, TreeModelListener, FocusListener, GalleryRemoteCore, PreferenceNames {
+public class MainFrameImpl extends JFrame implements ActionListener, ItemListener, ListSelectionListener, ListDataListener,
+		TreeSelectionListener, TreeModelListener, FocusListener, GalleryRemoteCore, PreferenceNames, MainFrame {
 
 	private static final long serialVersionUID = -7304899407265890824L;
 	public static final String MODULE = "MainFrame";
 	public static final String FILE_TYPE = ".grg";
 
-	public PreviewFrame previewFrame = null;
+	private PreviewFrame previewFrame;
 
 	/**
 	 * This File is the last opened file or null if the user has not opened a
@@ -158,7 +144,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 
 	boolean running = true;
 
-	public StatusBarPresenter jStatusBar = new StatusBarPresenterImpl(new StatusBarModel(), new StatusBar());
+	private StatusBarPresenter jStatusBar;
 
 	PictureSelection ps = null;
 
@@ -226,7 +212,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	AlbumInspectorPresenter jAlbumInspectorPresenter = new AlbumInspectorPresenterImpl(jAlbumInspectorModel, new AlbumInspectorImpl());
 	JScrollPane jPictureScroll = new JScrollPane();
 
-	public Frame activating = null;
+	private Frame activating;
 
 	public static Image iconImage = new ImageIcon(GalleryRemote.class.getResource("/rar_icon_16.gif")).getImage();
 
@@ -234,6 +220,11 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	public static final String CARD_ALBUM = "album";
 	private File source;
 
+	public MainFrameImpl() {
+
+	}
+
+	@Override
 	public void initMainFrame() {
 		macOSXRegistration();
 
@@ -245,7 +236,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 			int i = 0;
 			while (true) {
 				try {
-					Gallery g = Gallery.readFromProperties(p, i++, jStatusBar);
+					Gallery g = Gallery.readFromProperties(p, i++, getStatusBar());
 					if (g == null) {
 						break;
 					}
@@ -257,7 +248,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 				}
 			}
 		} else {
-			// Gallery g = new Gallery(jStatusBar);
+			// Gallery g = new Gallery(getStatusBar());
 			Applet applet = GalleryRemote.instance().getApplet();
 
 			GRApplet.AppletInfo info = ((GRApplet) applet).getGRAppletInfo();
@@ -339,8 +330,8 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 
 		if (GalleryRemote.instance().isAppletMode()) {
 			/*
-			 * Gallery g = getCurrentGallery(); g.getComm(jStatusBar).isLoggedIn =
-			 * true;
+			 * Gallery g = getCurrentGallery();
+			 * g.getComm(getStatusBar()).isLoggedIn = true;
 			 */
 
 			fetchAlbums();
@@ -375,7 +366,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 			if (g.isAutoLoadOnStartup()) {
 				// load the Gallery
 				// login may have failed and caused getComm to be null.
-				GalleryComm comm = g.getComm(jStatusBar);
+				GalleryComm comm = g.getComm(getStatusBar());
 
 				// may have tried to connect and failed
 				if (comm != null && !GalleryComm.wasAuthFailure()) {
@@ -549,17 +540,16 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 				 * jMenuItemOpen.setEnabled(false); jMenuItemSave.setEnabled(false);
 				 * jMenuItemSaveAs.setEnabled(false); }
 				 */
-				Log.log(
-						Log.LEVEL_TRACE,
+				Log.log(Log.LEVEL_TRACE,
 						currentGallery
 								+ " - "
 								+ currentGallery.getUsername()
 								+ " - "
-								+ (currentGallery.hasComm() ? (" - " + currentGallery.getComm(jStatusBar).isLoggedIn()) : (" - " + currentGallery
-										.hasComm())));
+								+ (currentGallery.hasComm() ? (" - " + currentGallery.getComm(getStatusBar()).isLoggedIn())
+										: (" - " + currentGallery.hasComm())));
 
 				if (currentGallery != null && currentGallery.getUsername() != null && currentGallery.hasComm()
-						&& currentGallery.getComm(jStatusBar).isLoggedIn()) {
+						&& currentGallery.getComm(getStatusBar()).isLoggedIn()) {
 					jLoginButton.setText(GRI18n.getString(MODULE, "Log_out"));
 				} else {
 					jLoginButton.setText(GRI18n.getString(MODULE, "Log_in"));
@@ -576,8 +566,8 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 				jPictureInspectorPresenter.setEnabled(enabled);
 				jPicturesList.setEnabled(enabled && currentAlbum.getCanAdd());
 				jNewAlbumButton.setEnabled(!inProgress && currentGallery != null && currentGallery.hasComm()
-						&& currentGallery.getComm(jStatusBar).isLoggedIn()
-						&& currentGallery.getComm(jStatusBar).hasCapability(jStatusBar, GalleryCommCapabilities.CAPA_NEW_ALBUM)
+						&& currentGallery.getComm(getStatusBar()).isLoggedIn()
+						&& currentGallery.getComm(getStatusBar()).hasCapability(getStatusBar(), GalleryCommCapabilities.CAPA_NEW_ALBUM)
 						&& currentAlbum != null && currentAlbum.getCanCreateSubAlbum());
 
 				// change image displayed
@@ -607,7 +597,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 				if (currentAlbum == null) {
 					jPictureInspectorModel.setPictureList(null);
 
-					jStatusBar.setStatus(GRI18n.getString(MODULE, "notLogged"));
+					getStatusBar().setStatus(GRI18n.getString(MODULE, "notLogged"));
 				} else if (currentAlbum.sizePictures() > 0) {
 					jPictureInspectorModel.setPictureList(jPicturesList.getSelectedValuesList());
 
@@ -616,17 +606,17 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 					if (sel == -1) {
 						Object[] params = { new Integer(currentAlbum.sizePictures()),
 								new Integer((int) (currentAlbum.getPictureFileSize() / 1024)) };
-						jStatusBar.setStatus(GRI18n.getString(MODULE, "statusBarNoSel", params));
+						getStatusBar().setStatus(GRI18n.getString(MODULE, "statusBarNoSel", params));
 					} else {
 						Object[] params = { new Integer(selN), GRI18n.getString(MODULE, (selN == 1) ? "oneSel" : "manySel"),
 								new Integer((int) Album.getObjectFileSize(jPicturesList.getSelectedValuesList()) / 1024) };
 
-						jStatusBar.setStatus(GRI18n.getString(MODULE, "statusBarSel", params));
+						getStatusBar().setStatus(GRI18n.getString(MODULE, "statusBarSel", params));
 					}
 				} else {
 					jPictureInspectorModel.setPictureList(null);
 
-					jStatusBar.setStatus(GRI18n.getString(MODULE, "noSelection"));
+					getStatusBar().setStatus(GRI18n.getString(MODULE, "noSelection"));
 				}
 
 				jAlbumInspectorModel.setAlbum(currentAlbum);
@@ -686,7 +676,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	 * Open a file selection dialog and load the corresponding files
 	 */
 	public void browseAddPictures() {
-		jStatusBar.setStatus(GRI18n.getString(MODULE, "selPicToAdd"));
+		getStatusBar().setStatus(GRI18n.getString(MODULE, "selPicToAdd"));
 		File[] files = AddFileDialog.addFiles(this);
 
 		if (files != null) {
@@ -695,15 +685,15 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	}
 
 	public void importApertureSelection() {
-		jStatusBar.startProgress(StatusLevel.UNINTERRUPTIBLE, 0, 100, GRI18n.getString(MODULE, "apertureStartImport"), true);
-		jStatusBar.setInProgress(true);
+		getStatusBar().startProgress(StatusLevel.UNINTERRUPTIBLE, 0, 100, GRI18n.getString(MODULE, "apertureStartImport"), true);
+		getStatusBar().setInProgress(true);
 		new Thread() {
 			@Override
 			public void run() {
 				ArrayList<String> resultList = ImageUtils.importApertureSelection();
 				if (resultList == null || resultList.size() == 0) {
-					jStatusBar.stopProgress(StatusLevel.UNINTERRUPTIBLE, GRI18n.getString(MODULE, "apertureCancelImport"));
-					jStatusBar.setInProgress(false);
+					getStatusBar().stopProgress(StatusLevel.UNINTERRUPTIBLE, GRI18n.getString(MODULE, "apertureCancelImport"));
+					getStatusBar().setInProgress(false);
 					return;
 				}
 
@@ -728,8 +718,8 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 				getCurrentAlbum().addPictures(pictures);
 				preloadThumbnails(pictures.iterator());
 
-				jStatusBar.stopProgress(StatusLevel.UNINTERRUPTIBLE, GRI18n.getString(MODULE, "apertureDoneImport"));
-				jStatusBar.setInProgress(false);
+				getStatusBar().stopProgress(StatusLevel.UNINTERRUPTIBLE, GRI18n.getString(MODULE, "apertureDoneImport"));
+				getStatusBar().setInProgress(false);
 			}
 		}.start();
 	}
@@ -738,6 +728,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		addPictures(null, files, -1, select);
 	}
 
+	@Override
 	public void addPictures(Album album, File[] files, boolean select) {
 		addPictures(album, files, -1, select);
 	}
@@ -775,6 +766,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		addPictures(null, pictures, -1, select);
 	}
 
+	@Override
 	public void addPictures(Album album, Picture[] pictures, boolean select) {
 		addPictures(album, pictures, -1, select);
 	}
@@ -871,7 +863,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	public void fetchAlbums() {
 		Log.log(Log.LEVEL_INFO, MODULE, "fetchAlbums starting");
 
-		getCurrentGallery().doFetchAlbums(jStatusBar);
+		getCurrentGallery().doFetchAlbums(getStatusBar());
 
 		// updateAlbumCombo();
 
@@ -881,10 +873,11 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		}
 	}
 
+	@Override
 	public void fetchAlbumImages() {
 		Log.log(Log.LEVEL_INFO, MODULE, "fetchAlbumImages starting");
 
-		getCurrentAlbum().fetchAlbumImages(jStatusBar, false, 0);
+		getCurrentAlbum().fetchAlbumImages(getStatusBar(), false, 0);
 	}
 
 	public void newAlbum() {
@@ -943,6 +936,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		// setDirtyFlag(true);
 	}
 
+	@Override
 	public void slideshow() {
 		SlideshowFrame sf = new SlideshowFrame();
 		sf.showSlideshow();
@@ -1231,7 +1225,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		jBottomPanel.add(sortPanel, null);
 		jBottomPanel.add(jUploadButton, null);
 		this.getContentPane().add(
-				jStatusBar.getView(),
+				getStatusBar().getView(),
 				new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
 						0, 0));
 		jTopPanel.add(jGalleryCombo, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
@@ -1340,7 +1334,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 
 			@Override
 			public void windowActivated(java.awt.event.WindowEvent e) {
-				if (activating == MainFrame.this) {
+				if (activating == MainFrameImpl.this) {
 					activating = null;
 					return;
 				}
@@ -1354,7 +1348,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 					 * previewFrame.removeWindowListener(pWindowListener);
 					 */
 
-					activating = MainFrame.this;
+					activating = MainFrameImpl.this;
 					previewFrame.toFront();
 					toFront();
 
@@ -1479,7 +1473,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 		} else if (command.equals("Help.About")) {
 			showAboutBox();
 		} else if (command.equals("Fetch")) {
-			if (getCurrentGallery().hasComm() && getCurrentGallery().getComm(jStatusBar).isLoggedIn()) {
+			if (getCurrentGallery().hasComm() && getCurrentGallery().getComm(getStatusBar()).isLoggedIn()) {
 				// todo: save
 				// We're currently logged in, but we might be dirty
 				// so ask the user if it's OK to log out.
@@ -1502,7 +1496,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 				// setDirtyFlag(false);
 			} else {
 				// login may have failed and caused getComm to be null.
-				GalleryComm comm = getCurrentGallery().getComm(jStatusBar);
+				GalleryComm comm = getCurrentGallery().getComm(getStatusBar());
 
 				// may have tried to connect and failed
 				if (comm != null && !GalleryComm.wasAuthFailure()) {
@@ -1762,7 +1756,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	 * ArrayList pictures = gallery.getAllPictures();
 	 * preloadThumbnails(pictures.iterator());
 	 * 
-	 * if (pictures.size() > 0) { gallery.doFetchAlbums(jStatusBar, false);
+	 * if (pictures.size() > 0) { gallery.doFetchAlbums(getStatusBar(), false);
 	 * 
 	 * if (selectGallery == null) { selectGallery = gallery; } } }
 	 * 
@@ -1789,6 +1783,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	 * }.transitionStart(); }
 	 */
 
+	@Override
 	public void removeGallery(Gallery g) {
 		Log.log(Log.LEVEL_INFO, MODULE, "Deleting Gallery " + g);
 		galleries.removeElement(g);
@@ -1968,6 +1963,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	 * Delete the selected pictures (using the core utilities) and mark the
 	 * document as being dirty.
 	 */
+	@Override
 	public void deleteSelectedPictures() {
 		CoreUtils.deleteSelectedPictures();
 		// setDirtyFlag(true);
@@ -1977,6 +1973,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	 * Move the selected picture (using the core utilities) and mark the document
 	 * as being dirty.
 	 */
+	@Override
 	public void movePicturesUp() {
 		CoreUtils.movePicturesUp();
 		// setDirtyFlag(true);
@@ -1986,6 +1983,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 	 * Move the selected picture (using the core utilities) and mark the document
 	 * as being dirty.
 	 */
+	@Override
 	public void movePicturesDown() {
 		CoreUtils.movePicturesDown();
 		// setDirtyFlag(true);
@@ -2010,7 +2008,7 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 
 	@Override
 	public StatusUpdate getMainStatusUpdate() {
-		return jStatusBar;
+		return getStatusBar();
 	}
 
 	@Override
@@ -2169,4 +2167,31 @@ public class MainFrame extends JFrame implements ActionListener, ItemListener, L
 			return text;
 		}
 	}
+
+	@Override
+	public StatusBarPresenter getStatusBar() {
+		if (jStatusBar == null) {
+			jStatusBar = new StatusBarPresenterImpl(new StatusBarModel(), new StatusBar());
+		}
+		return jStatusBar;
+	}
+
+	@Override
+	public PreviewFrame getPreview() {
+		if (previewFrame == null) {
+			previewFrame = new PreviewFrame();
+		}
+		return previewFrame;
+	}
+
+	@Override
+	public Frame getActivating() {
+		return activating;
+	}
+
+	@Override
+	public void setActivating(Frame frame) {
+		this.activating = frame;
+	}
+
 }

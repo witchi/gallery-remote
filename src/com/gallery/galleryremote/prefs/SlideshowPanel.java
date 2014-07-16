@@ -17,12 +17,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
+import com.gallery.galleryremote.GalleryRemote;
+import com.gallery.galleryremote.GalleryRemoteCore;
+import com.gallery.galleryremote.main.MainFrame;
 import com.gallery.galleryremote.util.ColorWellButton;
 import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.util.ImageUtils;
-import com.gallery.galleryremote.GalleryRemote;
-import com.gallery.galleryremote.GalleryRemoteCore;
-import com.gallery.galleryremote.MainFrame;
 
 /**
  * @author paour
@@ -141,7 +141,7 @@ public class SlideshowPanel extends PreferencePanel implements PreferenceNames {
 		}
 		GalleryRemoteCore core = GalleryRemote.instance().getCore();
 		if (!GalleryRemote.instance().isAppletMode()) {
-			((MainFrame) core).previewFrame.repaint();
+			((MainFrame) core).getPreview().repaint();
 		}
 	}
 

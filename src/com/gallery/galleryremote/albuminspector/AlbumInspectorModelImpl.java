@@ -2,13 +2,13 @@ package com.gallery.galleryremote.albuminspector;
 
 import java.awt.event.ActionEvent;
 
+import com.gallery.galleryremote.main.MainFrame;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.statusbar.StatusUpdate;
 import com.gallery.galleryremote.util.AbstractModel;
 import com.gallery.galleryremote.util.log.Logger;
 import com.gallery.galleryremote.GalleryCommCapabilities;
-import com.gallery.galleryremote.MainFrame;
 
 public class AlbumInspectorModelImpl extends AbstractModel implements AlbumInspectorModel {
 
@@ -75,7 +75,7 @@ public class AlbumInspectorModelImpl extends AbstractModel implements AlbumInspe
 
 	@Override
 	public boolean hasCapability(GalleryCommCapabilities capability) {
-		return album.getGallery().getComm(mainFrame.jStatusBar).hasCapability(mainFrame.jStatusBar, capability);
+		return album.getGallery().getComm(mainFrame.getStatusBar()).hasCapability(mainFrame.getStatusBar(), capability);
 	}
 
 	@Override

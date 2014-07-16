@@ -1,3 +1,15 @@
+2014-07-16  André Rothe <andre.rothe@phosco.info> (1.5.1-b48)
+    
+    * new Logging framework
+    * use VM >= 1.7
+    * internal refactoring
+    
+2014-07-02  André Rothe <andre.rothe@phosco.info> (1.5.1-b47)
+    
+    * better HTTPS support
+    * use VM >= 1.6
+    * internal refactoring
+    
 2009-09-07  Pierre-Luc Paour <gallery@paour.com> (1.5.1-b46)
 
 	* Fixed fullscreen slideshow on Mac.

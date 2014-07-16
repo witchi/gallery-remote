@@ -204,37 +204,6 @@ public class MainFrameImpl extends JFrame implements ActionListener, ItemListene
 		LOGGER.fine("Creating class instance...");
 	}
 
-	@Override
-	public void initMainFrame() {
-		macOSXRegistration();
-
-		PropertiesFile p = GalleryRemote.instance().properties;
-
-		// load galleries
-		galleries = new DefaultComboBoxModel<Gallery>();
-		if (!GalleryRemote.instance().isAppletMode()) {
-			int i = 0;
-			while (true) {
-				try {
-					Gallery g = Gallery.readFromProperties(p, i++, getStatusBar());
-					if (g == null) {
-						break;
-					}
-					galleries.addElement(g);
-				} catch (Exception e) {
-					LOGGER.warning("Error trying to load Gallery profile " + i);
-					LOGGER.throwing(e);
-				}
-			}
-		} else {
-			Applet applet = GalleryRemote.instance().getApplet();
-			GRApplet.AppletInfo info = ((GRApplet) applet).getGRAppletInfo();
-			info.gallery.addTreeModelListener(this);
-			galleries.addElement(info.gallery);
-		}
-
-		setIconImage(iconImage);
-	}
 
 	@Override
 	public void startup() {

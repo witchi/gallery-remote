@@ -9,6 +9,8 @@ import javax.swing.ImageIcon;
 
 import com.gallery.galleryremote.main.MainFrame;
 import com.gallery.galleryremote.main.MainFrameImpl;
+import com.gallery.galleryremote.main.MainFrameModelImpl;
+import com.gallery.galleryremote.main.MainFramePresenterImpl;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.prefs.PropertiesFile;
 import com.gallery.galleryremote.util.OsShutdown;
@@ -85,9 +87,9 @@ public class GalleryRemoteMainFrame extends GalleryRemote {
 
 		try {
 			if (isAppletMode() || !Update.upgrade()) {
-				mainFrame = new MainFrameImpl();
+				mainFrame = new MainFramePresenterImpl(new MainFrameModelImpl(), new MainFrameImpl());
 				CoreUtils.initCore();
-				mainFrame.initMainFrame();
+				mainFrame.init();
 			} else {
 				Log.shutdown();
 				System.exit(0);

@@ -189,7 +189,11 @@ public abstract class GalleryRemote implements PreferenceNames {
 		singleton = null;
 	}
 
-	// Main entry point
+	/**
+	 * Main entry point!
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		createInstance("com.gallery.galleryremote.GalleryRemoteMainFrame", null);
 

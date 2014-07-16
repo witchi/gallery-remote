@@ -10,8 +10,9 @@ com/gallery/galleryremote/util/MacOSXAdapter*
 com/gallery/galleryremote/util/NaturalOrderComparator*
 com/gallery/galleryremote/util/PostChangeLog*
 
-com/gallery/galleryremote/AboutBox*
+com/gallery/galleryremote/about/
 com/gallery/galleryremote/*Inspector*
+com/gallery/galleryremote/*inspector/
 com/gallery/galleryremote/DroppableTree*
 com/gallery/galleryremote/GalleryRemoteMainFrame*
 com/gallery/galleryremote/MainFrame*

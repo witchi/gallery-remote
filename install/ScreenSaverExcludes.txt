@@ -14,8 +14,8 @@ com/gallery/galleryremote/util/OsShutdown*
 com/gallery/galleryremote/util/PostChangeLog*
 edu/stanford/ejalbert/BrowserLauncher*
 
-com/gallery/galleryremote/AboutBox*
-com/gallery/galleryremote/*Inspector*
+com/gallery/galleryremote/about/
+com/gallery/galleryremote/*inspector/
 com/gallery/galleryremote/DroppableTree*
 com/gallery/galleryremote/GalleryRemoteMainFrame*
 com/gallery/galleryremote/MainFrame*

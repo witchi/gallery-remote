@@ -174,7 +174,7 @@ public class StatusBarPresenterImpl implements StatusBarPresenter {
 	@Override
 	public void error(String message) {
 		JOptionPane.showMessageDialog(DialogUtil.findParentWindow(view), message,
-				GRI18n.getString(StatusBarPresenterImpl.class.getPackage().getName(), "Error"), JOptionPane.ERROR_MESSAGE);
+				GRI18n.getString(this.getClass(), "Error"), JOptionPane.ERROR_MESSAGE);
 	}
 
 	@Override

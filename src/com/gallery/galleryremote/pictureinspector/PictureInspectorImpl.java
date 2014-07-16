@@ -204,7 +204,7 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	private JLabel getPathLabel() {
 		if (jPathLabel == null) {
 			jPathLabel = new JLabel();
-			jPathLabel.setText(GRI18n.getString(this.getClass().getPackage().getName(), "Path"));
+			jPathLabel.setText(GRI18n.getString(this.getClass(), "Path"));
 		}
 		return jPathLabel;
 	}
@@ -220,7 +220,7 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	private JLabel getAlbumLabel() {
 		if (jAlbumLabel == null) {
 			jAlbumLabel = new JLabel();
-			jAlbumLabel.setText(GRI18n.getString(this.getClass().getPackage().getName(), "Album"));
+			jAlbumLabel.setText(GRI18n.getString(this.getClass(), "Album"));
 		}
 		return jAlbumLabel;
 	}
@@ -236,7 +236,7 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	private JLabel getCaptionLabel() {
 		if (jCaptionLabel == null) {
 			jCaptionLabel = new JLabel();
-			jCaptionLabel.setText(GRI18n.getString(this.getClass().getPackage().getName(), "Caption"));
+			jCaptionLabel.setText(GRI18n.getString(this.getClass(), "Caption"));
 		}
 		return jCaptionLabel;
 	}
@@ -252,7 +252,7 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	private JLabel getMoveLabel() {
 		if (jMoveLabel == null) {
 			jMoveLabel = new JLabel();
-			jMoveLabel.setText(GRI18n.getString(this.getClass().getPackage().getName(), "Move"));
+			jMoveLabel.setText(GRI18n.getString(this.getClass(), "Move"));
 		}
 		return jMoveLabel;
 	}
@@ -268,7 +268,7 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	private JLabel getSizeLabel() {
 		if (jSizeLabel == null) {
 			jSizeLabel = new JLabel();
-			jSizeLabel.setText(GRI18n.getString(this.getClass().getPackage().getName(), "Size"));
+			jSizeLabel.setText(GRI18n.getString(this.getClass(), "Size"));
 		}
 		return jSizeLabel;
 	}
@@ -284,7 +284,7 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 	private JLabel getDeleteLabel() {
 		if (jDeleteLabel == null) {
 			jDeleteLabel = new JLabel();
-			jDeleteLabel.setText(GRI18n.getString(this.getClass().getPackage().getName(), "Delete"));
+			jDeleteLabel.setText(GRI18n.getString(this.getClass(), "Delete"));
 		}
 		return jDeleteLabel;
 	}
@@ -372,8 +372,8 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 			jUpButton.setMaximumSize(new Dimension(120, 23));
 			jUpButton.setMinimumSize(new Dimension(120, 23));
 			jUpButton.setPreferredSize(new Dimension(120, 23));
-			jUpButton.setToolTipText(GRI18n.getString(this.getClass().getPackage().getName(), "upBtnTip"));
-			jUpButton.setText(GRI18n.getString(this.getClass().getPackage().getName(), "upBtn"));
+			jUpButton.setToolTipText(GRI18n.getString(this.getClass(), "upBtnTip"));
+			jUpButton.setText(GRI18n.getString(this.getClass(), "upBtn"));
 			jUpButton.setActionCommand("Up");
 			jUpButton.setHorizontalAlignment(SwingConstants.LEFT);
 			jUpButton.setIcon(GalleryRemote.iUp);
@@ -396,8 +396,8 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 			jDownButton.setMaximumSize(new Dimension(120, 23));
 			jDownButton.setMinimumSize(new Dimension(120, 23));
 			jDownButton.setPreferredSize(new Dimension(120, 23));
-			jDownButton.setToolTipText(GRI18n.getString(this.getClass().getPackage().getName(), "dnBtnTip"));
-			jDownButton.setText(GRI18n.getString(this.getClass().getPackage().getName(), "dnBtn"));
+			jDownButton.setToolTipText(GRI18n.getString(this.getClass(), "dnBtnTip"));
+			jDownButton.setText(GRI18n.getString(this.getClass(), "dnBtn"));
 			jDownButton.setActionCommand("Down");
 			jDownButton.setHorizontalAlignment(SwingConstants.LEFT);
 			jDownButton.setIcon(GalleryRemote.iDown);
@@ -420,10 +420,10 @@ public class PictureInspectorImpl extends JPanel implements PictureInspector {
 			jDeleteButton.setMaximumSize(new Dimension(120, 23));
 			jDeleteButton.setMinimumSize(new Dimension(120, 23));
 			jDeleteButton.setPreferredSize(new Dimension(120, 23));
-			jDeleteButton.setToolTipText(GRI18n.getString(this.getClass().getPackage().getName(), "delBtnTip"));
+			jDeleteButton.setToolTipText(GRI18n.getString(this.getClass(), "delBtnTip"));
 			jDeleteButton.setActionCommand("Delete");
 			jDeleteButton.setHorizontalAlignment(SwingConstants.LEFT);
-			jDeleteButton.setText(GRI18n.getString(this.getClass().getPackage().getName(), "Delete"));
+			jDeleteButton.setText(GRI18n.getString(this.getClass(), "Delete"));
 			jDeleteButton.setIcon(GalleryRemote.iDelete);
 		}
 		return jDeleteButton;

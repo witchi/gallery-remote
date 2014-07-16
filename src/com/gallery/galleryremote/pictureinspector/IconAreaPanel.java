@@ -88,7 +88,7 @@ class IconAreaPanel extends JPanel {
 		if (jRotateLeftButton == null) {
 			jRotateLeftButton = new JButton();
 			jRotateLeftButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			jRotateLeftButton.setToolTipText(GRI18n.getString(this.getClass().getPackage().getName(), "rotLtTip"));
+			jRotateLeftButton.setToolTipText(GRI18n.getString(this.getClass(), "rotLtTip"));
 			jRotateLeftButton.setActionCommand(PictureInspectorActions.ROTATE_LEFT.name());
 			jRotateLeftButton.setIcon(GalleryRemote.iLeft);
 		}
@@ -99,7 +99,7 @@ class IconAreaPanel extends JPanel {
 		if (jRotateRightButton == null) {
 			jRotateRightButton = new JButton();
 			jRotateRightButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			jRotateRightButton.setToolTipText(GRI18n.getString(this.getClass().getPackage().getName(), "rotRtTip"));
+			jRotateRightButton.setToolTipText(GRI18n.getString(this.getClass(), "rotRtTip"));
 			jRotateRightButton.setActionCommand(PictureInspectorActions.ROTATE_RIGHT.name());
 			jRotateRightButton.setIcon(GalleryRemote.iRight);
 		}
@@ -110,7 +110,7 @@ class IconAreaPanel extends JPanel {
 		if (jFlipButton == null) {
 			jFlipButton = new JButton();
 			jFlipButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			jFlipButton.setToolTipText(GRI18n.getString(this.getClass().getPackage().getName(), "flipTip"));
+			jFlipButton.setToolTipText(GRI18n.getString(this.getClass(), "flipTip"));
 			jFlipButton.setActionCommand(PictureInspectorActions.FLIP.name());
 			jFlipButton.setIcon(GalleryRemote.iFlip);
 		}

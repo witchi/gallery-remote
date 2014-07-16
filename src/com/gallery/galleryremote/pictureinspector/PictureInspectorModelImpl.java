@@ -187,7 +187,7 @@ public class PictureInspectorModelImpl extends AbstractModel implements PictureI
 			Document d = new PlainDocument();
 			try {
 				d.remove(0, d.getLength());
-				d.insertString(0, GRI18n.getString(this.getClass().getPackage().getName(), "icon"), null);
+				d.insertString(0, GRI18n.getString(this.getClass(), "icon"), null);
 			} catch (BadLocationException e) {
 				// do nothing
 			}

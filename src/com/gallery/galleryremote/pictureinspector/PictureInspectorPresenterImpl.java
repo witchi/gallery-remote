@@ -170,7 +170,7 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 			dto.setCapability(false);
 			dto.setViewEnabled(false);
 
-			model.setDocumentText("Icon", GRI18n.getString(this.getClass().getPackage().getName(), "noPicSel"));
+			model.setDocumentText("Icon", GRI18n.getString(this.getClass(), "noPicSel"));
 			model.setDocumentText("Path", "");
 			model.setDocumentText("Album", "");
 			model.setDocumentText("Size", "");
@@ -187,7 +187,7 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 			dto.setViewEnabled(view.isEnabled());
 
 			if (p.isOnline()) {
-				model.setDocumentText("Path", GRI18n.getString(this.getClass().getPackage().getName(), "onServer"));
+				model.setDocumentText("Path", GRI18n.getString(this.getClass(), "onServer"));
 				model.setDocumentText("Icon", p.getName());
 			} else {
 				model.setDocumentText("Icon", p.getSource().getName());
@@ -208,7 +208,7 @@ public class PictureInspectorPresenterImpl implements ActionListener, DocumentLi
 			dto.setViewEnabled(view.isEnabled());
 
 			Object[] params = { new Integer(model.getPictureList().size()) };
-			model.setDocumentText("Icon", GRI18n.getString(this.getClass().getPackage().getName(), "countElemSel", params));
+			model.setDocumentText("Icon", GRI18n.getString(this.getClass(), "countElemSel", params));
 			model.setDocumentText("Path", "");
 			model.setDocumentText("Album", p.getParentAlbum().getTitle());
 			model.setDocumentText("Size", NumberFormat.getInstance().format((int) Album.getObjectFileSize(model.getPictureList())) + " bytes");

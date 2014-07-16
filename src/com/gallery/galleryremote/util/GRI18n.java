@@ -83,6 +83,10 @@ public class GRI18n implements PreferenceNames {
 		return msg;
 	}
 
+	public static String getString(Class<?> clazz, String key) {
+		return getString(clazz.getPackage().getName(), key);
+	}
+	
 	public static String getString(String className, String key, Object[] params) {
 		String msg;
 		String extKey = className + "." + key;
@@ -112,6 +116,10 @@ public class GRI18n implements PreferenceNames {
 		}
 
 		return msg;
+	}
+
+	public static String getString(Class<?> clazz, String key,  Object[] params) {
+		return getString(clazz.getPackage().getName(), key, params);
 	}
 
 	public static String fixQuotes(String s) {

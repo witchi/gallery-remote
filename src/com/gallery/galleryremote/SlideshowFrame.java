@@ -36,6 +36,7 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import com.gallery.galleryremote.main.preview.PreviewImpl;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.prefs.PropertiesFile;
@@ -45,7 +46,7 @@ import com.gallery.galleryremote.util.HTMLEscaper;
 import com.gallery.galleryremote.util.ImageLoaderUtil;
 import com.gallery.galleryremote.util.ImageUtils;
 
-public class SlideshowFrame extends PreviewFrame implements Runnable, PreferenceNames, CancellableTransferListener, MouseMotionListener {
+public class SlideshowFrame extends PreviewImpl implements Runnable, PreferenceNames, CancellableTransferListener, MouseMotionListener {
 
 	private static final long serialVersionUID = -7886492893131952256L;
 	public static final String MODULE = "SlideFrame";

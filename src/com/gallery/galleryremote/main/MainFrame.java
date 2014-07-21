@@ -24,7 +24,7 @@ import java.awt.Frame;
 import java.awt.Image;
 import java.io.File;
 
-import com.gallery.galleryremote.PreviewFrame;
+import com.gallery.galleryremote.main.preview.Preview;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.model.Picture;
@@ -60,7 +60,7 @@ public interface MainFrame {
 	
 	StatusBarPresenter getStatusBar();
 
-	PreviewFrame getPreview();
+	Preview getPreview();
 
 	void removeGallery(Gallery g);
 

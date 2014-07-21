@@ -1,6 +1,5 @@
 package com.gallery.galleryremote.main;
 
-import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -79,7 +78,6 @@ import com.gallery.galleryremote.GalleryRemoteCore;
 import com.gallery.galleryremote.Log;
 import com.gallery.galleryremote.NewAlbumDialog;
 import com.gallery.galleryremote.PictureSelection;
-import com.gallery.galleryremote.PreviewFrame;
 import com.gallery.galleryremote.SlideshowFrame;
 import com.gallery.galleryremote.UploadProgress;
 import com.gallery.galleryremote.about.AboutBox;
@@ -90,6 +88,7 @@ import com.gallery.galleryremote.albuminspector.AlbumInspectorPresenter;
 import com.gallery.galleryremote.albuminspector.AlbumInspectorPresenterImpl;
 import com.gallery.galleryremote.cache.ThumbnailCache;
 import com.gallery.galleryremote.cache.ThumbnailCacheImpl;
+import com.gallery.galleryremote.main.preview.Preview;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.model.Picture;
@@ -121,7 +120,7 @@ public class MainFrameImpl extends JFrame implements ActionListener, ItemListene
 
 	public static final String FILE_TYPE = ".grg";
 
-	private PreviewFrame previewFrame;
+	private Preview previewFrame;
 
 	/**
 	 * This File is the last opened file or null if the user has not opened a
@@ -246,7 +245,7 @@ public class MainFrameImpl extends JFrame implements ActionListener, ItemListene
 
 		setVisible(true);
 
-		previewFrame = new PreviewFrame();
+		previewFrame = new PreviewImpl();
 		previewFrame.initComponents();
 		previewFrame.addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
@@ -1593,9 +1592,9 @@ public class MainFrameImpl extends JFrame implements ActionListener, ItemListene
 	}
 
 	@Override
-	public PreviewFrame getPreview() {
+	public Preview getPreview() {
 		if (previewFrame == null) {
-			previewFrame = new PreviewFrame();
+			previewFrame = new Preview();
 		}
 		return previewFrame;
 	}

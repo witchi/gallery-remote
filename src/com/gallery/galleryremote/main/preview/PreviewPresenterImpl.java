@@ -16,7 +16,7 @@ public class PreviewPresenterImpl implements PreviewPresenter, ImageLoaderUtil.I
 	private final PreviewModel model;
 	private final Preview view;
 
-	Rectangle currentRect = null;
+	
 	// AR: public added
 	public ImageLoaderUtil loader;
 

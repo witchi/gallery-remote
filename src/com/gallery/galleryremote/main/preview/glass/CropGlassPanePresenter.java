@@ -3,12 +3,10 @@ package com.gallery.galleryremote.main.preview.glass;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 import javax.swing.SwingConstants;
@@ -17,10 +15,17 @@ import com.gallery.galleryremote.util.ImageUtils;
 
 public class CropGlassPanePresenter implements MouseListener, MouseMotionListener {
 
+	private final CropGlassPaneModel model;
+	private final CropGlassPane view;
+
+	private int movingEdge = 0; // use CropGlassConstants
 	
-	public CropGlassPanePresenter(CropGlassPane view) {
+	
+	public CropGlassPanePresenter(CropGlassPane view, CropGlassPaneModel model) {
 		view.addMouseListener(this);
 		view.addMouseMotionListener(this);
+		this.model = model;
+		this.view = view;
 	}
 
 	@Override
@@ -33,143 +38,70 @@ public class CropGlassPanePresenter implements MouseListener, MouseMotionListene
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (loader.pictureShowNow == null || currentRect == null || loader.pictureShowNow.isOnline()) {
+		if (loader.pictureShowNow == null || !model.hasCurrentRect() || loader.pictureShowNow.isOnline()) {
 			return;
 		}
-
-		if (cacheRect == null) {
-			movingEdge = 0;
+		if (!model.hasCachedRect()) {
+			movingEdge = CropGlassConstants.NONE;
 		}
-
-		dragStartTime = System.currentTimeMillis();
-
-		inDrag = true;
-
-		switch (movingEdge) {
-		case SwingConstants.NORTH:
-			// keep bottom-right
-			start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y + cacheRect.height));
-			break;
-
-		case SwingConstants.SOUTH:
-			// keep top-left
-			start = makeValid(new Point(cacheRect.x, cacheRect.y));
-			break;
-
-		case SwingConstants.WEST:
-			// keep bottom-right
-			start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y + cacheRect.height));
-			break;
-
-		case SwingConstants.EAST:
-			// keep top-left
-			start = makeValid(new Point(cacheRect.x, cacheRect.y));
-			break;
-
-		case SwingConstants.NORTH_WEST:
-			// keep bottom-right
-			start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y + cacheRect.height));
-			break;
-
-		case SwingConstants.NORTH_EAST:
-			// keep bottom-left
-			start = makeValid(new Point(cacheRect.x, cacheRect.y + cacheRect.height));
-			break;
-
-		case SwingConstants.SOUTH_WEST:
-			// keep top-right
-			start = makeValid(new Point(cacheRect.x + cacheRect.width, cacheRect.y));
-			break;
-
-		case SwingConstants.SOUTH_EAST:
-			// keep top-left
-			start = makeValid(new Point(cacheRect.x, cacheRect.y));
-			break;
-
-		case INSIDE:
-			// moving: just remember transitionStart for offset
-			moveCropStart = makeValid(e.getPoint());
-			break;
-
-		default:
-			// new rectangle
-			start = makeValid(e.getPoint());
-			break;
-		}
-
-		loader.pictureShowNow.setCropTo(null);
-		updateRectOnce = true;
+		model.startDragging(movingEdge);
 		mouseDragged(e);
-		repaint();
+
+		CropGlassDTO dto = new CropGlassDTO();
+		view.refreshUI(dto);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		inDrag = false;
-		centerMode = false;
-
-		if (loader.pictureShowNow == null || oldRect == null || loader.pictureShowNow.isOnline()) {
-			return;
-		}
-
-		AffineTransform t = ImageUtils.createTransform(getBounds(), currentRect, loader.pictureShowNow.getDimension(),
-				loader.pictureShowNow.getAngle(), loader.pictureShowNow.isFlipped());
-		// pictureShowNow.setCropTo(getRect(t.transform(transitionStart,
-		// null), t.transform(end, null)));
-
-		Rectangle tmpRect = new Rectangle();
-		tmpRect.setFrameFromDiagonal(t.transform(oldRect.getLocation(), null),
-				t.transform(new Point(oldRect.x + oldRect.width, oldRect.y + oldRect.height), null));
-		loader.pictureShowNow.setCropTo(tmpRect);
-
-		setCursor(Cursor.getDefaultCursor());
-
-		repaint();
+		model.stopDragging();
+		CropGlassDTO dto = new CropGlassDTO();
+		dto.setCursor(Cursor.DEFAULT_CURSOR);
+		view.refreshUI(dto);
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (currentRect == null) {
+		if (!model.hasCurrentRect()) {
 			return;
 		}
 
-		if (cacheRect == null) {
-			movingEdge = 0;
+		if (!model.hasCachedRect()) {
+			movingEdge = CropGlassConstants.NONE;
 		}
 
 		int modifiers = e.getModifiersEx();
 
 		Point2D p;
 		switch (movingEdge) {
-		case SwingConstants.NORTH:
+		case CropGlassConstants.NORTH:
 			p = makeValid(new Point(cacheRect.x, (int) (e.getPoint().getY())));
 			modifiers = 0;
 			break;
 
-		case SwingConstants.SOUTH:
+		case CropGlassConstants.SOUTH:
 			p = makeValid(new Point(cacheRect.x + cacheRect.width, (int) (e.getPoint().getY())));
 			modifiers = 0;
 			break;
 
-		case SwingConstants.WEST:
+		case CropGlassConstants.WEST:
 			p = makeValid(new Point((int) (e.getPoint().getX()), cacheRect.y));
 			modifiers = 0;
 			break;
 
-		case SwingConstants.EAST:
+		case CropGlassConstants.EAST:
 			p = makeValid(new Point((int) (e.getPoint().getX()), cacheRect.y + cacheRect.height));
 			modifiers = 0;
 			break;
 
-		case SwingConstants.NORTH_WEST:
-		case SwingConstants.NORTH_EAST:
-		case SwingConstants.SOUTH_WEST:
-		case SwingConstants.SOUTH_EAST:
+		case CropGlassConstants.NORTH_WEST:
+		case CropGlassConstants.NORTH_EAST:
+		case CropGlassConstants.SOUTH_WEST:
+		case CropGlassConstants.SOUTH_EAST:
 			p = makeValid(e.getPoint());
 			modifiers = modifiers & ~InputEvent.ALT_DOWN_MASK;
 			break;
 
-		case INSIDE:
+		case CropGlassConstants.INSIDE:
 			// move
 			double dx = e.getPoint().getX() - moveCropStart.getX();
 			double dy = e.getPoint().getY() - moveCropStart.getY();
@@ -226,10 +158,9 @@ public class CropGlassPanePresenter implements MouseListener, MouseMotionListene
 				p.setLocation(start.getX() + d.height, start.getY() + d.width);
 			}
 		}
-
-		centerMode = (modifiers & InputEvent.ALT_DOWN_MASK) == InputEvent.ALT_DOWN_MASK;
-
 		end = makeValid(p);
+		
+		model.setCenterMode((modifiers & InputEvent.ALT_DOWN_MASK) == InputEvent.ALT_DOWN_MASK);
 
 		updateRect();
 	}
@@ -238,7 +169,11 @@ public class CropGlassPanePresenter implements MouseListener, MouseMotionListene
 	public void mouseMoved(MouseEvent e) {
 		if (loader.pictureShowNow == null || loader.imageShowNow == null || loader.pictureShowNow.isOnline() || cacheRect == null) {
 			movingEdge = 0;
-			setCursor(Cursor.getDefaultCursor());
+			
+			CropGlassDTO dto = new CropGlassDTO();
+			dto.setCursor(Cursor.DEFAULT_CURSOR);
+			
+			view.refreshUI(dto);	// AR: added to refresh cursor type.
 			return;
 		}
 
@@ -261,49 +196,49 @@ public class CropGlassPanePresenter implements MouseListener, MouseMotionListene
 
 		if (py >= cacheRect.y + TOLERANCE && py <= cacheRect.y + cacheRect.height - TOLERANCE) {
 			if (Math.abs(px - cacheRect.x) < TOLERANCE) {
-				movingEdge = SwingConstants.WEST;
+				movingEdge = CropGlassConstants.WEST;
 				setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
 				canMove = true;
 			} else if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE) {
-				movingEdge = SwingConstants.EAST;
+				movingEdge = CropGlassConstants.EAST;
 				setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
 				canMove = true;
 			}
 		}
 
 		if (Math.abs(px - cacheRect.x) < TOLERANCE && Math.abs(py - cacheRect.y) < TOLERANCE) {
-			movingEdge = SwingConstants.NORTH_WEST;
+			movingEdge = CropGlassConstants.NORTH_WEST;
 			setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
 			canMove = true;
 		}
 
 		if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE && Math.abs(py - cacheRect.y) < TOLERANCE) {
-			movingEdge = SwingConstants.NORTH_EAST;
+			movingEdge = CropGlassConstants.NORTH_EAST;
 			setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
 			canMove = true;
 		}
 
 		if (Math.abs(px - cacheRect.x) < TOLERANCE && Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
-			movingEdge = SwingConstants.SOUTH_WEST;
+			movingEdge = CropGlassConstants.SOUTH_WEST;
 			setCursor(Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR));
 			canMove = true;
 		}
 
 		if (Math.abs(px - cacheRect.x - cacheRect.width) < TOLERANCE && Math.abs(py - cacheRect.y - cacheRect.height) < TOLERANCE) {
-			movingEdge = SwingConstants.SOUTH_EAST;
+			movingEdge = CropGlassConstants.SOUTH_EAST;
 			setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
 			canMove = true;
 		}
 
 		if (px >= cacheRect.x + TOLERANCE && px <= cacheRect.x + cacheRect.width - TOLERANCE && py >= cacheRect.y + TOLERANCE
 				&& py <= cacheRect.y + cacheRect.height - TOLERANCE) {
-			movingEdge = INSIDE;
+			movingEdge = CropGlassConstants.INSIDE;
 			setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			canMove = true;
 		}
 
 		if (!canMove) {
-			movingEdge = 0;
+			movingEdge = CropGlassConstants.NONE;
 			setCursor(Cursor.getDefaultCursor());
 		}
 	}
@@ -321,6 +256,5 @@ public class CropGlassPanePresenter implements MouseListener, MouseMotionListene
 			repaint();
 		}
 	}
-
 
 }

@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 
 import com.gallery.galleryremote.GalleryRemote;
 import com.gallery.galleryremote.main.preview.content.ImageContentPane;
-import com.gallery.galleryremote.main.preview.glass.CropGlassPane;
+import com.gallery.galleryremote.main.preview.glass.CropGlassPaneImpl;
 import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.util.log.Logger;
 
@@ -16,7 +16,7 @@ public class PreviewImpl extends JFrame implements Preview {
 	private static final Logger LOGGER = Logger.getLogger(PreviewImpl.class);
 
 	private ImageContentPane imageContentPane;
-	private CropGlassPane cropGlassPane;
+	private CropGlassPaneImpl cropGlassPane;
 
 	public PreviewImpl() {
 		LOGGER.fine("Creating class instance...");
@@ -39,9 +39,9 @@ public class PreviewImpl extends JFrame implements Preview {
 		return imageContentPane;
 	}
 
-	private CropGlassPane getCropGlassPane() {
+	private CropGlassPaneImpl getCropGlassPane() {
 		if (cropGlassPane == null) {
-			cropGlassPane = new CropGlassPane();
+			cropGlassPane = new CropGlassPaneImpl();
 		}
 		return cropGlassPane;
 	}

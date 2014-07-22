@@ -2,7 +2,6 @@ package com.gallery.galleryremote.util;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -12,17 +11,17 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.gallery.galleryremote.model.Picture;
-import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.CancellableTransferListener;
 import com.gallery.galleryremote.GalleryRemote;
 import com.gallery.galleryremote.Log;
+import com.gallery.galleryremote.imageloader.ImageLoaderThread;
+import com.gallery.galleryremote.imageloader.ImageLoaderUser;
+import com.gallery.galleryremote.imageloader.WrapInfo;
+import com.gallery.galleryremote.model.Picture;
+import com.gallery.galleryremote.prefs.PreferenceNames;
 
 /**
  * This class holds the current visible picture and a little cache of already
@@ -44,7 +43,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 	// current visible Image (image data)
 	public Image imageShowNow = null;
 
-	public ImageLoader imageLoader = new ImageLoader();
+	public ImageLoaderThread imageLoaderThread = new ImageLoaderThread();
 
 	public static Color[] darkGray = new Color[11];
 	public static Pattern breaker = Pattern.compile("<(br|BR)\\s?\\/?>");
@@ -117,7 +116,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 				} else {
 					Log.log(Log.LEVEL_TRACE, MODULE, "Cache miss: " + picture);
 					if (async) {
-						imageLoader.loadPicture(picture, true);
+						imageLoaderThread.loadPicture(picture, true);
 					} else {
 						Image sizedIcon = getSizedIconForce(picture);
 						if (sizedIcon != null) {
@@ -272,22 +271,6 @@ public class ImageLoaderUtil implements PreferenceNames {
 		return wrapInfo;
 	}
 
-	public static class WrapInfo {
-		public String[] lines;
-		public int width;
-		public int height;
-
-		@Override
-		public String toString() {
-			final StringBuffer sb = new StringBuffer();
-			sb.append("WrapInfo");
-			sb.append("{lines=").append(lines == null ? "null" : Arrays.asList(lines).toString());
-			sb.append(", width=").append(width);
-			sb.append(", height=").append(height);
-			sb.append('}');
-			return sb.toString();
-		}
-	}
 
 	public static void paintOutline(Graphics g, String s, int textX, int textY, int thickness) {
 		if (thickness > 10) {
@@ -348,169 +331,6 @@ public class ImageLoaderUtil implements PreferenceNames {
 		return text;
 	}
 
-	public class ImageLoader implements Runnable {
-		Picture picture;
-		boolean stillRunning = false;
-		boolean notify = false;
 
-		@Override
-		public void run() {
-			Log.log(Log.LEVEL_TRACE, MODULE, "Starting " + picture);
-			Picture tmpPicture = null;
-			Image tmpImage = null;
-			while (picture != null) {
-				synchronized (this) {
-					tmpPicture = picture;
-					picture = null;
-				}
 
-				tmpImage = getSizedIconForce(tmpPicture);
-
-				if (tmpImage == null) {
-					notify = false;
-				}
-			}
-
-			stillRunning = false;
-
-			if (notify) {
-				pictureReady(tmpImage, tmpPicture);
-				notify = false;
-			}
-
-			Log.log(Log.LEVEL_TRACE, MODULE, "Ending");
-		}
-
-		public void loadPicture(Picture picture, boolean notify) {
-			Log.log(Log.LEVEL_TRACE, MODULE, "loadPicture " + picture);
-
-			this.picture = picture;
-
-			if (notify) {
-				this.notify = true;
-			}
-
-			if (!stillRunning) {
-				stillRunning = true;
-				Log.log(Log.LEVEL_TRACE, MODULE, "Calling Start");
-				new Thread(this).start();
-			}
-		}
-	}
-
-	public class SmartHashtable extends HashMap<Object, Object> {
-		private static final long serialVersionUID = -5521200540999583214L;
-		ArrayList<Object> touchOrder = new ArrayList<Object>();
-
-		@Override
-		public Object put(Object key, Object value) {
-			touch(key);
-			super.put(key, value);
-
-			// Log.log(Log.LEVEL_TRACE, MODULE,
-			// Runtime.getRuntime().freeMemory() + " - " +
-			// Runtime.getRuntime().totalMemory());
-			if (cacheSize > 0 && touchOrder.size() > cacheSize) {
-				shrink();
-			}
-			// Log.log(Log.LEVEL_TRACE, MODULE,
-			// Runtime.getRuntime().freeMemory() + " - " +
-			// Runtime.getRuntime().totalMemory());
-
-			return value;
-		}
-
-		@Override
-		public Object get(Object key) {
-			return get(key, true);
-		}
-
-		public Object get(Object key, boolean touch) {
-			Object result = super.get(key);
-
-			if (result != null && touch) {
-				touch(key);
-			}
-
-			return result;
-		}
-
-		@Override
-		public void clear() {
-			// Log.log(Log.LEVEL_TRACE, MODULE,
-			// Runtime.getRuntime().freeMemory() + " - " +
-			// Runtime.getRuntime().totalMemory());
-
-			// flush images before clearing hastables for quicker deletion
-			Iterator<Object> it = values().iterator();
-			while (it.hasNext()) {
-				Image i = (Image) it.next();
-				if (i != null) {
-					i.flush();
-				}
-			}
-
-			super.clear();
-			touchOrder.clear();
-
-			System.runFinalization();
-			System.gc();
-
-			// Log.log(Log.LEVEL_TRACE, MODULE,
-			// Runtime.getRuntime().freeMemory() + " - " +
-			// Runtime.getRuntime().totalMemory());
-		}
-
-		public void touch(Object key) {
-			Log.log(Log.LEVEL_TRACE, MODULE, "touch " + key);
-			int i = touchOrder.indexOf(key);
-
-			if (i != -1) {
-				touchOrder.remove(i);
-			}
-
-			touchOrder.add(key);
-		}
-
-		public void shrink() {
-			if (touchOrder.size() == 0) {
-				Log.log(Log.LEVEL_ERROR, MODULE, "Empty SmartHashtable");
-				return;
-			}
-
-			Object key = touchOrder.get(0);
-			touchOrder.remove(0);
-
-			Image i = (Image) get(key, false);
-			if (i != null) {
-				i.flush();
-			}
-
-			remove(key);
-
-			Log.log(Log.LEVEL_TRACE, MODULE, "Shrunk " + key);
-			if (cacheSize > 0 && size() > cacheSize) {
-				shrink();
-			} else {
-				System.runFinalization();
-				System.gc();
-			}
-		}
-	}
-
-	public interface ImageLoaderUser {
-		public void pictureReady();
-
-		public boolean blockPictureReady(Image image, Picture picture);
-
-		public Dimension getImageSize();
-
-		public void nullRect();
-
-		public void pictureStartDownloading(Picture picture);
-
-		public void pictureStartProcessing(Picture picture);
-
-		public void pictureLoadError(Picture picture);
-	}
 }

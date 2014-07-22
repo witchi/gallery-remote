@@ -54,7 +54,7 @@ import com.gallery.galleryremote.util.ImageLoaderUtil;
 import com.gallery.galleryremote.util.ImageUtils;
 
 // TODO: remove that class after refactoring
-public class PreviewFrame extends JFrame implements PreferenceNames, ImageLoaderUtil.ImageLoaderUser {
+public class PreviewFrame extends JFrame implements PreferenceNames, ImageLoaderUtil.ImageLoaderListener {
 
 	private static final long serialVersionUID = 3498443714616453620L;
 	public static final String MODULE = "PreviewFrame";

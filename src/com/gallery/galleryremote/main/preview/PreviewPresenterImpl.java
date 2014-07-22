@@ -12,7 +12,7 @@ import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.util.ImageLoaderUtil;
 import com.gallery.galleryremote.util.log.Logger;
 
-public class PreviewPresenterImpl implements PreviewPresenter, ImageLoaderUtil.ImageLoaderUser {
+public class PreviewPresenterImpl implements PreviewPresenter, ImageLoaderUtil.ImageLoaderListener {
 
 	private static final Logger LOGGER = Logger.getLogger(PreviewPresenterImpl.class);
 

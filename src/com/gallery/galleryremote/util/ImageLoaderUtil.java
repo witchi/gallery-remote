@@ -18,7 +18,7 @@ import com.gallery.galleryremote.CancellableTransferListener;
 import com.gallery.galleryremote.GalleryRemote;
 import com.gallery.galleryremote.Log;
 import com.gallery.galleryremote.imageloader.ImageLoaderThread;
-import com.gallery.galleryremote.imageloader.ImageLoaderUser;
+import com.gallery.galleryremote.imageloader.ImageLoaderListener;
 import com.gallery.galleryremote.imageloader.WrapInfo;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.prefs.PreferenceNames;
@@ -52,9 +52,9 @@ public class ImageLoaderUtil implements PreferenceNames {
 	int cacheSize = 10;
 	boolean ignoreIMFailure = false;
 	CancellableTransferListener transferListener = null;
-	ImageLoaderUser imageLoaderUser = null;
+	ImageLoaderListener imageLoaderUser = null;
 
-	public ImageLoaderUtil(int cacheSize, ImageLoaderUser imageLoaderUser) {
+	public ImageLoaderUtil(int cacheSize, ImageLoaderListener imageLoaderUser) {
 		this.cacheSize = cacheSize;
 		this.imageLoaderUser = imageLoaderUser;
 	}

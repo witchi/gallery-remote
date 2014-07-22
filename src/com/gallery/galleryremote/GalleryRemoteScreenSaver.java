@@ -37,7 +37,7 @@ import com.gallery.galleryremote.util.log.Logger;
  * @version Jan 14, 2004
  */
 public class GalleryRemoteScreenSaver extends GalleryRemote implements GalleryRemoteCore, PreferenceNames, ListDataListener,
-		ImageLoaderUtil.ImageLoaderUser {
+		ImageLoaderUtil.ImageLoaderListener {
 
 	private static final Logger LOGGER = Logger.getLogger(GalleryRemoteScreenSaver.class);
 

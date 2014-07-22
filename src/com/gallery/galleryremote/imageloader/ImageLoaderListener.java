@@ -5,7 +5,7 @@ import java.awt.Image;
 
 import com.gallery.galleryremote.model.Picture;
 
-public interface ImageLoaderUser {
+public interface ImageLoaderListener {
 	public void pictureReady();
 
 	public boolean blockPictureReady(Image image, Picture picture);

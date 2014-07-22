@@ -1,6 +1,6 @@
 package com.gallery.galleryremote.main.preview.glass;
 
-public interface CropGlassPaneModel {
+enum CropGlassPaneActions {
 
-	void removeCrop();
+	REFRESH;
 }

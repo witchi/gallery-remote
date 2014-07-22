@@ -33,7 +33,7 @@ public class CropGlassPaneImpl extends JComponent {
 		setCursor(Cursor.getPredefinedCursor(dto.getCursor()));
 		
 		
-		// TODO: set values from DTO into local class members
+		// TODO: set values from DTO into local class members, use these later in paint() method
 		
 		repaint();
 	}
@@ -47,6 +47,9 @@ public class CropGlassPaneImpl extends JComponent {
 			localCurrentPicture = loader.pictureShowNow;
 		}
 
+		
+		// loader holds no picture or holds no image data or we only have the meta data,
+		// then we can not cache parts of the image
 		if (loader.pictureShowNow == null || loader.imageShowNow == null || loader.pictureShowNow.isOnline()) {
 			cacheRect = null;
 			return;

@@ -24,13 +24,26 @@ import com.gallery.galleryremote.CancellableTransferListener;
 import com.gallery.galleryremote.GalleryRemote;
 import com.gallery.galleryremote.Log;
 
+/**
+ * This class holds the current visible picture and a little cache of already
+ * displayed images. It stores also the next visible picture of the slideshow.
+ * The class notifies a listener (called ImageLoaderUser) on defined points
+ * (like start downloading or already loaded - PictureReady).
+ */
 public class ImageLoaderUtil implements PreferenceNames {
 	public static final String MODULE = "ImgLoadrUtil";
 
 	public SmartHashtable images = new SmartHashtable();
-	public Image imageShowNow = null;
+
+	// next visible picture
 	public Picture pictureShowWant = null;
+
+	// current visible Picture (meta data)
 	public Picture pictureShowNow = null;
+
+	// current visible Image (image data)
+	public Image imageShowNow = null;
+
 	public ImageLoader imageLoader = new ImageLoader();
 
 	public static Color[] darkGray = new Color[11];

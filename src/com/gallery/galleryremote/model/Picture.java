@@ -35,7 +35,7 @@ import com.gallery.galleryremote.GalleryRemote;
 import com.gallery.galleryremote.Log;
 
 /**
- * Picture model
+ * Picture meta data model
  * 
  * @author paour
  */

@@ -1129,7 +1129,8 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts, Pre
 				NVPair[] form_data = new NVPair[] { new NVPair("cmd", "fetch-album-images"), new NVPair("protocol_version", PROTOCOL_VERSION),
 						new NVPair("set_albumName", albumName), new NVPair("albums_too", recursive ? "yes" : "no"),
 						new NVPair("random", random ? "yes" : "no"), new NVPair("limit", maxPictures + ""), new NVPair("extrafields", "yes") };
-
+					// FIXME: where is "all_sizes"?
+				
 				Log.log(Log.LEVEL_TRACE, MODULE, "fetch-album-images parameters: " + Arrays.asList(form_data));
 
 				form_data = fudgeFormParameters(form_data);
@@ -1166,11 +1167,15 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts, Pre
 				if (extraFieldsString != null) {
 					a.setExtraFieldsString(extraFieldsString);
 				}
-
+				ArrayList<String> extraFields = a.getExtraFields();
+				
 				int width;
 				int height;
-				ArrayList<String> extraFields = a.getExtraFields();
+							
 				for (int i = 1; i <= numImages; i++) {
+					
+					// limit the number of fetched images, maybe it is better to use
+					// Math.min(numImages, maxPictures) if maxPictures > 0
 					if (maxPictures > 0 && newPictures.size() >= maxPictures) {
 						Log.log(Log.LEVEL_TRACE, MODULE, "Fetched maximum of " + maxPictures + " pictures: stopping.");
 						break;
@@ -1184,6 +1189,8 @@ public class GalleryComm2 extends GalleryComm implements GalleryComm2Consts, Pre
 							fetch(a, subAlbumName, newPictures);
 						}
 					} else {
+						// TODO: AR: what means online
+						
 						Picture picture = new Picture(g);
 						picture.setOnline(true);
 

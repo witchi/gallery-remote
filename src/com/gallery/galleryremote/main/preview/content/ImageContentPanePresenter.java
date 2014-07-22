@@ -1,5 +1,5 @@
 package com.gallery.galleryremote.main.preview.content;
 
-public interface ImageContentPane {
+public interface ImageContentPanePresenter {
 
 }

@@ -677,6 +677,9 @@ public class Album extends GalleryItem implements ListModel<Picture>, Serializab
 		return extraFields;
 	}
 
+	// TODO: this should be moved out of this class, it splits the list of the extra fields
+	// within the protocol response
+	// it should be replaced with a setExtraFields(List)
 	public void setExtraFieldsString(String extraFieldsString) {
 		if (extraFieldsString != null && extraFieldsString.length() > 0) {
 			extraFields = new ArrayList<String>();

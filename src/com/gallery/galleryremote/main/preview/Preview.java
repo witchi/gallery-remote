@@ -21,6 +21,8 @@
 
 package com.gallery.galleryremote.main.preview;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowListener;
@@ -37,6 +39,10 @@ public interface Preview {
 	void addComponentListener(ComponentListener listener);
 
 	void addWindowListener(WindowListener listener);
-	
+
 	void toFront();
+
+	Component getGlassPane();
+
+	Container getContentPane();
 }

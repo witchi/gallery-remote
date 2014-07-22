@@ -392,8 +392,9 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 		// Set up module list
 
-		String modules = "ch.innovation.httpclient.RetryModule|" + "ch.innovation.httpclient.CookieModule|" + "ch.innovation.httpclient.RedirectionModule|"
-				+ "ch.innovation.httpclient.AuthorizationModule|" + "ch.innovation.httpclient.DefaultModule|" + "ch.innovation.httpclient.TransferEncodingModule|"
+		String modules = "ch.innovation.httpclient.RetryModule|" + "ch.innovation.httpclient.CookieModule|"
+				+ "ch.innovation.httpclient.RedirectionModule|" + "ch.innovation.httpclient.AuthorizationModule|"
+				+ "ch.innovation.httpclient.DefaultModule|" + "ch.innovation.httpclient.TransferEncodingModule|"
 				+ "ch.innovation.httpclient.ContentMD5Module|" + "ch.innovation.httpclient.ContentEncodingModule";
 
 		boolean in_applet = false;
@@ -1807,10 +1808,14 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 	 * classes in the order they're to be invoked. If this property is not set it
 	 * defaults to:
 	 * 
-	 * "ch.innovation.httpclient.RetryModule | ch.innovation.httpclient.CookieModule |
-	 * ch.innovation.httpclient.RedirectionModule | ch.innovation.httpclient.AuthorizationModule |
-	 * ch.innovation.httpclient.DefaultModule | ch.innovation.httpclient.TransferEncodingModule |
-	 * ch.innovation.httpclient.ContentMD5Module | ch.innovation.httpclient.ContentEncodingModule"
+	 * "ch.innovation.httpclient.RetryModule |
+	 * ch.innovation.httpclient.CookieModule |
+	 * ch.innovation.httpclient.RedirectionModule |
+	 * ch.innovation.httpclient.AuthorizationModule |
+	 * ch.innovation.httpclient.DefaultModule |
+	 * ch.innovation.httpclient.TransferEncodingModule |
+	 * ch.innovation.httpclient.ContentMD5Module |
+	 * ch.innovation.httpclient.ContentEncodingModule"
 	 * 
 	 * @see HTTPClientModule
 	 * @param module
@@ -2865,6 +2870,25 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 							sock.setSoTimeout(con_timeout);
 							sock = ((SSLSocketFactory) sslFactory).createSocket(sock, Host, Port, true);
+
+							// JavaBug:
+							// java.security.InvalidAlgorithmParameterException: Prime
+							// size must be multiple of 64, and can only range from 512
+							// to 1024, remove Diffie Hellmann Cipher Suites from the
+							// list
+
+							String[] exludedCipherSuites = { "_DHE_", "_DH_" };
+							List<String> limited = new ArrayList<String>();
+
+							for (String suite : ((SSLSocket) sock).getEnabledCipherSuites()) {
+								for (String excl : exludedCipherSuites) {
+									if (!suite.contains(excl)) {
+										limited.add(suite);
+									}
+								}
+							}
+
+							((SSLSocket) sock).setEnabledCipherSuites(limited.toArray(new String[limited.size()]));
 							checkCert(convert(((SSLSocket) sock).getSession().getPeerCertificateChain()[0]), Host);
 						}
 

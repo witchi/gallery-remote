@@ -4,15 +4,20 @@ import java.awt.Image;
 
 import com.gallery.galleryremote.Log;
 import com.gallery.galleryremote.model.Picture;
+import com.gallery.galleryremote.util.log.Logger;
 
 public class ImageLoaderThread implements Runnable {
-	Picture picture;
-	boolean stillRunning = false;
-	boolean notify = false;
+	
+	private static final Logger LOGGER = Logger.getLogger(ImageLoaderThread.class);
+	
+	private Picture picture;
+	private boolean stillRunning = false;
+	private boolean notify = false;
 
 	@Override
 	public void run() {
-		Log.log(Log.LEVEL_TRACE, MODULE, "Starting " + picture);
+		LOGGER.fine("Start loading image " + picture);
+		
 		Picture tmpPicture = null;
 		Image tmpImage = null;
 		while (picture != null) {
@@ -35,11 +40,11 @@ public class ImageLoaderThread implements Runnable {
 			notify = false;
 		}
 
-		Log.log(Log.LEVEL_TRACE, MODULE, "Ending");
+		LOGGER.fine("Ending image loading");
 	}
 
 	public void loadPicture(Picture picture, boolean notify) {
-		Log.log(Log.LEVEL_TRACE, MODULE, "loadPicture " + picture);
+		LOGGER.fine("loadPicture " + picture);
 
 		this.picture = picture;
 
@@ -49,7 +54,7 @@ public class ImageLoaderThread implements Runnable {
 
 		if (!stillRunning) {
 			stillRunning = true;
-			Log.log(Log.LEVEL_TRACE, MODULE, "Calling Start");
+			LOGGER.fine("Calling Start for load picture");
 			new Thread(this).start();
 		}
 	}

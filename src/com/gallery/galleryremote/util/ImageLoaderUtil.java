@@ -32,7 +32,7 @@ import com.gallery.galleryremote.prefs.PreferenceNames;
 public class ImageLoaderUtil implements PreferenceNames {
 	public static final String MODULE = "ImgLoadrUtil";
 
-	public SmartHashtable images = new SmartHashtable();
+	public final SmartHashtable images;
 
 	// next visible picture
 	public Picture pictureShowWant = null;
@@ -56,6 +56,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 
 	public ImageLoaderUtil(int cacheSize, ImageLoaderListener imageLoaderUser) {
 		this.cacheSize = cacheSize;
+		this.images = new SmartHashtable(cacheSize);
 		this.imageLoaderUser = imageLoaderUser;
 	}
 
@@ -81,7 +82,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 			cacheSize = images.size() - 1;
 		}
 
-		images.shrink();
+		images.shrink(cacheSize);
 
 		Log.log(Log.LEVEL_TRACE, MODULE, "Free memory after reduction: " + Runtime.getRuntime().freeMemory());
 	}
@@ -271,7 +272,6 @@ public class ImageLoaderUtil implements PreferenceNames {
 		return wrapInfo;
 	}
 
-
 	public static void paintOutline(Graphics g, String s, int textX, int textY, int thickness) {
 		if (thickness > 10) {
 			thickness = 10;
@@ -330,7 +330,5 @@ public class ImageLoaderUtil implements PreferenceNames {
 
 		return text;
 	}
-
-
 
 }

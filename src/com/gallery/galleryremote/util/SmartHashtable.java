@@ -5,27 +5,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.gallery.galleryremote.Log;
+import com.gallery.galleryremote.util.log.Logger;
 
 public class SmartHashtable extends HashMap<Object, Object> {
+
+	private static final Logger LOGGER = Logger.getLogger(SmartHashtable.class);
 	private static final long serialVersionUID = -5521200540999583214L;
-	ArrayList<Object> touchOrder = new ArrayList<Object>();
+
+	private final ArrayList<Object> touchOrder;
+	private int cacheSize;
+
+	public SmartHashtable(int cacheSize) {
+		this.touchOrder = new ArrayList<Object>();
+		this.cacheSize = cacheSize;
+	}
 
 	@Override
 	public Object put(Object key, Object value) {
 		touch(key);
 		super.put(key, value);
 
-		// Log.log(Log.LEVEL_TRACE, MODULE,
-		// Runtime.getRuntime().freeMemory() + " - " +
-		// Runtime.getRuntime().totalMemory());
+		LOGGER.fine(Runtime.getRuntime().freeMemory() + " - " + Runtime.getRuntime().totalMemory());
 		if (cacheSize > 0 && touchOrder.size() > cacheSize) {
 			shrink();
 		}
-		// Log.log(Log.LEVEL_TRACE, MODULE,
-		// Runtime.getRuntime().freeMemory() + " - " +
-		// Runtime.getRuntime().totalMemory());
-
+		LOGGER.fine(Runtime.getRuntime().freeMemory() + " - " + Runtime.getRuntime().totalMemory());
 		return value;
 	}
 
@@ -46,9 +50,7 @@ public class SmartHashtable extends HashMap<Object, Object> {
 
 	@Override
 	public void clear() {
-		// Log.log(Log.LEVEL_TRACE, MODULE,
-		// Runtime.getRuntime().freeMemory() + " - " +
-		// Runtime.getRuntime().totalMemory());
+		LOGGER.fine(Runtime.getRuntime().freeMemory() + " - " + Runtime.getRuntime().totalMemory());
 
 		// flush images before clearing hastables for quicker deletion
 		Iterator<Object> it = values().iterator();
@@ -65,13 +67,11 @@ public class SmartHashtable extends HashMap<Object, Object> {
 		System.runFinalization();
 		System.gc();
 
-		// Log.log(Log.LEVEL_TRACE, MODULE,
-		// Runtime.getRuntime().freeMemory() + " - " +
-		// Runtime.getRuntime().totalMemory());
+		LOGGER.fine(Runtime.getRuntime().freeMemory() + " - " + Runtime.getRuntime().totalMemory());
 	}
 
 	public void touch(Object key) {
-		Log.log(Log.LEVEL_TRACE, MODULE, "touch " + key);
+		LOGGER.fine("touch " + key);
 		int i = touchOrder.indexOf(key);
 
 		if (i != -1) {
@@ -81,14 +81,13 @@ public class SmartHashtable extends HashMap<Object, Object> {
 		touchOrder.add(key);
 	}
 
-	public void shrink() {
+	private void shrink() {
 		if (touchOrder.size() == 0) {
-			Log.log(Log.LEVEL_ERROR, MODULE, "Empty SmartHashtable");
+			LOGGER.fine("Empty SmartHashtable");
 			return;
 		}
 
-		Object key = touchOrder.get(0);
-		touchOrder.remove(0);
+		Object key = touchOrder.remove(0);
 
 		Image i = (Image) get(key, false);
 		if (i != null) {
@@ -97,12 +96,17 @@ public class SmartHashtable extends HashMap<Object, Object> {
 
 		remove(key);
 
-		Log.log(Log.LEVEL_TRACE, MODULE, "Shrunk " + key);
+		LOGGER.fine("Shrunk " + key);
 		if (cacheSize > 0 && size() > cacheSize) {
 			shrink();
 		} else {
 			System.runFinalization();
 			System.gc();
 		}
+	}
+
+	public void shrink(int cacheSize) {
+		this.cacheSize = cacheSize;
+		shrink();
 	}
 }

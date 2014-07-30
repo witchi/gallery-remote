@@ -122,6 +122,7 @@
 				<attribute name="Permissions" value="all-permissions" />
 				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
 				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Application-Name" value="Gallery Remote" />
 			</manifest>
 		</jar>
 
@@ -138,6 +139,7 @@
 				<attribute name="Permissions" value="all-permissions" />
 				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
 				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Application-Name" value="Gallery Remote Applet" />
 			</manifest>
 		</jar>
 		<signjar jar="${dir.dest}/GalleryRemoteApplet.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" />
@@ -156,6 +158,7 @@
 				<attribute name="Permissions" value="all-permissions" />
 				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
 				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Application-Name" value="Gallery Remote Applet Mini" />
 			</manifest>
 		</jar>
 		<signjar jar="${dir.dest}/GalleryRemoteAppletMini.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" />

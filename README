@@ -1,4 +1,4 @@
-Gallery Remote Readme
+Gallery Remote
 
 CONTENTS:
   1. What is Gallery Remote?
@@ -7,8 +7,10 @@ CONTENTS:
   4. Can I run Gallery Remote on my non-Windows OS?
   5. Known problems
   6. HELP!! Where do I go for Help?
+  7. The Gallery Protocol
   
-1 WHAT IS GALLERY REMOTE?
+  
+1. WHAT IS GALLERY REMOTE?
 
 Gallery Remote is a Desktop file upload utility for Gallery. 
 
@@ -83,5 +85,17 @@ Tracker:
 
 It's a good idea to check through these databases to see if the
 bug/feature that you're referring to is already in there.
+
+The documentation is available on:
+
+    http://codex.gallery2.org/index.php/Gallery_Remote:FAQ
+
+
+7. THE GALLERY PROTOCOL
+
+The application communicates with a Gallery server using a defined protocol.
+You can find the protocol documentation here:
+
+    http://codex.gallery2.org/index.php/Gallery_Remote:Protocol
 
 THE END.

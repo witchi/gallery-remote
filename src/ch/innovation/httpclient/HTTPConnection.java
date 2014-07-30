@@ -392,8 +392,9 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 		// Set up module list
 
-		String modules = "ch.innovation.httpclient.RetryModule|" + "ch.innovation.httpclient.CookieModule|" + "ch.innovation.httpclient.RedirectionModule|"
-				+ "ch.innovation.httpclient.AuthorizationModule|" + "ch.innovation.httpclient.DefaultModule|" + "ch.innovation.httpclient.TransferEncodingModule|"
+		String modules = "ch.innovation.httpclient.RetryModule|" + "ch.innovation.httpclient.CookieModule|"
+				+ "ch.innovation.httpclient.RedirectionModule|" + "ch.innovation.httpclient.AuthorizationModule|"
+				+ "ch.innovation.httpclient.DefaultModule|" + "ch.innovation.httpclient.TransferEncodingModule|"
 				+ "ch.innovation.httpclient.ContentMD5Module|" + "ch.innovation.httpclient.ContentEncodingModule";
 
 		boolean in_applet = false;
@@ -1807,10 +1808,14 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 	 * classes in the order they're to be invoked. If this property is not set it
 	 * defaults to:
 	 * 
-	 * "ch.innovation.httpclient.RetryModule | ch.innovation.httpclient.CookieModule |
-	 * ch.innovation.httpclient.RedirectionModule | ch.innovation.httpclient.AuthorizationModule |
-	 * ch.innovation.httpclient.DefaultModule | ch.innovation.httpclient.TransferEncodingModule |
-	 * ch.innovation.httpclient.ContentMD5Module | ch.innovation.httpclient.ContentEncodingModule"
+	 * "ch.innovation.httpclient.RetryModule |
+	 * ch.innovation.httpclient.CookieModule |
+	 * ch.innovation.httpclient.RedirectionModule |
+	 * ch.innovation.httpclient.AuthorizationModule |
+	 * ch.innovation.httpclient.DefaultModule |
+	 * ch.innovation.httpclient.TransferEncodingModule |
+	 * ch.innovation.httpclient.ContentMD5Module |
+	 * ch.innovation.httpclient.ContentEncodingModule"
 	 * 
 	 * @see HTTPClientModule
 	 * @param module

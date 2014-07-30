@@ -9,9 +9,7 @@ Gallery Remote is a Desktop file upload utility for Gallery.
 #### 2. WHAT IS GALLERY?
 
 Gallery is a web based photo album viewer/creator.  For the latest
-information, check out the web site:
-
-  [http://gallery.sourceforge.net/](http://gallery.sourceforge.net)
+information, check out the web site (http://gallery.sourceforge.net)
     
     
 #### 3. USING GALLERY REMOTE
@@ -53,11 +51,8 @@ mailing lists.
 
 The Gallery users mailing list is here:
 
-  [http://lists.sourceforge.net/lists/listinfo/gallery-users](http://lists.sourceforge.net/lists/listinfo/gallery-users)
+  (http://lists.sourceforge.net/lists/listinfo/gallery-users)
 
-there's an archive of all the emails for the past few months here:
-
-  [http://marc.theaimsgroup.com/?l=gallery-users&r=1&w=2](http://marc.theaimsgroup.com/?l=gallery-users&r=1&w=2)
 
 We respond to each and every request for help.  There are very few
 problems that we have not been able to work through.  We *will* get
@@ -66,28 +61,20 @@ us of time that we could be spending improving the quality of Gallery
 and adding new features.
 
 Speaking of quality and features, if you find a bug you can file
-it in our Bug Tracker:
+it in our [Bug Tracker](http://sourceforge.net/tracker/?group_id=7130&atid=107130). File new bugs in the GitHub issue list.
 
-  [http://sourceforge.net/tracker/?group_id=7130&atid=107130](http://sourceforge.net/tracker/?group_id=7130&atid=107130)
-
-and if you think of a new feature, you can file it in our Feature
-Tracker:
-
-  [http://sourceforge.net/tracker/?atid=357130&group_id=7130&func=browse](http://sourceforge.net/tracker/?atid=357130&group_id=7130&func=browse)
+If you think of a new feature, you can file it in our [Feature
+Tracker](http://sourceforge.net/tracker/?atid=357130&group_id=7130&func=browse).
 
 It's a good idea to check through these databases to see if the
 bug/feature that you're referring to is already in there.
 
-The documentation is available on:
-
-  [http://codex.gallery2.org/index.php/Gallery_Remote:FAQ](http://codex.gallery2.org/index.php/Gallery_Remote:FAQ)
+The documentation is available on (http://codex.gallery2.org/index.php/Gallery_Remote:FAQ)
 
 
 #### 7. THE GALLERY PROTOCOL
 
 The application communicates with a Gallery server using a defined protocol.
-You can find the protocol documentation here:
-
-  [http://codex.gallery2.org/index.php/Gallery_Remote:Protocol](http://codex.gallery2.org/index.php/Gallery_Remote:Protocol)
+You can find the protocol documentation [here](http://codex.gallery2.org/index.php/Gallery_Remote:Protocol).
 
 THE END.

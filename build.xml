@@ -118,7 +118,7 @@
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Main-Class" value="com.gallery.galleryremote.GalleryRemote" />
-				<attribute name="Class-Path" value="${dir.lib}/metadata-extractor-2.1.jar ${dir.img}/" />
+				<attribute name="Class-Path" value="${dir.lib}/metadata-extractor-2.1.0.jar ${dir.img}/" />
 				<attribute name="Permissions" value="all-permissions" />
 				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
 				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
@@ -126,7 +126,7 @@
 			</manifest>
 		</jar>
 
-		<signjar jar="${dir.dest}/GalleryRemote.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" />
+		<signjar jar="${dir.dest}/GalleryRemote.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
 	<target name="galleryremoteapplet_jar" depends="clean,compile">
@@ -142,7 +142,7 @@
 				<attribute name="Application-Name" value="Gallery Remote Applet" />
 			</manifest>
 		</jar>
-		<signjar jar="${dir.dest}/GalleryRemoteApplet.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" />
+		<signjar jar="${dir.dest}/GalleryRemoteApplet.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
 	<target name="galleryremoteappletmini_jar" depends="clean,compile">
@@ -161,7 +161,7 @@
 				<attribute name="Application-Name" value="Gallery Remote Applet Mini" />
 			</manifest>
 		</jar>
-		<signjar jar="${dir.dest}/GalleryRemoteAppletMini.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" />
+		<signjar jar="${dir.dest}/GalleryRemoteAppletMini.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
 	<target name="galleryremotehttpclient_jar" depends="clean,compile">
@@ -175,7 +175,7 @@
 				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
 			</manifest>
 		</jar>
-		<signjar jar="${dir.dest}/GalleryRemoteHTTPClient.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" />
+		<signjar jar="${dir.dest}/GalleryRemoteHTTPClient.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
 	<target name="img_jar" depends="clean,compile">
@@ -189,7 +189,7 @@
 				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
 			</manifest>
 		</jar>
-		<signjar jar="${dir.dest}/img.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" />
+		<signjar jar="${dir.dest}/img.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
 	<target name="appletimg_jar" depends="clean,compile">
@@ -205,18 +205,14 @@
 				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
 			</manifest>
 		</jar>
-		<signjar jar="${dir.dest}/applet_img.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" />
+		<signjar jar="${dir.dest}/applet_img.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 
 		<delete file="${dir.img}/im.properties" />
 		<delete file="${dir.img}/jpegtran.properties" />
 	</target>
 
 	<target name="sign-libs">
-		<signjar alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}">
-			<path>
-				<fileset dir="${dir.lib}" includes="**/*.jar" />
-			</path>
-		</signjar>
+		<signjar jar="${dir.lib}/metadata-extractor-2.1.0.jar" signedjar="${dir.dest}/metadata-extractor-2.1.0.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
 	
@@ -255,7 +251,7 @@
 			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/remote/applets" />
 		</exec>
 		<exec executable="scp">
-			<arg value="${dir.lib}/metadata-extractor-2.1.jar" />
+			<arg value="${dir.dest}/metadata-extractor-2.1.0.jar" />
 			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/remote/applets" />
 		</exec>
 		<exec executable="scp">

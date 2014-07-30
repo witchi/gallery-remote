@@ -19,7 +19,7 @@ You're on your own here, but it's pretty straightforward.
 
 #### 4. CAN I RUN GALLERY REMOTE ON MY NON-WINDOWS OS?
 
-Yes, maybe. Gallery Remote was written in Java. If you have Java 1.3 or later
+Yes, maybe. Gallery Remote was written in Java. If you have Java 1.7 or later
 installed on your machine, you may be able to run the app with the command:
 
 ```bash
@@ -41,8 +41,8 @@ the Gallery authors get bombarded with lots of emails every day.
 Be kind to us and try to use the resources we make available before
 you fire off an email to us.
 
-The first thing you should do is to read the Gallery Frequently
-Asked Questions page, which is found [here](http://gallery.sourceforge.net/faq.php). If you can't find your answer there, send your help requests to the mailing lists. The Gallery users mailing list is [here](http://lists.sourceforge.net/lists/listinfo/gallery-users).
+The first thing you should do is to read the **Gallery Frequently
+Asked Questions** page, which is found [here](http://gallery.sourceforge.net/faq.php). If you can't find your answer there, send your help requests to the **mailing lists**. The Gallery users mailing list is [here](http://lists.sourceforge.net/lists/listinfo/gallery-users).
 
 
 We respond to each and every request for help.  There are very few

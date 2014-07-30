@@ -76,9 +76,7 @@ class GalleryRemoteWebStartView extends GalleryView {
 
         echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 ?>
-<jnlp
-  spec="1.0+"
-  codebase="<?php echo $codebase . 'modules/remote'; ?>">
+<jnlp spec="7.0" codebase="<?php echo $codebase . 'modules/remote'; ?>">
   <information>
     <title>Gallery Remote</title>
     <vendor>Gallery</vendor>
@@ -92,16 +90,21 @@ class GalleryRemoteWebStartView extends GalleryView {
       <menu submenu="Gallery Remote"/>
     </shortcut>
   </information>
+  
   <security>
-      <all-permissions/>
+      <all-permissions />
   </security>
+  
+  <update check="always" policy="always" />
+  
   <resources>
-    <j2se version="1.7+"/>
+    <java version="1.7+" href="http://java.sun.com/products/autodl/j2se" java-vm-args="-ea" initial-heap-size="128m" max-heap-size="512m" />
     <jar href="applets/GalleryRemote.jar"/>
     <jar href="applets/img.jar"/>
     <jar href="applets/metadata-extractor-2.1.jar"/>
   </resources>
-     <application-desc main-class="com.gallery.galleryremote.GalleryRemote">
+  
+  <application-desc main-class="com.gallery.galleryremote.GalleryRemote">
     <argument>-url</argument>
     <argument><?php echo $codebase; ?></argument>
     <?php if (isset($username)) { ?>

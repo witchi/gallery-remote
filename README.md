@@ -9,7 +9,7 @@ Gallery Remote is a Desktop file upload utility for Gallery.
 #### 2. WHAT IS GALLERY?
 
 Gallery is a web based photo album viewer/creator.  For the latest
-information, check out the web site (http://gallery.sourceforge.net)
+information, check out the web site http://gallery.sourceforge.net
     
     
 #### 3. USING GALLERY REMOTE
@@ -42,16 +42,10 @@ Be kind to us and try to use the resources we make available before
 you fire off an email to us.
 
 The first thing you should do is to read the Gallery Frequently
-Asked Questions page, which is found here:
-
-  [http://gallery.sourceforge.net/faq.php](http://gallery.sourceforge.net/faq.php)
+Asked Questions page, which is found [here](http://gallery.sourceforge.net/faq.php).
 
 If you can't find your answer there, send your help requests to the
-mailing lists.
-
-The Gallery users mailing list is here:
-
-  (http://lists.sourceforge.net/lists/listinfo/gallery-users)
+mailing lists. The Gallery users mailing list is [here](http://lists.sourceforge.net/lists/listinfo/gallery-users).
 
 
 We respond to each and every request for help.  There are very few
@@ -61,9 +55,7 @@ us of time that we could be spending improving the quality of Gallery
 and adding new features.
 
 Speaking of quality and features, if you find a bug you can file
-it in our [Bug Tracker](http://sourceforge.net/tracker/?group_id=7130&atid=107130). File new bugs in the GitHub issue list.
-
-If you think of a new feature, you can file it in our [Feature
+it in our [Bug Tracker](http://sourceforge.net/tracker/?group_id=7130&atid=107130). File new bugs in the GitHub issue list. If you think of a new feature, you can file it in our [Feature
 Tracker](http://sourceforge.net/tracker/?atid=357130&group_id=7130&func=browse).
 
 It's a good idea to check through these databases to see if the

@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
-<!DOCTYPE installation PUBLIC "" "installation.dtd" >
-<installation version="1.0">
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<izpack:installation version="5.0"
+                     xmlns:izpack="http://izpack.org/schema/installation"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
+
    <!-- Ant properties in this file can be referenced with @{},
                otherwise use variables below in installer files with ${} -->
           <info>
@@ -10,6 +13,7 @@
             <authors>
 				<author name="Andr&eacute; Rothe" email="andre.rothe@phosco.info" />
 			</authors>
+			<url>http://www.myCompany.com/</url>
           </info>
 
           <guiprefs width="600" height="480" resizable="no">
@@ -28,7 +32,7 @@
 
           <locale>
             <langpack iso3="eng"/>
+            <langpack iso3="deu"/>
           </locale>
           
-</installation>
-   
+</izpack:installation>

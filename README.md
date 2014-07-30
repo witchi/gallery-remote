@@ -11,7 +11,7 @@ Gallery Remote is a Desktop file upload utility for Gallery.
 Gallery is a web based photo album viewer/creator.  For the latest
 information, check out the web site:
 
-    [http://gallery.sourceforge.net/](http://gallery.sourceforge.net/)
+  [http://gallery.sourceforge.net/](http://gallery.sourceforge.net)
     
     
 #### 3. USING GALLERY REMOTE
@@ -25,7 +25,7 @@ Yes, maybe. Gallery Remote was written in Java. If you have Java 1.3 or later
 installed on your machine, you may be able to run the app with the command:
 
 ```bash
-	java -cp GalleryRemote.jar com.gallery.GalleryRemote.GalleryRemote
+   java -cp GalleryRemote.jar com.gallery.GalleryRemote.GalleryRemote
 ```	
 assuming you are in the same directory as the GalleryRemote.jar file.
 
@@ -46,18 +46,18 @@ you fire off an email to us.
 The first thing you should do is to read the Gallery Frequently
 Asked Questions page, which is found here:
 
-    [http://gallery.sourceforge.net/faq.php](http://gallery.sourceforge.net/faq.php)
+  [http://gallery.sourceforge.net/faq.php](http://gallery.sourceforge.net/faq.php)
 
 If you can't find your answer there, send your help requests to the
 mailing lists.
 
 The Gallery users mailing list is here:
 
-    (http://lists.sourceforge.net/lists/listinfo/gallery-users)
+  [http://lists.sourceforge.net/lists/listinfo/gallery-users](http://lists.sourceforge.net/lists/listinfo/gallery-users)
 
 there's an archive of all the emails for the past few months here:
 
-    [http://marc.theaimsgroup.com/?l=gallery-users&r=1&w=2]
+  [http://marc.theaimsgroup.com/?l=gallery-users&r=1&w=2](http://marc.theaimsgroup.com/?l=gallery-users&r=1&w=2)
 
 We respond to each and every request for help.  There are very few
 problems that we have not been able to work through.  We *will* get
@@ -68,19 +68,19 @@ and adding new features.
 Speaking of quality and features, if you find a bug you can file
 it in our Bug Tracker:
 
-    [http://sourceforge.net/tracker/?group_id=7130&atid=107130]
+  [http://sourceforge.net/tracker/?group_id=7130&atid=107130](http://sourceforge.net/tracker/?group_id=7130&atid=107130)
 
 and if you think of a new feature, you can file it in our Feature
 Tracker:
 
-    [http://sourceforge.net/tracker/?atid=357130&group_id=7130&func=browse]
+  [http://sourceforge.net/tracker/?atid=357130&group_id=7130&func=browse](http://sourceforge.net/tracker/?atid=357130&group_id=7130&func=browse)
 
 It's a good idea to check through these databases to see if the
 bug/feature that you're referring to is already in there.
 
 The documentation is available on:
 
-    [http://codex.gallery2.org/index.php/Gallery_Remote:FAQ]
+  [http://codex.gallery2.org/index.php/Gallery_Remote:FAQ](http://codex.gallery2.org/index.php/Gallery_Remote:FAQ)
 
 
 #### 7. THE GALLERY PROTOCOL
@@ -88,6 +88,6 @@ The documentation is available on:
 The application communicates with a Gallery server using a defined protocol.
 You can find the protocol documentation here:
 
-    [http://codex.gallery2.org/index.php/Gallery_Remote:Protocol]
+  [http://codex.gallery2.org/index.php/Gallery_Remote:Protocol](http://codex.gallery2.org/index.php/Gallery_Remote:Protocol)
 
 THE END.

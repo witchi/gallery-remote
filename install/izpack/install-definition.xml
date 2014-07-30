@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+ <installation version="1.0">
+        <!-- Ant properties in this file can be referenced with @{},
+               otherwise use variables below in installer files with ${} -->
+          <info>
+            <appname>Gallery Remote</appname>
+            <appversion>1.5.1-b49</appversion>
+            <uninstaller name="remove.task" path="${INSTALL_PATH}/Uninstall" write="yes"/>
+            <authors>
+				<author name="André Rothe" email="andre.rothe@phosco.info" />
+			</authors>
+          </info>
+
+          <guiprefs width="600" height="480" resizable="no">
+            <laf name="kunststoff">
+              <os family="unix" />
+            </laf>
+            <modifier key="useHeadingPanel" value="yes"/>
+            <modifier key="useHeadingForSummary" value="yes"/>
+<modifier key="headingImageOnLeft" value="yes"/>
+            <modifier key="headingLineCount" value="2"/>
+            <modifier key="headingFontSize" value="1.5"/>
+            <modifier key="headingBackgroundColor" value="0x00ffffff"/>
+            <modifier key="headingPanelCounter" value="text"/>
+            <modifier key="headingPanelCounterPos" value="inHeading"/>
+          </guiprefs>
+
+          <locale>
+            <langpack iso3="eng"/>
+          </locale>
+          
+          </installation>
+   

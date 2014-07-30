@@ -42,10 +42,7 @@ Be kind to us and try to use the resources we make available before
 you fire off an email to us.
 
 The first thing you should do is to read the Gallery Frequently
-Asked Questions page, which is found [here](http://gallery.sourceforge.net/faq.php).
-
-If you can't find your answer there, send your help requests to the
-mailing lists. The Gallery users mailing list is [here](http://lists.sourceforge.net/lists/listinfo/gallery-users).
+Asked Questions page, which is found [here](http://gallery.sourceforge.net/faq.php). If you can't find your answer there, send your help requests to the mailing lists. The Gallery users mailing list is [here](http://lists.sourceforge.net/lists/listinfo/gallery-users).
 
 
 We respond to each and every request for help.  There are very few
@@ -61,7 +58,7 @@ Tracker](http://sourceforge.net/tracker/?atid=357130&group_id=7130&func=browse).
 It's a good idea to check through these databases to see if the
 bug/feature that you're referring to is already in there.
 
-The documentation is available on (http://codex.gallery2.org/index.php/Gallery_Remote:FAQ)
+An FAQ for Gallery Remote is available on http://codex.gallery2.org/index.php/Gallery_Remote:FAQ
 
 
 #### 7. THE GALLERY PROTOCOL

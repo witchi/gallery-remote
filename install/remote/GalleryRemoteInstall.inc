@@ -25,7 +25,7 @@
  * @author Andre Rothe <andre.rothe@phosco.info>
  * @version $Revision: 1 $
  */
-class GalleryRemoteWebStartView extends GalleryView {
+class GalleryRemoteInstallView extends GalleryView {
 
     /**
      * @see GalleryView::isImmediate
@@ -93,8 +93,10 @@ class GalleryRemoteWebStartView extends GalleryView {
   
   <resources>
     <java version="1.7+" href="http://java.sun.com/products/autodl/j2se" java-vm-args="-ea" initial-heap-size="128m" max-heap-size="512m" />
-    <jar href="applets/GalleryRemoteInstall.jar"/>
+    <jar href="applets/GalleryRemoteInstall.jar" main="true"/>
   </resources>
+  
+   <application-desc main-class="com.izforge.izpack.installer.Installer" />
 </jnlp>
 <?php
         return null;

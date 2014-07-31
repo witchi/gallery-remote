@@ -246,6 +246,15 @@
 			</filterchain>
 		</copy>
 		<IzPack input="${java.io.tmpdir}/gallery-install-definition.xml" output="${dir.dest}/${ant.project.name}Install.jar" installerType="standard" basedir="${basedir}" />
+		<jar update="true" file="${dir.dest}/${ant.project.name}Install.jar">
+			<manifest>
+				<attribute name="Application-Name" value="${app.name} Installer" />
+				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Permissions" value="all-permissions" />
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
+			</manifest>
+		</jar>
 		<signjar jar="${dir.dest}/${ant.project.name}Install.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
@@ -267,8 +276,12 @@
 	  **
 	  -->
 
-	<target name="deploy" depends="jar" description="Deploys the jars into the right directories of Gallery2">
+	<target name="deploy" depends="installer,jar" description="Deploys the jars into the right directories of Gallery2">
 		<echo message="deploy JARs for module remote" />
+		<exec executable="scp">
+			<arg value="${dir.dest}/GalleryRemoteInstall.jar" />
+			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/remote/applets" />
+		</exec>
 		<exec executable="scp">
 			<arg value="${dir.dest}/GalleryRemote.jar" />
 			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/remote/applets" />

@@ -94,7 +94,7 @@ class GalleryRemoteWebStartView extends GalleryView {
   
   <resources>
     <java version="1.7+" href="http://java.sun.com/products/autodl/j2se" java-vm-args="-ea" initial-heap-size="128m" max-heap-size="512m" />
-    <jar href="applets/GalleryRemote.jar"/>
+    <jar href="applets/GalleryRemote.jar" main="true"/>
     <jar href="applets/img.jar"/>
     <jar href="applets/metadata-extractor-2.1.jar"/>
   </resources>

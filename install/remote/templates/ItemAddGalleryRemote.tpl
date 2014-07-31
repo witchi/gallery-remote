@@ -9,7 +9,7 @@
   <div class="giDescription">
     {g->text text="You can either:"}
     <ul>
-      <li><a href="{g->url arg1="href=http://gallery.sourceforge.net/gallery_remote.php"}">{g->text text="Install Gallery Remote permanently on your computer"}</a></li>
+      <li><a href="{g->url arg1="view=remote.GalleryRemoteInstall"}"}">{g->text text="Install Gallery Remote permanently on your computer"}</a></li>
       <li><a href="{g->url arg1="view=remote.GalleryRemoteWebStart"}">{g->text text="Run Gallery Remote immediately using Java Webstart"}</a></li>
     </ul>
   </div>

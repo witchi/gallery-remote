@@ -84,11 +84,6 @@ class GalleryRemoteWebStartView extends GalleryView {
     <description>A Java application you can use to upload pictures to your Gallery</description>
     <icon href="images/rar_icon_32.gif"/>
     <icon kind="splash" href="images/rar_about_gr1.png"/>
-    <offline-allowed />
-    <shortcut online="true">
-      <desktop/>
-      <menu submenu="Gallery Remote"/>
-    </shortcut>
   </information>
   
   <security>

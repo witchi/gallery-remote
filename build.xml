@@ -17,17 +17,21 @@
 	<property name="dir.dest" location="dest" />
 	<property name="dir.install" location="install" />
 
+	<property file="${dir.src}/defaults.properties" />
+
 	<path id="path.classpath">
 		<fileset dir="${dir.lib}" includes="**/*.jar" />
 		<pathelement path="${dir.img}" />
 	</path>
+
+	<taskdef name="IzPack" classpath="${dir.lib}/standalone-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask" />
 
 	<!--
 	  **
 	  ** this target initializes the build filesystem
 	  **
 	  -->
-	
+
 	<target name="prepare">
 		<!-- Create the time stamp -->
 		<tstamp />
@@ -45,13 +49,13 @@
 		</copy>
 	</target>
 
-	
+
 	<!--
 	  **
 	  ** this target compiles the source classes
 	  **
 	  -->
-	
+
 	<target name="compile" depends="prepare" description="compile the source">
 		<!-- Compile the java code from ${dir.src} into ${dir.build} -->
 		<javac includeantruntime="false" srcdir="${dir.src}" destdir="${dir.build}" classpathref="path.classpath" includes="com/**,ch/**,edu/**" listfiles="on" debug="on" nowarn="off" source="1.7" target="1.7">
@@ -60,13 +64,13 @@
 		</javac>
 	</target>
 
-	
+
 	<!--
 	  **
 	  ** this target runs the application GalleryRemote locally
 	  **
 	  -->
-	
+
 	<target name="run" depends="compile" description="compile then run">
 		<java classname="com.gallery.galleryremote.GalleryRemote" fork="true" maxmemory="256M">
 			<classpath>
@@ -83,7 +87,7 @@
 	  ** it waits till the Debug View of Eclipse connects it on Port 5005
 	  **
 	  -->
-	
+
 	<target name="debug" depends="compile" description="compile then run">
 
 		<java classname="com.gallery.galleryremote.GalleryRemote" fork="true" maxmemory="256M">
@@ -96,13 +100,13 @@
 		</java>
 	</target>
 
-	
+
 	<!--
 	  **
 	  ** this target cleans the whole filesystem
 	  **
 	  -->
-	  
+
 	<target name="clean" description="clean work files">
 		<!-- Delete the ${dir.build} and ${dist} directory trees -->
 		<delete dir="${dir.build}" />
@@ -110,7 +114,7 @@
 	</target>
 
 
-	<target name="galleryremote_jar" depends="clean,compile">
+	<target name="galleryremote_jar" depends="compile">
 		<delete file="${dir.dest}/GalleryRemote.jar" />
 		<jar destfile="${dir.dest}/GalleryRemote.jar">
 			<fileset dir="${dir.build}" />
@@ -129,7 +133,7 @@
 		<signjar jar="${dir.dest}/GalleryRemote.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	<target name="galleryremoteapplet_jar" depends="clean,compile">
+	<target name="galleryremoteapplet_jar" depends="compile">
 		<delete file="${dir.dest}/GalleryRemoteApplet.jar" />
 		<jar destfile="${dir.dest}/GalleryRemoteApplet.jar" index="true">
 			<fileset dir="${dir.build}" includesfile="${dir.install}/AppletMiniExcludes.txt" excludesfile="${dir.install}/AppletExcludes.txt" />
@@ -145,7 +149,7 @@
 		<signjar jar="${dir.dest}/GalleryRemoteApplet.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	<target name="galleryremoteappletmini_jar" depends="clean,compile">
+	<target name="galleryremoteappletmini_jar" depends="compile">
 		<delete file="${dir.dest}/GalleryRemoteAppletMini.jar" />
 		<jar destfile="${dir.dest}/GalleryRemoteAppletMini.jar" index="true">
 			<fileset dir="${dir.build}" excludes="ch/">
@@ -164,7 +168,7 @@
 		<signjar jar="${dir.dest}/GalleryRemoteAppletMini.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	<target name="galleryremotehttpclient_jar" depends="clean,compile">
+	<target name="galleryremotehttpclient_jar" depends="compile">
 		<delete file="${dir.dest}/GalleryRemoteHTTPClient.jar" />
 		<jar destfile="${dir.dest}/GalleryRemoteHTTPClient.jar" index="true">
 			<fileset dir="${dir.build}" includes="ch/" />
@@ -178,7 +182,7 @@
 		<signjar jar="${dir.dest}/GalleryRemoteHTTPClient.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	<target name="img_jar" depends="clean,compile">
+	<target name="img_jar" depends="compile">
 		<jar destfile="${dir.dest}/img.jar">
 			<fileset dir="${dir.img}" />
 			<fileset dir="." includes="rar_about_gr1.png" />
@@ -192,7 +196,7 @@
 		<signjar jar="${dir.dest}/img.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	<target name="appletimg_jar" depends="clean,compile">
+	<target name="appletimg_jar" depends="compile">
 		<copy file="${dir.src}/imagemagick/im.properties.applet" tofile="${dir.img}/im.properties" />
 		<copy file="${dir.src}/jpegtran/jpegtran.properties.applet" tofile="${dir.img}/jpegtran.properties" />
 
@@ -215,14 +219,36 @@
 		<signjar jar="${dir.lib}/metadata-extractor-2.1.0.jar" signedjar="${dir.dest}/metadata-extractor-2.1.0.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	
+
 	<!--
 	  **
 	  ** Builds all JARS and signs them
 	  **
 	  -->
-	
+
 	<target name="jar" depends="sign-libs,galleryremote_jar,galleryremoteapplet_jar,galleryremoteappletmini_jar,galleryremotehttpclient_jar,img_jar,appletimg_jar" description="create a jar of the source" />
+
+	<!--
+	  ** 
+	  ** compiles the installer
+	  **
+	  -->
+
+	<target name="installer" depends="jar" description="compiles the IzPack installer">
+		<copy overwrite="yes" verbose="yes" file="${dir.install}/izpack/install-definition.xml" tofile="${java.io.tmpdir}/gallery-install-definition.xml">
+			<filterchain>
+				<expandproperties />
+			</filterchain>
+		</copy>
+		<copy overwrite="yes" verbose="yes" file="${dir.install}/izpack/Unix_shortcutSpec.xml" tofile="${java.io.tmpdir}/Unix_shortcutSpec.xml">
+			<filterchain>
+				<expandproperties />
+			</filterchain>
+		</copy>
+		<IzPack input="${java.io.tmpdir}/gallery-install-definition.xml" output="${dir.dest}/${ant.project.name}Install.jar" installerType="standard" basedir="${basedir}" />
+		<signjar jar="${dir.dest}/${ant.project.name}Install.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
+	</target>
+
 
 	<target name="slideshowtest" depends="compile">
 		<java classname="com.gallery.GalleryRemote.DummyAppletContext" fork="true">
@@ -234,14 +260,15 @@
 		</java>
 	</target>
 
-	
+
 	<!--
 	  **
 	  ** this target copies all jars into the right directories on the webserver
 	  **
 	  -->
-	  
+
 	<target name="deploy" depends="jar" description="Deploys the jars into the right directories of Gallery2">
+		<echo message="deploy JARs for module remote" />
 		<exec executable="scp">
 			<arg value="${dir.dest}/GalleryRemote.jar" />
 			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/remote/applets" />
@@ -254,6 +281,7 @@
 			<arg value="${dir.dest}/metadata-extractor-2.1.0.jar" />
 			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/remote/applets" />
 		</exec>
+		<echo message="deploy JARs for module uploadapplet" />
 		<exec executable="scp">
 			<arg value="${dir.dest}/GalleryRemoteAppletMini.jar" />
 			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/uploadapplet/applets" />
@@ -266,6 +294,7 @@
 			<arg value="${dir.dest}/applet_img.jar" />
 			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/uploadapplet/applets" />
 		</exec>
+		<echo message="deploy JARs for module slideshowapplet" />
 		<exec executable="scp">
 			<arg value="${dir.dest}/GalleryRemoteAppletMini.jar" />
 			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/slideshowapplet/applets" />
@@ -286,20 +315,20 @@
 	  ** Creates the keystore for jar signing. Will be generated once. 
 	  **
 	  -->
-	
+
 	<target name="create-keystore">
 		<exec executable="keytool" failonerror="true">
 			<arg line="-genkey -alias gallery -keyalg RSA -keystore ${file.keystore} -keysize 1024 -validity 365 -dname &quot;CN=pics.phosco.info, OU=Gallery Development, O=Gallery, L=Leipzig, ST=Saxony, C=DE&quot; -keypass gallery -storepass gallery" />
 		</exec>
 	</target>
 
-	
+
 	<!-- 
 	  **
 	  ** Creates a signing request, which we can use to sign Jars 
 	  **
 	  -->
-	
+
 	<target name="make_csr" depends="create-keystore" description="Create a Certificate Signing Request from a self-signed certificate">
 		<exec executable="keytool" failonerror="true">
 			<arg line="-certreq -alias gallery -keystore ${file.keystore} -keypass gallery -storepass gallery -file gallery.csr" />

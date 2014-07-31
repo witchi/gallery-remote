@@ -1,38 +1,79 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<izpack:installation version="5.0"
-                     xmlns:izpack="http://izpack.org/schema/installation"
-                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
+<!DOCTYPE installation [
+<!ENTITY % iso-lat1 PUBLIC "ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+                    "http://www.oasis-open.org/docbook/xmlcharent/0.3/iso-lat1.ent">
+%iso-lat1;
+]>
+<installation version="1.0">
+   
+    <info>
+   
+   		<appname>${app.name}</appname>
+		<appversion>${version}</appversion>
+   
+   		<url>http://gallery.menalto.com</url>
+   		
+   		<authors>
+   			<author name="Pierre-Luc Paour" email="" />
+			<author name="Chris Smith" email="" />
+			<author name="Tim Miller" email="" />
+			<author name="Dolan Halbrook" email="" />
+			<author name="Markus Cozowicz" email="" />
+			<author name="Scott Gartner" email="" />
+			<author name="Amedeo Paglione" email="" />
+			<author name="Chris Schwerdt" email="" />
+			<author name="Seth Ladd" email="" />
+			<author name="Andr&eacute; Rothe" email="andre.rothe@phosco.info" />
+		</authors>
+	
+   		<uninstaller name="Uninstaller.jar" path="${INSTALL_PATH}/uninstall" write="yes"/>
+		<javaversion>1.7</javaversion>
+		<requiresjdk>no</requiresjdk>
+		
+	</info>
 
-   <!-- Ant properties in this file can be referenced with @{},
-               otherwise use variables below in installer files with ${} -->
-          <info>
-            <appname>Gallery Remote</appname>
-            <appversion>1.5.1-b49</appversion>
-            <uninstaller name="remove.task" path="${INSTALL_PATH}/Uninstall" write="yes"/>
-            <authors>
-				<author name="Andr&eacute; Rothe" email="andre.rothe@phosco.info" />
-			</authors>
-			<url>http://www.myCompany.com/</url>
-          </info>
+    <guiprefs width="600" height="480" resizable="no">
+        <laf name="kunststoff">
+	        <os family="unix" />
+        </laf>
+    
+        <modifier key="labelGap" value="2"/>
+        <modifier key="useHeadingPanel" value="yes"/>
+  		<modifier key="headingLineCount" value="1"/>
+  		<modifier key="headingFontSize" value="1.5"/>
+  		<modifier key="headingBackgroundColor" value="0x00ffffff"/>
+  		<modifier key="headingPanelCounter" value="progressbar"/>
+  		<modifier key="headingPanelCounterPos" value="inNavigationPanel"/>
+    </guiprefs>
 
-          <guiprefs width="600" height="480" resizable="no">
-            <laf name="kunststoff">
-              <os family="unix" />
-            </laf>
-            <modifier key="useHeadingPanel" value="yes"/>
-            <modifier key="useHeadingForSummary" value="yes"/>
-			<modifier key="headingImageOnLeft" value="yes"/>
-            <modifier key="headingLineCount" value="2"/>
-            <modifier key="headingFontSize" value="1.5"/>
-            <modifier key="headingBackgroundColor" value="0x00ffffff"/>
-            <modifier key="headingPanelCounter" value="text"/>
-            <modifier key="headingPanelCounterPos" value="inHeading"/>
-          </guiprefs>
-
-          <locale>
-            <langpack iso3="eng"/>
-            <langpack iso3="deu"/>
-          </locale>
-          
-</izpack:installation>
+    <locale>
+        <langpack iso3="eng"/>
+        <langpack iso3="deu"/>
+    </locale>
+    
+    <resources>
+    	<res id="LicencePanel.licence" src="LICENSE" />
+    	<res id="Heading.image" src="${dir.src}/rar_icon_32.gif" />
+    	<res id="installer.langsel.img" src="${dir.src}/rar_about_gr1.png" />
+    	<res id="Unix_shortcutSpec.xml" src="${java.io.tmpdir}/Unix_shortcutSpec.xml" />
+    </resources>
+    
+    <panels>
+    	<panel classname="HelloPanel"/>
+    	<panel classname="LicencePanel"/>
+    	<panel classname="TargetPanel" />
+    	<panel classname="ShortcutPanel" />
+    	<panel classname="InstallPanel"/>
+    	<panel classname="SimpleFinishPanel" />
+    </panels>
+    
+    <packs>
+    	<pack name="GalleryRemote" required="yes">
+    		<description>This is the GalleryRemote application.</description>
+    		<file src="${dir.dest}/GalleryRemote.jar" targetdir="$INSTALL_PATH" />
+    		<file src="${dir.dest}/img.jar" targetdir="$INSTALL_PATH" />
+    		<file src="${dir.dest}/metadata-extractor-2.1.0.jar" targetdir="$INSTALL_PATH" />
+    	</pack>
+    </packs>
+      
+</installation>

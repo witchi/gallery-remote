@@ -6,17 +6,17 @@ import java.awt.Image;
 import com.gallery.galleryremote.model.Picture;
 
 public interface ImageLoaderListener {
-	public void pictureReady();
+	void pictureReady();
 
-	public boolean blockPictureReady(Image image, Picture picture);
+	boolean blockPictureReady(Image image, Picture picture);
 
-	public Dimension getImageSize();
+	Dimension getImageSize();
 
-	public void nullRect();
+	void nullRect();
 
-	public void pictureStartDownloading(Picture picture);
+	void pictureStartDownloading(Picture picture);
 
-	public void pictureStartProcessing(Picture picture);
+	void pictureStartProcessing(Picture picture);
 
-	public void pictureLoadError(Picture picture);
+	void pictureLoadError(Picture picture);
 }

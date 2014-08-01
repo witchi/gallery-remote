@@ -9,14 +9,6 @@
 	  **
 	  -->
 	<property file="build.properties" />
-
-	<property name="dir.src" location="src" />
-	<property name="dir.build" location="build" />
-	<property name="dir.lib" location="lib" />
-	<property name="dir.img" location="src/img" />
-	<property name="dir.dest" location="dest" />
-	<property name="dir.install" location="install" />
-
 	<property file="${dir.src}/defaults.properties" />
 
 	<path id="path.classpath">
@@ -342,7 +334,7 @@
 	  **
 	  -->
 
-	<target name="make_csr" depends="create-keystore" description="Create a Certificate Signing Request from a self-signed certificate">
+	<target name="make-csr" depends="create-keystore" description="Create a Certificate Signing Request from a self-signed certificate">
 		<exec executable="keytool" failonerror="true">
 			<arg line="-certreq -alias gallery -keystore ${file.keystore} -keypass gallery -storepass gallery -file gallery.csr" />
 		</exec>

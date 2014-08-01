@@ -23,6 +23,11 @@ public final class GalleryLogFormatter extends Formatter {
 
 	private StringBuffer format(String msg, int margin) {
 		StringBuffer res = new StringBuffer();
+		
+		if (msg == null) {
+			return res;
+		}
+		
 		StringTokenizer tok = new StringTokenizer(msg, "\n");
 		while (tok.hasMoreTokens()) {
 			res.append(" | ");
@@ -32,6 +37,7 @@ public final class GalleryLogFormatter extends Formatter {
 				res.append(getSpaces(margin));
 			}
 		}
+		
 		return res;
 	}
 	

@@ -1,5 +1,6 @@
 package com.gallery.galleryremote.imageloader;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -97,8 +98,14 @@ public class ImageLoaderThread extends Thread {
 		interrupt();
 	}
 
-	public void loadPicture(Picture picture, boolean notify) {
-		LOGGER.fine("load picture " + picture);
+	public Image loadPicture(Picture picture) {
+		LOGGER.fine("synchronized load picture " + picture);
+		return processor.getSizedIconForce(picture);
+	}
+
+	public void loadPictureAsync(Picture picture, boolean notify) {
+		LOGGER.fine("async load picture " + picture);
 		workList.add(new ImageLoaderWorkUnit(picture, notify));
 	}
+
 }

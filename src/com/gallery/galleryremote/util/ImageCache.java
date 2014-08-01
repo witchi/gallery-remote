@@ -16,12 +16,12 @@ import java.util.regex.Pattern;
 
 import com.gallery.galleryremote.CancellableTransferListener;
 import com.gallery.galleryremote.GalleryRemote;
-import com.gallery.galleryremote.Log;
-import com.gallery.galleryremote.imageloader.ImageLoaderThread;
 import com.gallery.galleryremote.imageloader.ImageLoaderListener;
+import com.gallery.galleryremote.imageloader.ImageLoaderThread;
 import com.gallery.galleryremote.imageloader.WrapInfo;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.prefs.PreferenceNames;
+import com.gallery.galleryremote.util.log.Logger;
 
 /**
  * This class holds the current visible picture and a little cache of already
@@ -29,8 +29,8 @@ import com.gallery.galleryremote.prefs.PreferenceNames;
  * The class notifies a listener (called ImageLoaderUser) on defined points
  * (like start downloading or already loaded - PictureReady).
  */
-public class ImageLoaderUtil implements PreferenceNames, ImageProcessor {
-	public static final String MODULE = "ImgLoadrUtil";
+public class ImageCache implements PreferenceNames, ImageProcessor {
+	private static final Logger LOGGER = Logger.getLogger(ImageCache.class);
 
 	public final SmartHashtable images;
 
@@ -43,7 +43,7 @@ public class ImageLoaderUtil implements PreferenceNames, ImageProcessor {
 	// current visible Image (image data)
 	public Image imageShowNow = null;
 
-	public ImageLoaderThread imageLoaderThread = new ImageLoaderThread(this);
+	private final ImageLoaderThread imageLoaderThread;
 
 	public static Color[] darkGray = new Color[11];
 	public static Pattern breaker = Pattern.compile("<(br|BR)\\s?\\/?>");
@@ -52,12 +52,13 @@ public class ImageLoaderUtil implements PreferenceNames, ImageProcessor {
 	int cacheSize = 10;
 	boolean ignoreIMFailure = false;
 	CancellableTransferListener transferListener = null;
-	ImageLoaderListener imageLoaderUser = null;
+	ImageLoaderListener loadListener = null;
 
-	public ImageLoaderUtil(int cacheSize, ImageLoaderListener imageLoaderUser) {
+	public ImageCache(int cacheSize, ImageLoaderListener imageLoaderUser) {
+		this.imageLoaderThread = new ImageLoaderThread(this);
 		this.cacheSize = cacheSize;
 		this.images = new SmartHashtable(cacheSize);
-		this.imageLoaderUser = imageLoaderUser;
+		this.loadListener = imageLoaderUser;
 	}
 
 	public void setTransferListener(CancellableTransferListener transferListener) {
@@ -75,98 +76,103 @@ public class ImageLoaderUtil implements PreferenceNames, ImageProcessor {
 	}
 
 	public void reduceMemory() {
-		Log.log(Log.LEVEL_TRACE, MODULE, "Free memory before reduction: " + Runtime.getRuntime().freeMemory());
-		Log.log(Log.LEVEL_TRACE, MODULE, "Current image cache: " + images.size() + " - cache size " + cacheSize);
+		LOGGER.fine("Free memory before reduction: " + Runtime.getRuntime().freeMemory());
+		LOGGER.fine("Current image cache: " + images.size() + " - cache size " + cacheSize);
 
 		if (images.size() > 1 && cacheSize > 1) {
 			cacheSize = images.size() - 1;
 		}
 
 		images.shrink(cacheSize);
-
-		Log.log(Log.LEVEL_TRACE, MODULE, "Free memory after reduction: " + Runtime.getRuntime().freeMemory());
+		LOGGER.fine("Free memory after reduction: " + Runtime.getRuntime().freeMemory());
 	}
 
 	@Override
 	public void pictureReady(Image image, Picture picture) {
-		if (!imageLoaderUser.blockPictureReady(image, picture)) {
+		if (!loadListener.blockPictureReady(image, picture)) {
 			imageShowNow = image;
 			pictureShowNow = picture;
-
-			imageLoaderUser.pictureReady();
+			loadListener.pictureReady();
 		}
 	}
 
-	public void preparePicture(Picture picture, boolean async, boolean notify) {
-		if (picture == null) {
-			pictureShowWant = null;
-			imageLoaderUser.nullRect();
-
-			if (notify) {
-				pictureReady(null, null);
-			}
-		} else {
-			if (picture != pictureShowWant) {
-				pictureShowWant = picture;
-
-				Image r = (Image) images.get(picture);
-				if (r != null) {
-					Log.log(Log.LEVEL_TRACE, MODULE, "Cache hit: " + picture);
-					if (notify) {
-						pictureReady(r, picture);
-					}
-				} else {
-					Log.log(Log.LEVEL_TRACE, MODULE, "Cache miss: " + picture);
-					if (async) {
-						imageLoaderThread.loadPicture(picture, true);
-					} else {
-						Image sizedIcon = getSizedIconForce(picture);
-						if (sizedIcon != null) {
-							if (notify) {
-								pictureReady(sizedIcon, picture);
-							}
-						}
-					}
-				}
-			}
+	private void firePictureReady(boolean notify, Image image, Picture picture) {
+		if (notify) {
+			pictureReady(image, picture);
 		}
 	}
 
 	@Override
 	public Image getSizedIconForce(Picture picture) {
 		Image r = (Image) images.get(picture);
-
 		if (r == null) {
-			synchronized (picture) {
-				if (picture.isOnline()) {
-					imageLoaderUser.pictureStartDownloading(picture);
+			return null;
+		}
 
-					File f = ImageUtils.download(picture, imageLoaderUser.getImageSize(), GalleryRemote.instance().getCore()
-							.getMainStatusUpdate(), transferListener);
+		synchronized (picture) {
 
-					imageLoaderUser.pictureStartProcessing(picture);
+			// REFACTOR: move this into a processor oder loader class
 
-					if (f != null) {
-						r = ImageUtils.load(f.getPath(), imageLoaderUser.getImageSize(), ImageUtils.PREVIEW, ignoreIMFailure);
-					} else {
-						return null;
-					}
-				} else {
-					imageLoaderUser.pictureStartProcessing(picture);
+			if (picture.isOnline()) {
+				loadListener.pictureStartDownloading(picture);
 
-					r = ImageUtils.load(picture.getSource().getPath(), imageLoaderUser.getImageSize(), ImageUtils.PREVIEW, ignoreIMFailure);
+				File f = ImageUtils.download(picture, loadListener.getImageSize(), GalleryRemote.instance().getCore().getMainStatusUpdate(),
+						transferListener);
+
+				loadListener.pictureStartProcessing(picture);
+
+				if (f == null) {
+					return null;
 				}
 
-				if (r == null) {
-					imageLoaderUser.pictureLoadError(picture);
-				}
+				r = ImageUtils.load(f.getPath(), loadListener.getImageSize(), ImageUtils.PREVIEW, ignoreIMFailure);
 
-				Log.log(Log.LEVEL_TRACE, MODULE, "Adding to cache: " + picture);
-				images.put(picture, r);
+			} else {
+				loadListener.pictureStartProcessing(picture);
+				r = ImageUtils.load(picture.getSource().getPath(), loadListener.getImageSize(), ImageUtils.PREVIEW, ignoreIMFailure);
 			}
+
+			if (r == null) {
+				loadListener.pictureLoadError(picture);
+			}
+
+			LOGGER.fine("Adding to cache: " + picture);
+			images.put(picture, r);
 		}
 
 		return r;
+	}
+
+	public void preparePicture(Picture picture, boolean async, boolean notify) {
+		if (picture == null) {
+			pictureShowWant = null;
+			loadListener.nullRect();
+			firePictureReady(notify, null, null);
+			return;
+		}
+
+		if (picture == pictureShowWant) {
+			return;
+		}
+
+		pictureShowWant = picture;
+		Image r = (Image) images.get(picture);
+		if (r != null) {
+			LOGGER.fine("Cache hit: " + picture);
+			firePictureReady(notify, r, picture);
+			return;
+		}
+
+		LOGGER.fine("Cache miss: " + picture);
+		if (async) {
+			imageLoaderThread.loadPictureAsync(picture, notify);
+			return;
+		}
+
+		Image sizedIcon = imageLoaderThread.loadPicture(picture);
+		if (sizedIcon != null) {
+			firePictureReady(notify, sizedIcon, picture);
+		}
 	}
 
 	public static void paintAlignedOutline(Graphics g, String s, int textX, int textY, int thickness, int position, int wrapWidth) {

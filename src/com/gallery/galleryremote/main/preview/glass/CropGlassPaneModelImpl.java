@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
 
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.util.AbstractModel;
-import com.gallery.galleryremote.util.ImageLoaderUtil;
+import com.gallery.galleryremote.util.ImageCache;
 import com.gallery.galleryremote.util.ImageUtils;
 
 public class CropGlassPaneModelImpl  extends AbstractModel implements CropGlassPaneModel {
@@ -28,10 +28,10 @@ public class CropGlassPaneModelImpl  extends AbstractModel implements CropGlassP
 
 	public static final int TOLERANCE = 5;
 
-	private final ImageLoaderUtil loader;
+	private final ImageCache loader;
 
 	// TODO: use an interface for the loader class
-	public CropGlassPaneModelImpl(ImageLoaderUtil loader) {
+	public CropGlassPaneModelImpl(ImageCache loader) {
 		this.loader = loader;
 	}
 

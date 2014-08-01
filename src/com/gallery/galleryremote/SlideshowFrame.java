@@ -43,7 +43,7 @@ import com.gallery.galleryremote.prefs.PropertiesFile;
 import com.gallery.galleryremote.util.DialogUtil;
 import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.util.HTMLEscaper;
-import com.gallery.galleryremote.util.ImageLoaderUtil;
+import com.gallery.galleryremote.util.ImageCache;
 import com.gallery.galleryremote.util.ImageUtils;
 
 public class SlideshowFrame extends PreviewImpl implements Runnable, PreferenceNames, CancellableTransferListener, MouseMotionListener {
@@ -250,7 +250,7 @@ public class SlideshowFrame extends PreviewImpl implements Runnable, PreferenceN
 
 		sleepTime = GalleryRemote.instance().properties.getIntProperty(SLIDESHOW_DELAY) * 1000;
 
-		loader = new ImageLoaderUtil(5, this);
+		loader = new ImageCache(5, this);
 		loader.setTransferListener(this);
 	}
 
@@ -477,7 +477,7 @@ public class SlideshowFrame extends PreviewImpl implements Runnable, PreferenceN
 
 		if (picture != null) {
 			if (picture.getCaption() != null) {
-				caption = ImageLoaderUtil.stripTags(HTMLEscaper.unescape(picture.getCaption())).trim();
+				caption = ImageCache.stripTags(HTMLEscaper.unescape(picture.getCaption())).trim();
 			} else {
 				caption = null;
 			}
@@ -496,7 +496,7 @@ public class SlideshowFrame extends PreviewImpl implements Runnable, PreferenceN
 			}
 
 			if (picture.getParentAlbum().getCaption() != null) {
-				album = ImageLoaderUtil.stripTags(HTMLEscaper.unescape(picture.getParentAlbum().getCaption())).trim();
+				album = ImageCache.stripTags(HTMLEscaper.unescape(picture.getParentAlbum().getCaption())).trim();
 			} else {
 				album = null;
 			}
@@ -764,7 +764,7 @@ public class SlideshowFrame extends PreviewImpl implements Runnable, PreferenceN
 
 			if (firstPaint) {
 				firstPaint = false;
-				ImageLoaderUtil.setSlideshowFont(this);
+				ImageCache.setSlideshowFont(this);
 				initTransitionDuration();
 				int defaultThickness = getFont().getSize() / 7;
 				thickness = GalleryRemote.instance().properties.getIntProperty(SLIDESHOW_FONTTHICKNESS, defaultThickness);
@@ -1023,13 +1023,13 @@ public class SlideshowFrame extends PreviewImpl implements Runnable, PreferenceN
 					break;
 				}
 
-				ImageLoaderUtil.WrapInfo wrapInfo = ImageLoaderUtil.wrap(g, text, d.width);
+				ImageCache.WrapInfo wrapInfo = ImageCache.wrap(g, text, d.width);
 
 				infoImage[id] = new BufferedImage(wrapInfo.width + thickness * 2, wrapInfo.height + thickness * 2, BufferedImage.TYPE_INT_ARGB);
 
 				Graphics2D g2 = (Graphics2D) infoImage[id].getGraphics();
 				g2.setFont(g.getFont());
-				infoLocation[id] = ImageLoaderUtil.paintAlignedOutline(g2, x, y, thickness, position, wrapInfo, true);
+				infoLocation[id] = ImageCache.paintAlignedOutline(g2, x, y, thickness, position, wrapInfo, true);
 				Log.log(Log.LEVEL_TRACE, MODULE, "Cached info " + id + " - " + text);
 			}
 

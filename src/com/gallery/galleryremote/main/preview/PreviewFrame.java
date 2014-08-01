@@ -50,17 +50,17 @@ import com.gallery.galleryremote.main.MainFrame;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.util.GRI18n;
-import com.gallery.galleryremote.util.ImageLoaderUtil;
+import com.gallery.galleryremote.util.ImageCache;
 import com.gallery.galleryremote.util.ImageUtils;
 
 // TODO: remove that class after refactoring
-public class PreviewFrame extends JFrame implements PreferenceNames, ImageLoaderUtil.ImageLoaderListener {
+public class PreviewFrame extends JFrame implements PreferenceNames, ImageCache.ImageLoaderListener {
 
 	private static final long serialVersionUID = 3498443714616453620L;
 	public static final String MODULE = "PreviewFrame";
 	Rectangle currentRect = null;
 	// AR: public added
-	public ImageLoaderUtil loader;
+	public ImageCache loader;
 
 	public void initComponents() {
 		setTitle(GRI18n.getString(MODULE, "title"));
@@ -110,7 +110,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames, ImageLoader
 		CropGlassPane glass = new CropGlassPane();
 		setGlassPane(glass);
 		glass.setVisible(true);
-		loader = new ImageLoaderUtil(GalleryRemote.instance().properties.getIntProperty("cacheSize", 10), this);
+		loader = new ImageCache(GalleryRemote.instance().properties.getIntProperty("cacheSize", 10), this);
 	}
 
 	@Override
@@ -289,7 +289,7 @@ public class PreviewFrame extends JFrame implements PreferenceNames, ImageLoader
 			}
 
 			g.setFont(g.getFont());
-			ImageLoaderUtil.paintOutline(g, message, 5, getBounds().height - 5, 1);
+			ImageCache.paintOutline(g, message, 5, getBounds().height - 5, 1);
 		}
 
 		public void updateRect() {

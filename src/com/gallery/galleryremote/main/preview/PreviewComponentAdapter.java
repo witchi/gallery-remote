@@ -3,13 +3,13 @@ package com.gallery.galleryremote.main.preview;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-import com.gallery.galleryremote.util.ImageLoaderUtil;
+import com.gallery.galleryremote.util.ImageCache;
 
 public class PreviewComponentAdapter extends ComponentAdapter {
 
-	private final ImageLoaderUtil loader;
+	private final ImageCache loader;
 
-	public PreviewComponentAdapter(ImageLoaderUtil loader) {
+	public PreviewComponentAdapter(ImageCache loader) {
 		this.loader = loader;
 	}
 

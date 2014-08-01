@@ -29,7 +29,7 @@ import com.gallery.galleryremote.prefs.PreferenceNames;
  * The class notifies a listener (called ImageLoaderUser) on defined points
  * (like start downloading or already loaded - PictureReady).
  */
-public class ImageLoaderUtil implements PreferenceNames {
+public class ImageLoaderUtil implements PreferenceNames, ImageProcessor {
 	public static final String MODULE = "ImgLoadrUtil";
 
 	public final SmartHashtable images;
@@ -43,7 +43,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 	// current visible Image (image data)
 	public Image imageShowNow = null;
 
-	public ImageLoaderThread imageLoaderThread = new ImageLoaderThread();
+	public ImageLoaderThread imageLoaderThread = new ImageLoaderThread(this);
 
 	public static Color[] darkGray = new Color[11];
 	public static Pattern breaker = Pattern.compile("<(br|BR)\\s?\\/?>");
@@ -87,6 +87,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 		Log.log(Log.LEVEL_TRACE, MODULE, "Free memory after reduction: " + Runtime.getRuntime().freeMemory());
 	}
 
+	@Override
 	public void pictureReady(Image image, Picture picture) {
 		if (!imageLoaderUser.blockPictureReady(image, picture)) {
 			imageShowNow = image;
@@ -131,6 +132,7 @@ public class ImageLoaderUtil implements PreferenceNames {
 		}
 	}
 
+	@Override
 	public Image getSizedIconForce(Picture picture) {
 		Image r = (Image) images.get(picture);
 

@@ -181,4 +181,8 @@ public class CropGlassPaneModelImpl  extends AbstractModel implements CropGlassP
 	private void fireRefreshEvent() {
 		notifyListeners(new ActionEvent(this, 0, CropGlassPaneActions.REFRESH.name()));
 	}
+	
+	public Picture getCurrentPicture() {
+		return loader.pictureShowNow;
+	}
 }

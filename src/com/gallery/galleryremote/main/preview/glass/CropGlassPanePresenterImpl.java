@@ -42,7 +42,7 @@ public class CropGlassPanePresenterImpl implements CropGlassPanePresenter, Mouse
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (loader.pictureShowNow == null || !model.hasCurrentRect() || loader.pictureShowNow.isOnline()) {
+		if (model.getCurrentPicture() == null || !model.hasCurrentRect() || model.getCurrentPicture().isOnline()) {
 			return;
 		}
 		if (!model.hasCachedRect()) {

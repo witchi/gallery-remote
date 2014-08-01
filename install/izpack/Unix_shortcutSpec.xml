@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<shortcuts>
+
+  <programGroup defaultName="Gallery Remote"
+  location="applications"/>
+
+   <shortcut
+     name="Gallery Remote"
+     programGroup="yes"
+     desktop="yes"
+     applications="no"
+     startMenu="yes"
+     startup="no"
+     target="$JAVA_HOME/bin/java"
+     workingDirectory="$INSTALL_PATH"
+     commandLine="-cp .:img.jar:metadata-extractor-2.1.0.jar -jar &quot;$INSTALL_PATH/GalleryRemote.jar&quot;"
+     initialState="noShow"
+     iconFile="${dir.src}/rar_icon_16.gif"
+     iconIndex="0"
+     type="Application"
+     encoding="UTF-8"
+     description="Gallery Remote Application" />
+
+   <shortcut
+     name="Uninstaller"
+     programGroup="yes"
+     desktop="no"
+     applications="no"
+     startMenu="no"
+     startup="no"
+     target="$JAVA_HOME/bin/java"
+     commandLine="-jar &quot;${INSTALL_PATH}/uninstall/Uninstaller.jar&quot;"
+     initialState="noShow"
+     iconFile="trashcan_full"
+     iconIndex="0"
+     workingDirectory=""
+     type="Application"
+     encoding="UTF-8"
+     description="Gallery Remote uninstaller" />
+   
+</shortcuts>

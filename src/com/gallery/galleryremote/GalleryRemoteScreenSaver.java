@@ -27,7 +27,7 @@ import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.prefs.PropertiesFile;
 import com.gallery.galleryremote.statusbar.StatusUpdate;
 import com.gallery.galleryremote.statusbar.StatusUpdateAdapter;
-import com.gallery.galleryremote.util.ImageLoaderUtil;
+import com.gallery.galleryremote.util.ImageCache;
 import com.gallery.galleryremote.util.ImageUtils;
 import com.gallery.galleryremote.util.log.LogManager;
 import com.gallery.galleryremote.util.log.Logger;
@@ -37,7 +37,7 @@ import com.gallery.galleryremote.util.log.Logger;
  * @version Jan 14, 2004
  */
 public class GalleryRemoteScreenSaver extends GalleryRemote implements GalleryRemoteCore, PreferenceNames, ListDataListener,
-		ImageLoaderUtil.ImageLoaderListener {
+		ImageCache.ImageLoaderListener {
 
 	private static final Logger LOGGER = Logger.getLogger(GalleryRemoteScreenSaver.class);
 
@@ -49,7 +49,7 @@ public class GalleryRemoteScreenSaver extends GalleryRemote implements GalleryRe
 	ScreensaverContext context;
 	Picture currentPicture = null;
 	File currentImage = null;
-	ImageLoaderUtil loader = new ImageLoaderUtil(3, this);
+	ImageCache loader = new ImageCache(3, this);
 	Dimension size = null;
 	boolean newImage = false;
 	ArrayList<Picture> picturesList = null;

@@ -22,7 +22,7 @@ import org.jdesktop.jdic.screensaver.SimpleScreensaver;
 
 import java.awt.*;
 
-import com.gallery.galleryremote.util.ImageLoaderUtil;
+import com.gallery.galleryremote.util.ImageCache;
 import com.gallery.galleryremote.util.HTMLEscaper;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 
@@ -65,13 +65,13 @@ public class GRScreenSaver extends SimpleScreensaver implements PreferenceNames 
 			paintPass++;
 
 			Component c = getContext().getComponent();
-			ImageLoaderUtil.setSlideshowFont(c);
+			ImageCache.setSlideshowFont(c);
 			g.setFont(c.getFont());
 			String message = grss.hasSettings ? "Preparing slideshow..." : "Please pick the Settings for your Gallery";
 
 			int width = (int) c.getBounds().getWidth();
 			int height = (int) c.getBounds().getHeight();
-			ImageLoaderUtil.paintAlignedOutline(g, message, width / 2, height / 2, thickness, 20, width);
+			ImageCache.paintAlignedOutline(g, message, width / 2, height / 2, thickness, 20, width);
 
 			return;
 		}
@@ -101,10 +101,10 @@ public class GRScreenSaver extends SimpleScreensaver implements PreferenceNames 
 			g.fillRect(dx, 0, width - dx, dy);
 			g.fillRect(dx, height - dy, width - dx, height);
 
-			String caption = ImageLoaderUtil.stripTags(HTMLEscaper.unescape(grss.loader.pictureShowNow.getCaption()));
+			String caption = ImageCache.stripTags(HTMLEscaper.unescape(grss.loader.pictureShowNow.getCaption()));
 
 			if (caption != null && caption.length() != 0) {
-				ImageLoaderUtil.paintAlignedOutline(g, caption, width / 2, height - 10, thickness, 30, width);
+				ImageCache.paintAlignedOutline(g, caption, width / 2, height - 10, thickness, 30, width);
 			}
 		}
 	}

@@ -3,21 +3,26 @@
 		A part of the Gallery project
 	</description>
 
-	<!-- set global properties for this build -->
+	<!--
+	  **
+	  ** set global properties for this build 
+	  **
+	  -->
 	<property file="build.properties" />
-
-	<property name="dir.src" location="src" />
-	<property name="dir.build" location="build" />
-	<property name="dir.lib" location="lib" />
-	<property name="dir.img" location="src/img" />
-	<property name="dir.dest" location="dest" />
-	<property name="dir.install" location="install" />
-	<property name="file.keystore" location="${dir.build}/gallery_keystore" />
+	<property file="${dir.src}/defaults.properties" />
 
 	<path id="path.classpath">
 		<fileset dir="${dir.lib}" includes="**/*.jar" />
 		<pathelement path="${dir.img}" />
 	</path>
+
+	<taskdef name="IzPack" classpath="${dir.lib}/standalone-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask" />
+
+	<!--
+	  **
+	  ** this target initializes the build filesystem
+	  **
+	  -->
 
 	<target name="prepare">
 		<!-- Create the time stamp -->
@@ -36,6 +41,13 @@
 		</copy>
 	</target>
 
+
+	<!--
+	  **
+	  ** this target compiles the source classes
+	  **
+	  -->
+
 	<target name="compile" depends="prepare" description="compile the source">
 		<!-- Compile the java code from ${dir.src} into ${dir.build} -->
 		<javac includeantruntime="false" srcdir="${dir.src}" destdir="${dir.build}" classpathref="path.classpath" includes="com/**,ch/**,edu/**" listfiles="on" debug="on" nowarn="off" source="1.7" target="1.7">
@@ -43,6 +55,13 @@
 			<compilerarg value="-Xlint:deprecation" />
 		</javac>
 	</target>
+
+
+	<!--
+	  **
+	  ** this target runs the application GalleryRemote locally
+	  **
+	  -->
 
 	<target name="run" depends="compile" description="compile then run">
 		<java classname="com.gallery.galleryremote.GalleryRemote" fork="true" maxmemory="256M">
@@ -52,6 +71,14 @@
 			</classpath>
 		</java>
 	</target>
+
+
+	<!--
+	  **
+	  ** this target starts the debugger for the application GalleryRemote
+	  ** it waits till the Debug View of Eclipse connects it on Port 5005
+	  **
+	  -->
 
 	<target name="debug" depends="compile" description="compile then run">
 
@@ -65,6 +92,13 @@
 		</java>
 	</target>
 
+
+	<!--
+	  **
+	  ** this target cleans the whole filesystem
+	  **
+	  -->
+
 	<target name="clean" description="clean work files">
 		<!-- Delete the ${dir.build} and ${dist} directory trees -->
 		<delete dir="${dir.build}" />
@@ -72,37 +106,42 @@
 	</target>
 
 
-	<target name="galleryremote_jar" depends="clean,compile">
+	<target name="galleryremote_jar" depends="compile">
 		<delete file="${dir.dest}/GalleryRemote.jar" />
 		<jar destfile="${dir.dest}/GalleryRemote.jar">
 			<fileset dir="${dir.build}" />
 			<fileset dir="." includes="*.properties,${dir.install}/ApertureToGallery.applescript" excludes="postchangelog.properties" />
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Main-Class" value="com.gallery.GalleryRemote.GalleryRemote" />
-				<attribute name="Class-Path" value="${dir.lib}/metadata-extractor-2.1.jar ${dir.img}/" />
+				<attribute name="Main-Class" value="com.gallery.galleryremote.GalleryRemote" />
+				<attribute name="Class-Path" value="${dir.lib}/metadata-extractor-2.1.0.jar ${dir.img}/" />
+				<attribute name="Permissions" value="all-permissions" />
+				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Application-Name" value="Gallery Remote" />
 			</manifest>
 		</jar>
 
-		<signjar jar="${dir.dest}/GalleryRemote.jar" alias="gallery" storepass="gallery" />
+		<signjar jar="${dir.dest}/GalleryRemote.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	<target name="galleryremoteapplet_jar" depends="clean,compile">
+	<target name="galleryremoteapplet_jar" depends="compile">
 		<delete file="${dir.dest}/GalleryRemoteApplet.jar" />
 		<jar destfile="${dir.dest}/GalleryRemoteApplet.jar" index="true">
 			<fileset dir="${dir.build}" includesfile="${dir.install}/AppletMiniExcludes.txt" excludesfile="${dir.install}/AppletExcludes.txt" />
 			<fileset dir="." includes="*.properties" excludes="postchangelog.properties" />
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Permissions" value="all-permissions" />
+				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Application-Name" value="Gallery Remote Applet" />
 			</manifest>
 		</jar>
-
-		<!-- For testing you can self sign the jar. To create a key:-->
-		<!-- $keytool -genkey -alias gallery -keypass gallery-->
-		<signjar jar="${dir.dest}/GalleryRemoteApplet.jar" alias="gallery" storepass="gallery" />
+		<signjar jar="${dir.dest}/GalleryRemoteApplet.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	<target name="galleryremoteappletmini_jar" depends="clean,compile">
+	<target name="galleryremoteappletmini_jar" depends="compile">
 		<delete file="${dir.dest}/GalleryRemoteAppletMini.jar" />
 		<jar destfile="${dir.dest}/GalleryRemoteAppletMini.jar" index="true">
 			<fileset dir="${dir.build}" excludes="ch/">
@@ -112,59 +151,105 @@
 			<fileset dir="." includes="*.properties" excludes="postchangelog.properties" />
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Permissions" value="all-permissions" />
+				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Application-Name" value="Gallery Remote Applet Mini" />
 			</manifest>
 		</jar>
-
-		<signjar jar="${dir.dest}/GalleryRemoteAppletMini.jar" alias="gallery" storepass="gallery" />
+		<signjar jar="${dir.dest}/GalleryRemoteAppletMini.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	<target name="galleryremotehttpclient_jar" depends="clean,compile">
+	<target name="galleryremotehttpclient_jar" depends="compile">
 		<delete file="${dir.dest}/GalleryRemoteHTTPClient.jar" />
 		<jar destfile="${dir.dest}/GalleryRemoteHTTPClient.jar" index="true">
 			<fileset dir="${dir.build}" includes="ch/" />
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Permissions" value="all-permissions" />
+				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
 			</manifest>
 		</jar>
-
-		<signjar jar="${dir.dest}/GalleryRemoteHTTPClient.jar" alias="gallery" storepass="gallery" />
+		<signjar jar="${dir.dest}/GalleryRemoteHTTPClient.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	<target name="img_jar" depends="clean,compile">
+	<target name="img_jar" depends="compile">
 		<jar destfile="${dir.dest}/img.jar">
 			<fileset dir="${dir.img}" />
 			<fileset dir="." includes="rar_about_gr1.png" />
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Permissions" value="all-permissions" />
+				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
+			</manifest>
 		</jar>
-
-		<signjar jar="${dir.dest}/img.jar" alias="gallery" storepass="gallery" />
+		<signjar jar="${dir.dest}/img.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	<target name="appletimg_jar" depends="clean,compile">
+	<target name="appletimg_jar" depends="compile">
 		<copy file="${dir.src}/imagemagick/im.properties.applet" tofile="${dir.img}/im.properties" />
 		<copy file="${dir.src}/jpegtran/jpegtran.properties.applet" tofile="${dir.img}/jpegtran.properties" />
 
 		<jar destfile="${dir.dest}/applet_img.jar">
 			<fileset dir="${dir.img}" />
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Permissions" value="all-permissions" />
+				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
+			</manifest>
 		</jar>
+		<signjar jar="${dir.dest}/applet_img.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 
 		<delete file="${dir.img}/im.properties" />
 		<delete file="${dir.img}/jpegtran.properties" />
 	</target>
 
-	<target name="jar" depends="galleryremote_jar,galleryremoteapplet_jar,galleryremoteappletmini_jar,galleryremotehttpclient_jar,img_jar,appletimg_jar" description="create a jar of the source" />
-
-	<!-- Creates the keystore for jar signing. Will be generated once. -->
-	<target name="create_keystore" description="Creates a self-signed certificate">
-		<exec executable="keytool">
-			<arg line="-genkey -keyalg RSA -alias gallery -dname &quot;CN=gallery.sourceforge.net, OU=Gallery, O=Gallery, L=Menlo Park, ST=California, C=US&quot; -keypass gallery -storepass gallery" />
-		</exec>
+	<target name="sign-libs">
+		<signjar jar="${dir.lib}/metadata-extractor-2.1.0.jar" signedjar="${dir.dest}/metadata-extractor-2.1.0.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
 
-	<target name="make_csr" description="Create a Certificate Signing Request from a self-signed certificate">
-		<exec executable="keytool">
-			<arg line="-certreq -alias gallery -keyalg RSA -keypass gallery -storepass gallery -file gallery.csr" />
-		</exec>
+
+	<!--
+	  **
+	  ** Builds all JARS and signs them
+	  **
+	  -->
+
+	<target name="jar" depends="sign-libs,galleryremote_jar,galleryremoteapplet_jar,galleryremoteappletmini_jar,galleryremotehttpclient_jar,img_jar,appletimg_jar" description="create a jar of the source" />
+
+	<!--
+	  ** 
+	  ** compiles the installer
+	  **
+	  -->
+
+	<target name="installer" depends="jar" description="compiles the IzPack installer">
+		<copy overwrite="yes" verbose="yes" file="${dir.install}/izpack/install-definition.xml" tofile="${java.io.tmpdir}/gallery-install-definition.xml">
+			<filterchain>
+				<expandproperties />
+			</filterchain>
+		</copy>
+		<copy overwrite="yes" verbose="yes" file="${dir.install}/izpack/Unix_shortcutSpec.xml" tofile="${java.io.tmpdir}/Unix_shortcutSpec.xml">
+			<filterchain>
+				<expandproperties />
+			</filterchain>
+		</copy>
+		<IzPack input="${java.io.tmpdir}/gallery-install-definition.xml" output="${dir.dest}/${ant.project.name}Install.jar" installerType="standard" basedir="${basedir}" />
+		<jar update="true" file="${dir.dest}/${ant.project.name}Install.jar">
+			<manifest>
+				<attribute name="Application-Name" value="${app.name} Installer" />
+				<attribute name="Codebase" value="*.${deploy.domain} 127.0.0.1" />
+				<attribute name="Permissions" value="all-permissions" />
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Caller-Allowable-Codebase" value="*.${deploy.domain} 127.0.0.1" />
+			</manifest>
+		</jar>
+		<signjar jar="${dir.dest}/${ant.project.name}Install.jar" alias="gallery" keypass="gallery" storepass="gallery" keystore="${file.keystore}" tsaurl="http://tsa.starfieldtech.com/" />
 	</target>
+
 
 	<target name="slideshowtest" depends="compile">
 		<java classname="com.gallery.GalleryRemote.DummyAppletContext" fork="true">
@@ -172,8 +257,87 @@
 				<pathelement path="${dir.build}" />
 				<path refid="path.classpath" />
 			</classpath>
-			<arg line="com.gallery.GalleryRemote.GRAppletSlideshow -width 300 -height 450 gr_url http://www.paour.com/gallery2/ gr_gallery_version 2 gr_album 100401" />
+			<arg line="com.gallery.galleryremote.GRAppletSlideshow -width 300 -height 450 gr_url http://www.paour.com/gallery2/ gr_gallery_version 2 gr_album 100401" />
 		</java>
+	</target>
+
+
+	<!--
+	  **
+	  ** this target copies all jars into the right directories on the webserver
+	  **
+	  -->
+
+	<target name="deploy" depends="installer,jar" description="Deploys the jars into the right directories of Gallery2">
+		<echo message="deploy JARs for module remote" />
+		<exec executable="scp">
+			<arg value="${dir.dest}/GalleryRemoteInstall.jar" />
+			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/remote/applets" />
+		</exec>
+		<exec executable="scp">
+			<arg value="${dir.dest}/GalleryRemote.jar" />
+			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/remote/applets" />
+		</exec>
+		<exec executable="scp">
+			<arg value="${dir.dest}/img.jar" />
+			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/remote/applets" />
+		</exec>
+		<exec executable="scp">
+			<arg value="${dir.dest}/metadata-extractor-2.1.0.jar" />
+			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/remote/applets" />
+		</exec>
+		<echo message="deploy JARs for module uploadapplet" />
+		<exec executable="scp">
+			<arg value="${dir.dest}/GalleryRemoteAppletMini.jar" />
+			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/uploadapplet/applets" />
+		</exec>
+		<exec executable="scp">
+			<arg value="${dir.dest}/GalleryRemoteHTTPClient.jar" />
+			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/uploadapplet/applets" />
+		</exec>
+		<exec executable="scp">
+			<arg value="${dir.dest}/applet_img.jar" />
+			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/uploadapplet/applets" />
+		</exec>
+		<echo message="deploy JARs for module slideshowapplet" />
+		<exec executable="scp">
+			<arg value="${dir.dest}/GalleryRemoteAppletMini.jar" />
+			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/slideshowapplet/applets" />
+		</exec>
+		<exec executable="scp">
+			<arg value="${dir.dest}/GalleryRemoteHTTPClient.jar" />
+			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/slideshowapplet/applets" />
+		</exec>
+		<exec executable="scp">
+			<arg value="${dir.dest}/applet_img.jar" />
+			<arg value="${deploy.user}@${deploy.domain}:${dir.deploy}/modules/slideshowapplet/applets" />
+		</exec>
+	</target>
+
+
+	<!-- 
+	  **
+	  ** Creates the keystore for jar signing. Will be generated once. 
+	  **
+	  -->
+
+	<target name="create-keystore">
+		<exec executable="keytool" failonerror="true">
+			<arg line="-genkey -alias gallery -keyalg RSA -keystore ${file.keystore} -keysize 1024 -validity 365 -dname &quot;CN=pics.phosco.info, OU=Gallery Development, O=Gallery, L=Leipzig, ST=Saxony, C=DE&quot; -keypass gallery -storepass gallery" />
+		</exec>
+	</target>
+
+
+	<!-- 
+	  **
+	  ** Creates a signing request, which we can use to sign Jars 
+	  **
+	  -->
+
+	<target name="make-csr" depends="create-keystore" description="Create a Certificate Signing Request from a self-signed certificate">
+		<exec executable="keytool" failonerror="true">
+			<arg line="-certreq -alias gallery -keystore ${file.keystore} -keypass gallery -storepass gallery -file gallery.csr" />
+		</exec>
 	</target>
 
 </project>

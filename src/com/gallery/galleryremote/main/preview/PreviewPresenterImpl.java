@@ -8,12 +8,13 @@ import com.gallery.galleryremote.imageloader.ImageLoaderListener;
 import com.gallery.galleryremote.main.preview.content.ImageContentPaneModel;
 import com.gallery.galleryremote.main.preview.content.ImageContentPaneModelImpl;
 import com.gallery.galleryremote.main.preview.content.ImageContentPanePresenter;
+import com.gallery.galleryremote.main.preview.content.ImageContentPanePresenterImpl;
 import com.gallery.galleryremote.main.preview.glass.CropGlassPane;
 import com.gallery.galleryremote.main.preview.glass.CropGlassPaneModelImpl;
 import com.gallery.galleryremote.main.preview.glass.CropGlassPanePresenter;
 import com.gallery.galleryremote.main.preview.glass.CropGlassPanePresenterImpl;
 import com.gallery.galleryremote.model.Picture;
-import com.gallery.galleryremote.util.ImageLoaderUtil;
+import com.gallery.galleryremote.util.ImageCache;
 import com.gallery.galleryremote.util.log.Logger;
 
 public class PreviewPresenterImpl implements PreviewPresenter, ImageLoaderListener {
@@ -22,9 +23,10 @@ public class PreviewPresenterImpl implements PreviewPresenter, ImageLoaderListen
 
 	private final PreviewModel model;
 	private final Preview view;
+
 	private final ImageContentPaneModel imageModel;
 	private final ImageContentPanePresenter imagePresenter;
-	private final ImageLoaderUtil loader;
+	private final ImageCache loader;
 
 	private final CropGlassPanePresenter glassPresenter;
 	private final CropGlassPaneModelImpl glassModel;
@@ -33,7 +35,7 @@ public class PreviewPresenterImpl implements PreviewPresenter, ImageLoaderListen
 		LOGGER.fine("Creating class instance...");
 		this.model = model;
 		this.view = view;
-		this.loader = new ImageLoaderUtil(GalleryRemote.instance().properties.getIntProperty("cacheSize", 10), this);
+		this.loader = new ImageCache(GalleryRemote.instance().properties.getIntProperty("cacheSize", 10), this);
 
 		this.glassModel = new CropGlassPaneModelImpl(this.loader);
 		this.glassPresenter = new CropGlassPanePresenterImpl(this.glassModel, (CropGlassPane) view.getGlassPane());

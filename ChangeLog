@@ -1,3 +1,7 @@
+2014-07-30  André Rothe <andre.rothe@phosco.info> (1.5.1-b49)
+    
+    * a lot of changes for the Java 7 security requirements
+
 2014-07-16  André Rothe <andre.rothe@phosco.info> (1.5.1-b48)
     
     * new Logging framework

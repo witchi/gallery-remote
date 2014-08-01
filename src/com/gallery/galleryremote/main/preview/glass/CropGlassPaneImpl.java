@@ -16,7 +16,7 @@ import com.gallery.galleryremote.Log;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.util.GRI18n;
-import com.gallery.galleryremote.util.ImageLoaderUtil;
+import com.gallery.galleryremote.util.ImageCache;
 import com.gallery.galleryremote.util.ImageUtils;
 import com.gallery.galleryremote.util.log.Logger;
 
@@ -121,7 +121,7 @@ public class CropGlassPaneImpl extends JComponent {
 		}
 
 		g.setFont(g.getFont());
-		ImageLoaderUtil.paintOutline(g, message, 5, getBounds().height - 5, 1);
+		ImageCache.paintOutline(g, message, 5, getBounds().height - 5, 1);
 	}
 
 	public void updateRect() {

@@ -2869,6 +2869,10 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 							}
 
 							sock.setSoTimeout(con_timeout);
+							
+							sock.setSendBufferSize(65536);
+							sock.setReceiveBufferSize(65536);
+							
 							sock = ((SSLSocketFactory) sslFactory).createSocket(sock, Host, Port, true);
 							checkCert(convert(((SSLSocket) sock).getSession().getPeerCertificateChain()[0]), Host);
 						}

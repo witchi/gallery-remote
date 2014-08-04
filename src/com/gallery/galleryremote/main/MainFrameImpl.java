@@ -80,7 +80,7 @@ import com.gallery.galleryremote.PictureSelection;
 import com.gallery.galleryremote.SlideshowFrame;
 import com.gallery.galleryremote.UploadProgress;
 import com.gallery.galleryremote.about.AboutBox;
-import com.gallery.galleryremote.album.create.NewAlbumDialog;
+import com.gallery.galleryremote.album.create.NewAlbumDialogImpl;
 import com.gallery.galleryremote.album.inspector.AlbumInspectorImpl;
 import com.gallery.galleryremote.album.inspector.AlbumInspectorModel;
 import com.gallery.galleryremote.album.inspector.AlbumInspectorModelImpl;
@@ -739,7 +739,7 @@ public class MainFrameImpl extends JFrame implements ActionListener, ItemListene
 	}
 
 	public void newAlbum() {
-		NewAlbumDialog dialog = new NewAlbumDialog(this, getCurrentGallery(), getCurrentAlbum());
+		NewAlbumDialog dialog = new NewAlbumDialogImpl(this, getCurrentGallery(), getCurrentAlbum());
 		Album newAlbum = dialog.getNewAlbum();
 
 		if (newAlbum == null) {

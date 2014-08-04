@@ -32,16 +32,17 @@ import com.gallery.galleryremote.util.log.Logger;
 public class ImageCache implements PreferenceNames, ImageProcessor {
 	private static final Logger LOGGER = Logger.getLogger(ImageCache.class);
 
-	public final SmartHashtable images;
+	private final SmartHashtable images;
 
-	// next visible picture
-	public Picture pictureShowWant = null;
+	// next visible picture (TODO: is it the next picture or the expected Picture
+	// with angle and flip?)
+	private Picture nextPicture = null;
 
 	// current visible Picture (meta data)
-	public Picture pictureShowNow = null;
+	private Picture currentPicture = null;
 
 	// current visible Image (image data)
-	public Image imageShowNow = null;
+	private Image currentImage = null;
 
 	private final ImageLoaderThread imageLoaderThread;
 
@@ -49,16 +50,32 @@ public class ImageCache implements PreferenceNames, ImageProcessor {
 	public static Pattern breaker = Pattern.compile("<(br|BR)\\s?\\/?>");
 	public static Pattern stripper = Pattern.compile("<[^<>]*>");
 
-	int cacheSize = 10;
-	boolean ignoreIMFailure = false;
-	CancellableTransferListener transferListener = null;
-	ImageLoaderListener loadListener = null;
+	private int cacheSize;
+	private boolean ignoreIMFailure = false;
+	private CancellableTransferListener transferListener;
+	private ImageLoaderListener loadListener;
 
-	public ImageCache(int cacheSize, ImageLoaderListener imageLoaderUser) {
+	public ImageCache(int cacheSize, ImageLoaderListener imageLoadListener) {
+		LOGGER.fine("Creating class instance...");
+
 		this.imageLoaderThread = new ImageLoaderThread(this);
 		this.cacheSize = cacheSize;
 		this.images = new SmartHashtable(cacheSize);
-		this.loadListener = imageLoaderUser;
+		this.loadListener = imageLoadListener;
+		this.transferListener = null;
+		this.cacheSize = 10;
+	}
+
+	public Image getImage() {
+		return currentImage;
+	}
+
+	public Picture getPicture() {
+		return currentPicture;
+	}
+
+	public Picture getNextPicture() {
+		return nextPicture;
 	}
 
 	public void setTransferListener(CancellableTransferListener transferListener) {
@@ -67,11 +84,11 @@ public class ImageCache implements PreferenceNames, ImageProcessor {
 
 	public void flushMemory() {
 		images.clear();
-		if (pictureShowNow != null) {
-			pictureShowWant = null;
-			imageShowNow = null;
-			preparePicture(pictureShowNow, true, true);
-			pictureShowNow = null;
+		if (currentPicture != null) {
+			nextPicture = null;
+			currentImage = null;
+			preparePicture(currentPicture, true, true);
+			currentPicture = null;
 		}
 	}
 
@@ -90,8 +107,8 @@ public class ImageCache implements PreferenceNames, ImageProcessor {
 	@Override
 	public void pictureReady(Image image, Picture picture) {
 		if (!loadListener.blockPictureReady(image, picture)) {
-			imageShowNow = image;
-			pictureShowNow = picture;
+			currentImage = image;
+			currentPicture = picture;
 			loadListener.pictureReady();
 		}
 	}
@@ -145,17 +162,17 @@ public class ImageCache implements PreferenceNames, ImageProcessor {
 
 	public void preparePicture(Picture picture, boolean async, boolean notify) {
 		if (picture == null) {
-			pictureShowWant = null;
+			nextPicture = null;
 			loadListener.nullRect();
 			firePictureReady(notify, null, null);
 			return;
 		}
 
-		if (picture == pictureShowWant) {
+		if (picture == nextPicture) {
 			return;
 		}
 
-		pictureShowWant = picture;
+		nextPicture = picture;
 		Image r = (Image) images.get(picture);
 		if (r != null) {
 			LOGGER.fine("Cache hit: " + picture);
@@ -175,10 +192,12 @@ public class ImageCache implements PreferenceNames, ImageProcessor {
 		}
 	}
 
+	// FIXME: move this into another class, it should be part of a UI class
 	public static void paintAlignedOutline(Graphics g, String s, int textX, int textY, int thickness, int position, int wrapWidth) {
 		paintAlignedOutline(g, textX, textY, thickness, position, wrap((Graphics2D) g, s, wrapWidth), false);
 	}
 
+	// FIXME: move this into another class, it should be part of a UI class
 	public static Point paintAlignedOutline(Graphics g, int textX, int textY, int thickness, int position, WrapInfo wrapInfo,
 			boolean paintAtOrigin) {
 		FontMetrics fm = g.getFontMetrics();
@@ -245,6 +264,7 @@ public class ImageCache implements PreferenceNames, ImageProcessor {
 		return boxPos;
 	}
 
+	// FIXME: move this into another class, it should be part of a UI class	
 	public static WrapInfo wrap(Graphics2D g, String s, int wrapWidth) {
 		WrapInfo wrapInfo = new WrapInfo();
 
@@ -280,6 +300,7 @@ public class ImageCache implements PreferenceNames, ImageProcessor {
 		return wrapInfo;
 	}
 
+	// FIXME: move this into another class, it should be part of a UI class	
 	public static void paintOutline(Graphics g, String s, int textX, int textY, int thickness) {
 		if (thickness > 10) {
 			thickness = 10;
@@ -301,6 +322,7 @@ public class ImageCache implements PreferenceNames, ImageProcessor {
 		g.drawString(s, textX, textY);
 	}
 
+	// FIXME: move this into another class, it should be part of a UI class	
 	private static Color getDarkGray(int thickness) {
 		if (darkGray[thickness] == null) {
 			darkGray[thickness] = new Color(64, 64, 64, 255 / thickness / thickness);
@@ -309,6 +331,7 @@ public class ImageCache implements PreferenceNames, ImageProcessor {
 		return darkGray[thickness];
 	}
 
+	// FIXME: move this into another class, it should be part of a UI class	
 	public static void setSlideshowFont(Component c) {
 		String fontName = GalleryRemote.instance().properties.getProperty(SLIDESHOW_FONTNAME);
 		int defaultFontSize = (int) DialogUtil.findParentWindow(c).getGraphicsConfiguration().getBounds().getHeight() / 40;
@@ -325,6 +348,8 @@ public class ImageCache implements PreferenceNames, ImageProcessor {
 		}
 	}
 
+	
+	// FIXME: move this into another class, it should be part of an utility class	
 	public static String stripTags(String text) {
 		if (text == null) {
 			return null;

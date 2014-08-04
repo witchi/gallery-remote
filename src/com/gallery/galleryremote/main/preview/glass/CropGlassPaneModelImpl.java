@@ -11,7 +11,7 @@ import com.gallery.galleryremote.util.AbstractModel;
 import com.gallery.galleryremote.util.ImageCache;
 import com.gallery.galleryremote.util.ImageUtils;
 
-public class CropGlassPaneModelImpl  extends AbstractModel implements CropGlassPaneModel {
+public class CropGlassPaneModelImpl extends AbstractModel implements CropGlassPaneModel {
 
 	private Rectangle currentRect = null;
 	private long dragStartTime;
@@ -91,7 +91,7 @@ public class CropGlassPaneModelImpl  extends AbstractModel implements CropGlassP
 			break;
 		}
 
-		loader.pictureShowNow.setCropTo(null);
+		loader.getPicture().setCropTo(null);
 		updateRectOnce = true;
 	}
 
@@ -99,19 +99,19 @@ public class CropGlassPaneModelImpl  extends AbstractModel implements CropGlassP
 		inDrag = false;
 		centerMode = false;
 
-		if (loader.pictureShowNow == null || oldRect == null || loader.pictureShowNow.isOnline()) {
+		if (loader.getPicture() == null || oldRect == null || loader.getPicture().isOnline()) {
 			return;
 		}
 
-		AffineTransform t = ImageUtils.createTransform(getBounds(), currentRect, loader.pictureShowNow.getDimension(),
-				loader.pictureShowNow.getAngle(), loader.pictureShowNow.isFlipped());
+		AffineTransform t = ImageUtils.createTransform(view.getBounds(), currentRect, loader.getPicture().getDimension(), loader.getPicture()
+				.getAngle(), loader.getPicture().isFlipped());
 		// pictureShowNow.setCropTo(getRect(t.transform(transitionStart,
 		// null), t.transform(end, null)));
 
 		Rectangle tmpRect = new Rectangle();
 		tmpRect.setFrameFromDiagonal(t.transform(oldRect.getLocation(), null),
 				t.transform(new Point(oldRect.x + oldRect.width, oldRect.y + oldRect.height), null));
-		loader.pictureShowNow.setCropTo(tmpRect);
+		loader.getPicture().setCropTo(tmpRect);
 
 	}
 
@@ -170,14 +170,14 @@ public class CropGlassPaneModelImpl  extends AbstractModel implements CropGlassP
 
 		return r;
 	}
-	
+
 	@Override
 	public void removeCrop() {
-		loader.pictureShowNow.setCropTo(null);
+		loader.getPicture().setCropTo(null);
 		cacheRect = null;
 		fireRefreshEvent();
 	}
-	
+
 	private void fireRefreshEvent() {
 		notifyListeners(new ActionEvent(this, 0, CropGlassPaneActions.REFRESH.name()));
 	}

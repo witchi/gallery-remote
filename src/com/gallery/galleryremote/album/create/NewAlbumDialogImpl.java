@@ -52,19 +52,22 @@ import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.util.DialogUtil;
 import com.gallery.galleryremote.util.GRI18n;
+import com.gallery.galleryremote.util.log.Logger;
 
 /**
  * @author paour
+ * @author arothe
  * @created October 18, 2002
  */
 public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 
 	private static final long serialVersionUID = -7008531987250343265L;
-
+	private static final Logger LOGGER = Logger.getLogger(NewAlbumDialogImpl.class);
+	
 	private JLabel jLabel2;
 	private JLabel jLabel3;
-	JLabel jLabel4 = new JLabel();
-	JLabel jLabel5 = new JLabel();
+	private JLabel jLabel4;
+	private JLabel jLabel5;
 	JTextField jTitle = new JTextField();
 	JTextField jName = new JTextField();
 	JTextArea jDescription = new JTextArea();
@@ -78,6 +81,8 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 
 	public NewAlbumDialogImpl(Frame owner) {
 		super(owner, true);
+		
+		LOGGER.fine("Creating class instance...");
 		initUI();
 	}
 
@@ -95,6 +100,22 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 			jLabel3.setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "albmTitle"));
 		}
 		return jLabel3;
+	}
+
+	private JLabel getLabel4() {
+		if (jLabel4 == null) {
+			jLabel4 = new JLabel();
+			jLabel4.setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "albmName"));
+		}
+		return jLabel4;
+	}
+
+	private JLabel getLabel5() {
+		if (jLabel5 == null) {
+			jLabel5 = new JLabel();
+			jLabel5.setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "albmDesc"));
+		}
+		return jLabel5;
 	}
 
 	private JButton getCancelButton() {
@@ -131,7 +152,6 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 			jAlbum.setSelectedItem(defaultAlbum);
 		}
 
-		
 		jDescription
 				.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.white, Color.lightGray, Color.darkGray, Color.gray));
 		jDescription.setLineWrap(true);
@@ -143,24 +163,22 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 		jGalleryName.setText(GRI18n.getString(MODULE, "createAlbm", new String[] { gallery.toString() }));
 		jName.setFont(UIManager.getFont("Label.font"));
 		jName.setToolTipText(GRI18n.getString(MODULE, "albmNameTip"));
-		
+
 		jTitle.setFont(UIManager.getFont("Label.font"));
 
 		gridLayout1.setColumns(2);
 		gridLayout1.setHgap(5);
 
-		jLabel4.setText(GRI18n.getString(MODULE, "albmName"));
-		jLabel5.setText(GRI18n.getString(MODULE, "albmDesc"));
 		jPanel2.setLayout(gridLayout1);
 
 		this.getContentPane().add(getLabel2(),
 				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 4));
 		this.getContentPane().add(getLabel3(),
 				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 5, 0, 5), 0, 4));
-		this.getContentPane().add(jLabel4,
+		this.getContentPane().add(getLabel4(),
 				new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 5, 0, 5), 0, 4));
 		this.getContentPane().add(
-				jLabel5,
+				getLabel5(),
 				new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0,
 						3));
 		this.getContentPane().add(
@@ -192,6 +210,7 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 		DialogUtil.center(this, getOwner());
 	}
 
+	@Override
 	public void resetUI(NewAlbumDTO dto) {
 		jOk.setEnabled(dto.isEnabled());
 		jName.setEnabled(dto.isEnabled());

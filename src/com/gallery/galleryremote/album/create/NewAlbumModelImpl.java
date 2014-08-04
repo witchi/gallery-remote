@@ -21,6 +21,7 @@ public class NewAlbumModelImpl extends AbstractModel implements NewAlbumModel {
 		this.defaultAlbum = defaultAlbum;
 	}
 
+	@Override
 	public Album getNewAlbum() {
 		return newAlbum;
 	}

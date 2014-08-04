@@ -10,17 +10,22 @@ import java.awt.event.ItemListener;
 import javax.swing.JTextField;
 
 import com.gallery.galleryremote.model.Album;
+import com.gallery.galleryremote.util.log.Logger;
 
-public class NewAlbumPresenterImpl implements ActionListener, ItemListener, FocusListener {
+public class NewAlbumPresenterImpl implements ActionListener, ItemListener, FocusListener, NewAlbumPresenter {
 
+	private static final Logger LOGGER = Logger.getLogger(NewAlbumPresenterImpl.class);
 	private final NewAlbumModel model;
 	private final NewAlbumDialog view;
 
 	public NewAlbumPresenterImpl(NewAlbumModel model, NewAlbumDialog view) {
 		LOGGER.fine("Creating class instance...");
+		
 		this.view = view;
 		this.model = model;
+		
 		initEvents();
+		view.setVisible(true);
 	}
 
 	private void initEvents() {
@@ -31,14 +36,14 @@ public class NewAlbumPresenterImpl implements ActionListener, ItemListener, Focu
 		jName.addFocusListener(this);
 		jTitle.addFocusListener(this);
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		LOGGER.info("Command selected " + command);
 
 		if (command.equals("Cancel")) {
-			setVisible(false);
+			view.setVisible(false);
 		} else if (command.equals("OK")) {
 			newAlbum = new Album(gallery);
 			// newAlbum.setSuppressEvents(true);
@@ -51,7 +56,7 @@ public class NewAlbumPresenterImpl implements ActionListener, ItemListener, Focu
 			parentAlbum = (Album) jAlbum.getSelectedItem();
 			parentAlbum.getGallery().insertNodeInto(newAlbum, parentAlbum, parentAlbum.getChildCount());
 
-			setVisible(false);
+			view.setVisible(false);
 		}
 	}
 
@@ -73,7 +78,7 @@ public class NewAlbumPresenterImpl implements ActionListener, ItemListener, Focu
 			jName.setText(getDefaultName(jTitle.getText()));
 		}
 	}
-	
+
 	private void resetUI() {
 		Album a = (Album) jAlbum.getSelectedItem();
 		boolean canCreateSubAlbum = a.getCanCreateSubAlbum();

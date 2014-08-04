@@ -80,7 +80,12 @@ import com.gallery.galleryremote.PictureSelection;
 import com.gallery.galleryremote.SlideshowFrame;
 import com.gallery.galleryremote.UploadProgress;
 import com.gallery.galleryremote.about.AboutBox;
+import com.gallery.galleryremote.album.create.NewAlbumDialog;
 import com.gallery.galleryremote.album.create.NewAlbumDialogImpl;
+import com.gallery.galleryremote.album.create.NewAlbumModel;
+import com.gallery.galleryremote.album.create.NewAlbumModelImpl;
+import com.gallery.galleryremote.album.create.NewAlbumPresenter;
+import com.gallery.galleryremote.album.create.NewAlbumPresenterImpl;
 import com.gallery.galleryremote.album.inspector.AlbumInspectorImpl;
 import com.gallery.galleryremote.album.inspector.AlbumInspectorModel;
 import com.gallery.galleryremote.album.inspector.AlbumInspectorModelImpl;
@@ -89,6 +94,7 @@ import com.gallery.galleryremote.album.inspector.AlbumInspectorPresenterImpl;
 import com.gallery.galleryremote.cache.ThumbnailCache;
 import com.gallery.galleryremote.cache.ThumbnailCacheImpl;
 import com.gallery.galleryremote.main.preview.Preview;
+import com.gallery.galleryremote.main.preview.PreviewImpl;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.model.Picture;
@@ -202,7 +208,6 @@ public class MainFrameImpl extends JFrame implements ActionListener, ItemListene
 	public MainFrameImpl() {
 		LOGGER.fine("Creating class instance...");
 	}
-
 
 	@Override
 	public void startup() {
@@ -422,11 +427,11 @@ public class MainFrameImpl extends JFrame implements ActionListener, ItemListene
 				jNewGalleryButton.setEnabled(!inProgress);
 
 				LOGGER.fine(currentGallery
-								+ " - "
-								+ currentGallery.getUsername()
-								+ " - "
-								+ (currentGallery.hasComm() ? (" - " + currentGallery.getComm(getStatusBar()).isLoggedIn())
-										: (" - " + currentGallery.hasComm())));
+						+ " - "
+						+ currentGallery.getUsername()
+						+ " - "
+						+ (currentGallery.hasComm() ? (" - " + currentGallery.getComm(getStatusBar()).isLoggedIn()) : (" - " + currentGallery
+								.hasComm())));
 
 				if (currentGallery != null && currentGallery.getUsername() != null && currentGallery.hasComm()
 						&& currentGallery.getComm(getStatusBar()).isLoggedIn()) {
@@ -739,9 +744,11 @@ public class MainFrameImpl extends JFrame implements ActionListener, ItemListene
 	}
 
 	public void newAlbum() {
-		NewAlbumDialog dialog = new NewAlbumDialogImpl(this, getCurrentGallery(), getCurrentAlbum());
-		Album newAlbum = dialog.getNewAlbum();
-
+		// initialize MVC cascade
+		NewAlbumModel model = new NewAlbumModelImpl(getCurrentGallery(), getCurrentAlbum());
+		new NewAlbumPresenterImpl(model, new NewAlbumDialogImpl(this));
+		
+		Album newAlbum = model.getNewAlbum();
 		if (newAlbum == null) {
 			return;
 		}
@@ -1026,7 +1033,6 @@ public class MainFrameImpl extends JFrame implements ActionListener, ItemListene
 			jMenuBar1.add(jMenuHelp);
 		}
 
-
 		if (!GalleryRemote.IS_MAC_OS_X) {
 			jMenuFile.add(jMenuItemQuit);
 			jMenuHelp.add(jMenuItemAbout);
@@ -1115,7 +1121,6 @@ public class MainFrameImpl extends JFrame implements ActionListener, ItemListene
 		jPicturesList.addFocusListener(this);
 		jAlbumTree.addFocusListener(this);
 	}
-
 
 	// Event handling
 	@Override

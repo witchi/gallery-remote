@@ -1,5 +1,7 @@
 package com.gallery.galleryremote.main;
 
-public class MainFrameModelImpl implements MainFrameModel {
+import com.gallery.galleryremote.util.AbstractModel;
+
+public class MainFrameModelImpl extends AbstractModel implements MainFrameModel {
 
 }

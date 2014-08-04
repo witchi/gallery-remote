@@ -1,5 +1,7 @@
 package com.gallery.galleryremote.main.preview;
 
-public class PreviewModelImpl implements PreviewModel {
+import com.gallery.galleryremote.util.AbstractModel;
+
+public class PreviewModelImpl extends AbstractModel implements PreviewModel {
 
 }

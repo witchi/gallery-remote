@@ -8,30 +8,24 @@ import java.awt.Rectangle;
 
 import javax.swing.JPanel;
 
-import com.gallery.galleryremote.GalleryRemote;
-import com.gallery.galleryremote.prefs.PreferenceNames;
-import com.gallery.galleryremote.util.ImageUtils;
-
 public class ImageContentPaneImpl extends JPanel implements ImageContentPane {
 	private static final long serialVersionUID = 6465140694468227338L;
 
 	private volatile Image image;
 	private volatile Color color;
+	private volatile Rectangle rectangle;
 
-	public void setColor(Color color) {
-		this.color = color;
-	}
-
-	public void setImage(Image image) {
-		this.image = image;
+	@Override
+	public void refreshUI(ImageContentPaneDTO dto) {
+		image = dto.getImage();
+		color = dto.getColor();
+		rectangle = dto.getRectangle();
+		repaint();
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-
-		// TODO: move that to presenter and use setColor()
-		Color c = GalleryRemote.instance().properties.getColorProperty(PreferenceNames.SLIDESHOW_COLOR);
 
 		if (this.color != null) {
 			g.setColor(this.color);
@@ -45,17 +39,6 @@ public class ImageContentPaneImpl extends JPanel implements ImageContentPane {
 			return;
 		}
 
-		if (loader.imageShowNow != null && loader.pictureShowWant != null) {
-			// Log.log(Log.LEVEL_TRACE, MODULE, "New image: " +
-			// loader.imageShowNow);
-
-			Image tmpImage = ImageUtils.rotateImage(loader.imageShowNow, loader.pictureShowWant.getAngle(),
-					loader.pictureShowWant.isFlipped(), this);
-
-			currentRect = new Rectangle(getLocation().x + (getWidth() - tmpImage.getWidth(this)) / 2, getLocation().y
-					+ (getHeight() - tmpImage.getHeight(this)) / 2, tmpImage.getWidth(this), tmpImage.getHeight(this));
-
-			g2.drawImage(this.image, currentRect.x, currentRect.y, getContentPane());
-		}
+		g2.drawImage(this.image, rectangle.x, rectangle.y, this);
 	}
 }

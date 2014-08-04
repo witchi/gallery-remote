@@ -40,7 +40,7 @@ public class ImageContentPanePresenterImpl implements ImageContentPanePresenter 
 			dto.setImage(tmpImage);
 		}
 
-		view.refresh(dto);
+		view.refreshUI(dto);
 	}
 
 }

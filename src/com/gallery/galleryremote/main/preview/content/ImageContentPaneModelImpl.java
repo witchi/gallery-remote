@@ -3,10 +3,11 @@ package com.gallery.galleryremote.main.preview.content;
 import java.awt.Image;
 
 import com.gallery.galleryremote.model.Picture;
+import com.gallery.galleryremote.util.AbstractModel;
 import com.gallery.galleryremote.util.ImageCache;
 import com.gallery.galleryremote.util.log.Logger;
 
-public class ImageContentPaneModelImpl implements ImageContentPaneModel {
+public class ImageContentPaneModelImpl extends AbstractModel implements ImageContentPaneModel {
 
 	private final static Logger LOGGER = Logger.getLogger(ImageContentPaneModelImpl.class);
 	private final ImageCache cache;

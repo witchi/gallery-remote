@@ -18,7 +18,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.gallery.galleryremote;
+package com.gallery.galleryremote.album.create;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -50,6 +50,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
+import com.gallery.galleryremote.Log;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.util.DialogUtil;

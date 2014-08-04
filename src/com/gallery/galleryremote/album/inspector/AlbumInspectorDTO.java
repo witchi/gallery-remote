@@ -1,4 +1,4 @@
-package com.gallery.galleryremote.albuminspector;
+package com.gallery.galleryremote.album.inspector;
 
 class AlbumInspectorDTO {
 

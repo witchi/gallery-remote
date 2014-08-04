@@ -21,8 +21,8 @@ import javax.swing.MutableComboBoxModel;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
-import com.gallery.galleryremote.albuminspector.AlbumFieldComboBox;
-import com.gallery.galleryremote.albuminspector.AlbumFieldComboBoxImpl;
+import com.gallery.galleryremote.album.inspector.AlbumFieldComboBox;
+import com.gallery.galleryremote.album.inspector.AlbumFieldComboBoxImpl;
 import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.Log;
 

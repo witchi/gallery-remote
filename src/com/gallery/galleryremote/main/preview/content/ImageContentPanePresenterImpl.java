@@ -4,8 +4,6 @@ import java.awt.Component;
 import java.awt.Image;
 import java.awt.Rectangle;
 
-import com.gallery.galleryremote.GalleryRemote;
-import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.util.ImageUtils;
 import com.gallery.galleryremote.util.log.Logger;
 
@@ -20,13 +18,14 @@ public class ImageContentPanePresenterImpl implements ImageContentPanePresenter 
 		LOGGER.fine("Creating class instance...");
 		this.model = model;
 		this.view = view;
+		model.setDefaultBackgroundColor(view.getBackground());
 	}
 
 	@Override
 	public void resetUI() {
 
 		ImageContentPaneDTO dto = new ImageContentPaneDTO();
-		dto.setColor(GalleryRemote.instance().properties.getColorProperty(PreferenceNames.SLIDESHOW_COLOR));
+		dto.setColor(model.getBackgroundColor());
 
 		if (model.hasPicture()) {
 

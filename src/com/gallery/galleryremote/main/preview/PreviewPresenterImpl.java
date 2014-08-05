@@ -4,6 +4,11 @@ import java.awt.Dimension;
 import java.awt.Image;
 
 import com.gallery.galleryremote.GalleryRemote;
+import com.gallery.galleryremote.imageloader.ImageLoaderListener;
+import com.gallery.galleryremote.main.preview.content.ImageContentPaneModel;
+import com.gallery.galleryremote.main.preview.content.ImageContentPaneModelImpl;
+import com.gallery.galleryremote.main.preview.content.ImageContentPanePresenter;
+import com.gallery.galleryremote.main.preview.content.ImageContentPanePresenterImpl;
 import com.gallery.galleryremote.main.preview.glass.CropGlassPane;
 import com.gallery.galleryremote.main.preview.glass.CropGlassPaneModelImpl;
 import com.gallery.galleryremote.main.preview.glass.CropGlassPanePresenter;
@@ -12,12 +17,15 @@ import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.util.ImageCache;
 import com.gallery.galleryremote.util.log.Logger;
 
-public class PreviewPresenterImpl implements PreviewPresenter, ImageCache.ImageLoaderListener {
+public class PreviewPresenterImpl implements PreviewPresenter, ImageLoaderListener {
 
 	private static final Logger LOGGER = Logger.getLogger(PreviewPresenterImpl.class);
 
 	private final PreviewModel model;
 	private final Preview view;
+
+	private final ImageContentPaneModel imageModel;
+	private final ImageContentPanePresenter imagePresenter;
 	private final ImageCache loader;
 
 	private final CropGlassPanePresenter glassPresenter;
@@ -32,8 +40,8 @@ public class PreviewPresenterImpl implements PreviewPresenter, ImageCache.ImageL
 		this.glassModel = new CropGlassPaneModelImpl(this.loader);
 		this.glassPresenter = new CropGlassPanePresenterImpl(this.glassModel, (CropGlassPane) view.getGlassPane());
 
-		this.imageModel = new ImageContentPaneModel(this.loader);
-		this.imagePresenter = new ImageContentPanePresenter(this.imageModel, view.getContentPane());
+		this.imageModel = new ImageContentPaneModelImpl(this.loader);
+		this.imagePresenter = new ImageContentPanePresenterImpl(this.imageModel, view.getContentPane());
 
 		initEvents(); // TODO: should we call that here?
 	}
@@ -75,7 +83,7 @@ public class PreviewPresenterImpl implements PreviewPresenter, ImageCache.ImageL
 
 	@Override
 	public void nullRect() {
-		currentRect = null;
+		model.setCurrentRect(null);
 	}
 
 	@Override

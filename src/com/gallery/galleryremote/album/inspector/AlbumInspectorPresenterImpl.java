@@ -1,4 +1,4 @@
-package com.gallery.galleryremote.albuminspector;
+package com.gallery.galleryremote.album.inspector;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -12,6 +12,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 
+import com.gallery.galleryremote.album.move.MoveAlbumDialog;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.prefs.UploadPanel;
@@ -20,7 +21,6 @@ import com.gallery.galleryremote.util.log.Logger;
 import com.gallery.galleryremote.CoreUtils;
 import com.gallery.galleryremote.GalleryCommCapabilities;
 import com.gallery.galleryremote.GalleryRemote;
-import com.gallery.galleryremote.MoveAlbumDialog;
 
 public class AlbumInspectorPresenterImpl implements ActionListener, ItemListener, KeyListener, AlbumInspectorPresenter {
 

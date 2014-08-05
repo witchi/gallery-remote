@@ -18,10 +18,9 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.gallery.galleryremote;
+package com.gallery.galleryremote.album.create;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -37,12 +36,10 @@ import java.awt.event.ItemListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -50,31 +47,27 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
+import com.gallery.galleryremote.Log;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.util.DialogUtil;
 import com.gallery.galleryremote.util.GRI18n;
+import com.gallery.galleryremote.util.log.Logger;
 
 /**
- * Description of the Class
- * 
  * @author paour
+ * @author arothe
  * @created October 18, 2002
  */
-public class NewAlbumDialog extends JDialog implements ActionListener, ItemListener, FocusListener {
+public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 
 	private static final long serialVersionUID = -7008531987250343265L;
-	public final static String MODULE = "NewAlbum";
-
-	Gallery gallery = null;
-	Album defaultAlbum = null;
-	Album newAlbum = null;
-	Album parentAlbum = null;
-
-	JLabel jLabel2 = new JLabel();
-	JLabel jLabel3 = new JLabel();
-	JLabel jLabel4 = new JLabel();
-	JLabel jLabel5 = new JLabel();
+	private static final Logger LOGGER = Logger.getLogger(NewAlbumDialogImpl.class);
+	
+	private JLabel jLabel2;
+	private JLabel jLabel3;
+	private JLabel jLabel4;
+	private JLabel jLabel5;
 	JTextField jTitle = new JTextField();
 	JTextField jName = new JTextField();
 	JTextArea jDescription = new JTextArea();
@@ -82,46 +75,73 @@ public class NewAlbumDialog extends JDialog implements ActionListener, ItemListe
 	JLabel jGalleryName = new JLabel();
 	JComboBox<Album> jAlbum = null;
 	JPanel jPanel2 = new JPanel();
-	JButton jOk = new JButton();
-	JButton jCancel = new JButton();
+	private JButton jOk = new JButton();
+	private JButton jCancel;
 	GridLayout gridLayout1 = new GridLayout();
-	private static final String ILLEGAL_CHARACTERS = "[ \\\\/*?\"'&|.+#]";
 
-	/**
-	 * Constructor for the NewAlbumDialog object
-	 * 
-	 * @param owner
-	 *           Description of Parameter
-	 * @param gallery
-	 *           Description of Parameter
-	 * @param defaultAlbum
-	 *           Description of Parameter
-	 */
-	public NewAlbumDialog(Frame owner, Gallery gallery, Album defaultAlbum) {
+	public NewAlbumDialogImpl(Frame owner) {
 		super(owner, true);
-
-		this.gallery = gallery;
-		this.defaultAlbum = defaultAlbum;
-
-		jbInit();
-
-		pack();
-		DialogUtil.center(this, owner);
-
-		setVisible(true);
+		
+		LOGGER.fine("Creating class instance...");
+		initUI();
 	}
 
-	private void jbInit() {
+	private JLabel getLabel2() {
+		if (jLabel2 == null) {
+			jLabel2 = new JLabel();
+			jLabel2.setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "parentAlbm"));
+		}
+		return jLabel2;
+	}
+
+	private JLabel getLabel3() {
+		if (jLabel3 == null) {
+			jLabel3 = new JLabel();
+			jLabel3.setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "albmTitle"));
+		}
+		return jLabel3;
+	}
+
+	private JLabel getLabel4() {
+		if (jLabel4 == null) {
+			jLabel4 = new JLabel();
+			jLabel4.setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "albmName"));
+		}
+		return jLabel4;
+	}
+
+	private JLabel getLabel5() {
+		if (jLabel5 == null) {
+			jLabel5 = new JLabel();
+			jLabel5.setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "albmDesc"));
+		}
+		return jLabel5;
+	}
+
+	private JButton getCancelButton() {
+		if (jCancel == null) {
+			jCancel = new JButton();
+			jCancel.setText(GRI18n.getString("Common", "Cancel"));
+			jCancel.setActionCommand("Cancel");
+		}
+		return jCancel;
+	}
+
+	private JButton getOkButton() {
+		if (jOk == null) {
+			jOk = new JButton();
+			jOk.setText(GRI18n.getString("Common", "OK"));
+			jOk.setActionCommand("OK");
+		}
+		return jOk;
+	}
+
+	private void initUI() {
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.setModal(true);
-		this.setTitle(GRI18n.getString(MODULE, "title"));
+		this.setTitle(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "title"));
 
 		Vector<Album> albums = new Vector<Album>(gallery.getFlatAlbumList());
-		// rootAlbum = new Album(gallery);
-		// rootAlbum.setSuppressEvents(true);
-		// rootAlbum.setTitle(GRI18n.getString(MODULE, "rootAlbmTitle"));
-		// rootAlbum.setName("root.root");
-		// albums.add(0, rootAlbum);
 
 		jAlbum = new JComboBox<Album>(albums);
 		jAlbum.setRenderer(new AlbumListRenderer());
@@ -132,8 +152,6 @@ public class NewAlbumDialog extends JDialog implements ActionListener, ItemListe
 			jAlbum.setSelectedItem(defaultAlbum);
 		}
 
-		jCancel.setText(GRI18n.getString("Common", "Cancel"));
-		jCancel.setActionCommand("Cancel");
 		jDescription
 				.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.white, Color.lightGray, Color.darkGray, Color.gray));
 		jDescription.setLineWrap(true);
@@ -145,26 +163,22 @@ public class NewAlbumDialog extends JDialog implements ActionListener, ItemListe
 		jGalleryName.setText(GRI18n.getString(MODULE, "createAlbm", new String[] { gallery.toString() }));
 		jName.setFont(UIManager.getFont("Label.font"));
 		jName.setToolTipText(GRI18n.getString(MODULE, "albmNameTip"));
-		jOk.setText(GRI18n.getString("Common", "OK"));
-		jOk.setActionCommand("OK");
+
 		jTitle.setFont(UIManager.getFont("Label.font"));
 
 		gridLayout1.setColumns(2);
 		gridLayout1.setHgap(5);
-		jLabel2.setText(GRI18n.getString(MODULE, "parentAlbm"));
-		jLabel3.setText(GRI18n.getString(MODULE, "albmTitle"));
-		jLabel4.setText(GRI18n.getString(MODULE, "albmName"));
-		jLabel5.setText(GRI18n.getString(MODULE, "albmDesc"));
+
 		jPanel2.setLayout(gridLayout1);
 
-		this.getContentPane().add(jLabel2,
+		this.getContentPane().add(getLabel2(),
 				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 4));
-		this.getContentPane().add(jLabel3,
+		this.getContentPane().add(getLabel3(),
 				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 5, 0, 5), 0, 4));
-		this.getContentPane().add(jLabel4,
+		this.getContentPane().add(getLabel4(),
 				new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 5, 0, 5), 0, 4));
 		this.getContentPane().add(
-				jLabel5,
+				getLabel5(),
 				new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0,
 						3));
 		this.getContentPane().add(
@@ -187,118 +201,21 @@ public class NewAlbumDialog extends JDialog implements ActionListener, ItemListe
 						0, 0));
 		this.getContentPane().add(jPanel2,
 				new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		jPanel2.add(jCancel, null);
-		jPanel2.add(jOk, null);
+		jPanel2.add(getCancelButton(), null);
+		jPanel2.add(getOkButton(), null);
 
-		jOk.addActionListener(this);
-		jCancel.addActionListener(this);
-		jAlbum.addItemListener(this);
+		getRootPane().setDefaultButton(getOkButton());
 
-		jName.addFocusListener(this);
-		jTitle.addFocusListener(this);
-
-		getRootPane().setDefaultButton(jOk);
-
-		resetUIState();
-	}
-
-	/**
-	 * Description of the Method
-	 * 
-	 * @param e
-	 *           Description of Parameter
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String command = e.getActionCommand();
-		Log.log(Log.LEVEL_INFO, MODULE, "Command selected " + command);
-
-		if (command.equals("Cancel")) {
-			setVisible(false);
-		} else if (command.equals("OK")) {
-			newAlbum = new Album(gallery);
-			// newAlbum.setSuppressEvents(true);
-			newAlbum.setName(jName.getText());
-			newAlbum.setTitle(jTitle.getText());
-			newAlbum.setCaption(jDescription.getText());
-
-			// newAlbum.setSuppressEvents(false);
-
-			parentAlbum = (Album) jAlbum.getSelectedItem();
-			parentAlbum.getGallery().insertNodeInto(newAlbum, parentAlbum, parentAlbum.getChildCount());
-
-			setVisible(false);
-		}
-	}
-
-	public Album getNewAlbum() {
-		return newAlbum;
-	}
-
-	public Album getParentAlbum() {
-		return parentAlbum;
+		pack();
+		DialogUtil.center(this, getOwner());
 	}
 
 	@Override
-	public void itemStateChanged(ItemEvent e) {
-		if (e.getStateChange() == ItemEvent.SELECTED) {
-			resetUIState();
-		}
+	public void resetUI(NewAlbumDTO dto) {
+		jOk.setEnabled(dto.isEnabled());
+		jName.setEnabled(dto.isEnabled());
+		jTitle.setEnabled(dto.isEnabled());
+		jDescription.setEnabled(dto.isEnabled());
 	}
 
-	void resetUIState() {
-		Album a = (Album) jAlbum.getSelectedItem();
-
-		boolean canCreateSubAlbum = a.getCanCreateSubAlbum();
-
-		jOk.setEnabled(canCreateSubAlbum);
-		jName.setEnabled(canCreateSubAlbum);
-		jTitle.setEnabled(canCreateSubAlbum);
-		jDescription.setEnabled(canCreateSubAlbum);
-	}
-
-	@Override
-	public void focusGained(FocusEvent e) {
-		((JTextField) e.getSource()).selectAll();
-	}
-
-	@Override
-	public void focusLost(FocusEvent e) {
-		if (e.getSource() == jTitle && jName.getText().length() == 0) {
-			jName.setText(getDefaultName(jTitle.getText()));
-		}
-	}
-
-	/**
-	 * 
-	 * @param text
-	 *           album title
-	 * @return a reasonable default, safe album name
-	 */
-	static String getDefaultName(final String text) {
-		String r = text.toLowerCase();
-		r = r.replaceAll("[&]", "and");
-		r = r.replaceAll(ILLEGAL_CHARACTERS, "_");
-		return r.replaceAll("_{2,}", "_");
-	}
-
-	public class AlbumListRenderer extends DefaultListCellRenderer {
-
-		private static final long serialVersionUID = -1231757007725402230L;
-
-		@Override
-		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-			super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-			if (((Album) value).getCanCreateSubAlbum()) {
-				if (!isSelected) {
-					setForeground(Color.BLACK);
-				}
-			} else {
-				setForeground(Color.GRAY);
-			}
-
-			return this;
-		}
-	}
 }

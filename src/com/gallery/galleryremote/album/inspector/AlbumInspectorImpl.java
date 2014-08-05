@@ -18,7 +18,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.gallery.galleryremote.albuminspector;
+package com.gallery.galleryremote.album.inspector;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;

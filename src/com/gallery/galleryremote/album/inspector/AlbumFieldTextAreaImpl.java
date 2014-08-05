@@ -1,4 +1,4 @@
-package com.gallery.galleryremote.albuminspector;
+package com.gallery.galleryremote.album.inspector;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;

@@ -18,7 +18,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.gallery.galleryremote;
+package com.gallery.galleryremote.album.move;
 
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -37,7 +37,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import com.gallery.galleryremote.albuminspector.AlbumInspectorModel;
+import com.gallery.galleryremote.Log;
+import com.gallery.galleryremote.album.inspector.AlbumInspectorModel;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.util.DialogUtil;
 import com.gallery.galleryremote.util.GRI18n;

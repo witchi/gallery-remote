@@ -20,21 +20,29 @@ public class NewAlbumPresenterImpl implements ActionListener, ItemListener, Focu
 
 	public NewAlbumPresenterImpl(NewAlbumModel model, NewAlbumDialog view) {
 		LOGGER.fine("Creating class instance...");
-		
+
 		this.view = view;
 		this.model = model;
-		
+
+		initDocuments();
 		initEvents();
+		resetUI();
+		
 		view.setVisible(true);
 	}
 
+	private void initDocuments() {
+		view.getTitleField().setDocument(model.getTitle());
+		view.getNameField().setDocument(model.getName());
+		view.getDescriptionArea().setDocument(model.getDescription());
+	}
+	
 	private void initEvents() {
-		jOk.addActionListener(this);
-		jCancel.addActionListener(this);
-		jAlbum.addItemListener(this);
-
-		jName.addFocusListener(this);
-		jTitle.addFocusListener(this);
+		view.getOkButton().addActionListener(this);
+		view.getCancelButton().addActionListener(this);
+		view.getAlbumComboBox().addItemListener(this);
+		view.getNameField().addFocusListener(this);
+		view.getTitleField().addFocusListener(this);
 	}
 
 	@Override
@@ -45,17 +53,7 @@ public class NewAlbumPresenterImpl implements ActionListener, ItemListener, Focu
 		if (command.equals("Cancel")) {
 			view.setVisible(false);
 		} else if (command.equals("OK")) {
-			newAlbum = new Album(gallery);
-			// newAlbum.setSuppressEvents(true);
-			newAlbum.setName(jName.getText());
-			newAlbum.setTitle(jTitle.getText());
-			newAlbum.setCaption(jDescription.getText());
-
-			// newAlbum.setSuppressEvents(false);
-
-			parentAlbum = (Album) jAlbum.getSelectedItem();
-			parentAlbum.getGallery().insertNodeInto(newAlbum, parentAlbum, parentAlbum.getChildCount());
-
+			model.getNewAlbum();
 			view.setVisible(false);
 		}
 	}
@@ -63,6 +61,7 @@ public class NewAlbumPresenterImpl implements ActionListener, ItemListener, Focu
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
+			model.setSelectedAlbum((Album) e.getItem());
 			resetUI();
 		}
 	}
@@ -74,15 +73,18 @@ public class NewAlbumPresenterImpl implements ActionListener, ItemListener, Focu
 
 	@Override
 	public void focusLost(FocusEvent e) {
-		if (e.getSource() == jTitle && jName.getText().length() == 0) {
-			jName.setText(getDefaultName(jTitle.getText()));
+		if (e.getSource() == view.getTitleField() && model.getName().getLength() == 0) {
+			model.setDefaultName(model.getTitle());
 		}
 	}
 
 	private void resetUI() {
-		Album a = (Album) jAlbum.getSelectedItem();
-		boolean canCreateSubAlbum = a.getCanCreateSubAlbum();
-		view.resetUI(new NewAlbumDTO(canCreateSubAlbum));
+		NewAlbumDTO dto = new NewAlbumDTO();
+		dto.setAlbumList(model.getAlbumList());
+		dto.setSelectedAlbum(model.getSelectedAlbum());
+		dto.setEnabled(model.getSelectedAlbum().getCanCreateSubAlbum());
+		dto.setGalleryUri(model.getGalleryUri());
+		view.resetUI(dto);
 	}
 
 }

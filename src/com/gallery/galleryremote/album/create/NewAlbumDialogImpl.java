@@ -27,13 +27,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -46,10 +39,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 
-import com.gallery.galleryremote.Log;
 import com.gallery.galleryremote.model.Album;
-import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.util.DialogUtil;
 import com.gallery.galleryremote.util.GRI18n;
 import com.gallery.galleryremote.util.log.Logger;
@@ -63,27 +55,54 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 
 	private static final long serialVersionUID = -7008531987250343265L;
 	private static final Logger LOGGER = Logger.getLogger(NewAlbumDialogImpl.class);
-	
+
+	private JComboBox<Album> jAlbum;
+	private GridBagConstraints jAlbumConstraints;
+	private AlbumComboBoxModel jAlbumModel;
+
 	private JLabel jLabel2;
+	private GridBagConstraints jLabel2Constraints;
+
 	private JLabel jLabel3;
+	private GridBagConstraints jLabel3Constraints;
+
 	private JLabel jLabel4;
+	private GridBagConstraints jLabel4Constraints;
+
 	private JLabel jLabel5;
-	JTextField jTitle = new JTextField();
-	JTextField jName = new JTextField();
-	JTextArea jDescription = new JTextArea();
-	JLabel jLabel1 = new JLabel();
-	JLabel jGalleryName = new JLabel();
-	JComboBox<Album> jAlbum = null;
-	JPanel jPanel2 = new JPanel();
-	private JButton jOk = new JButton();
+	private GridBagConstraints jLabel5Constraints;
+
+	private JTextField jTitle;
+	private GridBagConstraints jTitleConstraints;
+
+	private JTextField jName;
+	private GridBagConstraints jNameConstraints;
+
+	private JTextArea jDescription;
+	private JScrollPane jDescriptionScrollPane;
+	private GridBagConstraints jDescriptionConstraints;
+
+	private JLabel jGalleryName;
+	private GridBagConstraints jGalleryNameConstraints;
+
+	private JPanel jPanel2;
+	private GridBagConstraints jPanel2Constraints;
+
+	private JButton jOk;
 	private JButton jCancel;
-	GridLayout gridLayout1 = new GridLayout();
 
 	public NewAlbumDialogImpl(Frame owner) {
 		super(owner, true);
-		
+
 		LOGGER.fine("Creating class instance...");
 		initUI();
+	}
+
+	private JLabel getGalleryName() {
+		if (jGalleryName == null) {
+			jGalleryName = new JLabel();
+		}
+		return jGalleryName;
 	}
 
 	private JLabel getLabel2() {
@@ -118,7 +137,8 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 		return jLabel5;
 	}
 
-	private JButton getCancelButton() {
+	@Override
+	public JButton getCancelButton() {
 		if (jCancel == null) {
 			jCancel = new JButton();
 			jCancel.setText(GRI18n.getString("Common", "Cancel"));
@@ -127,7 +147,8 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 		return jCancel;
 	}
 
-	private JButton getOkButton() {
+	@Override
+	public JButton getOkButton() {
 		if (jOk == null) {
 			jOk = new JButton();
 			jOk.setText(GRI18n.getString("Common", "OK"));
@@ -136,73 +157,175 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 		return jOk;
 	}
 
-	private void initUI() {
-		this.getContentPane().setLayout(new GridBagLayout());
-		this.setModal(true);
-		this.setTitle(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "title"));
+	private JPanel getButtonPanel() {
+		if (jPanel2 == null) {
+			GridLayout layout = new GridLayout();
+			layout.setColumns(2);
+			layout.setHgap(5);
 
-		Vector<Album> albums = new Vector<Album>(gallery.getFlatAlbumList());
-
-		jAlbum = new JComboBox<Album>(albums);
-		jAlbum.setRenderer(new AlbumListRenderer());
-
-		if (defaultAlbum == null) {
-			jAlbum.setSelectedItem(gallery.getRoot());
-		} else {
-			jAlbum.setSelectedItem(defaultAlbum);
+			jPanel2 = new JPanel();
+			jPanel2.setLayout(layout);
+			jPanel2.add(getCancelButton(), null);
+			jPanel2.add(getOkButton(), null);
 		}
+		return jPanel2;
+	}
 
-		jDescription
-				.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.white, Color.lightGray, Color.darkGray, Color.gray));
-		jDescription.setLineWrap(true);
-		jDescription.setWrapStyleWord(true);
-		JScrollPane descriptionArea = new JScrollPane(jDescription, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		descriptionArea.setPreferredSize(new Dimension(250, 100));
-		jAlbum.setFont(UIManager.getFont("Label.font"));
-		jGalleryName.setText(GRI18n.getString(MODULE, "createAlbm", new String[] { gallery.toString() }));
-		jName.setFont(UIManager.getFont("Label.font"));
-		jName.setToolTipText(GRI18n.getString(MODULE, "albmNameTip"));
+	@Override
+	public JTextField getTitleField() {
+		if (jTitle == null) {
+			jTitle = new JTextField();
+			jTitle.setFont(UIManager.getFont("Label.font"));
+		}
+		return jTitle;
+	}
 
-		jTitle.setFont(UIManager.getFont("Label.font"));
+	@Override
+	public JTextField getNameField() {
+		if (jName == null) {
+			jName = new JTextField();
+			jName.setFont(UIManager.getFont("Label.font"));
+			jName.setToolTipText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "albmNameTip"));
+		}
+		return jName;
+	}
 
-		gridLayout1.setColumns(2);
-		gridLayout1.setHgap(5);
+	@Override
+	public JTextArea getDescriptionArea() {
+		if (jDescription == null) {
+			jDescription = new JTextArea();
+			jDescription.setBorder(getDescriptionBorder());
+			jDescription.setLineWrap(true);
+			jDescription.setWrapStyleWord(true);
+		}
+		return jDescription;
+	}
 
-		jPanel2.setLayout(gridLayout1);
+	private Border getDescriptionBorder() {
+		return BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.white, Color.lightGray, Color.darkGray, Color.gray);
+	}
 
-		this.getContentPane().add(getLabel2(),
-				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 4));
-		this.getContentPane().add(getLabel3(),
-				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 5, 0, 5), 0, 4));
-		this.getContentPane().add(getLabel4(),
-				new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 5, 0, 5), 0, 4));
-		this.getContentPane().add(
-				getLabel5(),
-				new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0,
-						3));
-		this.getContentPane().add(
-				jTitle,
-				new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 5),
-						0, 0));
-		this.getContentPane().add(
-				jName,
-				new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 5),
-						0, 0));
-		this.getContentPane().add(descriptionArea,
-				new GridBagConstraints(1, 4, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 5), 0, 0));
-		this.getContentPane().add(
-				jGalleryName,
-				new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0,
-						0));
-		this.getContentPane().add(
-				jAlbum,
-				new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 5),
-						0, 0));
-		this.getContentPane().add(jPanel2,
-				new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		jPanel2.add(getCancelButton(), null);
-		jPanel2.add(getOkButton(), null);
+	private JScrollPane getDescriptionScroller() {
+		if (jDescriptionScrollPane != null) {
+			jDescriptionScrollPane = new JScrollPane(getDescriptionArea(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			jDescriptionScrollPane.setPreferredSize(new Dimension(250, 100));
+		}
+		return jDescriptionScrollPane;
+	}
+
+	private AlbumComboBoxModel getAlbumComboBoxModel() {
+		if (jAlbumModel == null) {
+			jAlbumModel = new AlbumComboBoxModel();
+		}
+		return jAlbumModel;
+	}
+
+	@Override
+	public JComboBox<Album> getAlbumComboBox() {
+		if (jAlbum == null) {
+			jAlbum = new JComboBox<Album>(getAlbumComboBoxModel());
+			jAlbum.setRenderer(new AlbumListRenderer());
+			jAlbum.setFont(UIManager.getFont("Label.font"));
+		}
+		return jAlbum;
+	}
+
+	private GridBagConstraints getLabel2Constraints() {
+		if (jLabel2Constraints == null) {
+			jLabel2Constraints = new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,
+					5, 0, 5), 0, 4);
+		}
+		return jLabel2Constraints;
+	}
+
+	private GridBagConstraints getLabel3Constraints() {
+		if (jLabel3Constraints == null) {
+			jLabel3Constraints = new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2,
+					5, 0, 5), 0, 4);
+		}
+		return jLabel3Constraints;
+	}
+
+	private GridBagConstraints getLabel4Constraints() {
+		if (jLabel4Constraints == null) {
+			jLabel4Constraints = new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2,
+					5, 0, 5), 0, 4);
+		}
+		return jLabel4Constraints;
+	}
+
+	private GridBagConstraints getLabel5Constraints() {
+		if (jLabel5Constraints == null) {
+			jLabel5Constraints = new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE,
+					new Insets(0, 5, 0, 5), 0, 3);
+		}
+		return jLabel5Constraints;
+	}
+
+	private GridBagConstraints getTitleConstraints() {
+		if (jTitleConstraints == null) {
+			jTitleConstraints = new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+					new Insets(0, 0, 0, 5), 0, 0);
+		}
+		return jTitleConstraints;
+	}
+
+	private GridBagConstraints getNameConstraints() {
+		if (jNameConstraints == null) {
+			jNameConstraints = new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+					new Insets(0, 0, 0, 5), 0, 0);
+		}
+		return jNameConstraints;
+	}
+
+	private GridBagConstraints getButtonPanelConstraints() {
+		if (jPanel2Constraints == null) {
+			jPanel2Constraints = new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5,
+					5, 5, 5), 0, 0);
+		}
+		return jPanel2Constraints;
+	}
+
+	private GridBagConstraints getAlbumComboboxConstraints() {
+		if (jAlbumConstraints == null) {
+			jAlbumConstraints = new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+					new Insets(0, 0, 0, 5), 0, 0);
+		}
+		return jAlbumConstraints;
+	}
+
+	private GridBagConstraints getGalleryNameConstraints() {
+		if (jGalleryNameConstraints == null) {
+			jGalleryNameConstraints = new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+					new Insets(5, 5, 5, 5), 0, 0);
+		}
+		return jGalleryNameConstraints;
+	}
+
+	private GridBagConstraints getDescriptionConstraints() {
+		if (jDescriptionConstraints == null) {
+			jDescriptionConstraints = new GridBagConstraints(1, 4, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 0, 5), 0, 0);
+		}
+		return jDescriptionConstraints;
+	}
+
+	private void initUI() {
+		setModal(true);
+		setTitle(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "title"));
+
+		getContentPane().setLayout(new GridBagLayout());
+		getContentPane().add(getLabel2(), getLabel2Constraints());
+		getContentPane().add(getLabel3(), getLabel3Constraints());
+		getContentPane().add(getLabel4(), getLabel4Constraints());
+		getContentPane().add(getLabel5(), getLabel5Constraints());
+		getContentPane().add(getTitleField(), getTitleConstraints());
+		getContentPane().add(getNameField(), getNameConstraints());
+		getContentPane().add(getDescriptionScroller(), getDescriptionConstraints());
+		getContentPane().add(getGalleryName(), getGalleryNameConstraints());
+		getContentPane().add(getAlbumComboBox(), getAlbumComboboxConstraints());
+		getContentPane().add(getButtonPanel(), getButtonPanelConstraints());
 
 		getRootPane().setDefaultButton(getOkButton());
 
@@ -212,10 +335,13 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 
 	@Override
 	public void resetUI(NewAlbumDTO dto) {
-		jOk.setEnabled(dto.isEnabled());
-		jName.setEnabled(dto.isEnabled());
-		jTitle.setEnabled(dto.isEnabled());
-		jDescription.setEnabled(dto.isEnabled());
+		getOkButton().setEnabled(dto.isEnabled());
+		getNameField().setEnabled(dto.isEnabled());
+		getTitleField().setEnabled(dto.isEnabled());
+		getDescriptionArea().setEnabled(dto.isEnabled());
+		getAlbumComboBoxModel().setAlbumList(dto.getAlbumList());
+		getAlbumComboBox().setSelectedItem(dto.getSelectedAlbum());
+		getGalleryName().setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "createAlbm", new String[] { dto.getGalleryUri() }));
 	}
 
 }

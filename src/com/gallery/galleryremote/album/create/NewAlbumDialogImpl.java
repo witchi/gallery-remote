@@ -108,7 +108,7 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 	private JLabel getLabel2() {
 		if (jLabel2 == null) {
 			jLabel2 = new JLabel();
-			jLabel2.setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "parentAlbm"));
+			jLabel2.setText(GRI18n.getString(NewAlbumDialog.class, "parentAlbm"));
 		}
 		return jLabel2;
 	}
@@ -116,7 +116,7 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 	private JLabel getLabel3() {
 		if (jLabel3 == null) {
 			jLabel3 = new JLabel();
-			jLabel3.setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "albmTitle"));
+			jLabel3.setText(GRI18n.getString(NewAlbumDialog.class, "albmTitle"));
 		}
 		return jLabel3;
 	}
@@ -124,7 +124,7 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 	private JLabel getLabel4() {
 		if (jLabel4 == null) {
 			jLabel4 = new JLabel();
-			jLabel4.setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "albmName"));
+			jLabel4.setText(GRI18n.getString(NewAlbumDialog.class, "albmName"));
 		}
 		return jLabel4;
 	}
@@ -132,7 +132,7 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 	private JLabel getLabel5() {
 		if (jLabel5 == null) {
 			jLabel5 = new JLabel();
-			jLabel5.setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "albmDesc"));
+			jLabel5.setText(GRI18n.getString(NewAlbumDialog.class, "albmDesc"));
 		}
 		return jLabel5;
 	}
@@ -141,7 +141,7 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 	public JButton getCancelButton() {
 		if (jCancel == null) {
 			jCancel = new JButton();
-			jCancel.setText(GRI18n.getString("Common", "Cancel"));
+			jCancel.setText(GRI18n.getString(NewAlbumDialog.class, "Cancel"));
 			jCancel.setActionCommand("Cancel");
 		}
 		return jCancel;
@@ -151,7 +151,7 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 	public JButton getOkButton() {
 		if (jOk == null) {
 			jOk = new JButton();
-			jOk.setText(GRI18n.getString("Common", "OK"));
+			jOk.setText(GRI18n.getString(NewAlbumDialog.class, "OK"));
 			jOk.setActionCommand("OK");
 		}
 		return jOk;
@@ -185,7 +185,7 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 		if (jName == null) {
 			jName = new JTextField();
 			jName.setFont(UIManager.getFont("Label.font"));
-			jName.setToolTipText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "albmNameTip"));
+			jName.setToolTipText(GRI18n.getString(NewAlbumDialog.class, "albmNameTip"));
 		}
 		return jName;
 	}
@@ -313,7 +313,7 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 
 	private void initUI() {
 		setModal(true);
-		setTitle(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "title"));
+		setTitle(GRI18n.getString(NewAlbumDialog.class, "title"));
 
 		getContentPane().setLayout(new GridBagLayout());
 		getContentPane().add(getLabel2(), getLabel2Constraints());
@@ -341,7 +341,7 @@ public class NewAlbumDialogImpl extends JDialog implements NewAlbumDialog {
 		getDescriptionArea().setEnabled(dto.isEnabled());
 		getAlbumComboBoxModel().setAlbumList(dto.getAlbumList());
 		getAlbumComboBox().setSelectedItem(dto.getSelectedAlbum());
-		getGalleryName().setText(GRI18n.getString(NewAlbumDialogImpl.class.getName(), "createAlbm", new String[] { dto.getGalleryUri() }));
+		getGalleryName().setText(GRI18n.getString(NewAlbumDialog.class, "createAlbm", new String[] { dto.getGalleryUri() }));
 	}
 
 }

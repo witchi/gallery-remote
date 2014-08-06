@@ -12,15 +12,18 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 
-import com.gallery.galleryremote.album.move.MoveAlbumDialog;
+import com.gallery.galleryremote.CoreUtils;
+import com.gallery.galleryremote.GalleryCommCapabilities;
+import com.gallery.galleryremote.GalleryRemote;
+import com.gallery.galleryremote.album.move.MoveAlbumDialogImpl;
+import com.gallery.galleryremote.album.move.MoveAlbumModel;
+import com.gallery.galleryremote.album.move.MoveAlbumModelImpl;
+import com.gallery.galleryremote.album.move.MoveAlbumPresenterImpl;
 import com.gallery.galleryremote.model.Album;
 import com.gallery.galleryremote.prefs.PreferenceNames;
 import com.gallery.galleryremote.prefs.UploadPanel;
 import com.gallery.galleryremote.util.DialogUtil;
 import com.gallery.galleryremote.util.log.Logger;
-import com.gallery.galleryremote.CoreUtils;
-import com.gallery.galleryremote.GalleryCommCapabilities;
-import com.gallery.galleryremote.GalleryRemote;
 
 public class AlbumInspectorPresenterImpl implements ActionListener, ItemListener, KeyListener, AlbumInspectorPresenter {
 
@@ -188,9 +191,10 @@ public class AlbumInspectorPresenterImpl implements ActionListener, ItemListener
 
 		} else if (source == view.getMoveButton()) {
 
-			MoveAlbumDialog mad = new MoveAlbumDialog(DialogUtil.findParentWindow((Component) view), model);
-			Album newParent = mad.getNewParent();
+			MoveAlbumModel m = new MoveAlbumModelImpl(model);
+			new MoveAlbumPresenterImpl(new MoveAlbumDialogImpl(DialogUtil.findParentWindow((Component) view)), m);
 
+			Album newParent = m.getNewParent();
 			if (newParent != null) {
 				model.moveAlbumTo(GalleryRemote.instance().getCore().getMainStatusUpdate(), newParent);
 

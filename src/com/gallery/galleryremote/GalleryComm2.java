@@ -50,6 +50,7 @@ import com.gallery.galleryremote.model.Gallery;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.prefs.GalleryProperties;
 import com.gallery.galleryremote.prefs.PreferenceNames;
+import com.gallery.galleryremote.progress.UploadProgress;
 import com.gallery.galleryremote.statusbar.StatusLevel;
 import com.gallery.galleryremote.statusbar.StatusUpdate;
 import com.gallery.galleryremote.statusbar.StatusUpdateAdapter;

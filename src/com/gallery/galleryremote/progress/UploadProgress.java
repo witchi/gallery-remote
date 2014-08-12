@@ -1,4 +1,4 @@
-package com.gallery.galleryremote;
+package com.gallery.galleryremote.progress;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -21,6 +21,8 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 
+import com.gallery.galleryremote.GalleryRemote;
+import com.gallery.galleryremote.Log;
 import com.gallery.galleryremote.model.Picture;
 import com.gallery.galleryremote.statusbar.StatusLevel;
 import com.gallery.galleryremote.statusbar.StatusUpdate;
